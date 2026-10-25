@@ -32,7 +32,7 @@ import com.joclegg.puzzles.solitaire.engine.DrawMode
 @Composable
 fun SettingsRoute(
     viewModel: SettingsViewModel,
-    onBack: () -> Unit,
+    onBack: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
     val settings by viewModel.uiState.collectAsStateWithLifecycle()
@@ -50,16 +50,18 @@ fun SettingsScreen(
     settings: Settings,
     onToggle: (Toggle, Boolean) -> Unit,
     onDrawModeChange: (DrawMode) -> Unit,
-    onBack: () -> Unit,
+    onBack: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            BackButton(onBack)
-            Text("Settings", style = MaterialTheme.typography.headlineMedium)
+        if (onBack != null) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                BackButton(onBack)
+                Text("Settings", style = MaterialTheme.typography.headlineMedium)
+            }
         }
         SettingsCard(title = "Play") {
             Choice(

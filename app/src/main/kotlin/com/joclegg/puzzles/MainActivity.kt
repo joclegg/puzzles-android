@@ -9,6 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import com.joclegg.puzzles.fiveletters.FiveLettersFixtures
 import com.joclegg.puzzles.sightlines.SightlinesFixtures
 import com.joclegg.puzzles.solitaire.SolitaireFixtures
 import com.joclegg.puzzles.sudoku.SudokuFixtures
@@ -50,6 +51,7 @@ class MainActivity : ComponentActivity() {
         val solitaire = SolitaireFixtures.deal(name)
         val twoTone = TwoToneFixtures.puzzle(name)
         val sightlines = SightlinesFixtures.puzzle(name)
+        val fiveLetters = FiveLettersFixtures.word(name)
         lifecycleScope.launch {
             if (draft != null) {
                 app.sudoku.settings.setCustomDraft(draft)
@@ -92,6 +94,15 @@ class MainActivity : ComponentActivity() {
                         PuzzleGame.SIGHTLINES,
                         app.sightlines.games
                             .start { sightlines }
+                            .id,
+                    )
+            }
+            if (fiveLetters != null) {
+                openGame.value =
+                    OpenGame(
+                        PuzzleGame.FIVE_LETTERS,
+                        app.fiveLetters.games
+                            .start(fiveLetters, hardMode = false)
                             .id,
                     )
             }

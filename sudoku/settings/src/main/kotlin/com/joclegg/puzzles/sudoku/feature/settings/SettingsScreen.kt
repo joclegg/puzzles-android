@@ -34,7 +34,6 @@ import com.joclegg.puzzles.sudoku.core.data.DigitCounts
 import com.joclegg.puzzles.sudoku.core.data.GameMode
 import com.joclegg.puzzles.sudoku.core.data.ModeSettings
 import com.joclegg.puzzles.sudoku.core.data.Settings
-import com.joclegg.puzzles.sudoku.core.data.ThemeMode
 import com.joclegg.puzzles.sudoku.core.data.Toggle
 import com.joclegg.puzzles.sudoku.core.ui.BackButton
 import com.joclegg.puzzles.sudoku.core.ui.SudokuIcons
@@ -46,7 +45,7 @@ import com.joclegg.puzzles.sudoku.engine.MistakeCheck
 fun SettingsRoute(
     viewModel: SettingsViewModel,
     initialMode: GameMode,
-    onBack: () -> Unit,
+    onBack: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
     val settings by viewModel.uiState.collectAsStateWithLifecycle()
@@ -56,7 +55,6 @@ fun SettingsRoute(
         onToggle = viewModel::onToggle,
         onInputModeChange = viewModel::onInputModeChange,
         onMistakeLevelChange = viewModel::onMistakeLevelChange,
-        onThemeChange = viewModel::onThemeChange,
         onDigitCountsChange = viewModel::onDigitCountsChange,
         onSameNumberStyleChange = viewModel::onSameNumberStyleChange,
         onNotesStyleChange = viewModel::onNotesStyleChange,
@@ -72,11 +70,10 @@ fun SettingsScreen(
     onToggle: (GameMode, Toggle, Boolean) -> Unit,
     onInputModeChange: (InputMode) -> Unit,
     onMistakeLevelChange: (GameMode, MistakeCheck) -> Unit,
-    onThemeChange: (ThemeMode) -> Unit,
     onDigitCountsChange: (GameMode, DigitCounts) -> Unit,
     onSameNumberStyleChange: (GameMode, HighlightStyle) -> Unit,
     onNotesStyleChange: (GameMode, HighlightStyle) -> Unit,
-    onBack: () -> Unit,
+    onBack: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
     var mode by rememberSaveable { mutableStateOf(initialMode) }
@@ -86,25 +83,13 @@ fun SettingsScreen(
         modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            BackButton(onBack)
-            Text("Settings", style = MaterialTheme.typography.headlineMedium)
+        if (onBack != null) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                BackButton(onBack)
+                Text("Settings", style = MaterialTheme.typography.headlineMedium)
+            }
         }
         SettingsCard(title = "General") {
-            Section("Appearance")
-            Choice(
-                options = ThemeMode.entries,
-                selected = settings.theme,
-                label = {
-                    when (it) {
-                        ThemeMode.SYSTEM -> "System"
-                        ThemeMode.LIGHT -> "Light"
-                        ThemeMode.DARK -> "Dark"
-                    }
-                },
-                tag = { "setting_theme_${it.name.lowercase()}" },
-                onSelect = onThemeChange,
-            )
             Section("Entering numbers")
             InputModeChoice(settings.inputMode, onInputModeChange)
         }

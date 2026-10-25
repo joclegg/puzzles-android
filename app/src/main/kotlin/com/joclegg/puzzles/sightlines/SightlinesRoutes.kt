@@ -10,6 +10,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.joclegg.puzzles.SettingsHub
+import com.joclegg.puzzles.SettingsTab
 import com.joclegg.puzzles.sightlines.core.ui.SightlinesTheme
 import com.joclegg.puzzles.sightlines.feature.game.GameRoute
 import com.joclegg.puzzles.sightlines.feature.game.GameViewModel
@@ -26,7 +28,6 @@ object SightlinesRoutes {
     private const val GAME = "sightlines/game/{id}"
     private const val STATS = "sightlines/stats"
     private const val HISTORY = "sightlines/history"
-    private const val SETTINGS = "sightlines/settings"
 
     fun NavGraphBuilder.sightlinesGraph(
         container: SightlinesContainer,
@@ -39,7 +40,7 @@ object SightlinesRoutes {
                 onOpenGame = { navController.openSightlinesGame(it) },
                 onStats = { navController.navigate(STATS) },
                 onHistory = { navController.navigate(HISTORY) },
-                onSettings = { navController.navigate(SETTINGS) },
+                onSettings = { navController.navigate(SettingsHub.route(SettingsTab.SIGHTLINES)) },
                 onBack = navController::popBackStack,
             )
         }
@@ -54,9 +55,6 @@ object SightlinesRoutes {
                 onHome = { navController.popBackStack(HOME, inclusive = false) },
             )
         }
-        screen(SETTINGS, darkTheme) {
-            SettingsRoute(viewModel { SettingsViewModel(container.settings) }, onBack = navController::popBackStack)
-        }
         screen(STATS, darkTheme) {
             StatsRoute(viewModel { StatsViewModel(container.games) }, onBack = navController::popBackStack)
         }
@@ -66,6 +64,16 @@ object SightlinesRoutes {
                 onOpenGame = { navController.openSightlinesGame(it) },
                 onBack = navController::popBackStack,
             )
+        }
+    }
+
+    @Composable
+    fun SettingsTabContent(
+        container: SightlinesContainer,
+        darkTheme: Boolean,
+    ) {
+        SightlinesTheme(darkTheme) {
+            SettingsRoute(viewModel { SettingsViewModel(container.settings) }, onBack = null)
         }
     }
 

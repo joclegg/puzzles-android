@@ -50,4 +50,11 @@ include(
     ":sightlines:home",
     ":sightlines:stats",
     ":sightlines:settings",
+    ":fiveletters:engine",
+    ":fiveletters:data",
+    ":fiveletters:ui",
+    ":fiveletters:game",
+    ":fiveletters:home",
+    ":fiveletters:stats",
+    ":fiveletters:settings",
 )

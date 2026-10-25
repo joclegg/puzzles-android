@@ -10,6 +10,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.joclegg.puzzles.SettingsHub
+import com.joclegg.puzzles.SettingsTab
 import com.joclegg.puzzles.solitaire.core.ui.SolitaireTheme
 import com.joclegg.puzzles.solitaire.feature.game.GameRoute
 import com.joclegg.puzzles.solitaire.feature.game.GameViewModel
@@ -26,7 +28,6 @@ object SolitaireRoutes {
     private const val GAME = "solitaire/game/{id}"
     private const val STATS = "solitaire/stats"
     private const val HISTORY = "solitaire/history"
-    private const val SETTINGS = "solitaire/settings"
 
     fun NavGraphBuilder.solitaireGraph(
         container: SolitaireContainer,
@@ -39,7 +40,7 @@ object SolitaireRoutes {
                 onOpenGame = { navController.openSolitaireGame(it) },
                 onStats = { navController.navigate(STATS) },
                 onHistory = { navController.navigate(HISTORY) },
-                onSettings = { navController.navigate(SETTINGS) },
+                onSettings = { navController.navigate(SettingsHub.route(SettingsTab.SOLITAIRE)) },
                 onBack = navController::popBackStack,
             )
         }
@@ -54,9 +55,6 @@ object SolitaireRoutes {
                 onHome = { navController.popBackStack(HOME, inclusive = false) },
             )
         }
-        screen(SETTINGS, darkTheme) {
-            SettingsRoute(viewModel { SettingsViewModel(container.settings) }, onBack = navController::popBackStack)
-        }
         screen(STATS, darkTheme) {
             StatsRoute(viewModel { StatsViewModel(container.games) }, onBack = navController::popBackStack)
         }
@@ -66,6 +64,16 @@ object SolitaireRoutes {
                 onOpenGame = { navController.openSolitaireGame(it) },
                 onBack = navController::popBackStack,
             )
+        }
+    }
+
+    @Composable
+    fun SettingsTabContent(
+        container: SolitaireContainer,
+        darkTheme: Boolean,
+    ) {
+        SolitaireTheme(darkTheme) {
+            SettingsRoute(viewModel { SettingsViewModel(container.settings) }, onBack = null)
         }
     }
 

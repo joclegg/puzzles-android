@@ -42,6 +42,11 @@ spotless {
             shortCode = "compose:compositionlocal-allowlist"
             path = "sightlines/ui/src/main/kotlin/com/joclegg/puzzles/sightlines/core/ui/Theme.kt"
         }
+        suppressLintsFor {
+            step = "ktlint"
+            shortCode = "compose:compositionlocal-allowlist"
+            path = "fiveletters/ui/src/main/kotlin/com/joclegg/puzzles/fiveletters/core/ui/Theme.kt"
+        }
     }
     kotlinGradle {
         target("**/*.gradle.kts")

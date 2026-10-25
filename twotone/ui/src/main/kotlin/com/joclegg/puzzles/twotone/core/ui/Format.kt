@@ -20,8 +20,8 @@ fun sizeLabel(size: Int) = "$size x $size"
 
 fun PuzzleRef.title(): String =
     if (isDaily) {
-        val date = LocalDate.parse(id.removePrefix(PuzzleRef.DAILY_PREFIX))
-        "Daily · ${date.format(DateTimeFormatter.ofPattern("d MMM"))}"
+        val date = LocalDate.parse(id.removePrefix(PuzzleRef.DAILY_PREFIX).substringBefore('_'))
+        "Daily · ${date.format(DateTimeFormatter.ofPattern("d MMM"))} · ${sizeLabel(size)}"
     } else {
         sizeLabel(size)
     }

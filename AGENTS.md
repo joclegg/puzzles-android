@@ -1,12 +1,12 @@
 # AGENTS.md
 
-Puzzles: an offline Android app with four games: sudoku (classic and killer), Klondike solitaire, Two Tone (red/blue binary grid, like 0h h1) and Sightlines (blue dots that count what they see, like 0h n0). A launcher screen picks the game.
+Puzzles: an offline Android app with five games: sudoku (classic and killer), Klondike solitaire, Two Tone (red/blue binary grid, like 0h h1), Sightlines (blue dots that count what they see, like 0h n0) and Five Letters (a Wordle-style word game). A launcher screen picks the game.
 
 ## Stack
 
 - Kotlin 2.4, Jetpack Compose with Material 3, single activity
 - AGP 9 with built-in Kotlin, Gradle version catalog, convention plugins in `build-logic/`
-- Room for saved games, DataStore for settings, manual DI in one container per game (`SudokuContainer`, `SolitaireContainer`, `TwoToneContainer`, `SightlinesContainer`)
+- Room for saved games, DataStore for settings, manual DI in one container per game (`SudokuContainer`, `SolitaireContainer`, `TwoToneContainer`, `SightlinesContainer`, `FiveLettersContainer`)
 - JUnit 5 with `kotlin.test` for the engines, JUnit 4 with Robolectric for Android and Compose code
 - Maestro for e2e flows on the `puzzles-e2e` emulator
 - Spotless with ktlint (`ktlint_official`) and the Compose rules, plus Android Lint
@@ -16,7 +16,7 @@ Puzzles: an offline Android app with four games: sudoku (classic and killer), Kl
 - `./gradlew spotlessApply`: format the code
 - `./gradlew spotlessCheck`: check formatting and the Compose rules
 - `./gradlew lintDebug test assembleDebug`: run Android Lint, every unit test and a debug build
-- `./gradlew :<game>:engine:test` (`sudoku`, `solitaire`, `twotone`, `sightlines`): run only one game's engine tests
+- `./gradlew :<game>:engine:test` (`sudoku`, `solitaire`, `twotone`, `sightlines`, `fiveletters`): run only one game's engine tests
 - `./gradlew :app:installDebug`: install the debug app on the running emulator
 - `e2e/run.sh --shards 3`: run every Maestro flow in parallel on three emulators (boots any that aren't running)
 - `e2e/run.sh --fast`: only the flows tagged `fast`, for everyday checks
@@ -26,19 +26,21 @@ Puzzles: an offline Android app with four games: sudoku (classic and killer), Kl
 
 ## Structure
 
-Each game has its own modules under `sudoku/`, `solitaire/`, `twotone/` and `sightlines/`, with packages `com.joclegg.puzzles.<game>.*`:
+Each game has its own modules under `sudoku/`, `solitaire/`, `twotone/`, `sightlines/` and `fiveletters/`, with packages `com.joclegg.puzzles.<game>.*`:
 
 - `<game>/engine/`: pure Kotlin, every game rule
   - sudoku: board model, `Solver`, `Grader`, `Generator`, `GameState` and `GameTimer`
   - solitaire: `Card`, `Board` (piles, legal moves, `BuildOrder`), `GameState` (taps, undo by replay), `BoardCodec`, `MoveCodec` and `GameTimer`
   - twotone and sightlines: `Grid`, `Puzzle`, a logic-only `Solver` whose next step is also the hint, `Generator` (seeded, keeps removing givens while the solver still finishes), `GameState` (tap, paint, undo, hints) and `GameTimer`
+  - fiveletters: `Words` (answer and guess lists, the daily word by date), `score` and `GameState` (typing, guesses, hard mode, share text)
 - `<game>/data/`: Room database and repositories. Sudoku also has `PuzzleBank` and `PuzzleSupply`; solitaire has `DealRef` (random and daily deals)
-- `<game>/ui/`: theme, colour tokens (`BoardColors` for sudoku, `TableColors` for solitaire, `TileColors` for twotone and sightlines) and shared components
+- `<game>/ui/`: theme, colour tokens (`BoardColors` for sudoku, `TableColors` for solitaire, `TileColors` for twotone and sightlines, `LetterColors` for fiveletters) and shared components
 - `<game>/game/`, `<game>/home/`, `<game>/stats/`, `<game>/settings/`: the screens
 - `core/testing/`: shared test utilities, such as `TestCompletionSource`
 - `app/`: `MainActivity`, `PuzzlesApp.kt` (navigation), `LauncherScreen`, and per game a container (`<Game>Container`), a routes file (`<Game>Routes`) and debug-only e2e fixtures in `src/debug/` (`<Game>Fixtures`)
 - `app/src/main/assets/puzzles/`: the generated sudoku bank, one file per mode and level
-- `e2e/flows/`: Maestro flows, one behaviour per file, named `sudoku_*`, `solitaire_*`, `two_tone_*` or `sightlines_*`
+- `app/src/main/assets/words/`: Five Letters word lists: `answers.txt` (hand-picked common words, British spelling, no plurals) and `guesses.txt` (the public-domain ENABLE list)
+- `e2e/flows/`: Maestro flows, one behaviour per file, named `sudoku_*`, `solitaire_*`, `two_tone_*`, `sightlines_*` or `five_letters_*`
 - `build-logic/`: convention plugins shared by every module
 
 ## Rules
@@ -61,7 +63,7 @@ Rules marked (lint) are enforced by `spotlessCheck`, Android Lint or the build.
 - MUST keep the app fully offline. MUST NOT add the `INTERNET` or `ACCESS_NETWORK_STATE` permission. (lint: `verify<Variant>NoInternet`)
 - MUST NOT add analytics, crash reporting, ads, cloud sync or any network library.
 - MUST keep all data on the device, in Room or DataStore.
-- MUST pick daily sudoku puzzles locally from the bundled bank, deal daily solitaire games locally, seeded by date (`DealRef.daily`), and generate daily Two Tone and Sightlines puzzles locally, seeded by date (`PuzzleRef.daily`).
+- MUST pick daily sudoku puzzles locally from the bundled bank, deal daily solitaire games locally, seeded by date (`DealRef.daily`), generate daily Two Tone and Sightlines puzzles locally, seeded by date (`PuzzleRef.daily`), and pick the daily Five Letters word locally from the bundled list (`Words.daily`). MUST NOT fetch another service's daily word.
 
 ### Modules
 
@@ -84,7 +86,7 @@ Rules marked (lint) are enforced by `spotlessCheck`, Android Lint or the build.
 - MUST wrap callbacks used inside effects in `rememberUpdatedState`. (lint)
 - MUST NOT pass mutable state or ViewModels into stateless `<X>Screen` composables. (lint)
 - MUST give every screen except the launcher a back arrow (`BackButton`) at the top left, including each game's Home.
-- The app theme (System / Light / Dark) lives in sudoku's Settings and applies to the whole app. Each other game's routes file wraps its screens in that game's theme (`SolitaireTheme`, `TwoToneTheme`, `SightlinesTheme`).
+- The app theme (System / Light / Dark) lives in sudoku's Settings and applies to the whole app. Each other game's routes file wraps its screens in that game's theme (`SolitaireTheme`, `TwoToneTheme`, `SightlinesTheme`, `FiveLettersTheme`).
 
 ### Sudoku look
 
@@ -118,8 +120,15 @@ Rules marked (lint) are enforced by `spotlessCheck`, Android Lint or the build.
 
 ### Two Tone and Sightlines games
 
-- MUST keep at most one game in progress per save slot: each size, and one per date for the daily puzzle.
+- MUST keep at most one game in progress per save slot: each size, and one per size per date for the daily puzzles.
 - MUST keep undo unlimited by saving every change (`ChangeCodec`) and replaying them.
+
+### Five Letters
+
+- MUST take colours only from `LocalLetterColors` or `MaterialTheme`, with dark and high-contrast values.
+- MUST give everyone the same daily word on the same date: `Words.daily` shuffles the answers with a fixed seed and counts days from `Words.FIRST_DAY`. MUST NOT reorder or remove answers once released; only append.
+- MUST keep Share to the coloured grid only, never the letters.
+- MUST keep one game per date for the daily word (it can't be replayed once finished) and one practice game in progress.
 
 ### Sudoku games
 
@@ -154,7 +163,7 @@ Rules marked (lint) are enforced by `spotlessCheck`, Android Lint or the build.
 - MUST test timer logic with a fake clock.
 - MUST make tests of concurrent code deterministic: background work signals when it is done (a `TestCompletionSource` from `core:testing`, completed by the fake or callback that observes the work) and the test awaits that signal. MUST NOT wait with sleeps, delays, polling or real-time timeouts. The source's timeout is only a safety net that fails the build when a signal never comes.
 - MUST pass coroutine dispatchers into classes that switch threads (as `GameRepository` takes `background`), so tests can run that work on the test dispatcher.
-- MUST give every element an e2e flow touches a `testTag`: sudoku `cell_r{row}c{col}` (1-based) and `digit_{n}`; Two Tone `tile_r{row}c{col}`; Sightlines `dot_r{row}c{col}`; solitaire `card_{rank}{suit}` (e.g. `card_TH`), `tableau_{n}`, `foundation_{n}`, `tableau_{n}_down_{i}`, `stock` and `waste`; snake_case names elsewhere.
+- MUST give every element an e2e flow touches a `testTag`: sudoku `cell_r{row}c{col}` (1-based) and `digit_{n}`; Five Letters `letter_r{row}c{col}`, `key_{A-Z}`, `key_enter` and `key_delete`; Two Tone `tile_r{row}c{col}`; Sightlines `dot_r{row}c{col}`; solitaire `card_{rank}{suit}` (e.g. `card_TH`), `tableau_{n}`, `foundation_{n}`, `tableau_{n}_down_{i}`, `stock` and `waste`; snake_case names elsewhere.
 - MUST apply `Modifier.dialogTestTags()` to dialogs, so their tags reach Maestro.
 - MUST write one behaviour per Maestro flow in `e2e/flows/<game>_<behaviour>.yaml`.
 - MUST start each flow with `launchApp: clearState: true`, then `tapOn: game_<game>` on the launcher. Use a debug fixture instead, which opens the game directly, (`arguments: fixture: <name>`, or `draft: <name>` for custom entry) when the flow needs a known board. MUST NOT type long inputs tap by tap; add a fixture.

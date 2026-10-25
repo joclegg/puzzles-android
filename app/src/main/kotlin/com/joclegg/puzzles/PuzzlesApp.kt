@@ -11,10 +11,16 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.joclegg.puzzles.fiveletters.FiveLettersRoutes
+import com.joclegg.puzzles.fiveletters.FiveLettersRoutes.fiveLettersGraph
+import com.joclegg.puzzles.fiveletters.FiveLettersRoutes.openFiveLettersGame
 import com.joclegg.puzzles.sightlines.SightlinesRoutes
 import com.joclegg.puzzles.sightlines.SightlinesRoutes.openSightlinesGame
 import com.joclegg.puzzles.sightlines.SightlinesRoutes.sightlinesGraph
@@ -24,11 +30,12 @@ import com.joclegg.puzzles.solitaire.SolitaireRoutes.solitaireGraph
 import com.joclegg.puzzles.sudoku.SudokuRoutes
 import com.joclegg.puzzles.sudoku.SudokuRoutes.openSudokuGame
 import com.joclegg.puzzles.sudoku.SudokuRoutes.sudokuGraph
+import com.joclegg.puzzles.sudoku.core.data.GameMode
 import com.joclegg.puzzles.twotone.TwoToneRoutes
 import com.joclegg.puzzles.twotone.TwoToneRoutes.openTwoToneGame
 import com.joclegg.puzzles.twotone.TwoToneRoutes.twoToneGraph
 
-enum class PuzzleGame { SUDOKU, SOLITAIRE, TWO_TONE, SIGHTLINES }
+enum class PuzzleGame { SUDOKU, SOLITAIRE, TWO_TONE, SIGHTLINES, FIVE_LETTERS }
 
 data class OpenGame(
     val game: PuzzleGame,
@@ -70,24 +77,61 @@ fun PuzzlesApp(
                     navController.navigate(SightlinesRoutes.HOME)
                     openGame.id?.let { navController.openSightlinesGame(it) }
                 }
+
+                PuzzleGame.FIVE_LETTERS -> {
+                    navController.navigate(FiveLettersRoutes.HOME)
+                    openGame.id?.let { navController.openFiveLettersGame(it) }
+                }
             }
             currentOnConsume()
         }
     }
     Scaffold(modifier.fillMaxSize().semantics { testTagsAsResourceId = true }) { padding ->
         NavHost(navController, startDestination = LAUNCHER, modifier = Modifier.padding(padding)) {
+            composable(
+                SettingsHub.ROUTE,
+                arguments =
+                    listOf(
+                        navArgument("tab") { type = NavType.StringType },
+                        navArgument("mode") {
+                            type = NavType.StringType
+                            nullable = true
+                        },
+                    ),
+            ) { entry ->
+                val mode = entry.arguments?.getString("mode")?.let(GameMode::valueOf) ?: GameMode.CLASSIC
+                SettingsHubRoute(
+                    viewModel = viewModel { AppSettingsViewModel(app.sudoku.settings) },
+                    initialTab = SettingsTab.valueOf(entry.arguments!!.getString("tab")!!),
+                    onBack = navController::popBackStack,
+                    tabContent = { tab ->
+                        when (tab) {
+                            SettingsTab.GENERAL -> Unit
+                            SettingsTab.SUDOKU -> SudokuRoutes.SettingsTabContent(app.sudoku, mode)
+                            SettingsTab.SOLITAIRE -> SolitaireRoutes.SettingsTabContent(app.solitaire, darkTheme)
+                            SettingsTab.TWO_TONE -> TwoToneRoutes.SettingsTabContent(app.twoTone, darkTheme)
+                            SettingsTab.SIGHTLINES -> SightlinesRoutes.SettingsTabContent(app.sightlines, darkTheme)
+                            SettingsTab.FIVE_LETTERS -> FiveLettersRoutes.SettingsTabContent(app.fiveLetters, darkTheme)
+                        }
+                    },
+                )
+            }
             composable(LAUNCHER) {
                 LauncherScreen(
+                    darkTheme = darkTheme,
+                    onSettingsClick = { navController.navigate(SettingsHub.route(SettingsTab.GENERAL)) },
                     onSudokuClick = { navController.navigate(SudokuRoutes.HOME) },
                     onSolitaireClick = { navController.navigate(SolitaireRoutes.HOME) },
                     onTwoToneClick = { navController.navigate(TwoToneRoutes.HOME) },
                     onSightlinesClick = { navController.navigate(SightlinesRoutes.HOME) },
+                    onFiveLettersClick = { navController.navigate(FiveLettersRoutes.HOME) },
                 )
             }
             sudokuGraph(app.sudoku, navController)
             solitaireGraph(app.solitaire, navController, darkTheme)
             twoToneGraph(app.twoTone, navController, darkTheme)
             sightlinesGraph(app.sightlines, navController, darkTheme)
+            fiveLettersGraph(app.fiveLetters, navController, darkTheme)
         }
     }
 }

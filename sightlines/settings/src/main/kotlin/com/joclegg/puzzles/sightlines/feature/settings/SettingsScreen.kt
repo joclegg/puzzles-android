@@ -30,7 +30,7 @@ import com.joclegg.puzzles.sightlines.core.ui.BackButton
 @Composable
 fun SettingsRoute(
     viewModel: SettingsViewModel,
-    onBack: () -> Unit,
+    onBack: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
     val settings by viewModel.uiState.collectAsStateWithLifecycle()
@@ -42,16 +42,18 @@ fun SettingsScreen(
     settings: Settings,
     onToggle: (Toggle, Boolean) -> Unit,
     onInputModeChange: (InputMode) -> Unit,
-    onBack: () -> Unit,
+    onBack: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            BackButton(onBack)
-            Text("Settings", style = MaterialTheme.typography.headlineMedium)
+        if (onBack != null) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                BackButton(onBack)
+                Text("Settings", style = MaterialTheme.typography.headlineMedium)
+            }
         }
         OutlinedCard(Modifier.fillMaxWidth()) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -86,7 +88,7 @@ fun SettingsScreen(
                     Toggle.MARK_BROKEN_RULES,
                     onToggle,
                     "Mark broken rules",
-                    detail = "Circle numbers that see too many or can no longer see enough, and blue dots that can see nothing.",
+                    detail = "Outline numbers that see too many or can no longer see enough, and blue dots that can see nothing.",
                 )
                 ToggleRow(settings, Toggle.SHOW_TIMER, onToggle, "Show the timer")
                 ToggleRow(settings, Toggle.SHOW_PROGRESS, onToggle, "Show how much is filled in")

@@ -6,7 +6,6 @@ import com.joclegg.puzzles.sudoku.core.data.DigitCounts
 import com.joclegg.puzzles.sudoku.core.data.GameMode
 import com.joclegg.puzzles.sudoku.core.data.Settings
 import com.joclegg.puzzles.sudoku.core.data.SettingsRepository
-import com.joclegg.puzzles.sudoku.core.data.ThemeMode
 import com.joclegg.puzzles.sudoku.core.data.Toggle
 import com.joclegg.puzzles.sudoku.engine.HighlightStyle
 import com.joclegg.puzzles.sudoku.engine.InputMode
@@ -56,10 +55,6 @@ class SettingsViewModel(
         style: HighlightStyle,
     ) {
         viewModelScope.launch { settings.setNotesStyle(mode, style) }
-    }
-
-    fun onThemeChange(theme: ThemeMode) {
-        viewModelScope.launch { settings.setTheme(theme) }
     }
 
     fun onInputModeChange(mode: InputMode) {

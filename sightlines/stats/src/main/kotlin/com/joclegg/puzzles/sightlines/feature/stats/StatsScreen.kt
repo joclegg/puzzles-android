@@ -58,7 +58,7 @@ fun StatsScreen(
             )
         }
         Text(
-            "Solved out of played. Abandoned puzzles count as played. The daily puzzle is 7 x 7.",
+            "Solved out of played. Abandoned puzzles count as played. Daily puzzles count under their size.",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )

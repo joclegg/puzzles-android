@@ -2,6 +2,7 @@ package com.joclegg.puzzles.sightlines.feature.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -69,7 +70,7 @@ fun HomeRoute(
         state = state,
         onResume = onOpenGame,
         onStart = { size -> launchGame { viewModel.start(size) } },
-        onDaily = { launchGame { viewModel.openDaily() } },
+        onDaily = { size -> launchGame { viewModel.openDaily(size) } },
         onStats = onStats,
         onHistory = onHistory,
         onSettings = onSettings,
@@ -83,7 +84,7 @@ fun HomeScreen(
     state: HomeUiState,
     onResume: (Long) -> Unit,
     onStart: (Int) -> Unit,
-    onDaily: () -> Unit,
+    onDaily: (Int) -> Unit,
     onStats: () -> Unit,
     onHistory: () -> Unit,
     onSettings: () -> Unit,
@@ -123,14 +124,23 @@ fun HomeScreen(
                 }
             }
         }
-        OutlinedButton(onClick = onDaily, modifier = Modifier.fillMaxWidth().testTag("daily")) {
-            Text(
-                if (state.dailySolved) {
-                    "Daily puzzle · Solved ✓"
-                } else {
-                    "Daily puzzle"
-                },
-            )
+        Text("Today's puzzles", style = MaterialTheme.typography.titleMedium)
+        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            SIZES.forEach { size ->
+                OutlinedButton(
+                    onClick = { onDaily(size) },
+                    contentPadding = PaddingValues(0.dp),
+                    modifier = Modifier.weight(1f).testTag("daily_$size"),
+                ) {
+                    Text(
+                        if (size in state.dailySolved) {
+                            "$size ✓"
+                        } else {
+                            "$size"
+                        },
+                    )
+                }
+            }
         }
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             OutlinedButton(onClick = onStats, modifier = Modifier.weight(1f).testTag("stats")) { Text("Stats") }

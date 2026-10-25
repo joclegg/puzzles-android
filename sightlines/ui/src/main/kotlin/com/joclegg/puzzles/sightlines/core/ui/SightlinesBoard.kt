@@ -135,10 +135,10 @@ private fun DotView(
             .clip(DotShape)
             .background(edge)
             .then(
-                if (hinted) {
-                    Modifier.border(3.dp, colors.hintTarget, DotShape)
-                } else {
-                    Modifier
+                when {
+                    hinted -> Modifier.border(3.dp, colors.hintTarget, DotShape)
+                    broken -> Modifier.border(3.dp, colors.broken, DotShape)
+                    else -> Modifier
                 },
             ).clickable { onDotClick(cell) }
             .testTag(dotTag(cell, board.grid.size))
@@ -180,14 +180,10 @@ private fun DotView(
                             .testTag("${dotTag(cell, board.grid.size)}_seen"),
                 )
             }
-            if (broken) {
-                Box(Modifier.fillMaxSize(BROKEN_FRACTION).align(Alignment.Center).border(2.dp, colors.broken, CircleShape))
-            }
         }
     }
 }
 
 private const val EDGE_FACE_FRACTION = 0.9f
-private const val BROKEN_FRACTION = 0.75f
 private const val NUMBER_FRACTION = 0.42f
 private const val SEEN_SCALE = 0.42f

@@ -25,7 +25,6 @@ data class PuzzleRef(
 
     companion object {
         const val DAILY_PREFIX = "daily_"
-        const val DAILY_SIZE = 7
         private const val DAILY_SEED_SPREAD = 7_919L
 
         fun random(
@@ -33,7 +32,15 @@ data class PuzzleRef(
             size: Int,
         ) = PuzzleRef("random_$seed", Generator.generate(size, seed))
 
-        fun daily(date: LocalDate) = PuzzleRef("$DAILY_PREFIX$date", Generator.generate(DAILY_SIZE, date.toEpochDay() * DAILY_SEED_SPREAD))
+        fun dailyId(
+            date: LocalDate,
+            size: Int,
+        ) = "$DAILY_PREFIX${date}_$size"
+
+        fun daily(
+            date: LocalDate,
+            size: Int,
+        ) = PuzzleRef(dailyId(date, size), Generator.generate(size, date.toEpochDay() * DAILY_SEED_SPREAD + size))
     }
 }
 

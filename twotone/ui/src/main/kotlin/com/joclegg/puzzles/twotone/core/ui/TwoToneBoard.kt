@@ -122,10 +122,10 @@ private fun TileView(
             .clip(TileShape)
             .background(edge)
             .then(
-                if (hinted) {
-                    Modifier.border(3.dp, colors.hintTarget, TileShape)
-                } else {
-                    Modifier
+                when {
+                    hinted -> Modifier.border(3.dp, colors.hintTarget, TileShape)
+                    broken -> Modifier.border(3.dp, colors.broken, TileShape)
+                    else -> Modifier
                 },
             ).clickable { onTileClick(cell) }
             .testTag(tileTag(cell, board.grid.size))
@@ -144,15 +144,8 @@ private fun TileView(
                 .clip(TileShape)
                 .background(face),
         ) {
-            if (given) {
-                Box(Modifier.size(5.dp).align(Alignment.Center).background(colors.givenMark, CircleShape))
-            }
-            if (broken) {
-                Box(Modifier.fillMaxSize(BROKEN_FRACTION).align(Alignment.Center).border(2.dp, colors.broken, CircleShape))
-            }
         }
     }
 }
 
 private const val EDGE_FACE_FRACTION = 0.9f
-private const val BROKEN_FRACTION = 0.45f

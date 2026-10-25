@@ -1,12 +1,15 @@
 package com.joclegg.puzzles.sudoku
 
 import android.os.SystemClock
+import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.joclegg.puzzles.SettingsHub
+import com.joclegg.puzzles.SettingsTab
 import com.joclegg.puzzles.sudoku.core.data.GameMode
 import com.joclegg.puzzles.sudoku.feature.game.EntryRoute
 import com.joclegg.puzzles.sudoku.feature.game.EntryViewModel
@@ -29,7 +32,6 @@ object SudokuRoutes {
     private const val STATS = "sudoku/stats"
     private const val HISTORY = "sudoku/history"
     private const val DAILY = "sudoku/daily"
-    private const val SETTINGS = "sudoku/settings/{mode}"
 
     fun NavGraphBuilder.sudokuGraph(
         container: SudokuContainer,
@@ -41,7 +43,7 @@ object SudokuRoutes {
                 onOpenGame = { navController.openSudokuGame(it) },
                 onEnterPuzzle = { mode -> navController.navigate(entry(mode)) },
                 onDailyCalendar = { navController.navigate(DAILY) },
-                onSettings = { mode -> navController.navigate(settings(mode)) },
+                onSettings = { mode -> navController.navigate(SettingsHub.route(SettingsTab.SUDOKU, mode.name)) },
                 onStats = { navController.navigate(STATS) },
                 onHistory = { navController.navigate(HISTORY) },
                 onBack = navController::popBackStack,
@@ -69,13 +71,6 @@ object SudokuRoutes {
                 onBack = navController::popBackStack,
             )
         }
-        composable(SETTINGS) { entry ->
-            SettingsRoute(
-                viewModel = viewModel { SettingsViewModel(container.settings) },
-                initialMode = GameMode.valueOf(entry.arguments!!.getString("mode")!!),
-                onBack = navController::popBackStack,
-            )
-        }
         composable(STATS) {
             StatsRoute(viewModel { StatsViewModel(container.games, container.settings) }, onBack = navController::popBackStack)
         }
@@ -88,6 +83,14 @@ object SudokuRoutes {
         }
     }
 
+    @Composable
+    fun SettingsTabContent(
+        container: SudokuContainer,
+        mode: GameMode,
+    ) {
+        SettingsRoute(viewModel { SettingsViewModel(container.settings) }, initialMode = mode, onBack = null)
+    }
+
     fun NavHostController.openSudokuGame(id: Long) {
         navigate("sudoku/game/$id") {
             popUpTo(HOME)
@@ -96,6 +99,4 @@ object SudokuRoutes {
     }
 
     private fun entry(mode: GameMode) = "sudoku/entry/${mode.name}"
-
-    private fun settings(mode: GameMode) = "sudoku/settings/${mode.name}"
 }

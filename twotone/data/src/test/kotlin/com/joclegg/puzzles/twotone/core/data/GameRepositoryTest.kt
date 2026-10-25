@@ -68,7 +68,7 @@ class GameRepositoryTest {
 
             // Act
             repository.start { PuzzleRef.random(2, 6) }
-            repository.start { PuzzleRef.daily(LocalDate.of(2026, 10, 25)) }
+            repository.start { PuzzleRef.daily(LocalDate.of(2026, 10, 25), 4) }
 
             // Assert
             assertEquals(3, repository.inProgress.first().size)

@@ -10,6 +10,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.joclegg.puzzles.SettingsHub
+import com.joclegg.puzzles.SettingsTab
 import com.joclegg.puzzles.twotone.core.ui.TwoToneTheme
 import com.joclegg.puzzles.twotone.feature.game.GameRoute
 import com.joclegg.puzzles.twotone.feature.game.GameViewModel
@@ -26,7 +28,6 @@ object TwoToneRoutes {
     private const val GAME = "two_tone/game/{id}"
     private const val STATS = "two_tone/stats"
     private const val HISTORY = "two_tone/history"
-    private const val SETTINGS = "two_tone/settings"
 
     fun NavGraphBuilder.twoToneGraph(
         container: TwoToneContainer,
@@ -39,7 +40,7 @@ object TwoToneRoutes {
                 onOpenGame = { navController.openTwoToneGame(it) },
                 onStats = { navController.navigate(STATS) },
                 onHistory = { navController.navigate(HISTORY) },
-                onSettings = { navController.navigate(SETTINGS) },
+                onSettings = { navController.navigate(SettingsHub.route(SettingsTab.TWO_TONE)) },
                 onBack = navController::popBackStack,
             )
         }
@@ -54,9 +55,6 @@ object TwoToneRoutes {
                 onHome = { navController.popBackStack(HOME, inclusive = false) },
             )
         }
-        screen(SETTINGS, darkTheme) {
-            SettingsRoute(viewModel { SettingsViewModel(container.settings) }, onBack = navController::popBackStack)
-        }
         screen(STATS, darkTheme) {
             StatsRoute(viewModel { StatsViewModel(container.games) }, onBack = navController::popBackStack)
         }
@@ -66,6 +64,16 @@ object TwoToneRoutes {
                 onOpenGame = { navController.openTwoToneGame(it) },
                 onBack = navController::popBackStack,
             )
+        }
+    }
+
+    @Composable
+    fun SettingsTabContent(
+        container: TwoToneContainer,
+        darkTheme: Boolean,
+    ) {
+        TwoToneTheme(darkTheme) {
+            SettingsRoute(viewModel { SettingsViewModel(container.settings) }, onBack = null)
         }
     }
 

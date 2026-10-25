@@ -1,0 +1,45 @@
+appId: com.joclegg.puzzles
+name: Five Letters - a wrong guess colours the tiles, then the right word wins
+tags:
+  - fast
+---
+- launchApp:
+    clearState: true
+    arguments:
+      fixture: "five_letters_crane"
+- tapOn:
+    id: "key_T"
+- tapOn:
+    id: "key_R"
+- tapOn:
+    id: "key_A"
+- tapOn:
+    id: "key_C"
+- tapOn:
+    id: "key_E"
+- tapOn:
+    id: "key_enter"
+- assertVisible:
+    text: "T"
+    childOf:
+      id: "letter_r1c1"
+- tapOn:
+    id: "key_C"
+- tapOn:
+    id: "key_R"
+- tapOn:
+    id: "key_A"
+- tapOn:
+    id: "key_N"
+- tapOn:
+    id: "key_E"
+- tapOn:
+    id: "key_enter"
+- assertVisible:
+    id: "result_title"
+    text: "Got it in 2!"
+- tapOn:
+    id: "result_new_practice"
+- assertVisible:
+    id: "game_title"
+    text: "Practice"
