@@ -57,4 +57,11 @@ include(
     ":fiveletters:home",
     ":fiveletters:stats",
     ":fiveletters:settings",
+    ":kakuro:engine",
+    ":kakuro:data",
+    ":kakuro:ui",
+    ":kakuro:game",
+    ":kakuro:home",
+    ":kakuro:stats",
+    ":kakuro:settings",
 )

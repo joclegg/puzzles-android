@@ -45,6 +45,7 @@ enum class SettingsTab(
     TWO_TONE("Two Tone"),
     SIGHTLINES("Sightlines"),
     FIVE_LETTERS("Five Letters"),
+    KAKURO("Kakuro"),
 }
 
 object SettingsHub {

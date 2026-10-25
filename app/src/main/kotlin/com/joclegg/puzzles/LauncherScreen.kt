@@ -20,6 +20,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.joclegg.puzzles.fiveletters.core.ui.FiveLettersGameIcon
 import com.joclegg.puzzles.fiveletters.core.ui.FiveLettersTheme
+import com.joclegg.puzzles.kakuro.core.ui.KakuroGameIcon
+import com.joclegg.puzzles.kakuro.core.ui.KakuroTheme
 import com.joclegg.puzzles.sightlines.core.ui.SightlinesGameIcon
 import com.joclegg.puzzles.sightlines.core.ui.SightlinesTheme
 import com.joclegg.puzzles.solitaire.core.ui.SolitaireGameIcon
@@ -38,6 +40,7 @@ fun LauncherScreen(
     onTwoToneClick: () -> Unit,
     onSightlinesClick: () -> Unit,
     onFiveLettersClick: () -> Unit,
+    onKakuroClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -66,6 +69,9 @@ fun LauncherScreen(
             Modifier.testTag("game_five_letters"),
         ) {
             FiveLettersTheme(darkTheme) { FiveLettersGameIcon() }
+        }
+        GameCard("Kakuro", "Cross sums: runs of different digits that add up", onKakuroClick, Modifier.testTag("game_kakuro")) {
+            KakuroTheme(darkTheme) { KakuroGameIcon() }
         }
     }
 }

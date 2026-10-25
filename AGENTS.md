@@ -1,12 +1,12 @@
 # AGENTS.md
 
-Puzzles: an offline Android app with five games: sudoku (classic and killer), Klondike solitaire, Two Tone (red/blue binary grid, like 0h h1), Sightlines (blue dots that count what they see, like 0h n0) and Five Letters (a Wordle-style word game). A launcher screen picks the game.
+Puzzles: an offline Android app with five games: sudoku (classic and killer), Klondike solitaire, Two Tone (red/blue binary grid, like 0h h1), Sightlines (blue dots that count what they see, like 0h n0) Five Letters (a Wordle-style word game) and Kakuro (cross sums). A launcher screen picks the game.
 
 ## Stack
 
 - Kotlin 2.4, Jetpack Compose with Material 3, single activity
 - AGP 9 with built-in Kotlin, Gradle version catalog, convention plugins in `build-logic/`
-- Room for saved games, DataStore for settings, manual DI in one container per game (`SudokuContainer`, `SolitaireContainer`, `TwoToneContainer`, `SightlinesContainer`, `FiveLettersContainer`)
+- Room for saved games, DataStore for settings, manual DI in one container per game (`SudokuContainer`, `SolitaireContainer`, `TwoToneContainer`, `SightlinesContainer`, `FiveLettersContainer`, `KakuroContainer`)
 - JUnit 5 with `kotlin.test` for the engines, JUnit 4 with Robolectric for Android and Compose code
 - Maestro for e2e flows on the `puzzles-e2e` emulator
 - Spotless with ktlint (`ktlint_official`) and the Compose rules, plus Android Lint
@@ -16,7 +16,7 @@ Puzzles: an offline Android app with five games: sudoku (classic and killer), Kl
 - `./gradlew spotlessApply`: format the code
 - `./gradlew spotlessCheck`: check formatting and the Compose rules
 - `./gradlew lintDebug test assembleDebug`: run Android Lint, every unit test and a debug build
-- `./gradlew :<game>:engine:test` (`sudoku`, `solitaire`, `twotone`, `sightlines`, `fiveletters`): run only one game's engine tests
+- `./gradlew :<game>:engine:test` (`sudoku`, `solitaire`, `twotone`, `sightlines`, `fiveletters`, `kakuro`): run only one game's engine tests
 - `./gradlew :app:installDebug`: install the debug app on the running emulator
 - `e2e/run.sh --shards 3`: run every Maestro flow in parallel on three emulators (boots any that aren't running)
 - `e2e/run.sh --fast`: only the flows tagged `fast`, for everyday checks
@@ -26,21 +26,23 @@ Puzzles: an offline Android app with five games: sudoku (classic and killer), Kl
 
 ## Structure
 
-Each game has its own modules under `sudoku/`, `solitaire/`, `twotone/`, `sightlines/` and `fiveletters/`, with packages `com.joclegg.puzzles.<game>.*`:
+Each game has its own modules under `sudoku/`, `solitaire/`, `twotone/`, `sightlines/`, `fiveletters/` and `kakuro/`, with packages `com.joclegg.puzzles.<game>.*`:
 
 - `<game>/engine/`: pure Kotlin, every game rule
   - sudoku: board model, `Solver`, `Grader`, `Generator`, `GameState` and `GameTimer`
   - solitaire: `Card`, `Board` (piles, legal moves, `BuildOrder`), `GameState` (taps, undo by replay), `BoardCodec`, `MoveCodec` and `GameTimer`
   - twotone and sightlines: `Grid`, `Puzzle`, a logic-only `Solver` whose next step is also the hint, `Generator` (seeded, keeps removing givens while the solver still finishes), `GameState` (tap, paint, undo, hints) and `GameTimer`
   - fiveletters: `Words` (answer and guess lists, the daily word by date), `score` and `GameState` (typing, guesses, hard mode, share text)
+  - kakuro: `Puzzle` (layout, runs, clues), `Combinations` (digit sets per sum), `Solver` (counts solutions), `Generator` (layout, low/high-leaning fill, fewest starting digits) and `GameState` (select, digits, notes, undo)
 - `<game>/data/`: Room database and repositories. Sudoku also has `PuzzleBank` and `PuzzleSupply`; solitaire has `DealRef` (random and daily deals)
 - `<game>/ui/`: theme, colour tokens (`BoardColors` for sudoku, `TableColors` for solitaire, `TileColors` for twotone and sightlines, `LetterColors` for fiveletters) and shared components
 - `<game>/game/`, `<game>/home/`, `<game>/stats/`, `<game>/settings/`: the screens
 - `core/testing/`: shared test utilities, such as `TestCompletionSource`
 - `app/`: `MainActivity`, `PuzzlesApp.kt` (navigation), `LauncherScreen`, and per game a container (`<Game>Container`), a routes file (`<Game>Routes`) and debug-only e2e fixtures in `src/debug/` (`<Game>Fixtures`)
 - `app/src/main/assets/puzzles/`: the generated sudoku bank, one file per mode and level
+- `app/src/main/assets/kakuro/`: the generated Kakuro bank, one file per size (`./gradlew :kakuro:engine:generateBank`)
 - `app/src/main/assets/words/`: Five Letters word lists: `answers.txt` (hand-picked common words, British spelling, no plurals) and `guesses.txt` (the public-domain ENABLE list)
-- `e2e/flows/`: Maestro flows, one behaviour per file, named `sudoku_*`, `solitaire_*`, `two_tone_*`, `sightlines_*` or `five_letters_*`
+- `e2e/flows/`: Maestro flows, one behaviour per file, named `sudoku_*`, `solitaire_*`, `two_tone_*`, `sightlines_*` or `five_letters_*`, `kakuro_*`
 - `build-logic/`: convention plugins shared by every module
 
 ## Rules
@@ -86,7 +88,7 @@ Rules marked (lint) are enforced by `spotlessCheck`, Android Lint or the build.
 - MUST wrap callbacks used inside effects in `rememberUpdatedState`. (lint)
 - MUST NOT pass mutable state or ViewModels into stateless `<X>Screen` composables. (lint)
 - MUST give every screen except the launcher a back arrow (`BackButton`) at the top left, including each game's Home.
-- The app theme (System / Light / Dark) lives in sudoku's Settings and applies to the whole app. Each other game's routes file wraps its screens in that game's theme (`SolitaireTheme`, `TwoToneTheme`, `SightlinesTheme`, `FiveLettersTheme`).
+- The app theme (System / Light / Dark) lives in sudoku's Settings and applies to the whole app. Each other game's routes file wraps its screens in that game's theme (`SolitaireTheme`, `TwoToneTheme`, `SightlinesTheme`, `FiveLettersTheme`, `KakuroTheme`).
 
 ### Sudoku look
 
@@ -129,6 +131,13 @@ Rules marked (lint) are enforced by `spotlessCheck`, Android Lint or the build.
 - MUST give everyone the same daily word on the same date: `Words.daily` shuffles the answers with a fixed seed and counts days from `Words.FIRST_DAY`. MUST NOT reorder or remove answers once released; only append.
 - MUST keep Share to the coloured grid only, never the letters.
 - MUST keep one game per date for the daily word (it can't be replayed once finished) and one practice game in progress.
+
+### Kakuro
+
+- MUST take colours only from `LocalKakuroColors` or `MaterialTheme`.
+- MUST get puzzles from the bundled bank (`PuzzleBank`), regenerated with `generateBank`, never by hand. The daily puzzle per size is picked from the bank by date.
+- MUST give every puzzle exactly one solution, using as few starting digits (`givens`, shown on grey cells) as the generator can find.
+- MUST keep the sum helper (`SHOW_COMBINATIONS`) off by default.
 
 ### Sudoku games
 
