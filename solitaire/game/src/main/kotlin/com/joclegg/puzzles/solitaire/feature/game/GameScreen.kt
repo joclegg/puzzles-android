@@ -57,6 +57,8 @@ fun GameRoute(
             onCardClick = viewModel::onCardClick,
             onEmptyPileClick = viewModel::onEmptyPileClick,
             onCardDrop = viewModel::onCardDrop,
+            onUndoToWinnable = viewModel::onUndoToWinnable,
+            onDismissUnwinnable = viewModel::onDismissUnwinnable,
             onUndo = viewModel::onUndo,
             onRestart = viewModel::onRestart,
             onNewDeal = { scope.launch { onOpenGame(viewModel.newDeal()) } },
@@ -73,6 +75,8 @@ fun GameScreen(
     onCardClick: (Pile, Int) -> Unit,
     onEmptyPileClick: (Pile) -> Unit,
     onCardDrop: (Pile, Int, Pile) -> Unit,
+    onUndoToWinnable: () -> Unit,
+    onDismissUnwinnable: () -> Unit,
     onUndo: () -> Unit,
     onRestart: () -> Unit,
     onNewDeal: () -> Unit,
@@ -128,6 +132,27 @@ fun GameScreen(
             onEmptyPileClick = onEmptyPileClick,
             modifier = Modifier.weight(1f),
             onCardDrop = onCardDrop,
+        )
+    }
+    if (state.unwinnable) {
+        AlertDialog(
+            onDismissRequest = onDismissUnwinnable,
+            modifier = Modifier.dialogTestTags().testTag("unwinnable_dialog"),
+            title = { Text("This deal can't be won now") },
+            text = {
+                Text(
+                    "No sequence of moves from here wins. Undo back to the last position that could still be won, or start a new deal.",
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = onUndoToWinnable, modifier = Modifier.testTag("undo_to_winnable")) { Text("Undo to winnable") }
+            },
+            dismissButton = {
+                Row {
+                    TextButton(onClick = onDismissUnwinnable, modifier = Modifier.testTag("keep_playing")) { Text("Keep playing") }
+                    TextButton(onClick = onNewDeal, modifier = Modifier.testTag("unwinnable_new_deal")) { Text("New deal") }
+                }
+            },
         )
     }
     if (state.won && state.resultSaved) {

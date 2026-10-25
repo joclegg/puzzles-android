@@ -116,6 +116,8 @@ Rules marked (lint) are enforced by `spotlessCheck`, Android Lint or the build.
 - MUST NOT add a hint or auto-solve.
 - MUST put every player preference in Settings (`Settings`, `Toggle`). Default to on unless there's a reason, and apply changes live.
 - MUST NOT duplicate a Settings choice as a button on the game screen.
+- MUST only report a deal as unwinnable when `Solver` has searched every move (`Verdict.UNWINNABLE`). Out of time or budget is `UNKNOWN`, and says nothing.
+- MUST run the solver off the main thread with a time limit (`CHECK_LIMIT_MS`).
 
 ### Two Tone and Sightlines look
 

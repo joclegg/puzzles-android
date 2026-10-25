@@ -86,6 +86,20 @@ fun SettingsScreen(
                 "One tap to move",
                 detail = "Tapping a card sends it to the best place. Off: tap a card, then where it should go.",
             )
+            ToggleRow(
+                settings,
+                Toggle.WINNABLE_ONLY,
+                onToggle,
+                "Winnable deals only",
+                detail = "Every new deal can be won. Applies to new deals.",
+            )
+            ToggleRow(
+                settings,
+                Toggle.WARN_UNWINNABLE,
+                onToggle,
+                "Tell me when a deal can't be won",
+                detail = "Checks after each move, and offers to undo back to the last winnable position.",
+            )
             ToggleRow(settings, Toggle.SHOW_TIMER, onToggle, "Show the timer")
             ToggleRow(settings, Toggle.SHOW_MOVE_COUNT, onToggle, "Show the move counter")
         }
