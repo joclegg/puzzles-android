@@ -12,22 +12,6 @@ fun formatDuration(ms: Long): String {
     }
 }
 
-fun parseDuration(text: String): Long? {
-    val parts = text.trim().split(':')
-    if (parts.size !in 2..3 || parts.any { it.isEmpty() || !it.all(Char::isDigit) }) {
-        return null
-    }
-    val numbers = parts.map(String::toLong)
-    if (numbers.drop(1).any { it >= SECONDS_PER_MINUTE }) {
-        return null
-    }
-    val seconds = numbers.fold(0L) { total, part -> total * SECONDS_PER_MINUTE + part }
-    return (seconds * MS_PER_SECOND).takeIf { it > 0 }
-}
-
-private const val SECONDS_PER_MINUTE = 60
-private const val MS_PER_SECOND = 1000
-
 fun Difficulty?.label(): String =
     when (this) {
         Difficulty.FAST -> "Fast"

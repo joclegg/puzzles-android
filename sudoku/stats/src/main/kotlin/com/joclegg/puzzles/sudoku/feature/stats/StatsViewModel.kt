@@ -7,14 +7,12 @@ import com.joclegg.puzzles.sudoku.core.data.GameMode
 import com.joclegg.puzzles.sudoku.core.data.GameRepository
 import com.joclegg.puzzles.sudoku.core.data.SavedGame
 import com.joclegg.puzzles.sudoku.core.data.SettingsRepository
-import com.joclegg.puzzles.sudoku.engine.Difficulty
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 
 enum class HistoryFilter { CLASSIC, KILLER, CUSTOM }
 
@@ -34,14 +32,6 @@ class StatsViewModel(
         combine(games.bestTimes, games.history, filter) { best, history, filter ->
             StatsUiState(best, history.filter { it.matches(filter) }, filter)
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), StatsUiState())
-
-    fun onSetPastBest(
-        mode: GameMode,
-        level: Difficulty,
-        bestMs: Long,
-    ) {
-        viewModelScope.launch { games.setPastBest(mode, level, bestMs) }
-    }
 
     fun setFilter(value: HistoryFilter?) {
         filter.value = value
