@@ -35,9 +35,10 @@ data class BoardUi(
     val selected: Int?,
     val runCells: Set<Int>,
     val wrong: Set<Int>,
+    val sameDigit: Set<Int> = emptySet(),
 )
 
-fun GameState.toBoardUi(showMistakes: Boolean): BoardUi {
+fun GameState.toBoardUi(): BoardUi {
     val current = selected
     return BoardUi(
         puzzle = puzzle,
@@ -49,12 +50,11 @@ fun GameState.toBoardUi(showMistakes: Boolean): BoardUi {
                 ?.let { cell -> puzzle.runsOf[cell].orEmpty().flatMap { it.cells } }
                 .orEmpty()
                 .toSet(),
-        wrong =
-            if (showMistakes) {
-                wrongCells + brokenRuns.flatMap { run -> run.cells.filter { values[it] != 0 } }
-            } else {
-                emptySet()
-            },
+        wrong = shownWrongCells + setOfNotNull(rejected),
+        sameDigit =
+            activeDigit
+                ?.let { digit -> values.indices.filter { values[it] == digit }.toSet() }
+                .orEmpty(),
     )
 }
 
@@ -96,6 +96,7 @@ private fun WhiteCell(
     val background =
         when {
             cell == board.selected -> colors.selected
+            cell in board.sameDigit -> colors.sameDigit
             given -> colors.givenCell
             cell in board.runCells -> colors.run
             else -> colors.background

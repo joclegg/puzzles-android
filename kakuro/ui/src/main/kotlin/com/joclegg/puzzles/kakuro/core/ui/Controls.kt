@@ -3,6 +3,7 @@ package com.joclegg.puzzles.kakuro.core.ui
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
@@ -13,6 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -23,6 +26,7 @@ fun ToolButton(
     tag: String,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    on: Boolean = false,
 ) {
     TooltipBox(
         positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
@@ -30,7 +34,17 @@ fun ToolButton(
         state = rememberTooltipState(),
         modifier = modifier,
     ) {
-        IconButton(onClick = onClick, enabled = enabled, modifier = Modifier.testTag(tag)) {
+        IconButton(
+            onClick = onClick,
+            enabled = enabled,
+            modifier = Modifier.testTag(tag).semantics { selected = on },
+            colors =
+                if (on) {
+                    IconButtonDefaults.filledIconButtonColors()
+                } else {
+                    IconButtonDefaults.iconButtonColors()
+                },
+        ) {
             Icon(icon, contentDescription = description)
         }
     }

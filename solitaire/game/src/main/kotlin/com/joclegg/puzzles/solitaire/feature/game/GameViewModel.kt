@@ -85,6 +85,12 @@ class GameViewModel(
 
     fun onEmptyPileClick(pile: Pile) = move { it.tapEmptyPile(pile) }
 
+    fun onCardDrop(
+        from: Pile,
+        index: Int,
+        to: Pile,
+    ) = move { it.drop(from, index, to) }
+
     fun onUndo() = move { it.undo() }
 
     fun onRestart() {

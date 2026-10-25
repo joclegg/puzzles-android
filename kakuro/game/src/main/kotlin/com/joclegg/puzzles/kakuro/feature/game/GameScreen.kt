@@ -88,8 +88,14 @@ fun GameScreen(
             BackButton(onHome)
             Column(Modifier.weight(1f)) {
                 Text(state.title, style = MaterialTheme.typography.titleMedium, modifier = Modifier.testTag("game_title"))
-                if (state.showTimer) {
-                    Text(formatDuration(state.elapsedMs), modifier = Modifier.testTag("timer"))
+                Row {
+                    if (state.showTimer) {
+                        Text(formatDuration(state.elapsedMs), modifier = Modifier.testTag("timer"))
+                        Spacer(Modifier.width(12.dp))
+                    }
+                    if (state.showMistakeCount) {
+                        Text("Mistakes ${state.mistakes}", modifier = Modifier.testTag("mistakes"))
+                    }
                 }
             }
             ToolButton(KakuroIcons.Undo, "Undo the last tap", onUndo, tag = "undo", enabled = state.canUndo)
@@ -127,19 +133,36 @@ fun GameScreen(
         }
         Spacer(Modifier.weight(1f))
         Row(Modifier.padding(horizontal = 8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            ToolButton(KakuroIcons.Eraser, "Clear the selected cell", onErase, tag = "erase")
             ToolButton(
-                KakuroIcons.Pencil,
-                if (state.notesMode) {
-                    "Notes are on: digits go in as notes"
-                } else {
-                    "Notes are off: digits go in as answers"
+                KakuroIcons.Eraser,
+                when {
+                    !state.digitFirst -> "Clear the selected cell"
+                    state.eraserActive -> "Erase is on: tap cells to clear them"
+                    else -> "Turn on erase, then tap cells to clear them"
                 },
-                onToggleNotes,
+                onErase,
+                tag = "erase",
+                on = state.eraserActive,
+            )
+            ToolButton(
+                on = state.notesMode,
+                icon = KakuroIcons.Pencil,
+                description =
+                    if (state.notesMode) {
+                        "Notes are on: digits go in as notes"
+                    } else {
+                        "Notes are off: digits go in as answers"
+                    },
+                onClick = onToggleNotes,
                 tag = "notes",
             )
         }
-        NumberPad(onDigitClick, Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 16.dp))
+        NumberPad(
+            onDigitClick,
+            Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 16.dp),
+            activeDigit = state.activeDigit,
+            doneDigits = state.doneDigits,
+        )
     }
     if (rulesOpen) {
         RulesDialog(onDismiss = { rulesOpen = false })

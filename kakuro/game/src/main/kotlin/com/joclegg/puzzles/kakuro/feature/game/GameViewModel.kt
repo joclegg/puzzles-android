@@ -14,6 +14,9 @@ import com.joclegg.puzzles.kakuro.core.ui.toBoardUi
 import com.joclegg.puzzles.kakuro.engine.Combinations
 import com.joclegg.puzzles.kakuro.engine.GameState
 import com.joclegg.puzzles.kakuro.engine.GameTimer
+import com.joclegg.puzzles.kakuro.engine.InputMode
+import com.joclegg.puzzles.kakuro.engine.MAX_DIGIT
+import com.joclegg.puzzles.kakuro.engine.MistakeCheck
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
@@ -30,6 +33,12 @@ data class GameUiState(
     val elapsedMs: Long,
     val showTimer: Boolean,
     val notesMode: Boolean,
+    val digitFirst: Boolean,
+    val eraserActive: Boolean,
+    val activeDigit: Int?,
+    val doneDigits: Set<Int>,
+    val mistakes: Int,
+    val showMistakeCount: Boolean,
     val combinations: List<String>,
     val canUndo: Boolean,
     val solved: Boolean,
@@ -62,13 +71,22 @@ class GameViewModel(
         viewModelScope.launch {
             val loaded = games.get(gameId) ?: return@launch
             saved = loaded
-            game = GameState.replay(loaded.ref.puzzle, loaded.changes)
+            game = GameState.replay(loaded.ref.puzzle, loaded.changes).copy(mistakes = loaded.mistakes)
             timer = GameTimer(accumulatedMs = loaded.elapsedMs)
             if (visible) {
                 resumeTimer()
             }
             settings.settings.collect {
                 display = it
+                game =
+                    game?.let { current ->
+                        val checked = current.copy(mistakeCheck = it.mistakeCheck)
+                        if (checked.inputMode == it.inputMode) {
+                            checked
+                        } else {
+                            checked.withInputMode(it.inputMode)
+                        }
+                    }
                 publish()
             }
         }
@@ -141,7 +159,7 @@ class GameViewModel(
         game = after
         if (!before.isSolved && after.isSolved) {
             finish()
-        } else if (after.changes != before.changes) {
+        } else if (after.changes != before.changes || after.mistakes != before.mistakes) {
             persistSoon()
         }
         publish()
@@ -179,13 +197,13 @@ class GameViewModel(
 
     private fun snapshot(): SavedGame? {
         val current = game ?: return null
-        return saved?.copy(changes = current.changes, elapsedMs = timer.elapsedMs(monotonicNowMs()))
+        return saved?.copy(changes = current.changes, mistakes = current.mistakes, elapsedMs = timer.elapsedMs(monotonicNowMs()))
     }
 
     private fun publish() {
         val current = game ?: return
         val ref = saved?.ref ?: return
-        val board = current.toBoardUi(display.showMistakes)
+        val board = current.toBoardUi()
         _uiState.value =
             GameUiState(
                 title = ref.title(),
@@ -198,6 +216,12 @@ class GameViewModel(
                 elapsedMs = timer.elapsedMs(monotonicNowMs()),
                 showTimer = display.showTimer,
                 notesMode = current.notesMode,
+                digitFirst = current.inputMode == InputMode.DIGIT_FIRST,
+                eraserActive = current.eraserActive,
+                activeDigit = current.activeDigit,
+                doneDigits = (1..MAX_DIGIT).filter(current::isDigitDone).toSet(),
+                mistakes = current.mistakes,
+                showMistakeCount = display.showMistakeCount && current.mistakeCheck != MistakeCheck.OFF,
                 combinations =
                     if (display.showCombinations) {
                         current.selectedCombinations().map { (run, masks) ->

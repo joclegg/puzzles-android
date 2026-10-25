@@ -56,6 +56,7 @@ fun GameRoute(
             onStockClick = viewModel::onStockClick,
             onCardClick = viewModel::onCardClick,
             onEmptyPileClick = viewModel::onEmptyPileClick,
+            onCardDrop = viewModel::onCardDrop,
             onUndo = viewModel::onUndo,
             onRestart = viewModel::onRestart,
             onNewDeal = { scope.launch { onOpenGame(viewModel.newDeal()) } },
@@ -71,6 +72,7 @@ fun GameScreen(
     onStockClick: () -> Unit,
     onCardClick: (Pile, Int) -> Unit,
     onEmptyPileClick: (Pile) -> Unit,
+    onCardDrop: (Pile, Int, Pile) -> Unit,
     onUndo: () -> Unit,
     onRestart: () -> Unit,
     onNewDeal: () -> Unit,
@@ -125,6 +127,7 @@ fun GameScreen(
             onCardClick = onCardClick,
             onEmptyPileClick = onEmptyPileClick,
             modifier = Modifier.weight(1f),
+            onCardDrop = onCardDrop,
         )
     }
     if (state.won && state.resultSaved) {

@@ -1,5 +1,7 @@
 package com.joclegg.puzzles.kakuro.core.data
 
+import androidx.room.AutoMigration
+import androidx.room.ColumnInfo
 import androidx.room.Dao
 import androidx.room.Database
 import androidx.room.Entity
@@ -20,6 +22,7 @@ data class GameEntity(
     val changes: String,
     val elapsedMs: Long,
     val hints: Int,
+    @ColumnInfo(defaultValue = "0") val mistakes: Int,
     val status: String,
     val startedAt: Long,
     val finishedAt: Long?,
@@ -52,7 +55,12 @@ interface GameDao {
     ): Long?
 }
 
-@Database(entities = [GameEntity::class], version = 1, exportSchema = true)
+@Database(
+    entities = [GameEntity::class],
+    version = 2,
+    exportSchema = true,
+    autoMigrations = [AutoMigration(from = 1, to = 2)],
+)
 abstract class GameDatabase : RoomDatabase() {
     abstract fun gameDao(): GameDao
 }

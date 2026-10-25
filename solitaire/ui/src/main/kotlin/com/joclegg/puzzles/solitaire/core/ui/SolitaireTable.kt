@@ -18,6 +18,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,6 +31,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import com.joclegg.puzzles.solitaire.engine.Board
 import com.joclegg.puzzles.solitaire.engine.BuildOrder
 import com.joclegg.puzzles.solitaire.engine.Card
@@ -67,21 +71,33 @@ fun SolitaireTable(
     onCardClick: (Pile, Int) -> Unit,
     onEmptyPileClick: (Pile) -> Unit,
     modifier: Modifier = Modifier,
+    onCardDrop: (Pile, Int, Pile) -> Unit = { _, _, _ -> },
 ) {
     val colors = LocalTableColors.current
+    val currentOnDrop by rememberUpdatedState(onCardDrop)
+    val drag = remember { CardDrag { from, index, to -> currentOnDrop(from, index, to) } }
     BoxWithConstraints(modifier.fillMaxSize().background(colors.felt).padding(Gap)) {
         val cardWidth = (maxWidth - Gap * (Board.COLUMNS - 1)) / Board.COLUMNS
         val card = DpSize(cardWidth, cardWidth * CARD_ASPECT)
         val tableauHeight = maxHeight - card.height - Gap * 3
         Column {
-            Row {
+            val topLifted = drag.pile == Pile.Waste || drag.pile is Pile.Foundation
+            Row(
+                Modifier.zIndex(
+                    if (topLifted) {
+                        1f
+                    } else {
+                        0f
+                    },
+                ),
+            ) {
                 StockPile(table.board.stock.size, card, onStockClick)
                 Spacer(Modifier.width(Gap))
-                WastePile(table, card, onCardClick, Modifier.width(cardWidth * 2 + Gap))
+                WastePile(table, card, onCardClick, drag, Modifier.width(cardWidth * 2 + Gap))
                 Spacer(Modifier.width(Gap))
                 table.board.foundations.forEachIndexed { index, cards ->
                     val pile = Pile.Foundation(index)
-                    Box(Modifier.size(card)) {
+                    Box(Modifier.size(card).then(drag.target(pile))) {
                         EmptyPile(
                             pile,
                             card,
@@ -93,6 +109,7 @@ fun SolitaireTable(
                                 top,
                                 card,
                                 table.isSelected(pile, cards.lastIndex),
+                                modifier = drag.lifted(pile, cards.lastIndex).then(drag.source(pile, cards.lastIndex)),
                                 onClick = { onCardClick(pile, cards.lastIndex) },
                             )
                         }
@@ -105,7 +122,23 @@ fun SolitaireTable(
             Spacer(Modifier.height(Gap * 3))
             Row {
                 table.board.tableau.forEachIndexed { index, _ ->
-                    TableauColumn(table, index, card, tableauHeight, onCardClick, onEmptyPileClick)
+                    val lifted = drag.pile == Pile.Tableau(index)
+                    TableauColumn(
+                        table,
+                        index,
+                        card,
+                        tableauHeight,
+                        onCardClick,
+                        onEmptyPileClick,
+                        drag,
+                        Modifier.zIndex(
+                            if (lifted) {
+                                1f
+                            } else {
+                                0f
+                            },
+                        ),
+                    )
                     if (index < table.board.tableau.lastIndex) {
                         Spacer(Modifier.width(Gap))
                     }
@@ -150,6 +183,7 @@ private fun WastePile(
     table: TableUi,
     card: DpSize,
     onCardClick: (Pile, Int) -> Unit,
+    drag: CardDrag,
     modifier: Modifier = Modifier,
 ) {
     val waste = table.board.waste
@@ -162,7 +196,16 @@ private fun WastePile(
                 top,
                 card,
                 table.isSelected(Pile.Waste, index),
-                modifier = Modifier.offset(x = card.width * WASTE_FAN * position),
+                modifier =
+                    Modifier
+                        .offset(x = card.width * WASTE_FAN * position)
+                        .then(
+                            if (isTop) {
+                                drag.lifted(Pile.Waste, index).then(drag.source(Pile.Waste, index))
+                            } else {
+                                Modifier
+                            },
+                        ),
                 onClick =
                     if (isTop) {
                         { onCardClick(Pile.Waste, index) }
@@ -182,6 +225,7 @@ private fun TableauColumn(
     maxHeight: Dp,
     onCardClick: (Pile, Int) -> Unit,
     onEmptyPileClick: (Pile) -> Unit,
+    drag: CardDrag,
     modifier: Modifier = Modifier,
 ) {
     val pile = Pile.Tableau(column)
@@ -195,14 +239,20 @@ private fun TableauColumn(
         } else {
             1f
         }
-    Box(modifier.width(card.width).height(maxHeight)) {
+    Box(modifier.width(card.width).height(maxHeight).then(drag.target(pile))) {
         EmptyPile(pile, card, onEmptyPileClick)
         var top = 0.dp
         cards.cards.forEachIndexed { index, playing ->
             val isFaceUp = cards.isFaceUp(index)
             val cardModifier = Modifier.offset(y = top)
             if (isFaceUp) {
-                PlayingCard(playing, card, table.isSelected(pile, index), cardModifier, onClick = { onCardClick(pile, index) })
+                PlayingCard(
+                    playing,
+                    card,
+                    table.isSelected(pile, index),
+                    cardModifier.then(drag.lifted(pile, index)).then(drag.source(pile, index)),
+                    onClick = { onCardClick(pile, index) },
+                )
             } else {
                 CardBack(card, cardModifier.testTag(faceDownTag(column, index)).semantics { cardFaceUp = false })
             }

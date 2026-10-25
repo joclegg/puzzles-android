@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.joclegg.puzzles.kakuro.core.data.Settings
 import com.joclegg.puzzles.kakuro.core.data.SettingsRepository
 import com.joclegg.puzzles.kakuro.core.data.Toggle
+import com.joclegg.puzzles.kakuro.engine.InputMode
+import com.joclegg.puzzles.kakuro.engine.MistakeCheck
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -21,6 +23,14 @@ class SettingsViewModel(
         enabled: Boolean,
     ) {
         viewModelScope.launch { settings.set(toggle, enabled) }
+    }
+
+    fun onInputModeChange(mode: InputMode) {
+        viewModelScope.launch { settings.setInputMode(mode) }
+    }
+
+    fun onMistakeCheckChange(level: MistakeCheck) {
+        viewModelScope.launch { settings.setMistakeCheck(level) }
     }
 
     private companion object {

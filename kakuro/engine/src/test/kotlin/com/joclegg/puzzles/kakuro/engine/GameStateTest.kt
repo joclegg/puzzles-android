@@ -2,6 +2,7 @@ package com.joclegg.puzzles.kakuro.engine
 
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.EnumSource
 import org.junit.jupiter.params.provider.ValueSource
 import kotlin.test.assertEquals
 
@@ -115,5 +116,67 @@ class GameStateTest {
 
         // Assert
         assertEquals(listOf(listOf(listOf(1, 2)), listOf(listOf(1, 3))), combos.map { (_, masks) -> masks.map(Combinations::digitsOf) })
+    }
+
+    @Test
+    fun `given number first with a digit picked when cells are tapped then the digit goes in, and tapping again clears it`() {
+        // Arrange
+        val game = GameState(small, inputMode = InputMode.DIGIT_FIRST).tapDigit(1)
+
+        // Act
+        val placed = game.tapCell(4)
+        val cleared = placed.tapCell(4)
+
+        // Assert
+        assertEquals(1 to 0, placed.values[4] to cleared.values[4])
+    }
+
+    @Test
+    fun `given number first with erase on when a filled cell is tapped then it is cleared`() {
+        // Arrange
+        val game = GameState(small, inputMode = InputMode.DIGIT_FIRST).tapDigit(2).tapCell(5).erase()
+
+        // Act
+        val after = game.tapCell(5)
+
+        // Assert
+        assertEquals(0, after.values[5])
+    }
+
+    @Test
+    fun `given block clashes when a digit already in the run is entered then it is refused and counted`() {
+        // Arrange
+        val game = GameState(small, mistakeCheck = MistakeCheck.BLOCK_CLASHES).tapCell(5).tapDigit(2).tapCell(4)
+
+        // Act
+        val after = game.tapDigit(2)
+
+        // Assert
+        assertEquals(Triple(0, 4, 1), Triple(after.values[4], after.rejected, after.mistakes))
+    }
+
+    @ParameterizedTest
+    @EnumSource(MistakeCheck::class, names = ["OFF", "SHOW_WRONG"])
+    fun `given a mistake check level when a wrong digit is entered then it is shown and counted only when showing wrong`(
+        level: MistakeCheck,
+    ) {
+        // Arrange
+        val game = GameState(small, mistakeCheck = level).tapCell(4)
+
+        // Act
+        val after = game.tapDigit(9)
+
+        // Assert
+        val showing = level == MistakeCheck.SHOW_WRONG
+        assertEquals(showing to showing, (4 in after.shownWrongCells) to (after.mistakes == 1))
+    }
+
+    @Test
+    fun `given every one of a digit placed correctly when it is checked then that digit is done`() {
+        // Act
+        val game = GameState(small).tapCell(4).tapDigit(1)
+
+        // Assert
+        assertEquals(true to false, game.isDigitDone(1) to game.isDigitDone(2))
     }
 }

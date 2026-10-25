@@ -1,0 +1,24 @@
+appId: com.joclegg.puzzles
+name: Kakuro - with Number first on, picking a digit then a cell fills it
+---
+- launchApp:
+    clearState: true
+- scrollUntilVisible:
+    element:
+      id: "game_kakuro"
+    centerElement: true
+- tapOn:
+    id: "game_kakuro"
+- tapOn:
+    id: "settings"
+- tapOn:
+    id: "setting_digit_first"
+- launchApp:
+    arguments:
+      fixture: "kakuro_one_left"
+- tapOn:
+    id: "digit_4"
+- tapOn:
+    id: "cell_r3c3"
+- assertVisible:
+    id: "solved_dialog"
