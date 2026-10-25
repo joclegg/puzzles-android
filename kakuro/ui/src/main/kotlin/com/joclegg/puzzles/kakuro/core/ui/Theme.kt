@@ -18,6 +18,7 @@ data class KakuroColors(
     val note: Color,
     val selected: Color,
     val run: Color,
+    val sameDigit: Color,
     val wrong: Color,
 )
 
@@ -32,6 +33,7 @@ private val Light =
         note = Color(0xFF4A515B),
         selected = Color(0xFF8EC0FA),
         run = Color(0xFFE5F0FE),
+        sameDigit = Color(0xFFBCD9FC),
         wrong = Color(0xFFD32F2F),
     )
 
@@ -46,6 +48,7 @@ private val Dark =
         note = Color(0xFFB8BEC8),
         selected = Color(0xFF2F5E99),
         run = Color(0xFF1A2B40),
+        sameDigit = Color(0xFF244A78),
         wrong = Color(0xFFFF6B6B),
     )
 

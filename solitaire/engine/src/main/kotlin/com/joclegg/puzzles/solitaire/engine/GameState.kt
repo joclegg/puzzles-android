@@ -69,6 +69,18 @@ data class GameState(
         }
     }
 
+    fun drop(
+        from: Pile,
+        index: Int,
+        to: Pile,
+    ): GameState {
+        val count = board.cardsIn(from).size - index
+        if (isWon || from == to || !board.canMove(from, count, to, order)) {
+            return copy(selection = null)
+        }
+        return play(Move.Transfer(from, count, to))
+    }
+
     fun tapEmptyPile(pile: Pile): GameState {
         val current = selection ?: return this
         return if (board.canMove(current.pile, current.count, pile, order)) {

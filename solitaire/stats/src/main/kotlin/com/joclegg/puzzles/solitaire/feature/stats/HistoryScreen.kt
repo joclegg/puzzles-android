@@ -104,6 +104,7 @@ private fun HistoryItem(
     val status =
         when (game.status) {
             GameStatus.WON -> "Won"
+            GameStatus.LOST -> "Lost"
             GameStatus.IN_PROGRESS -> "In progress"
             GameStatus.ABANDONED -> "Abandoned"
         }

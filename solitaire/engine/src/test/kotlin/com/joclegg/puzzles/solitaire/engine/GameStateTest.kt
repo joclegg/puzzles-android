@@ -178,4 +178,28 @@ class GameStateTest {
         assertEquals(board("/;2C3C;;|||"), after.board)
         assertNull(after.selection)
     }
+
+    @Test
+    fun `given a run dragged onto a column where it fits when it is dropped then it moves there`() {
+        // Arrange
+        val game = state("4C/TH9S|/JC|/KD;;;|||")
+
+        // Act
+        val after = game.drop(Pile.Tableau(0), 1, Pile.Tableau(1))
+
+        // Assert
+        assertEquals(board("/4C|/JCTH9S|/KD;;;|||"), after.board)
+    }
+
+    @Test
+    fun `given a card dropped where it does not fit when it is dropped then nothing moves`() {
+        // Arrange
+        val game = state("4C/TH9S|/JC|/KD;;;|||")
+
+        // Act
+        val after = game.drop(Pile.Tableau(0), 1, Pile.Tableau(2))
+
+        // Assert
+        assertEquals(0, after.moveCount)
+    }
 }

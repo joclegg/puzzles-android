@@ -10,6 +10,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,6 +25,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joclegg.puzzles.kakuro.core.data.Settings
 import com.joclegg.puzzles.kakuro.core.data.Toggle
 import com.joclegg.puzzles.kakuro.core.ui.BackButton
+import com.joclegg.puzzles.kakuro.engine.InputMode
+import com.joclegg.puzzles.kakuro.engine.MistakeCheck
 
 @Composable
 fun SettingsRoute(
@@ -30,13 +35,15 @@ fun SettingsRoute(
     modifier: Modifier = Modifier,
 ) {
     val settings by viewModel.uiState.collectAsStateWithLifecycle()
-    SettingsScreen(settings, viewModel::onToggle, onBack, modifier)
+    SettingsScreen(settings, viewModel::onToggle, viewModel::onInputModeChange, viewModel::onMistakeCheckChange, onBack, modifier)
 }
 
 @Composable
 fun SettingsScreen(
     settings: Settings,
     onToggle: (Toggle, Boolean) -> Unit,
+    onInputModeChange: (InputMode) -> Unit,
+    onMistakeCheckChange: (MistakeCheck) -> Unit,
     onBack: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
@@ -52,12 +59,45 @@ fun SettingsScreen(
         }
         OutlinedCard(Modifier.fillMaxWidth()) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Text("Entering numbers", style = MaterialTheme.typography.titleMedium)
+                Choice(
+                    options = InputMode.entries,
+                    selected = settings.inputMode,
+                    label = {
+                        when (it) {
+                            InputMode.CELL_FIRST -> "Cell first"
+                            InputMode.DIGIT_FIRST -> "Number first"
+                        }
+                    },
+                    tag = { "setting_${it.name.lowercase()}" },
+                    onSelect = onInputModeChange,
+                )
+                Hint("Cell first: tap a cell, then a number. Number first: pick a number, then tap cells to fill them.")
+                Text("Mistakes", style = MaterialTheme.typography.titleMedium)
+                Choice(
+                    options = MistakeCheck.entries,
+                    selected = settings.mistakeCheck,
+                    label = {
+                        when (it) {
+                            MistakeCheck.OFF -> "Off"
+                            MistakeCheck.BLOCK_CLASHES -> "Block clashes"
+                            MistakeCheck.SHOW_WRONG -> "Show wrong"
+                        }
+                    },
+                    tag = { "setting_mistakes_${it.name.lowercase()}" },
+                    onSelect = onMistakeCheckChange,
+                )
+                Hint(
+                    "Block clashes refuses a number already in the run. Show wrong turns any wrong number red. " +
+                        "Both turn runs that can no longer add up red, and count mistakes.",
+                )
+                ToggleRow(settings, Toggle.SHOW_MISTAKE_COUNT, onToggle, "Show the mistake counter")
                 ToggleRow(
                     settings,
-                    Toggle.SHOW_MISTAKES,
+                    Toggle.AUTO_REMOVE_NOTES,
                     onToggle,
-                    "Show mistakes",
-                    detail = "Wrong digits and runs that can't add up turn red.",
+                    "Remove pencil marks automatically",
+                    detail = "Placing a number clears that number's pencil marks from its across and down runs.",
                 )
                 ToggleRow(
                     settings,
@@ -101,4 +141,34 @@ private fun ToggleRow(
             modifier = Modifier.testTag("setting_${toggle.name.lowercase()}"),
         )
     }
+}
+
+@Composable
+private fun <T> Choice(
+    options: List<T>,
+    selected: T,
+    label: (T) -> String,
+    tag: (T) -> String,
+    onSelect: (T) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    SingleChoiceSegmentedButtonRow(modifier.fillMaxWidth()) {
+        options.forEachIndexed { index, option ->
+            SegmentedButton(
+                selected = selected == option,
+                onClick = { onSelect(option) },
+                shape = SegmentedButtonDefaults.itemShape(index, options.size),
+                modifier = Modifier.testTag(tag(option)),
+                icon = {},
+            ) { Text(label(option), maxLines = 1) }
+        }
+    }
+}
+
+@Composable
+private fun Hint(
+    text: String,
+    modifier: Modifier = Modifier,
+) {
+    Text(text, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = modifier)
 }

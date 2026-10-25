@@ -61,6 +61,7 @@ data class SavedGame(
     val changes: List<Change>,
     val elapsedMs: Long,
     val hints: Int,
+    val mistakes: Int = 0,
     val status: GameStatus,
     val startedAt: Long,
     val finishedAt: Long?,

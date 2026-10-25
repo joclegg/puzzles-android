@@ -6,18 +6,40 @@ data class Change(
     val fromNotes: Int,
     val toValue: Int,
     val toNotes: Int,
+    val clearedNotes: List<Int> = emptyList(),
 )
 
 object ChangeCodec {
+    private const val CHANGE_FIELDS = 5
+
     fun encode(changes: List<Change>) =
-        changes.joinToString(";") { "${it.cell},${it.fromValue},${it.fromNotes},${it.toValue},${it.toNotes}" }
+        changes.joinToString(";") { change ->
+            val cleared = change.clearedNotes.joinToString(":")
+            "${change.cell},${change.fromValue},${change.fromNotes},${change.toValue},${change.toNotes}" +
+                if (cleared.isEmpty()) {
+                    ""
+                } else {
+                    ",$cleared"
+                }
+        }
 
     fun decode(text: String): List<Change> =
         text.split(';').filter { it.isNotEmpty() }.map {
-            val (cell, fromValue, fromNotes, toValue, toNotes) = it.split(',').map(String::toInt)
-            Change(cell, fromValue, fromNotes, toValue, toNotes)
+            val parts = it.split(',')
+            val (cell, fromValue, fromNotes, toValue, toNotes) = parts.take(CHANGE_FIELDS).map(String::toInt)
+            val cleared =
+                parts
+                    .getOrNull(CHANGE_FIELDS)
+                    ?.split(':')
+                    ?.map(String::toInt)
+                    .orEmpty()
+            Change(cell, fromValue, fromNotes, toValue, toNotes, cleared)
         }
 }
+
+enum class InputMode { CELL_FIRST, DIGIT_FIRST }
+
+enum class MistakeCheck { OFF, BLOCK_CLASHES, SHOW_WRONG }
 
 data class GameState(
     val puzzle: Puzzle,
@@ -26,6 +48,13 @@ data class GameState(
     val changes: List<Change> = emptyList(),
     val selected: Int? = null,
     val notesMode: Boolean = false,
+    val inputMode: InputMode = InputMode.CELL_FIRST,
+    val mistakeCheck: MistakeCheck = MistakeCheck.SHOW_WRONG,
+    val activeDigit: Int? = null,
+    val eraserActive: Boolean = false,
+    val mistakes: Int = 0,
+    val rejected: Int? = null,
+    val autoRemoveNotes: Boolean = true,
 ) {
     val isSolved: Boolean get() = values == puzzle.solution
 
@@ -48,33 +77,101 @@ data class GameState(
         }
     }
 
-    fun tapCell(cell: Int): GameState =
-        if (puzzle.isWhite[cell]) {
-            copy(selected = cell)
-        } else {
-            this
+    val shownWrongCells: Set<Int>
+        get() =
+            when (mistakeCheck) {
+                MistakeCheck.SHOW_WRONG -> wrongCells + brokenRuns.flatMap { run -> run.cells.filter { values[it] != 0 } }
+                MistakeCheck.BLOCK_CLASHES -> brokenRuns.flatMap { run -> run.cells.filter { values[it] != 0 } }.toSet()
+                MistakeCheck.OFF -> emptySet()
+            }
+
+    fun isDigitDone(digit: Int): Boolean {
+        val needed = puzzle.solution.count { it == digit }
+        return needed > 0 && values.indices.count { values[it] == digit && values[it] == puzzle.solution[it] } == needed
+    }
+
+    fun tapCell(cell: Int): GameState {
+        if (!puzzle.isWhite[cell]) {
+            return this
         }
+        val selectedHere = copy(selected = cell, rejected = null)
+        if (inputMode == InputMode.CELL_FIRST || isSolved || isGiven(cell)) {
+            return selectedHere
+        }
+        val digit = activeDigit
+        return when {
+            eraserActive -> selectedHere.set(cell, 0, 0)
+            digit != null -> selectedHere.place(cell, digit)
+            else -> selectedHere
+        }
+    }
 
     fun tapDigit(digit: Int): GameState {
+        if (inputMode == InputMode.DIGIT_FIRST) {
+            val next =
+                if (activeDigit == digit) {
+                    null
+                } else {
+                    digit
+                }
+            return copy(activeDigit = next, eraserActive = false, rejected = null)
+        }
         val cell = selected ?: return this
         if (isSolved || isGiven(cell)) {
             return this
         }
-        return if (notesMode) {
-            set(cell, 0, notes[cell] xor Combinations.bit(digit))
-        } else if (values[cell] == digit) {
-            set(cell, 0, notes[cell])
-        } else {
-            set(cell, digit, 0)
-        }
+        return copy(rejected = null).place(cell, digit)
     }
 
     fun erase(): GameState {
+        if (inputMode == InputMode.DIGIT_FIRST) {
+            return copy(eraserActive = !eraserActive, activeDigit = null, rejected = null)
+        }
         val cell = selected ?: return this
         if (isSolved || isGiven(cell)) {
             return this
         }
         return set(cell, 0, 0)
+    }
+
+    fun withInputMode(mode: InputMode): GameState = copy(inputMode = mode, activeDigit = null, eraserActive = false, rejected = null)
+
+    private fun place(
+        cell: Int,
+        digit: Int,
+    ): GameState {
+        if (notesMode) {
+            return set(cell, 0, notes[cell] xor Combinations.bit(digit))
+        }
+        if (values[cell] == digit) {
+            return set(cell, 0, notes[cell])
+        }
+        val clashes =
+            puzzle.runsOf[cell]
+                .orEmpty()
+                .any { run -> run.cells.any { it != cell && values[it] == digit } }
+        return when (mistakeCheck) {
+            MistakeCheck.BLOCK_CLASHES -> {
+                if (clashes) {
+                    copy(rejected = cell, mistakes = mistakes + 1)
+                } else {
+                    set(cell, digit, 0)
+                }
+            }
+
+            MistakeCheck.SHOW_WRONG -> {
+                val placed = set(cell, digit, 0)
+                if (digit != puzzle.solution[cell]) {
+                    placed.copy(mistakes = mistakes + 1)
+                } else {
+                    placed
+                }
+            }
+
+            MistakeCheck.OFF -> {
+                set(cell, digit, 0)
+            }
+        }
     }
 
     fun toggleNotes(): GameState = copy(notesMode = !notesMode)
@@ -84,15 +181,19 @@ data class GameState(
         if (isSolved) {
             return this
         }
+        val restored =
+            last.clearedNotes.fold(notes.replaced(last.cell, last.fromNotes)) { all, other ->
+                all.replaced(other, all[other] or Combinations.bit(last.toValue))
+            }
         return copy(
             values = values.replaced(last.cell, last.fromValue),
-            notes = notes.replaced(last.cell, last.fromNotes),
+            notes = restored,
             changes = changes.dropLast(1),
             selected = last.cell,
         )
     }
 
-    fun restart(): GameState = GameState(puzzle)
+    fun restart(): GameState = GameState(puzzle, inputMode = inputMode, mistakeCheck = mistakeCheck, autoRemoveNotes = autoRemoveNotes)
 
     private fun set(
         cell: Int,
@@ -102,9 +203,24 @@ data class GameState(
         if (values[cell] == value && notes[cell] == cellNotes) {
             return this
         }
-        val change = Change(cell, values[cell], notes[cell], value, cellNotes)
-        return copy(values = values.replaced(cell, value), notes = notes.replaced(cell, cellNotes), changes = changes + change)
+        val cleared =
+            if (value != 0 && autoRemoveNotes) {
+                puzzle.runsOf[cell]
+                    .orEmpty()
+                    .flatMap { it.cells }
+                    .distinct()
+                    .filter { it != cell && notes[it] and Combinations.bit(value) != 0 }
+            } else {
+                emptyList()
+            }
+        val change = Change(cell, values[cell], notes[cell], value, cellNotes, cleared)
+        return copy(values = values.replaced(cell, value), notes = applyNotes(change), changes = changes + change)
     }
+
+    private fun applyNotes(change: Change): List<Int> =
+        change.clearedNotes.fold(notes.replaced(change.cell, change.toNotes)) { all, other ->
+            all.replaced(other, all[other] and Combinations.bit(change.toValue).inv())
+        }
 
     companion object {
         fun startValues(puzzle: Puzzle) =
@@ -123,7 +239,7 @@ data class GameState(
             changes.fold(GameState(puzzle)) { state, change ->
                 state.copy(
                     values = state.values.replaced(change.cell, change.toValue),
-                    notes = state.notes.replaced(change.cell, change.toNotes),
+                    notes = state.applyNotes(change),
                     changes = state.changes + change,
                 )
             }

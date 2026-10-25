@@ -57,6 +57,8 @@ data class Board(
 ) {
     val isWon: Boolean get() = foundations.all { it.size == Card.KING }
 
+    val cardCount: Int get() = tableau.sumOf { it.cards.size } + stock.size + waste.size + foundations.sumOf { it.size }
+
     fun cardsIn(pile: Pile): List<Card> =
         when (pile) {
             Pile.Waste -> waste

@@ -116,6 +116,8 @@ Rules marked (lint) are enforced by `spotlessCheck`, Android Lint or the build.
 - MUST NOT add a hint or auto-solve.
 - MUST put every player preference in Settings (`Settings`, `Toggle`). Default to on unless there's a reason, and apply changes live.
 - MUST NOT duplicate a Settings choice as a button on the game screen.
+- MUST only report a deal as unwinnable when `Solver` has searched every move (`Verdict.UNWINNABLE`). Out of time or budget is `UNKNOWN`, and says nothing.
+- MUST run the solver off the main thread with a time limit (`CHECK_LIMIT_MS`).
 
 ### Two Tone and Sightlines look
 
@@ -142,6 +144,8 @@ Rules marked (lint) are enforced by `spotlessCheck`, Android Lint or the build.
 - MUST get puzzles from the bundled bank (`PuzzleBank`), regenerated with `generateBank`, never by hand. The daily puzzle per size is picked from the bank by date.
 - MUST give every puzzle exactly one solution, using as few starting digits (`givens`, shown on grey cells) as the generator can find.
 - MUST keep the sum helper (`SHOW_COMBINATIONS`) off by default.
+- MUST offer the same entry options as sudoku: Cell first or Number first (`InputMode`), and mistake checking Off, Block clashes or Show wrong (`MistakeCheck`), with a mistake counter.
+- Database changes MUST come with a Room migration (Kakuro is at version 2, auto-migrated from 1) and a migration test.
 
 ### Slide Out
 
