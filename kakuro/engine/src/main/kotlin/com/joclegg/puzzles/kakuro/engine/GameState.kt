@@ -6,16 +6,34 @@ data class Change(
     val fromNotes: Int,
     val toValue: Int,
     val toNotes: Int,
+    val clearedNotes: List<Int> = emptyList(),
 )
 
 object ChangeCodec {
+    private const val CHANGE_FIELDS = 5
+
     fun encode(changes: List<Change>) =
-        changes.joinToString(";") { "${it.cell},${it.fromValue},${it.fromNotes},${it.toValue},${it.toNotes}" }
+        changes.joinToString(";") { change ->
+            val cleared = change.clearedNotes.joinToString(":")
+            "${change.cell},${change.fromValue},${change.fromNotes},${change.toValue},${change.toNotes}" +
+                if (cleared.isEmpty()) {
+                    ""
+                } else {
+                    ",$cleared"
+                }
+        }
 
     fun decode(text: String): List<Change> =
         text.split(';').filter { it.isNotEmpty() }.map {
-            val (cell, fromValue, fromNotes, toValue, toNotes) = it.split(',').map(String::toInt)
-            Change(cell, fromValue, fromNotes, toValue, toNotes)
+            val parts = it.split(',')
+            val (cell, fromValue, fromNotes, toValue, toNotes) = parts.take(CHANGE_FIELDS).map(String::toInt)
+            val cleared =
+                parts
+                    .getOrNull(CHANGE_FIELDS)
+                    ?.split(':')
+                    ?.map(String::toInt)
+                    .orEmpty()
+            Change(cell, fromValue, fromNotes, toValue, toNotes, cleared)
         }
 }
 
@@ -36,6 +54,7 @@ data class GameState(
     val eraserActive: Boolean = false,
     val mistakes: Int = 0,
     val rejected: Int? = null,
+    val autoRemoveNotes: Boolean = true,
 ) {
     val isSolved: Boolean get() = values == puzzle.solution
 
@@ -162,15 +181,19 @@ data class GameState(
         if (isSolved) {
             return this
         }
+        val restored =
+            last.clearedNotes.fold(notes.replaced(last.cell, last.fromNotes)) { all, other ->
+                all.replaced(other, all[other] or Combinations.bit(last.toValue))
+            }
         return copy(
             values = values.replaced(last.cell, last.fromValue),
-            notes = notes.replaced(last.cell, last.fromNotes),
+            notes = restored,
             changes = changes.dropLast(1),
             selected = last.cell,
         )
     }
 
-    fun restart(): GameState = GameState(puzzle, inputMode = inputMode, mistakeCheck = mistakeCheck)
+    fun restart(): GameState = GameState(puzzle, inputMode = inputMode, mistakeCheck = mistakeCheck, autoRemoveNotes = autoRemoveNotes)
 
     private fun set(
         cell: Int,
@@ -180,9 +203,24 @@ data class GameState(
         if (values[cell] == value && notes[cell] == cellNotes) {
             return this
         }
-        val change = Change(cell, values[cell], notes[cell], value, cellNotes)
-        return copy(values = values.replaced(cell, value), notes = notes.replaced(cell, cellNotes), changes = changes + change)
+        val cleared =
+            if (value != 0 && autoRemoveNotes) {
+                puzzle.runsOf[cell]
+                    .orEmpty()
+                    .flatMap { it.cells }
+                    .distinct()
+                    .filter { it != cell && notes[it] and Combinations.bit(value) != 0 }
+            } else {
+                emptyList()
+            }
+        val change = Change(cell, values[cell], notes[cell], value, cellNotes, cleared)
+        return copy(values = values.replaced(cell, value), notes = applyNotes(change), changes = changes + change)
     }
+
+    private fun applyNotes(change: Change): List<Int> =
+        change.clearedNotes.fold(notes.replaced(change.cell, change.toNotes)) { all, other ->
+            all.replaced(other, all[other] and Combinations.bit(change.toValue).inv())
+        }
 
     companion object {
         fun startValues(puzzle: Puzzle) =
@@ -201,7 +239,7 @@ data class GameState(
             changes.fold(GameState(puzzle)) { state, change ->
                 state.copy(
                     values = state.values.replaced(change.cell, change.toValue),
-                    notes = state.notes.replaced(change.cell, change.toNotes),
+                    notes = state.applyNotes(change),
                     changes = state.changes + change,
                 )
             }

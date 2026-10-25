@@ -15,6 +15,7 @@ enum class Toggle(
     val default: Boolean = true,
 ) {
     SHOW_MISTAKE_COUNT(Settings::showMistakeCount),
+    AUTO_REMOVE_NOTES(Settings::autoRemoveNotes),
     HIGHLIGHT_RUNS(Settings::highlightRuns),
     SHOW_TIMER(Settings::showTimer),
     SHOW_COMBINATIONS(Settings::showCombinations, default = false),
@@ -24,6 +25,7 @@ data class Settings(
     val inputMode: InputMode = InputMode.CELL_FIRST,
     val mistakeCheck: MistakeCheck = MistakeCheck.SHOW_WRONG,
     val showMistakeCount: Boolean = true,
+    val autoRemoveNotes: Boolean = true,
     val highlightRuns: Boolean = true,
     val showTimer: Boolean = true,
     val showCombinations: Boolean = false,
@@ -40,6 +42,7 @@ class SettingsRepository(
                 mistakeCheck =
                     prefs[MISTAKE_CHECK]?.let { saved -> MistakeCheck.entries.find { it.name == saved } } ?: MistakeCheck.SHOW_WRONG,
                 showMistakeCount = on(Toggle.SHOW_MISTAKE_COUNT),
+                autoRemoveNotes = on(Toggle.AUTO_REMOVE_NOTES),
                 highlightRuns = on(Toggle.HIGHLIGHT_RUNS),
                 showTimer = on(Toggle.SHOW_TIMER),
                 showCombinations = on(Toggle.SHOW_COMBINATIONS),

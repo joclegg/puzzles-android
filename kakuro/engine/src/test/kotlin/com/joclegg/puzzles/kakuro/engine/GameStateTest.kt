@@ -179,4 +179,63 @@ class GameStateTest {
         // Assert
         assertEquals(true to false, game.isDigitDone(1) to game.isDigitDone(2))
     }
+
+    @Test
+    fun `given pencil marks in the same runs when a digit is placed then those marks are removed, and undo puts them back`() {
+        // Arrange
+        val noted =
+            GameState(small)
+                .toggleNotes()
+                .tapCell(5)
+                .tapDigit(1)
+                .tapCell(7)
+                .tapDigit(1)
+                .tapCell(8)
+                .tapDigit(1)
+                .toggleNotes()
+
+        // Act
+        val placed = noted.tapCell(4).tapDigit(1)
+        val undone = placed.undo()
+
+        // Assert
+        assertEquals(listOf(0, 0, 1), listOf(5, 7, 8).map { placed.notes[it] })
+        assertEquals(noted.notes, undone.notes)
+    }
+
+    @Test
+    fun `given auto remove turned off when a digit is placed then other pencil marks stay`() {
+        // Arrange
+        val noted =
+            GameState(small, autoRemoveNotes = false)
+                .toggleNotes()
+                .tapCell(5)
+                .tapDigit(1)
+                .toggleNotes()
+
+        // Act
+        val placed = noted.tapCell(4).tapDigit(1)
+
+        // Assert
+        assertEquals(1, placed.notes[5])
+    }
+
+    @Test
+    fun `given changes that cleared pencil marks when they are saved and replayed then the marks match`() {
+        // Arrange
+        val played =
+            GameState(small)
+                .toggleNotes()
+                .tapCell(5)
+                .tapDigit(1)
+                .toggleNotes()
+                .tapCell(4)
+                .tapDigit(1)
+
+        // Act
+        val replayed = GameState.replay(small, ChangeCodec.decode(ChangeCodec.encode(played.changes)))
+
+        // Assert
+        assertEquals(played.notes, replayed.notes)
+    }
 }

@@ -80,7 +80,7 @@ class GameViewModel(
                 display = it
                 game =
                     game?.let { current ->
-                        val checked = current.copy(mistakeCheck = it.mistakeCheck)
+                        val checked = current.copy(mistakeCheck = it.mistakeCheck, autoRemoveNotes = it.autoRemoveNotes)
                         if (checked.inputMode == it.inputMode) {
                             checked
                         } else {

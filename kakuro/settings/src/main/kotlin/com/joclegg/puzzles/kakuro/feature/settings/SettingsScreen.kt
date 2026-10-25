@@ -94,6 +94,13 @@ fun SettingsScreen(
                 ToggleRow(settings, Toggle.SHOW_MISTAKE_COUNT, onToggle, "Show the mistake counter")
                 ToggleRow(
                     settings,
+                    Toggle.AUTO_REMOVE_NOTES,
+                    onToggle,
+                    "Remove pencil marks automatically",
+                    detail = "Placing a number clears that number's pencil marks from its across and down runs.",
+                )
+                ToggleRow(
+                    settings,
                     Toggle.HIGHLIGHT_RUNS,
                     onToggle,
                     "Highlight runs",
