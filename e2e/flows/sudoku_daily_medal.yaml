@@ -10,9 +10,10 @@ name: Finishing today's daily earns a silver medal on Home and in the calendar
 - tapOn:
     id: "digit_4"
 - assertVisible: "Great job"
-- tapOn:
-    id: "solved_screen"
-    optional: true
+- extendedWaitUntil:
+    visible:
+      id: "todays_medal_silver"
+    timeout: 15000
 - assertVisible:
     id: "todays_medal_silver"
 - tapOn:

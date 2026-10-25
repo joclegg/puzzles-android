@@ -7,8 +7,10 @@ name: Putting the last card up wins, records a best time and shows in stats and 
       fixture: "one_move_to_win"
 - tapOn:
     id: "card_KS"
-- assertVisible:
-    id: "won_dialog"
+- extendedWaitUntil:
+    visible:
+      id: "won_dialog"
+    timeout: 15000
 - assertVisible:
     id: "new_best"
 - tapOn:

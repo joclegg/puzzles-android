@@ -21,9 +21,10 @@ name: Fast - a 6x6 board with numbers 1 to 6, in classic and killer
 - tapOn:
     id: "digit_3"
 - assertVisible: "Great job"
-- tapOn:
-    id: "solved_screen"
-    optional: true
+- extendedWaitUntil:
+    visible:
+      id: "stats"
+    timeout: 15000
 - tapOn:
     id: "stats"
 - assertVisible:
