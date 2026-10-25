@@ -16,6 +16,8 @@ enum class Toggle(
 ) {
     REVERSE(Settings::reverse, default = false),
     ONE_TAP_MOVE(Settings::oneTapMove),
+    WINNABLE_ONLY(Settings::winnableOnly),
+    WARN_UNWINNABLE(Settings::warnUnwinnable),
     SHOW_TIMER(Settings::showTimer),
     SHOW_MOVE_COUNT(Settings::showMoveCount),
 }
@@ -24,6 +26,8 @@ data class Settings(
     val drawMode: DrawMode = DrawMode.DRAW_ONE,
     val reverse: Boolean = false,
     val oneTapMove: Boolean = true,
+    val winnableOnly: Boolean = true,
+    val warnUnwinnable: Boolean = true,
     val showTimer: Boolean = true,
     val showMoveCount: Boolean = true,
 ) {
@@ -45,6 +49,8 @@ class SettingsRepository(
                 drawMode = prefs[DRAW_MODE]?.let { saved -> DrawMode.entries.find { it.name == saved } } ?: DrawMode.DRAW_ONE,
                 reverse = prefs[Toggle.REVERSE.key] ?: Toggle.REVERSE.default,
                 oneTapMove = prefs[Toggle.ONE_TAP_MOVE.key] ?: true,
+                winnableOnly = prefs[Toggle.WINNABLE_ONLY.key] ?: true,
+                warnUnwinnable = prefs[Toggle.WARN_UNWINNABLE.key] ?: true,
                 showTimer = prefs[Toggle.SHOW_TIMER.key] ?: true,
                 showMoveCount = prefs[Toggle.SHOW_MOVE_COUNT.key] ?: true,
             )
