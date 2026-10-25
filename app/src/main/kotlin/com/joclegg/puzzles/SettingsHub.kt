@@ -46,6 +46,7 @@ enum class SettingsTab(
     SIGHTLINES("Sightlines"),
     FIVE_LETTERS("Five Letters"),
     KAKURO("Kakuro"),
+    SLIDE_OUT("Slide Out"),
 }
 
 object SettingsHub {

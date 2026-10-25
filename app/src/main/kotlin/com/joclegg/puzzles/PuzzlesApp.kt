@@ -27,6 +27,9 @@ import com.joclegg.puzzles.kakuro.KakuroRoutes.openKakuroGame
 import com.joclegg.puzzles.sightlines.SightlinesRoutes
 import com.joclegg.puzzles.sightlines.SightlinesRoutes.openSightlinesGame
 import com.joclegg.puzzles.sightlines.SightlinesRoutes.sightlinesGraph
+import com.joclegg.puzzles.slideout.SlideOutRoutes
+import com.joclegg.puzzles.slideout.SlideOutRoutes.openSlideOutGame
+import com.joclegg.puzzles.slideout.SlideOutRoutes.slideOutGraph
 import com.joclegg.puzzles.solitaire.SolitaireRoutes
 import com.joclegg.puzzles.solitaire.SolitaireRoutes.openSolitaireGame
 import com.joclegg.puzzles.solitaire.SolitaireRoutes.solitaireGraph
@@ -38,7 +41,7 @@ import com.joclegg.puzzles.twotone.TwoToneRoutes
 import com.joclegg.puzzles.twotone.TwoToneRoutes.openTwoToneGame
 import com.joclegg.puzzles.twotone.TwoToneRoutes.twoToneGraph
 
-enum class PuzzleGame { SUDOKU, SOLITAIRE, TWO_TONE, SIGHTLINES, FIVE_LETTERS, KAKURO }
+enum class PuzzleGame { SUDOKU, SOLITAIRE, TWO_TONE, SIGHTLINES, FIVE_LETTERS, KAKURO, SLIDE_OUT }
 
 data class OpenGame(
     val game: PuzzleGame,
@@ -90,6 +93,11 @@ fun PuzzlesApp(
                     navController.navigate(KakuroRoutes.HOME)
                     openGame.id?.let { navController.openKakuroGame(it) }
                 }
+
+                PuzzleGame.SLIDE_OUT -> {
+                    navController.navigate(SlideOutRoutes.HOME)
+                    openGame.id?.let { navController.openSlideOutGame(it) }
+                }
             }
             currentOnConsume()
         }
@@ -121,6 +129,7 @@ fun PuzzlesApp(
                             SettingsTab.SIGHTLINES -> SightlinesRoutes.SettingsTabContent(app.sightlines, darkTheme)
                             SettingsTab.FIVE_LETTERS -> FiveLettersRoutes.SettingsTabContent(app.fiveLetters, darkTheme)
                             SettingsTab.KAKURO -> KakuroRoutes.SettingsTabContent(app.kakuro, darkTheme)
+                            SettingsTab.SLIDE_OUT -> SlideOutRoutes.SettingsTabContent(app.slideOut, darkTheme)
                         }
                     },
                 )
@@ -135,6 +144,7 @@ fun PuzzlesApp(
                     onSightlinesClick = { navController.navigate(SightlinesRoutes.HOME) },
                     onFiveLettersClick = { navController.navigate(FiveLettersRoutes.HOME) },
                     onKakuroClick = { navController.navigate(KakuroRoutes.HOME) },
+                    onSlideOutClick = { navController.navigate(SlideOutRoutes.HOME) },
                 )
             }
             sudokuGraph(app.sudoku, navController)
@@ -143,6 +153,7 @@ fun PuzzlesApp(
             sightlinesGraph(app.sightlines, navController, darkTheme)
             fiveLettersGraph(app.fiveLetters, navController, darkTheme)
             kakuroGraph(app.kakuro, navController, darkTheme)
+            slideOutGraph(app.slideOut, navController, darkTheme)
         }
     }
 }

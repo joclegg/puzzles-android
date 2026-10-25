@@ -24,6 +24,8 @@ import com.joclegg.puzzles.kakuro.core.ui.KakuroGameIcon
 import com.joclegg.puzzles.kakuro.core.ui.KakuroTheme
 import com.joclegg.puzzles.sightlines.core.ui.SightlinesGameIcon
 import com.joclegg.puzzles.sightlines.core.ui.SightlinesTheme
+import com.joclegg.puzzles.slideout.core.ui.SlideOutGameIcon
+import com.joclegg.puzzles.slideout.core.ui.SlideOutTheme
 import com.joclegg.puzzles.solitaire.core.ui.SolitaireGameIcon
 import com.joclegg.puzzles.solitaire.core.ui.SolitaireTheme
 import com.joclegg.puzzles.sudoku.core.ui.SudokuGameIcon
@@ -41,6 +43,7 @@ fun LauncherScreen(
     onSightlinesClick: () -> Unit,
     onFiveLettersClick: () -> Unit,
     onKakuroClick: () -> Unit,
+    onSlideOutClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -72,6 +75,9 @@ fun LauncherScreen(
         }
         GameCard("Kakuro", "Cross sums: runs of different digits that add up", onKakuroClick, Modifier.testTag("game_kakuro")) {
             KakuroTheme(darkTheme) { KakuroGameIcon() }
+        }
+        GameCard("Slide Out", "Slide the blocks to free the red one", onSlideOutClick, Modifier.testTag("game_slide_out")) {
+            SlideOutTheme(darkTheme) { SlideOutGameIcon() }
         }
     }
 }

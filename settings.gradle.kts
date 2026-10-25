@@ -64,4 +64,11 @@ include(
     ":kakuro:home",
     ":kakuro:stats",
     ":kakuro:settings",
+    ":slideout:engine",
+    ":slideout:data",
+    ":slideout:ui",
+    ":slideout:game",
+    ":slideout:home",
+    ":slideout:stats",
+    ":slideout:settings",
 )

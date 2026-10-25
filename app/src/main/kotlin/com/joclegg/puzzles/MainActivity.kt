@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import com.joclegg.puzzles.fiveletters.FiveLettersFixtures
 import com.joclegg.puzzles.kakuro.KakuroFixtures
 import com.joclegg.puzzles.sightlines.SightlinesFixtures
+import com.joclegg.puzzles.slideout.SlideOutFixtures
 import com.joclegg.puzzles.solitaire.SolitaireFixtures
 import com.joclegg.puzzles.sudoku.SudokuFixtures
 import com.joclegg.puzzles.sudoku.core.data.ThemeMode
@@ -67,6 +68,7 @@ class MainActivity : ComponentActivity() {
         val sightlines = SightlinesFixtures.puzzle(name)
         val fiveLetters = FiveLettersFixtures.word(name)
         val kakuro = KakuroFixtures.puzzle(name)
+        val slideOut = SlideOutFixtures.puzzle(name)
         lifecycleScope.launch {
             if (draft != null) {
                 app.sudoku.settings.setCustomDraft(draft)
@@ -127,6 +129,15 @@ class MainActivity : ComponentActivity() {
                         PuzzleGame.KAKURO,
                         app.kakuro.games
                             .start { kakuro }
+                            .id,
+                    )
+            }
+            if (slideOut != null) {
+                openGame.value =
+                    OpenGame(
+                        PuzzleGame.SLIDE_OUT,
+                        app.slideOut.games
+                            .start { slideOut }
                             .id,
                     )
             }
