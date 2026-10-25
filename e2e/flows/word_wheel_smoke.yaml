@@ -1,0 +1,16 @@
+appId: com.joclegg.puzzles
+name: Word Wheel - start a six-letter puzzle
+tags:
+  - fast
+---
+- launchApp:
+    clearState: true
+- tapOn:
+    id: "game_word_wheel"
+- tapOn:
+    id: "level_6"
+- assertVisible:
+    id: "game_title"
+    text: "6 letters"
+- assertVisible:
+    id: "wheel_letter_6"

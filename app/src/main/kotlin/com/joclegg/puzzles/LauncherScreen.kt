@@ -32,6 +32,8 @@ import com.joclegg.puzzles.sudoku.core.ui.SudokuGameIcon
 import com.joclegg.puzzles.sudoku.core.ui.SudokuIcons
 import com.joclegg.puzzles.twotone.core.ui.TwoToneGameIcon
 import com.joclegg.puzzles.twotone.core.ui.TwoToneTheme
+import com.joclegg.puzzles.wordwheel.core.ui.WordWheelGameIcon
+import com.joclegg.puzzles.wordwheel.core.ui.WordWheelTheme
 
 @Composable
 fun LauncherScreen(
@@ -44,6 +46,7 @@ fun LauncherScreen(
     onFiveLettersClick: () -> Unit,
     onKakuroClick: () -> Unit,
     onSlideOutClick: () -> Unit,
+    onWordWheelClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -78,6 +81,9 @@ fun LauncherScreen(
         }
         GameCard("Slide Out", "Slide the blocks to free the red one", onSlideOutClick, Modifier.testTag("game_slide_out")) {
             SlideOutTheme(darkTheme) { SlideOutGameIcon() }
+        }
+        GameCard("Word Wheel", "Swipe the letters to fill the crossword", onWordWheelClick, Modifier.testTag("game_word_wheel")) {
+            WordWheelTheme(darkTheme) { WordWheelGameIcon() }
         }
     }
 }

@@ -12,6 +12,7 @@ fun main(args: Array<String>) {
     val pool = Executors.newFixedThreadPool(threads)
     val seedBase = System.getenv("BANK_SEED_BASE")?.toLong() ?: System.currentTimeMillis() % SEED_SPREAD
     val deadline = System.getenv("BANK_MINUTES")?.toLong()?.let { System.currentTimeMillis() + it * MS_PER_MINUTE } ?: Long.MAX_VALUE
+
     fun timeUp() = System.currentTimeMillis() > deadline
     Level.entries.zip(counts).filter { (_, count) -> count > 0 }.forEach { (level, count) ->
         val file = File(directory, "${level.name.lowercase()}.txt")

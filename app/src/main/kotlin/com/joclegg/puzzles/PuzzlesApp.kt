@@ -40,8 +40,11 @@ import com.joclegg.puzzles.sudoku.core.data.GameMode
 import com.joclegg.puzzles.twotone.TwoToneRoutes
 import com.joclegg.puzzles.twotone.TwoToneRoutes.openTwoToneGame
 import com.joclegg.puzzles.twotone.TwoToneRoutes.twoToneGraph
+import com.joclegg.puzzles.wordwheel.WordWheelRoutes
+import com.joclegg.puzzles.wordwheel.WordWheelRoutes.openWordWheelGame
+import com.joclegg.puzzles.wordwheel.WordWheelRoutes.wordWheelGraph
 
-enum class PuzzleGame { SUDOKU, SOLITAIRE, TWO_TONE, SIGHTLINES, FIVE_LETTERS, KAKURO, SLIDE_OUT }
+enum class PuzzleGame { SUDOKU, SOLITAIRE, TWO_TONE, SIGHTLINES, FIVE_LETTERS, KAKURO, SLIDE_OUT, WORD_WHEEL }
 
 data class OpenGame(
     val game: PuzzleGame,
@@ -98,6 +101,11 @@ fun PuzzlesApp(
                     navController.navigate(SlideOutRoutes.HOME)
                     openGame.id?.let { navController.openSlideOutGame(it) }
                 }
+
+                PuzzleGame.WORD_WHEEL -> {
+                    navController.navigate(WordWheelRoutes.HOME)
+                    openGame.id?.let { navController.openWordWheelGame(it) }
+                }
             }
             currentOnConsume()
         }
@@ -130,6 +138,7 @@ fun PuzzlesApp(
                             SettingsTab.FIVE_LETTERS -> FiveLettersRoutes.SettingsTabContent(app.fiveLetters, darkTheme)
                             SettingsTab.KAKURO -> KakuroRoutes.SettingsTabContent(app.kakuro, darkTheme)
                             SettingsTab.SLIDE_OUT -> SlideOutRoutes.SettingsTabContent(app.slideOut, darkTheme)
+                            SettingsTab.WORD_WHEEL -> WordWheelRoutes.SettingsTabContent(app.wordWheel, darkTheme)
                         }
                     },
                 )
@@ -145,6 +154,7 @@ fun PuzzlesApp(
                     onFiveLettersClick = { navController.navigate(FiveLettersRoutes.HOME) },
                     onKakuroClick = { navController.navigate(KakuroRoutes.HOME) },
                     onSlideOutClick = { navController.navigate(SlideOutRoutes.HOME) },
+                    onWordWheelClick = { navController.navigate(WordWheelRoutes.HOME) },
                 )
             }
             sudokuGraph(app.sudoku, navController)
@@ -154,6 +164,7 @@ fun PuzzlesApp(
             fiveLettersGraph(app.fiveLetters, navController, darkTheme)
             kakuroGraph(app.kakuro, navController, darkTheme)
             slideOutGraph(app.slideOut, navController, darkTheme)
+            wordWheelGraph(app.wordWheel, navController, darkTheme)
         }
     }
 }

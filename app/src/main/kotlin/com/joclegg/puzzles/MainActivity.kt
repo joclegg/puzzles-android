@@ -21,6 +21,7 @@ import com.joclegg.puzzles.sudoku.SudokuFixtures
 import com.joclegg.puzzles.sudoku.core.data.ThemeMode
 import com.joclegg.puzzles.sudoku.core.ui.SudokuTheme
 import com.joclegg.puzzles.twotone.TwoToneFixtures
+import com.joclegg.puzzles.wordwheel.WordWheelFixtures
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -69,6 +70,7 @@ class MainActivity : ComponentActivity() {
         val fiveLetters = FiveLettersFixtures.word(name)
         val kakuro = KakuroFixtures.puzzle(name)
         val slideOut = SlideOutFixtures.puzzle(name)
+        val wordWheel = WordWheelFixtures.puzzle(name)
         lifecycleScope.launch {
             if (draft != null) {
                 app.sudoku.settings.setCustomDraft(draft)
@@ -138,6 +140,15 @@ class MainActivity : ComponentActivity() {
                         PuzzleGame.SLIDE_OUT,
                         app.slideOut.games
                             .start { slideOut }
+                            .id,
+                    )
+            }
+            if (wordWheel != null) {
+                openGame.value =
+                    OpenGame(
+                        PuzzleGame.WORD_WHEEL,
+                        app.wordWheel.games
+                            .start { wordWheel }
                             .id,
                     )
             }
