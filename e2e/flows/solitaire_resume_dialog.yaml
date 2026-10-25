@@ -1,0 +1,26 @@
+appId: com.joclegg.puzzles
+name: Tapping New game with a game in progress offers Resume or New deal
+---
+- launchApp:
+    clearState: true
+- scrollUntilVisible:
+    element:
+      id: "game_solitaire"
+    centerElement: true
+- tapOn:
+    id: "game_solitaire"
+- tapOn:
+    id: "play"
+- tapOn:
+    id: "stock"
+- tapOn:
+    id: "back"
+- tapOn:
+    id: "play"
+- assertVisible:
+    id: "resume_dialog"
+- tapOn:
+    id: "resume_game"
+- assertVisible:
+    id: "move_count"
+    text: "Moves 1"

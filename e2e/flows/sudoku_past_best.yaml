@@ -1,0 +1,23 @@
+appId: com.joclegg.puzzles
+name: Sudoku - a past best time from another app shows on Best times
+---
+- launchApp:
+    clearState: true
+- scrollUntilVisible:
+    element:
+      id: "game_sudoku"
+    centerElement: true
+- tapOn:
+    id: "game_sudoku"
+- tapOn:
+    id: "stats"
+- tapOn:
+    id: "best_killer_expert"
+- tapOn:
+    id: "past_best_input"
+- inputText: "7:54"
+- tapOn:
+    id: "past_best_save"
+- assertVisible:
+    id: "best_killer_expert_best"
+    text: "7:54"

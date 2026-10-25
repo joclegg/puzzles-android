@@ -1,0 +1,32 @@
+appId: com.joclegg.puzzles
+name: Finishing today's daily earns a silver medal on Home and in the calendar
+---
+- launchApp:
+    clearState: true
+    arguments:
+      fixture: "daily_classic_one_left"
+- tapOn:
+    id: "cell_r1c3"
+- tapOn:
+    id: "digit_4"
+- assertVisible: "Great job"
+- extendedWaitUntil:
+    visible:
+      id: "todays_medal_silver"
+    timeout: 15000
+- assertVisible:
+    id: "todays_medal_silver"
+- tapOn:
+    id: "daily_calendar"
+- assertVisible:
+    id: "medal_silver"
+    childOf:
+      id: "daily_today"
+- tapOn:
+    id: "daily_today"
+- assertVisible:
+    id: "daily_choice"
+- assertVisible:
+    text: "Classic · .*✓"
+    childOf:
+      id: "daily_play_classic"

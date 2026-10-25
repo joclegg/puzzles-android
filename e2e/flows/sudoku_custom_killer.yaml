@@ -1,0 +1,60 @@
+appId: com.joclegg.puzzles
+name: Custom killer - draw cages with sums, then play it
+---
+- launchApp:
+    clearState: true
+- scrollUntilVisible:
+    element:
+      id: "game_sudoku"
+    centerElement: true
+- tapOn:
+    id: "game_sudoku"
+- tapOn:
+    id: "mode_killer"
+- tapOn:
+    id: "enter_puzzle"
+- assertVisible:
+    id: "entry_killer"
+    checked: true
+- tapOn:
+    id: "cage_tool"
+- tapOn:
+    id: "cell_r1c1"
+- tapOn:
+    id: "cell_r1c2"
+- tapOn:
+    id: "digit_1"
+- tapOn:
+    id: "digit_7"
+- assertVisible:
+    id: "entry_status"
+    text: "Cage sum: 17"
+- tapOn:
+    id: "confirm_cage"
+- assertNotVisible:
+    id: "entry_problem"
+- assertVisible:
+    id: "cage_sum_r1c1"
+    text: "17"
+- tapOn:
+    id: "cage_tool"
+- tapOn:
+    id: "cell_r5c5"
+- tapOn:
+    id: "digit_5"
+- tapOn:
+    id: "fix_puzzle"
+- assertVisible:
+    id: "unverified_dialog"
+- tapOn:
+    id: "play_anyway"
+- assertVisible:
+    id: "game_title"
+    text: "Custom killer"
+- assertVisible:
+    text: "5"
+    childOf:
+      id: "cell_r5c5"
+- assertVisible:
+    id: "mistakes"
+    text: "Mistakes: 0"

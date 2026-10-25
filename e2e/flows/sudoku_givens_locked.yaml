@@ -1,0 +1,19 @@
+appId: com.joclegg.puzzles
+name: Givens can't be changed or erased
+tags:
+  - fast
+---
+- launchApp:
+    clearState: true
+    arguments:
+      fixture: "classic_easy"
+- tapOn:
+    id: "cell_r1c1"
+- tapOn:
+    id: "digit_9"
+- tapOn:
+    id: "erase"
+- assertVisible:
+    text: "5"
+    childOf:
+      id: "cell_r1c1"

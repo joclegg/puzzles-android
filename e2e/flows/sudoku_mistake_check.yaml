@@ -1,0 +1,67 @@
+appId: com.joclegg.puzzles
+name: Mistake checking - show wrong, block clashes and off
+tags:
+  - fast
+---
+- launchApp:
+    clearState: true
+    arguments:
+      fixture: "classic_easy"
+- tapOn:
+    id: "cell_r1c3"
+- tapOn:
+    id: "digit_9"
+- assertVisible:
+    id: "mistakes"
+    text: "Mistakes: 1"
+- launchApp:
+    clearState: true
+- scrollUntilVisible:
+    element:
+      id: "game_sudoku"
+    centerElement: true
+- tapOn:
+    id: "game_sudoku"
+- tapOn:
+    id: "settings"
+- tapOn:
+    id: "setting_mistakes_block_clashes"
+- launchApp:
+    arguments:
+      fixture: "classic_easy"
+- tapOn:
+    id: "cell_r1c3"
+- tapOn:
+    id: "digit_5"
+- assertNotVisible:
+    text: "5"
+    childOf:
+      id: "cell_r1c3"
+- assertVisible:
+    id: "mistakes"
+    text: "Mistakes: 1"
+- launchApp:
+    stopApp: true
+- scrollUntilVisible:
+    element:
+      id: "game_sudoku"
+    centerElement: true
+- tapOn:
+    id: "game_sudoku"
+- tapOn:
+    id: "settings"
+- tapOn:
+    id: "setting_mistakes_off"
+- launchApp:
+    arguments:
+      fixture: "classic_easy"
+- tapOn:
+    id: "cell_r1c3"
+- tapOn:
+    id: "digit_9"
+- assertVisible:
+    text: "9"
+    childOf:
+      id: "cell_r1c3"
+- assertNotVisible:
+    id: "mistakes"

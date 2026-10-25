@@ -1,0 +1,47 @@
+appId: com.joclegg.puzzles
+name: Settings - dark theme, hiding the timer and mistake counter, and choosing number-first
+---
+- launchApp:
+    clearState: true
+- scrollUntilVisible:
+    element:
+      id: "game_sudoku"
+    centerElement: true
+- tapOn:
+    id: "game_sudoku"
+- tapOn:
+    id: "settings"
+- tapOn:
+    id: "setting_digit_first"
+- tapOn:
+    id: "settings_tab_general"
+- tapOn:
+    id: "setting_theme_dark"
+- assertVisible:
+    id: "setting_theme_dark"
+    checked: true
+- tapOn:
+    id: "settings_tab_sudoku"
+- tapOn:
+    id: "setting_show_mistake_count"
+- scrollUntilVisible:
+    element:
+      id: "setting_show_timer"
+    centerElement: true
+- tapOn:
+    id: "setting_show_timer"
+- launchApp:
+    arguments:
+      fixture: "classic_easy"
+- assertNotVisible:
+    id: "timer"
+- tapOn:
+    id: "digit_9"
+- tapOn:
+    id: "cell_r1c3"
+- assertVisible:
+    text: "9"
+    childOf:
+      id: "cell_r1c3"
+- assertNotVisible:
+    id: "mistakes"

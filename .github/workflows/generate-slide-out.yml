@@ -1,0 +1,57 @@
+name: Generate Slide Out puzzles
+
+on:
+  push:
+    branches: ["generate/slide-out"]
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    name: Generate (shard ${{ matrix.shard }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+    env:
+      RESULTS_BRANCH: generate/slide-out-results-${{ matrix.shard }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Resume from this shard's saved results
+        run: |
+          mkdir -p out
+          if git ls-remote --exit-code origin "refs/heads/$RESULTS_BRANCH" >/dev/null; then
+            git fetch -q origin "$RESULTS_BRANCH"
+            git show "FETCH_HEAD:expert.txt" > out/expert.txt
+          fi
+          wc -l out/expert.txt 2>/dev/null || true
+      - name: Generate expert puzzles, saving every 10 minutes
+        env:
+          BANK_SEED_BASE: ${{ matrix.shard }}
+          BANK_MINUTES: 320
+        run: |
+          ./gradlew -q :slideout:engine:generateBank -PbankDir=out -PbankSizes=0,0,0,0,1000 &
+          generator=$!
+          save() {
+            [ -s out/expert.txt ] || return 0
+            dir=$(mktemp -d)
+            cp out/expert.txt "$dir/"
+            git -C "$dir" init -q
+            git -C "$dir" add expert.txt
+            git -C "$dir" -c user.name=github-actions -c user.email=github-actions@users.noreply.github.com commit -q -m "Slide Out expert puzzles, shard ${{ matrix.shard }}"
+            git -C "$dir" push -q -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" "HEAD:refs/heads/$RESULTS_BRANCH"
+            echo "Saved $(wc -l < out/expert.txt) puzzles"
+          }
+          while kill -0 "$generator" 2>/dev/null; do
+            sleep 600
+            save
+          done
+          save

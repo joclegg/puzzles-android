@@ -1,0 +1,57 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Build and publish the APK and app bundle
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v4
+      - uses: gittools/actions/gitversion/setup@v3
+        with:
+          versionSpec: "6.x"
+      - name: Work out the version
+        id: gitversion
+        uses: gittools/actions/gitversion/execute@v3
+      - name: Work out the version code
+        id: version
+        run: |
+          echo "name=${{ steps.gitversion.outputs.majorMinorPatch }}" >> "$GITHUB_OUTPUT"
+          echo "code=$(( ${{ steps.gitversion.outputs.major }} * 1000000 + ${{ steps.gitversion.outputs.minor }} * 1000 + ${{ steps.gitversion.outputs.patch }} ))" >> "$GITHUB_OUTPUT"
+      - name: Restore the signing key
+        run: echo "${{ secrets.PUZZLES_KEYSTORE_BASE64 }}" | base64 --decode > "$RUNNER_TEMP/release.jks"
+      - run: ./gradlew spotlessCheck
+      - name: Test and build the signed APK and app bundle
+        env:
+          PUZZLES_KEYSTORE: ${{ runner.temp }}/release.jks
+          PUZZLES_KEYSTORE_PASSWORD: ${{ secrets.PUZZLES_KEYSTORE_PASSWORD }}
+          PUZZLES_KEY_ALIAS: ${{ secrets.PUZZLES_KEY_ALIAS }}
+          PUZZLES_KEY_PASSWORD: ${{ secrets.PUZZLES_KEY_PASSWORD }}
+        run: |
+          ./gradlew test assembleRelease bundleRelease -PversionName=${{ steps.version.outputs.name }} -PversionCode=${{ steps.version.outputs.code }}
+          cp app/build/outputs/apk/release/app-release.apk "puzzles-${{ steps.version.outputs.name }}.apk"
+          cp app/build/outputs/bundle/release/app-release.aab "puzzles-${{ steps.version.outputs.name }}.aab"
+      - name: Publish the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >
+          gh release create "v${{ steps.version.outputs.name }}"
+          "puzzles-${{ steps.version.outputs.name }}.apk" "puzzles-${{ steps.version.outputs.name }}.aab"
+          --target "$GITHUB_SHA" --title "Puzzles ${{ steps.version.outputs.name }}" --generate-notes

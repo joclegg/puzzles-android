@@ -1,0 +1,24 @@
+appId: com.joclegg.puzzles
+name: Two Tone - with Pick a colour on, picking blue and tapping fills the last spot
+---
+- launchApp:
+    clearState: true
+- scrollUntilVisible:
+    element:
+      id: "game_two_tone"
+    centerElement: true
+- tapOn:
+    id: "game_two_tone"
+- tapOn:
+    id: "settings"
+- tapOn:
+    id: "setting_pick_colour"
+- launchApp:
+    arguments:
+      fixture: "two_tone_one_left"
+- tapOn:
+    id: "colour_blue"
+- tapOn:
+    id: "tile_r1c2"
+- assertVisible:
+    id: "solved_dialog"

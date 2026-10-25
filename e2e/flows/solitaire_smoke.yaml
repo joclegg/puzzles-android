@@ -1,0 +1,23 @@
+appId: com.joclegg.puzzles
+name: Smoke - deal a Draw 1 game
+tags:
+  - fast
+---
+- launchApp:
+    clearState: true
+- scrollUntilVisible:
+    element:
+      id: "game_solitaire"
+    centerElement: true
+- tapOn:
+    id: "game_solitaire"
+- assertVisible: "Solitaire"
+- tapOn:
+    id: "play"
+- assertVisible:
+    id: "stock"
+- assertVisible:
+    id: "tableau_7_down_6"
+- assertVisible:
+    id: "game_title"
+    text: "Draw 1"

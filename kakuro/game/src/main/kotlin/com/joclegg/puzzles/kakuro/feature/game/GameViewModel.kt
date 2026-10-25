@@ -1,0 +1,227 @@
+package com.joclegg.puzzles.kakuro.feature.game
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.joclegg.puzzles.kakuro.core.data.GameRepository
+import com.joclegg.puzzles.kakuro.core.data.PuzzleBank
+import com.joclegg.puzzles.kakuro.core.data.PuzzleRef
+import com.joclegg.puzzles.kakuro.core.data.SavedGame
+import com.joclegg.puzzles.kakuro.core.data.Settings
+import com.joclegg.puzzles.kakuro.core.data.SettingsRepository
+import com.joclegg.puzzles.kakuro.core.ui.BoardUi
+import com.joclegg.puzzles.kakuro.core.ui.title
+import com.joclegg.puzzles.kakuro.core.ui.toBoardUi
+import com.joclegg.puzzles.kakuro.engine.Combinations
+import com.joclegg.puzzles.kakuro.engine.GameState
+import com.joclegg.puzzles.kakuro.engine.GameTimer
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
+data class GameUiState(
+    val title: String,
+    val board: BoardUi,
+    val elapsedMs: Long,
+    val showTimer: Boolean,
+    val notesMode: Boolean,
+    val combinations: List<String>,
+    val canUndo: Boolean,
+    val solved: Boolean,
+    val newBest: Boolean,
+    val resultSaved: Boolean,
+)
+
+class GameViewModel(
+    private val gameId: Long,
+    private val games: GameRepository,
+    private val settings: SettingsRepository,
+    private val bank: PuzzleBank,
+    private val monotonicNowMs: () -> Long,
+    private val newSeed: () -> Long,
+) : ViewModel() {
+    private var saved: SavedGame? = null
+    private var game: GameState? = null
+    private var timer = GameTimer()
+    private var visible = false
+    private var ticker: Job? = null
+    private var pendingSave: Job? = null
+    private var newBest = false
+    private var resultSaved = false
+    private var display = Settings()
+
+    private val _uiState = MutableStateFlow<GameUiState?>(null)
+    val uiState: StateFlow<GameUiState?> = _uiState.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            val loaded = games.get(gameId) ?: return@launch
+            saved = loaded
+            game = GameState.replay(loaded.ref.puzzle, loaded.changes)
+            timer = GameTimer(accumulatedMs = loaded.elapsedMs)
+            if (visible) {
+                resumeTimer()
+            }
+            settings.settings.collect {
+                display = it
+                publish()
+            }
+        }
+    }
+
+    fun onCellClick(cell: Int) = move { it.tapCell(cell) }
+
+    fun onDigitClick(digit: Int) = move { it.tapDigit(digit) }
+
+    fun onErase() = move { it.erase() }
+
+    fun onUndo() = move { it.undo() }
+
+    fun onToggleNotes() = move { it.toggleNotes() }
+
+    fun onRestart() {
+        val current = game ?: return
+        if (current.isSolved) {
+            return
+        }
+        game = current.restart()
+        timer = GameTimer()
+        if (visible) {
+            resumeTimer()
+        }
+        persistNow()
+        publish()
+    }
+
+    suspend fun newPuzzle(): Long {
+        val size = saved?.ref?.size ?: return gameId
+        val seed = newSeed()
+        return games.start { PuzzleRef.random(bank, size, seed) }.id
+    }
+
+    fun onVisible() {
+        visible = true
+        resumeTimer()
+    }
+
+    fun onHidden() {
+        visible = false
+        timer = timer.pause(monotonicNowMs())
+        ticker?.cancel()
+        persistNow()
+    }
+
+    private fun resumeTimer() {
+        val current = game ?: return
+        if (current.isSolved) {
+            return
+        }
+        timer = timer.start(monotonicNowMs())
+        ticker?.cancel()
+        ticker =
+            viewModelScope.launch {
+                while (isActive) {
+                    publish()
+                    delay(TICK_MS)
+                }
+            }
+    }
+
+    private fun move(change: (GameState) -> GameState) {
+        val before = game ?: return
+        val after = change(before)
+        if (after == before) {
+            return
+        }
+        game = after
+        if (!before.isSolved && after.isSolved) {
+            finish()
+        } else if (after.changes != before.changes) {
+            persistSoon()
+        }
+        publish()
+    }
+
+    private fun finish() {
+        timer = timer.pause(monotonicNowMs())
+        ticker?.cancel()
+        pendingSave?.cancel()
+        val finished = snapshot() ?: return
+        viewModelScope.launch {
+            newBest = withContext(NonCancellable) { games.solve(finished) }
+            resultSaved = true
+            publish()
+        }
+    }
+
+    private fun persistSoon() {
+        pendingSave?.cancel()
+        pendingSave =
+            viewModelScope.launch {
+                delay(SAVE_AFTER_IDLE_MS)
+                persistNow()
+            }
+    }
+
+    private fun persistNow() {
+        pendingSave?.cancel()
+        val snapshot = snapshot() ?: return
+        if (game?.isSolved == true) {
+            return
+        }
+        viewModelScope.launch { withContext(NonCancellable) { games.save(snapshot) } }
+    }
+
+    private fun snapshot(): SavedGame? {
+        val current = game ?: return null
+        return saved?.copy(changes = current.changes, elapsedMs = timer.elapsedMs(monotonicNowMs()))
+    }
+
+    private fun publish() {
+        val current = game ?: return
+        val ref = saved?.ref ?: return
+        val board = current.toBoardUi(display.showMistakes)
+        _uiState.value =
+            GameUiState(
+                title = ref.title(),
+                board =
+                    if (display.highlightRuns) {
+                        board
+                    } else {
+                        board.copy(runCells = emptySet())
+                    },
+                elapsedMs = timer.elapsedMs(monotonicNowMs()),
+                showTimer = display.showTimer,
+                notesMode = current.notesMode,
+                combinations =
+                    if (display.showCombinations) {
+                        current.selectedCombinations().map { (run, masks) ->
+                            val direction =
+                                if (run.isAcross) {
+                                    "Across"
+                                } else {
+                                    "Down"
+                                }
+                            "$direction ${run.sum} in ${run.cells.size}: " +
+                                masks.joinToString("  ") { Combinations.digitsOf(it).joinToString("") }.ifEmpty { "none fit" }
+                        }
+                    } else {
+                        emptyList()
+                    },
+                canUndo = current.changes.isNotEmpty() && !current.isSolved,
+                solved = current.isSolved,
+                newBest = newBest,
+                resultSaved = resultSaved,
+            )
+    }
+
+    private companion object {
+        const val TICK_MS = 500L
+        const val SAVE_AFTER_IDLE_MS = 400L
+    }
+}

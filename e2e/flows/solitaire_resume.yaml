@@ -1,0 +1,25 @@
+appId: com.joclegg.puzzles
+name: A game in progress, and its undo history, survive the app being closed
+---
+- launchApp:
+    clearState: true
+    arguments:
+      fixture: "simple"
+- tapOn:
+    id: "stock"
+- launchApp:
+    stopApp: true
+- scrollUntilVisible:
+    element:
+      id: "game_solitaire"
+    centerElement: true
+- tapOn:
+    id: "game_solitaire"
+- tapOn:
+    id: "continue"
+- assertVisible:
+    id: "card_3C"
+- tapOn:
+    id: "undo"
+- assertNotVisible:
+    id: "card_3C"

@@ -1,0 +1,22 @@
+appId: com.joclegg.puzzles
+name: Choosing Draw 3 in settings deals Draw 3 games
+---
+- launchApp:
+    clearState: true
+- scrollUntilVisible:
+    element:
+      id: "game_solitaire"
+    centerElement: true
+- tapOn:
+    id: "game_solitaire"
+- tapOn:
+    id: "settings"
+- tapOn:
+    id: "setting_draw_three"
+- tapOn:
+    id: "back"
+- tapOn:
+    id: "play"
+- assertVisible:
+    id: "game_title"
+    text: "Draw 3"

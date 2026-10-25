@@ -1,0 +1,20 @@
+appId: com.joclegg.puzzles
+name: Kakuro - start an 8 x 8 puzzle
+tags:
+  - fast
+---
+- launchApp:
+    clearState: true
+- scrollUntilVisible:
+    element:
+      id: "game_kakuro"
+    centerElement: true
+- tapOn:
+    id: "game_kakuro"
+- tapOn:
+    id: "size_8"
+- assertVisible:
+    id: "game_title"
+    text: "8 x 8"
+- assertVisible:
+    id: "digit_9"

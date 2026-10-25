@@ -1,0 +1,38 @@
+appId: com.joclegg.puzzles
+name: Puzzle menu - restart clears entries, show solution fills the board and ends the game
+---
+- launchApp:
+    clearState: true
+    arguments:
+      fixture: "classic_easy"
+- tapOn:
+    id: "cell_r1c3"
+- tapOn:
+    id: "digit_9"
+- tapOn:
+    id: "puzzle_menu"
+- tapOn:
+    id: "menu_restart"
+- tapOn:
+    id: "confirm_action"
+- assertNotVisible:
+    text: "9"
+    childOf:
+      id: "cell_r1c3"
+- tapOn:
+    id: "puzzle_menu"
+- tapOn:
+    id: "menu_solution"
+- tapOn:
+    id: "confirm_action"
+- assertVisible:
+    text: "4"
+    childOf:
+      id: "cell_r1c3"
+- assertVisible:
+    id: "solution_shown"
+- tapOn:
+    id: "back"
+- tapOn:
+    id: "history"
+- assertVisible: ".*Solution shown.*"
