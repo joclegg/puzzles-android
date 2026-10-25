@@ -46,6 +46,7 @@ enum class SettingsTab(
     SIGHTLINES("Sightlines"),
     FIVE_LETTERS("Five Letters"),
     KAKURO("Kakuro"),
+    WORD_WHEEL("Word Wheel"),
 }
 
 object SettingsHub {

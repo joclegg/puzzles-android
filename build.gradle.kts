@@ -52,6 +52,11 @@ spotless {
             shortCode = "compose:compositionlocal-allowlist"
             path = "kakuro/ui/src/main/kotlin/com/joclegg/puzzles/kakuro/core/ui/Theme.kt"
         }
+        suppressLintsFor {
+            step = "ktlint"
+            shortCode = "compose:compositionlocal-allowlist"
+            path = "wordwheel/ui/src/main/kotlin/com/joclegg/puzzles/wordwheel/core/ui/Theme.kt"
+        }
     }
     kotlinGradle {
         target("**/*.gradle.kts")

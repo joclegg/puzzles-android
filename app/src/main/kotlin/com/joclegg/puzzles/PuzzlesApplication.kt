@@ -7,6 +7,7 @@ import com.joclegg.puzzles.sightlines.SightlinesContainer
 import com.joclegg.puzzles.solitaire.SolitaireContainer
 import com.joclegg.puzzles.sudoku.SudokuContainer
 import com.joclegg.puzzles.twotone.TwoToneContainer
+import com.joclegg.puzzles.wordwheel.WordWheelContainer
 
 class PuzzlesApplication : Application() {
     val sudoku by lazy { SudokuContainer(this) }
@@ -15,4 +16,5 @@ class PuzzlesApplication : Application() {
     val sightlines by lazy { SightlinesContainer(this) }
     val fiveLetters by lazy { FiveLettersContainer(this) }
     val kakuro by lazy { KakuroContainer(this) }
+    val wordWheel by lazy { WordWheelContainer(this) }
 }

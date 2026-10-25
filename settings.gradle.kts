@@ -64,4 +64,11 @@ include(
     ":kakuro:home",
     ":kakuro:stats",
     ":kakuro:settings",
+    ":wordwheel:engine",
+    ":wordwheel:data",
+    ":wordwheel:ui",
+    ":wordwheel:game",
+    ":wordwheel:home",
+    ":wordwheel:stats",
+    ":wordwheel:settings",
 )

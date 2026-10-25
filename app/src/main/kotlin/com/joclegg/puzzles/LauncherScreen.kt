@@ -30,6 +30,8 @@ import com.joclegg.puzzles.sudoku.core.ui.SudokuGameIcon
 import com.joclegg.puzzles.sudoku.core.ui.SudokuIcons
 import com.joclegg.puzzles.twotone.core.ui.TwoToneGameIcon
 import com.joclegg.puzzles.twotone.core.ui.TwoToneTheme
+import com.joclegg.puzzles.wordwheel.core.ui.WordWheelGameIcon
+import com.joclegg.puzzles.wordwheel.core.ui.WordWheelTheme
 
 @Composable
 fun LauncherScreen(
@@ -41,6 +43,7 @@ fun LauncherScreen(
     onSightlinesClick: () -> Unit,
     onFiveLettersClick: () -> Unit,
     onKakuroClick: () -> Unit,
+    onWordWheelClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -72,6 +75,9 @@ fun LauncherScreen(
         }
         GameCard("Kakuro", "Cross sums: runs of different digits that add up", onKakuroClick, Modifier.testTag("game_kakuro")) {
             KakuroTheme(darkTheme) { KakuroGameIcon() }
+        }
+        GameCard("Word Wheel", "Swipe the letters to fill the crossword", onWordWheelClick, Modifier.testTag("game_word_wheel")) {
+            WordWheelTheme(darkTheme) { WordWheelGameIcon() }
         }
     }
 }
