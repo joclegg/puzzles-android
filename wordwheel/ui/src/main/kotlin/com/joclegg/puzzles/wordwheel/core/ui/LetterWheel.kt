@@ -2,8 +2,8 @@ package com.joclegg.puzzles.wordwheel.core.ui
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.aspectRatio
@@ -14,10 +14,14 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
@@ -41,6 +45,7 @@ fun LetterWheel(
     val currentChosen by rememberUpdatedState(chosen)
     val currentOnChange by rememberUpdatedState(onChosenChange)
     val currentOnEnd by rememberUpdatedState(onSwipeEnd)
+    var finger by remember { mutableStateOf<Offset?>(null) }
     BoxWithConstraints(modifier.aspectRatio(1f).background(colors.wheel, CircleShape)) {
         val sizePx = with(LocalDensity.current) { maxWidth.toPx() }
         val letterSize = maxWidth * LETTER_FRACTION
@@ -57,8 +62,16 @@ fun LetterWheel(
             Modifier
                 .fillMaxSize()
                 .pointerInput(letters) {
+                    detectTapGestures { point ->
+                        val index = letterAt(point)
+                        if (index >= 0 && index !in currentChosen) {
+                            currentOnChange(currentChosen + index)
+                        }
+                    }
+                }.pointerInput(letters) {
                     detectDragGestures(
                         onDragStart = { start ->
+                            finger = start
                             val index = letterAt(start)
                             currentOnChange(
                                 if (index >= 0) {
@@ -68,8 +81,13 @@ fun LetterWheel(
                                 },
                             )
                         },
-                        onDragEnd = { currentOnEnd() },
+                        onDragEnd = {
+                            finger = null
+                            currentOnEnd()
+                        },
+                        onDragCancel = { finger = null },
                     ) { change, _ ->
+                        finger = change.position
                         val index = letterAt(change.position)
                         val path = currentChosen
                         when {
@@ -80,8 +98,14 @@ fun LetterWheel(
                     }
                 },
         ) {
+            val stroke = LINE_WIDTH.dp.toPx()
             chosen.zipWithNext().forEach { (from, to) ->
-                drawLine(colors.line, centres[from], centres[to], strokeWidth = 8.dp.toPx())
+                drawLine(colors.line, centres[from], centres[to], strokeWidth = stroke, cap = StrokeCap.Round)
+            }
+            val end = finger
+            val last = chosen.lastOrNull()
+            if (end != null && last != null) {
+                drawLine(colors.line, centres[last], end, strokeWidth = stroke, cap = StrokeCap.Round)
             }
         }
         letters.forEachIndexed { index, letter ->
@@ -99,11 +123,7 @@ fun LetterWheel(
                                 colors.letter
                             },
                             CircleShape,
-                        ).clickable {
-                            if (!selected) {
-                                onChosenChange(chosen + index)
-                            }
-                        }.testTag(wheelTag(index)),
+                        ).testTag(wheelTag(index)),
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
@@ -124,3 +144,4 @@ fun LetterWheel(
 }
 
 private const val LETTER_FRACTION = 0.24f
+private const val LINE_WIDTH = 10
