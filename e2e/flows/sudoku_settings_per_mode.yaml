@@ -3,6 +3,10 @@ name: Settings open on the Home mode and apply to that mode
 ---
 - launchApp:
     clearState: true
+- scrollUntilVisible:
+    element:
+      id: "game_sudoku"
+    centerElement: true
 - tapOn:
     id: "game_sudoku"
 - tapOn:

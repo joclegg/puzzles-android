@@ -3,6 +3,10 @@ name: With one tap move off, a card moves by tapping it and then its target
 ---
 - launchApp:
     clearState: true
+- scrollUntilVisible:
+    element:
+      id: "game_solitaire"
+    centerElement: true
 - tapOn:
     id: "game_solitaire"
 - tapOn:

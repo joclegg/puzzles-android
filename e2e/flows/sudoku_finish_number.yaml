@@ -3,6 +3,10 @@ name: Finishing a number by hand disables its button
 ---
 - launchApp:
     clearState: true
+- scrollUntilVisible:
+    element:
+      id: "game_sudoku"
+    centerElement: true
 - tapOn:
     id: "game_sudoku"
 - tapOn:

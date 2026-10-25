@@ -5,6 +5,10 @@ tags:
 ---
 - launchApp:
     clearState: true
+- scrollUntilVisible:
+    element:
+      id: "game_solitaire"
+    centerElement: true
 - tapOn:
     id: "game_solitaire"
 - assertVisible: "Solitaire"

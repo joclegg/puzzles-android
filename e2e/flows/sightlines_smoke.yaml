@@ -5,6 +5,10 @@ tags:
 ---
 - launchApp:
     clearState: true
+- scrollUntilVisible:
+    element:
+      id: "game_sightlines"
+    centerElement: true
 - tapOn:
     id: "game_sightlines"
 - tapOn:

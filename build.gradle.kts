@@ -56,6 +56,10 @@ spotless {
             step = "ktlint"
             shortCode = "compose:compositionlocal-allowlist"
             path = "slideout/ui/src/main/kotlin/com/joclegg/puzzles/slideout/core/ui/Theme.kt"
+        }
+        suppressLintsFor {
+            step = "ktlint"
+            shortCode = "compose:compositionlocal-allowlist"
             path = "wordwheel/ui/src/main/kotlin/com/joclegg/puzzles/wordwheel/core/ui/Theme.kt"
         }
     }

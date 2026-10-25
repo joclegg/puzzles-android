@@ -3,6 +3,10 @@ name: Settings - dark theme, hiding the timer and mistake counter, and choosing 
 ---
 - launchApp:
     clearState: true
+- scrollUntilVisible:
+    element:
+      id: "game_sudoku"
+    centerElement: true
 - tapOn:
     id: "game_sudoku"
 - tapOn:

@@ -3,6 +3,10 @@ name: Custom killer - draw cages with sums, then play it
 ---
 - launchApp:
     clearState: true
+- scrollUntilVisible:
+    element:
+      id: "game_sudoku"
+    centerElement: true
 - tapOn:
     id: "game_sudoku"
 - tapOn:

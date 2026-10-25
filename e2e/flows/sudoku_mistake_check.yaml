@@ -16,6 +16,10 @@ tags:
     text: "Mistakes: 1"
 - launchApp:
     clearState: true
+- scrollUntilVisible:
+    element:
+      id: "game_sudoku"
+    centerElement: true
 - tapOn:
     id: "game_sudoku"
 - tapOn:
@@ -38,6 +42,10 @@ tags:
     text: "Mistakes: 1"
 - launchApp:
     stopApp: true
+- scrollUntilVisible:
+    element:
+      id: "game_sudoku"
+    centerElement: true
 - tapOn:
     id: "game_sudoku"
 - tapOn:

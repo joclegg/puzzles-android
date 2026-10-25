@@ -12,6 +12,10 @@ name: Sightlines - a puzzle in progress survives the app being closed
     text: "50%"
 - launchApp:
     stopApp: true
+- scrollUntilVisible:
+    element:
+      id: "game_sightlines"
+    centerElement: true
 - tapOn:
     id: "game_sightlines"
 - tapOn:

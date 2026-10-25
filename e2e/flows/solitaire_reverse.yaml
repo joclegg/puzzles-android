@@ -3,6 +3,10 @@ name: Turning on Reverse deals reverse games
 ---
 - launchApp:
     clearState: true
+- scrollUntilVisible:
+    element:
+      id: "game_solitaire"
+    centerElement: true
 - tapOn:
     id: "game_solitaire"
 - tapOn:

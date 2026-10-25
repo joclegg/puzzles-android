@@ -3,6 +3,10 @@ name: Sudoku - a past best time from another app shows on Best times
 ---
 - launchApp:
     clearState: true
+- scrollUntilVisible:
+    element:
+      id: "game_sudoku"
+    centerElement: true
 - tapOn:
     id: "game_sudoku"
 - tapOn:

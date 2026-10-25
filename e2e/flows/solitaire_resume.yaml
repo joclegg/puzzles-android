@@ -9,6 +9,10 @@ name: A game in progress, and its undo history, survive the app being closed
     id: "stock"
 - launchApp:
     stopApp: true
+- scrollUntilVisible:
+    element:
+      id: "game_solitaire"
+    centerElement: true
 - tapOn:
     id: "game_solitaire"
 - tapOn:

@@ -5,6 +5,10 @@ tags:
 ---
 - launchApp:
     clearState: true
+- scrollUntilVisible:
+    element:
+      id: "game_word_wheel"
+    centerElement: true
 - tapOn:
     id: "game_word_wheel"
 - tapOn:

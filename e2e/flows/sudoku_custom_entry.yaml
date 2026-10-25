@@ -3,6 +3,10 @@ name: Custom entry - clashes, multiple solutions, and a real puzzle
 ---
 - launchApp:
     clearState: true
+- scrollUntilVisible:
+    element:
+      id: "game_sudoku"
+    centerElement: true
 - tapOn:
     id: "game_sudoku"
 - tapOn:

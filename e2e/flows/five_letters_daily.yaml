@@ -5,6 +5,10 @@ tags:
 ---
 - launchApp:
     clearState: true
+- scrollUntilVisible:
+    element:
+      id: "game_five_letters"
+    centerElement: true
 - tapOn:
     id: "game_five_letters"
 - tapOn:
@@ -26,6 +30,10 @@ tags:
     id: "key_enter"
 - launchApp:
     stopApp: true
+- scrollUntilVisible:
+    element:
+      id: "game_five_letters"
+    centerElement: true
 - tapOn:
     id: "game_five_letters"
 - tapOn:

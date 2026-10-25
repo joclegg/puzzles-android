@@ -14,6 +14,10 @@ name: Two Tone - a puzzle in progress survives the app being closed
     text: "50%"
 - launchApp:
     stopApp: true
+- scrollUntilVisible:
+    element:
+      id: "game_two_tone"
+    centerElement: true
 - tapOn:
     id: "game_two_tone"
 - tapOn:

@@ -11,6 +11,10 @@ name: A game in progress, and its undo history, survive the app being closed
     id: "digit_4"
 - launchApp:
     stopApp: true
+- scrollUntilVisible:
+    element:
+      id: "game_sudoku"
+    centerElement: true
 - tapOn:
     id: "game_sudoku"
 - tapOn:
