@@ -14,6 +14,7 @@ import com.joclegg.puzzles.solitaire.engine.Suit
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
@@ -39,7 +40,9 @@ internal class GameViewModelHarness {
     private val settingsRepository = mockk<SettingsRepository> { every { settings } returns this@GameViewModelHarness.settings }
 
     suspend fun openGame(): GameViewModel =
-        GameViewModel(GAME_ID, games, settingsRepository, { clockMs }, { 7L }).also { it.uiState.filterNotNull().first() }
+        GameViewModel(GAME_ID, games, settingsRepository, {
+            clockMs
+        }, { 7L }, solving = Dispatchers.Main).also { it.uiState.filterNotNull().first() }
 
     private fun oneMoveToWin(): SavedGame {
         val foundations =
