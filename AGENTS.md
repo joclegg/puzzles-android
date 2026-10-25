@@ -177,6 +177,7 @@ Rules marked (lint) are enforced by `spotlessCheck`, Android Lint or the build.
 - MUST regenerate the bank with `generateBank`. MUST NOT edit the puzzle files by hand.
 - MUST get new puzzles through `PuzzleSupply`: bundled first, then the generated stock, then one made on the spot. Top-ups run in `PuzzleTopUpWorker` only when a level's stock falls below `LOW_WATERMARK`.
 - MUST keep custom puzzles out of best times.
+- MUST NOT add any screen, dialog or option for entering past best times. Past bests from other apps go straight into the `past_bests` table on the device.
 
 ### Tests
 
