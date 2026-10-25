@@ -7,7 +7,7 @@ import kotlin.test.assertEquals
 class GeneratorTest {
     @ParameterizedTest
     @ValueSource(ints = [4, 5, 6, 7, 8, 9])
-    fun `given a size when a puzzle is generated then every blue sees another, numbers are right and logic alone solves it`(size: Int) {
+    fun `given a size when a puzzle is generated then numbers are right and at most the grid size, and logic solves it`(size: Int) {
         // Act
         val puzzle = Generator.generate(size, seed = size.toLong())
 
@@ -21,6 +21,12 @@ class GeneratorTest {
                 .all { solution.seen(it) > 0 },
         )
         assertEquals(true, puzzle.numbers.all { (cell, number) -> solution.seen(cell) == number })
+        assertEquals(
+            true,
+            solution.dots.indices
+                .filter { solution.dots[it] == Dot.BLUE }
+                .all { solution.seen(it) <= size },
+        )
         assertEquals(solution, Solver.solveLogically(puzzle.givens, puzzle.numbers))
     }
 

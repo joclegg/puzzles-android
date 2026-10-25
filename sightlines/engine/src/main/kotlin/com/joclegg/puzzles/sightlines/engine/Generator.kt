@@ -47,8 +47,14 @@ object Generator {
                 },
             )
         while (true) {
-            val lonely = grid.dots.indices.firstOrNull { grid.dots[it] == Dot.BLUE && grid.seen(it) == 0 } ?: return grid
-            grid = grid.with(lonely, Dot.RED)
+            val lonely = grid.dots.indices.firstOrNull { grid.dots[it] == Dot.BLUE && grid.seen(it) == 0 }
+            if (lonely != null) {
+                grid = grid.with(lonely, Dot.RED)
+                continue
+            }
+            val crowded = grid.dots.indices.firstOrNull { grid.dots[it] == Dot.BLUE && grid.seen(it) > size } ?: return grid
+            val inView = Direction.entries.flatMap { direction -> grid.ray(crowded, direction).take(grid.seen(crowded, direction)) }
+            grid = grid.with(inView.random(random), Dot.RED)
         }
     }
 }
