@@ -59,6 +59,12 @@ fun GameRoute(
             onCardDrop = viewModel::onCardDrop,
             onUndoToWinnable = viewModel::onUndoToWinnable,
             onDismissUnwinnable = viewModel::onDismissUnwinnable,
+            onGiveUp = {
+                scope.launch {
+                    viewModel.giveUp()
+                    onHome()
+                }
+            },
             onUndo = viewModel::onUndo,
             onRestart = viewModel::onRestart,
             onNewDeal = { scope.launch { onOpenGame(viewModel.newDeal()) } },
@@ -77,6 +83,7 @@ fun GameScreen(
     onCardDrop: (Pile, Int, Pile) -> Unit,
     onUndoToWinnable: () -> Unit,
     onDismissUnwinnable: () -> Unit,
+    onGiveUp: () -> Unit,
     onUndo: () -> Unit,
     onRestart: () -> Unit,
     onNewDeal: () -> Unit,
@@ -149,6 +156,7 @@ fun GameScreen(
             },
             dismissButton = {
                 Row {
+                    TextButton(onClick = onGiveUp, modifier = Modifier.testTag("unwinnable_leave")) { Text("Leave as lost") }
                     TextButton(onClick = onDismissUnwinnable, modifier = Modifier.testTag("keep_playing")) { Text("Keep playing") }
                     TextButton(onClick = onNewDeal, modifier = Modifier.testTag("unwinnable_new_deal")) { Text("New deal") }
                 }

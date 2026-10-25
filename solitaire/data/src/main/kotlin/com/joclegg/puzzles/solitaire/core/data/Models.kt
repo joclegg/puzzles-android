@@ -7,7 +7,7 @@ import com.joclegg.puzzles.solitaire.engine.Move
 import com.joclegg.puzzles.solitaire.engine.Solver
 import java.time.LocalDate
 
-enum class GameStatus { IN_PROGRESS, WON, ABANDONED }
+enum class GameStatus { IN_PROGRESS, WON, LOST, ABANDONED }
 
 data class DealRef(
     val id: String,

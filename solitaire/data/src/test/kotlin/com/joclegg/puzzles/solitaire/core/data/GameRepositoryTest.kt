@@ -112,4 +112,20 @@ class GameRepositoryTest {
             // Assert
             assertEquals(game.copy(moves = moves, elapsedMs = 12_000), repository.get(game.id))
         }
+
+    @Test
+    fun `given a game left as lost when stats are read then it counts as played but not won, and it is no longer in progress`() =
+        runTest {
+            // Arrange
+            val game = repository.start(DealRef.random(9, DrawMode.DRAW_ONE))
+
+            // Act
+            repository.lose(game)
+
+            // Assert
+            val stats = repository.stats.first().first { it.drawMode == DrawMode.DRAW_ONE }
+            assertEquals(1 to 0, stats.played to stats.won)
+            assertEquals(GameStatus.LOST, repository.get(game.id)?.status)
+            assertEquals(emptyList<SavedGame>(), repository.inProgress.first())
+        }
 }

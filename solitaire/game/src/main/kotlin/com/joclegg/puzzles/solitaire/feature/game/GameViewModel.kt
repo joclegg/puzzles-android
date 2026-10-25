@@ -10,6 +10,7 @@ import com.joclegg.puzzles.solitaire.core.data.SettingsRepository
 import com.joclegg.puzzles.solitaire.core.ui.TableUi
 import com.joclegg.puzzles.solitaire.core.ui.title
 import com.joclegg.puzzles.solitaire.core.ui.toTableUi
+import com.joclegg.puzzles.solitaire.engine.Card
 import com.joclegg.puzzles.solitaire.engine.GameState
 import com.joclegg.puzzles.solitaire.engine.GameTimer
 import com.joclegg.puzzles.solitaire.engine.Pile
@@ -177,6 +178,15 @@ class GameViewModel(
         move { current.copy(moves = current.moves.take(lastWinnableMoves ?: 0), selection = null) }
     }
 
+    suspend fun giveUp() {
+        check?.cancel()
+        timer = timer.pause(monotonicNowMs())
+        ticker?.cancel()
+        pendingSave?.cancel()
+        val lost = snapshot() ?: return
+        withContext(NonCancellable) { games.lose(lost) }
+    }
+
     fun onDismissUnwinnable() {
         warningDismissed = true
         publish()
@@ -186,7 +196,7 @@ class GameViewModel(
         check?.cancel()
         unwinnable = false
         val current = game ?: return
-        if (!display.warnUnwinnable || current.isWon) {
+        if (!display.warnUnwinnable || current.isWon || current.board.cardCount != Card.deck.size) {
             return
         }
         val moves = current.moves.size

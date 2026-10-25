@@ -44,6 +44,10 @@ class GameRepository(
 
     suspend fun save(game: SavedGame) = dao.update(withContext(background) { game.toEntity() })
 
+    suspend fun lose(game: SavedGame) {
+        dao.update(withContext(background) { game.copy(status = GameStatus.LOST, finishedAt = now()).toEntity() })
+    }
+
     suspend fun win(game: SavedGame): Boolean {
         dao.update(withContext(background) { game.copy(status = GameStatus.WON, finishedAt = now()).toEntity() })
         val previous = dao.bestTimeExcluding(game.deal.drawMode.name, game.id)
