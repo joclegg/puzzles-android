@@ -1,0 +1,23 @@
+appId: com.joclegg.puzzles
+name: Daily puzzle - shows its level, starts it, and resumes it the same day
+---
+- launchApp:
+    clearState: true
+- tapOn:
+    id: "game_sudoku"
+- assertVisible:
+    text: "Daily puzzle · .*"
+    childOf:
+      id: "daily"
+- tapOn:
+    id: "daily"
+- assertVisible:
+    id: "game_title"
+- tapOn:
+    id: "back"
+- tapOn:
+    id: "daily"
+- assertNotVisible:
+    id: "resume_dialog"
+- assertVisible:
+    id: "timer"

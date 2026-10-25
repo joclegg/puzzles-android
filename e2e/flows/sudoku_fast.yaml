@@ -1,0 +1,43 @@
+appId: com.joclegg.puzzles
+name: Fast - a 6x6 board with numbers 1 to 6, in classic and killer
+---
+- launchApp:
+    clearState: true
+    arguments:
+      fixture: "fast_one_left"
+- assertVisible:
+    id: "game_title"
+    text: "Classic · Fast"
+- assertVisible:
+    id: "cell_r6c6"
+- assertNotVisible:
+    id: "cell_r7c1"
+- assertVisible:
+    id: "digit_6"
+- assertNotVisible:
+    id: "digit_7"
+- tapOn:
+    id: "cell_r1c3"
+- tapOn:
+    id: "digit_3"
+- assertVisible: "Great job"
+- tapOn:
+    id: "solved_screen"
+    optional: true
+- tapOn:
+    id: "stats"
+- assertVisible:
+    id: "best_classic_fast_solved"
+    text: "1"
+- back
+- tapOn:
+    id: "mode_killer"
+- tapOn:
+    id: "level_fast"
+- assertVisible:
+    id: "game_title"
+    text: "Killer · Fast"
+- assertVisible:
+    id: "cell_r6c6"
+- assertNotVisible:
+    id: "cell_r7c1"

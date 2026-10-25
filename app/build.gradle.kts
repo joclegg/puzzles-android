@@ -1,0 +1,73 @@
+plugins {
+    alias(libs.plugins.puzzles.android.application)
+    alias(libs.plugins.puzzles.android.compose)
+}
+
+val releaseKeystore = providers.environmentVariable("PUZZLES_KEYSTORE").orNull
+
+android {
+    namespace = "com.joclegg.puzzles"
+    defaultConfig {
+        applicationId = "com.joclegg.puzzles"
+        versionCode = providers.gradleProperty("versionCode").orNull?.toInt() ?: 1
+        versionName = providers.gradleProperty("versionName").orNull ?: "0.1.0"
+    }
+    signingConfigs {
+        create("release") {
+            if (releaseKeystore != null) {
+                storeFile = file(releaseKeystore)
+                storePassword = providers.environmentVariable("PUZZLES_KEYSTORE_PASSWORD").get()
+                keyAlias = providers.environmentVariable("PUZZLES_KEY_ALIAS").get()
+                keyPassword = providers.environmentVariable("PUZZLES_KEY_PASSWORD").get()
+            }
+        }
+    }
+    buildTypes {
+        release {
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
+            signingConfig =
+                if (releaseKeystore != null) {
+                    signingConfigs.getByName("release")
+                } else {
+                    signingConfigs.getByName("debug")
+                }
+        }
+    }
+}
+
+dependencies {
+    implementation(projects.sudoku.data)
+    implementation(projects.sudoku.ui)
+    implementation(projects.sudoku.game)
+    implementation(projects.sudoku.home)
+    implementation(projects.sudoku.stats)
+    implementation(projects.sudoku.settings)
+    implementation(projects.solitaire.data)
+    implementation(projects.solitaire.ui)
+    implementation(projects.solitaire.game)
+    implementation(projects.solitaire.home)
+    implementation(projects.solitaire.stats)
+    implementation(projects.solitaire.settings)
+    implementation(projects.twotone.data)
+    implementation(projects.twotone.ui)
+    implementation(projects.twotone.game)
+    implementation(projects.twotone.home)
+    implementation(projects.twotone.stats)
+    implementation(projects.twotone.settings)
+    implementation(projects.sightlines.data)
+    implementation(projects.sightlines.ui)
+    implementation(projects.sightlines.game)
+    implementation(projects.sightlines.home)
+    implementation(projects.sightlines.stats)
+    implementation(projects.sightlines.settings)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.work.runtime)
+}

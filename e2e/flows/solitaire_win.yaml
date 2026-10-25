@@ -1,0 +1,25 @@
+appId: com.joclegg.puzzles
+name: Putting the last card up wins, records a best time and shows in stats and history
+---
+- launchApp:
+    clearState: true
+    arguments:
+      fixture: "one_move_to_win"
+- tapOn:
+    id: "card_KS"
+- assertVisible:
+    id: "won_dialog"
+- assertVisible:
+    id: "new_best"
+- tapOn:
+    id: "won_home"
+- tapOn:
+    id: "stats"
+- assertVisible:
+    id: "draw_one_won"
+    text: "1"
+- tapOn:
+    id: "back"
+- tapOn:
+    id: "history"
+- assertVisible: "Won · 1 moves"

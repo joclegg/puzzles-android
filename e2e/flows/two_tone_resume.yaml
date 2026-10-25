@@ -1,0 +1,23 @@
+appId: com.joclegg.puzzles
+name: Two Tone - a puzzle in progress survives the app being closed
+---
+- launchApp:
+    clearState: true
+    arguments:
+      fixture: "two_tone_two_left"
+- tapOn:
+    id: "tile_r1c2"
+- tapOn:
+    id: "tile_r1c2"
+- assertVisible:
+    id: "progress"
+    text: "50%"
+- launchApp:
+    stopApp: true
+- tapOn:
+    id: "game_two_tone"
+- tapOn:
+    id: "continue"
+- assertVisible:
+    id: "progress"
+    text: "50%"

@@ -1,0 +1,18 @@
+appId: com.joclegg.puzzles
+name: Turning on Reverse deals reverse games
+---
+- launchApp:
+    clearState: true
+- tapOn:
+    id: "game_solitaire"
+- tapOn:
+    id: "settings"
+- tapOn:
+    id: "setting_reverse"
+- tapOn:
+    id: "back"
+- tapOn:
+    id: "play"
+- assertVisible:
+    id: "game_title"
+    text: "Draw 1 · Reverse"

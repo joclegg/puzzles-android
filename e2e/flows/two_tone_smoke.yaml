@@ -1,0 +1,16 @@
+appId: com.joclegg.puzzles
+name: Two Tone - start a 6 x 6 puzzle
+tags:
+  - fast
+---
+- launchApp:
+    clearState: true
+- tapOn:
+    id: "game_two_tone"
+- tapOn:
+    id: "size_6"
+- assertVisible:
+    id: "tile_r6c6"
+- assertVisible:
+    id: "game_title"
+    text: "6 x 6"

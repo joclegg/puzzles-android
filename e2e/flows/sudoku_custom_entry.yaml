@@ -1,0 +1,50 @@
+appId: com.joclegg.puzzles
+name: Custom entry - clashes, multiple solutions, and a real puzzle
+---
+- launchApp:
+    clearState: true
+- tapOn:
+    id: "game_sudoku"
+- tapOn:
+    id: "enter_puzzle"
+- tapOn:
+    id: "cell_r1c1"
+- tapOn:
+    id: "digit_5"
+- tapOn:
+    id: "cell_r1c2"
+- tapOn:
+    id: "digit_5"
+- tapOn:
+    id: "fix_puzzle"
+- assertVisible:
+    id: "entry_problem"
+- tapOn:
+    id: "cell_r1c2"
+- tapOn:
+    id: "erase"
+- tapOn:
+    id: "fix_puzzle"
+- assertVisible:
+    id: "unverified_dialog"
+- tapOn: "Keep editing"
+- launchApp:
+    arguments:
+      draft: "classic_easy_missing_r1c1"
+- tapOn:
+    id: "enter_puzzle"
+- tapOn:
+    id: "cell_r1c1"
+- tapOn:
+    id: "digit_5"
+- tapOn:
+    id: "fix_puzzle"
+- assertVisible:
+    id: "game_title"
+    text: "Custom · Easy"
+- assertVisible:
+    text: "5"
+    childOf:
+      id: "cell_r1c1"
+- assertVisible:
+    id: "timer"

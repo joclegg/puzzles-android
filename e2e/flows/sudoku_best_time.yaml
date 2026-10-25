@@ -1,0 +1,30 @@
+appId: com.joclegg.puzzles
+name: Completing a puzzle records a best time and history entry
+---
+- launchApp:
+    clearState: true
+    arguments:
+      fixture: "classic_one_left"
+- tapOn:
+    id: "cell_r1c3"
+- tapOn:
+    id: "digit_4"
+- assertVisible:
+    id: "solved_screen"
+- assertVisible:
+    id: "new_best"
+- extendedWaitUntil:
+    visible:
+      id: "stats"
+    timeout: 15000
+- tapOn:
+    id: "stats"
+- assertVisible:
+    id: "best_classic_easy_solved"
+    text: "1"
+- back
+- tapOn:
+    id: "history"
+- assertVisible:
+    id: "history_item"
+- assertVisible: "Classic · Easy"
