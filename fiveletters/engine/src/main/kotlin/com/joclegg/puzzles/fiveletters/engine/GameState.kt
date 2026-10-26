@@ -81,7 +81,7 @@ data class GameState(
         val rejected =
             when {
                 typing.length < WORD_LENGTH -> Rejection.TOO_SHORT
-                !words.isAllowed(typing) -> Rejection.NOT_A_WORD
+                typing != answer && !words.isAllowed(typing) -> Rejection.NOT_A_WORD
                 hardMode && !usesHints(typing) -> Rejection.MUST_USE_HINTS
                 else -> null
             }

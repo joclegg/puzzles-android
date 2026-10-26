@@ -27,9 +27,9 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                 onVariants { variant ->
                     val name = variant.name.replaceFirstChar { it.uppercase() }
                     val verify =
-                        tasks.register("verify${name}NoInternet", NoInternetPermissionTask::class.java) {
+                        tasks.register("verify${name}Permissions", NetworkPermissionTask::class.java) {
                             mergedManifest.set(variant.artifacts.get(SingleArtifact.MERGED_MANIFEST))
-                            report.set(layout.buildDirectory.file("reports/no-internet/${variant.name}.txt"))
+                            report.set(layout.buildDirectory.file("reports/permissions/${variant.name}.txt"))
                         }
                     tasks.named("check") { dependsOn(verify) }
                     tasks.matching { it.name == "assemble$name" }.configureEach { dependsOn(verify) }

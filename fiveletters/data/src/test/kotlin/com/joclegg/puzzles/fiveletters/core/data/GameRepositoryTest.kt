@@ -10,6 +10,7 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.time.LocalDate
 
 @RunWith(AndroidJUnit4::class)
 class GameRepositoryTest {
@@ -74,5 +75,19 @@ class GameRepositoryTest {
             // Assert
             assertEquals(GameStatus.ABANDONED, repository.get(first.id)?.status)
             assertEquals(2, repository.inProgress.first().size)
+        }
+
+    @Test
+    fun `given the daily and a practice game in progress when the NY Times daily starts then both are kept`() =
+        runTest {
+            // Arrange
+            repository.start(WordRef("daily_2026-10-26", "SLATE"), hardMode = false)
+            repository.start(WordRef("practice_1", "CRANE"), hardMode = false)
+
+            // Act
+            repository.start(WordRef.nyt(LocalDate.of(2026, 10, 26), "GEEKY"), hardMode = false)
+
+            // Assert
+            assertEquals(3, repository.inProgress.first().size)
         }
 }
