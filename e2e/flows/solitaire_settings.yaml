@@ -21,6 +21,10 @@ name: Turning off the timer in settings hides it in the game
 - waitForAnimationToEnd
 - tapOn:
     id: "play"
+- extendedWaitUntil:
+    visible:
+      id: "stock"
+    timeout: 60000
 - waitForAnimationToEnd
 - assertVisible:
     id: "stock"

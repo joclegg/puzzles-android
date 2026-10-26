@@ -13,6 +13,10 @@ name: Tapping New game with a game in progress offers Resume or New deal
 - waitForAnimationToEnd
 - tapOn:
     id: "play"
+- extendedWaitUntil:
+    visible:
+      id: "stock"
+    timeout: 60000
 - waitForAnimationToEnd
 - tapOn:
     id: "stock"

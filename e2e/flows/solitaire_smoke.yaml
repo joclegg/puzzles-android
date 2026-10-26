@@ -16,6 +16,10 @@ tags:
 - assertVisible: "Solitaire"
 - tapOn:
     id: "play"
+- extendedWaitUntil:
+    visible:
+      id: "stock"
+    timeout: 60000
 - waitForAnimationToEnd
 - assertVisible:
     id: "stock"
