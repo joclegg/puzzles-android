@@ -114,4 +114,13 @@ class GameStateTest {
         assertEquals(true, words[0] != words[2])
         assertEquals(8, Words.dayNumber(day))
     }
+
+    @Test
+    fun `given an answer missing from the word list when it is guessed then it is accepted and wins`() {
+        // Act
+        val after = GameState("GEEKY").enter("geeky")
+
+        // Assert
+        assertEquals(true, after.isWon)
+    }
 }

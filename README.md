@@ -1,6 +1,6 @@
 # Puzzles
 
-An offline puzzle app for Android with eight games:
+A puzzle app for Android that plays offline, with eight games:
 
 - **Sudoku**: classic and killer, from a 6x6 Fast level to Evil, graded by the solving techniques a puzzle needs. Notes, undo, mistake checking, a daily puzzle with medals, best times and history, and custom puzzle entry.
 - **Solitaire**: Klondike, Draw 1 or Draw 3, with an optional reverse mode (kings first, columns build up). One tap to move, unlimited undo, a daily deal, stats and history.
@@ -11,7 +11,7 @@ An offline puzzle app for Android with eight games:
 - **Slide Out**: slide the blocks to free the red one (like Unblock Me). Beginner to Expert, graded by the fewest moves, with par, hints and undo.
 - **Word Wheel**: swipe the letters on the wheel to fill a small crossword (like Word Trip). Bonus words, shuffle and letter hints.
 
-Fully offline: no account, no ads, no internet permission.
+Plays fully offline: no account, no ads. The one exception is Five Letters' NY Times daily, which fetches that day's Wordle answer.
 
 See [`AGENTS.md`](AGENTS.md) for commands and coding rules.
 
