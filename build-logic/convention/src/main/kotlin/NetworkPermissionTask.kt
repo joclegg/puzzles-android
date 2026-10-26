@@ -7,7 +7,7 @@ import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 
-abstract class NoInternetPermissionTask : DefaultTask() {
+abstract class NetworkPermissionTask : DefaultTask() {
     @get:InputFile
     @get:PathSensitive(PathSensitivity.NONE)
     abstract val mergedManifest: RegularFileProperty
@@ -18,9 +18,11 @@ abstract class NoInternetPermissionTask : DefaultTask() {
     @TaskAction
     fun verify() {
         val manifest = mergedManifest.get().asFile.readText()
-        val banned = listOf("android.permission.INTERNET", "android.permission.ACCESS_NETWORK_STATE").filter { it in manifest }
+        val banned = listOf("android.permission.ACCESS_NETWORK_STATE").filter { it in manifest }
         if (banned.isNotEmpty()) {
-            throw GradleException("Merged manifest requests $banned, but the app must stay offline. Remove it with tools:node=\"remove\".")
+            throw GradleException(
+                "Merged manifest requests $banned, but the app only needs INTERNET for the opt-in NYT word. Remove it with tools:node=\"remove\".",
+            )
         }
         report.get().asFile.writeText("OK\n")
     }

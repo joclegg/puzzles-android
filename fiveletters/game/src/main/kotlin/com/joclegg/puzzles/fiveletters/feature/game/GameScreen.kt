@@ -113,7 +113,7 @@ fun GameScreen(
             }
         }
         Spacer(Modifier.height(12.dp))
-        WordBoard(state.board, Modifier.weight(1f).padding(horizontal = 48.dp))
+        WordBoard(state.board, Modifier.weight(1f, fill = false).padding(horizontal = 12.dp))
         Text(
             state.message.orEmpty(),
             style = MaterialTheme.typography.titleSmall,

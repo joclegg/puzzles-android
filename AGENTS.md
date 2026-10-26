@@ -66,10 +66,11 @@ Rules marked (lint) are enforced by `spotlessCheck`, Android Lint or the build.
 
 ### Offline
 
-- MUST keep the app fully offline. MUST NOT add the `INTERNET` or `ACCESS_NETWORK_STATE` permission. (lint: `verify<Variant>NoInternet`)
-- MUST NOT add analytics, crash reporting, ads, cloud sync or any network library.
+- MUST keep every game playable offline. The only network call is the opt-in New York Times word for the Five Letters daily (`NytWordSource`), which falls back to the bundled daily word when it fails. MUST NOT add any other network call.
+- MUST NOT add the `ACCESS_NETWORK_STATE` permission. `INTERNET` is allowed only for the NYT word. (lint: `verify<Variant>Permissions`)
+- MUST NOT add analytics, crash reporting, ads, cloud sync or any network library. Use the JDK's `HttpURLConnection`.
 - MUST keep all data on the device, in Room or DataStore.
-- MUST pick daily sudoku puzzles locally from the bundled bank, deal daily solitaire games locally, seeded by date (`DealRef.daily`), generate daily Two Tone and Sightlines puzzles locally, seeded by date (`PuzzleRef.daily`), and pick the daily Five Letters word locally from the bundled list (`Words.daily`). MUST NOT fetch another service's daily word.
+- MUST pick daily sudoku puzzles locally from the bundled bank, deal daily solitaire games locally, seeded by date (`DealRef.daily`), generate daily Two Tone and Sightlines puzzles locally, seeded by date (`PuzzleRef.daily`), and pick the daily Five Letters word locally from the bundled list (`Words.daily`), unless the player turns on the NYT word in Five Letters' Settings.
 
 ### Modules
 

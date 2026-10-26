@@ -5,6 +5,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
 import com.joclegg.puzzles.fiveletters.core.data.GameDatabase
 import com.joclegg.puzzles.fiveletters.core.data.GameRepository
+import com.joclegg.puzzles.fiveletters.core.data.NytWordSource
 import com.joclegg.puzzles.fiveletters.core.data.SettingsRepository
 import com.joclegg.puzzles.fiveletters.engine.Words
 import kotlinx.coroutines.Dispatchers
@@ -24,6 +25,7 @@ class FiveLettersContainer(
     val settings = SettingsRepository(context.fiveLettersSettingsStore)
     val newSeed: () -> Long = { Random.nextLong() }
     val today: () -> LocalDate = LocalDate::now
+    val nytWords = NytWordSource()
 
     private val loading = Mutex()
     private var loaded: Words? = null

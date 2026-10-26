@@ -43,6 +43,7 @@ object FiveLettersRoutes {
                             container::words,
                             container.newSeed,
                             container.today,
+                            container.nytWords,
                         )
                     },
                 onOpenGame = { navController.openFiveLettersGame(it) },

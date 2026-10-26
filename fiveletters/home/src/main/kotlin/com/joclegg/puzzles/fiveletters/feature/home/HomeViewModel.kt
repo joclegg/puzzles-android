@@ -2,6 +2,7 @@ package com.joclegg.puzzles.fiveletters.feature.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.joclegg.puzzles.fiveletters.core.data.DailyWordSource
 import com.joclegg.puzzles.fiveletters.core.data.GameRepository
 import com.joclegg.puzzles.fiveletters.core.data.GameStatus
 import com.joclegg.puzzles.fiveletters.core.data.SavedGame
@@ -29,6 +30,7 @@ class HomeViewModel(
     private val words: suspend () -> Words,
     private val newSeed: () -> Long,
     private val today: () -> LocalDate,
+    private val nytWords: DailyWordSource,
 ) : ViewModel() {
     val uiState: StateFlow<HomeUiState> =
         combine(games.inProgress, games.history) { inProgress, history ->
@@ -44,7 +46,17 @@ class HomeViewModel(
         val date = today()
         val dailyId = WordRef.dailyId(date)
         val existing = games.history.first().find { it.ref.id == dailyId && it.status != GameStatus.ABANDONED }
-        return existing?.id ?: games.start(WordRef.daily(words(), date), settings.settings.first().hardMode).id
+        if (existing != null) {
+            return existing.id
+        }
+        val current = settings.settings.first()
+        val nytWord =
+            if (current.nytWord) {
+                nytWords.word(date)
+            } else {
+                null
+            }
+        return games.start(WordRef.daily(words(), date, nytWord), current.hardMode).id
     }
 
     suspend fun startPractice(): Long = games.start(WordRef.practice(words(), newSeed()), settings.settings.first().hardMode).id

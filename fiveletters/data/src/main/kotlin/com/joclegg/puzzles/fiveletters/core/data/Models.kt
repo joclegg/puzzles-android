@@ -28,7 +28,8 @@ data class WordRef(
         fun daily(
             words: Words,
             date: LocalDate,
-        ) = WordRef(dailyId(date), words.daily(date))
+            nytWord: String? = null,
+        ) = WordRef(dailyId(date), nytWord ?: words.daily(date))
 
         fun practice(
             words: Words,
