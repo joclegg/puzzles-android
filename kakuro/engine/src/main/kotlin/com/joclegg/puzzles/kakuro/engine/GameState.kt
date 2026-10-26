@@ -168,6 +168,9 @@ data class GameState(
         digit: Int,
     ): GameState {
         if (notesMode) {
+            if (values[cell] != 0) {
+                return this
+            }
             return set(cell, 0, notes[cell] xor Combinations.bit(digit))
         }
         if (values[cell] == digit) {

@@ -1,5 +1,10 @@
 package com.joclegg.puzzles.kakuro.feature.game
 
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joclegg.puzzles.kakuro.core.data.GameRepository
@@ -39,7 +44,7 @@ data class GameUiState(
     val doneDigits: Set<Int>,
     val mistakes: Int,
     val showMistakeCount: Boolean,
-    val combinations: List<String>,
+    val combinations: List<AnnotatedString>,
     val canUndo: Boolean,
     val canRedo: Boolean = false,
     val markActive: Boolean = false,
@@ -237,8 +242,29 @@ class GameViewModel(
                                 } else {
                                     "Down"
                                 }
-                            "$direction ${run.sum} in ${run.cells.size}: " +
-                                masks.joinToString("  ") { Combinations.digitsOf(it).joinToString("") }.ifEmpty { "none fit" }
+                            val placed =
+                                run.cells
+                                    .map { current.values[it] }
+                                    .filter { it != 0 }
+                                    .toSet()
+                            buildAnnotatedString {
+                                append("$direction ${run.sum} in ${run.cells.size}: ")
+                                if (masks.isEmpty()) {
+                                    append("none fit")
+                                }
+                                masks.forEachIndexed { index, mask ->
+                                    if (index > 0) {
+                                        append("  ")
+                                    }
+                                    Combinations.digitsOf(mask).forEach { digit ->
+                                        if (digit in placed) {
+                                            withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("$digit") }
+                                        } else {
+                                            append("$digit")
+                                        }
+                                    }
+                                }
+                            }
                         }
                     } else {
                         emptyList()
