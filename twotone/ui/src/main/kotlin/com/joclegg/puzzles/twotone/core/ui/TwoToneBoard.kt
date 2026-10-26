@@ -19,6 +19,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
@@ -34,6 +35,7 @@ data class BoardUi(
     val broken: Set<Int> = emptySet(),
     val hintLine: Set<Int> = emptySet(),
     val hintTargets: Set<Int> = emptySet(),
+    val showGivens: Boolean = false,
 )
 
 fun GameState.toBoardUi(markBrokenRules: Boolean): BoardUi {
@@ -144,6 +146,16 @@ private fun TileView(
                 .clip(TileShape)
                 .background(face),
         ) {
+            if (given && board.showGivens) {
+                Box(
+                    Modifier
+                        .align(Alignment.Center)
+                        .size(6.dp)
+                        .clip(CircleShape)
+                        .background(Color.White.copy(alpha = 0.6f))
+                        .testTag("given_marker"),
+                )
+            }
         }
     }
 }

@@ -230,7 +230,12 @@ class GameViewModel(
                 digitFirst = current.inputMode == InputMode.DIGIT_FIRST,
                 eraserActive = current.eraserActive,
                 activeDigit = current.activeDigit,
-                doneDigits = (1..MAX_DIGIT).filter(current::isDigitDone).toSet(),
+                doneDigits =
+                    if (display.greyUsedDigits) {
+                        (1..MAX_DIGIT).filter(current::isDigitDone).toSet()
+                    } else {
+                        emptySet()
+                    },
                 mistakes = current.mistakes,
                 showMistakeCount = display.showMistakeCount && current.mistakeCheck != MistakeCheck.OFF,
                 combinations =

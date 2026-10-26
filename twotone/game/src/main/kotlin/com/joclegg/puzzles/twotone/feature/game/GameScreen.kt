@@ -22,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -85,6 +86,7 @@ fun GameScreen(
 ) {
     var menuOpen by remember { mutableStateOf(false) }
     var rulesOpen by remember { mutableStateOf(false) }
+    var showGivens by rememberSaveable { mutableStateOf(false) }
     Column(modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         Row(Modifier.fillMaxWidth().padding(horizontal = 4.dp), verticalAlignment = Alignment.CenterVertically) {
             BackButton(onHome)
@@ -101,6 +103,16 @@ fun GameScreen(
                 }
             }
             ToolButton(TwoToneIcons.Undo, "Undo the last tap", onUndo, tag = "undo", enabled = state.canUndo)
+            ToolButton(
+                TwoToneIcons.StartingTiles,
+                if (showGivens) {
+                    "Hide the starting tiles"
+                } else {
+                    "Show the starting tiles"
+                },
+                { showGivens = !showGivens },
+                tag = "starting_tiles",
+            )
             ToolButton(TwoToneIcons.Hint, "Show a hint", onHint, tag = "hint", enabled = !state.solved)
             ToolButton(TwoToneIcons.Rules, "Show the rules", { rulesOpen = true }, tag = "rules")
             Column {
@@ -137,7 +149,7 @@ fun GameScreen(
             }
         }
         Spacer(Modifier.height(24.dp))
-        TwoToneBoard(state.board, onTileClick, Modifier.fillMaxWidth().padding(horizontal = 12.dp))
+        TwoToneBoard(state.board.copy(showGivens = showGivens), onTileClick, Modifier.fillMaxWidth().padding(horizontal = 12.dp))
         Spacer(Modifier.height(16.dp))
         if (state.pickColour) {
             ColourPicker(state.colour, onColourClick)

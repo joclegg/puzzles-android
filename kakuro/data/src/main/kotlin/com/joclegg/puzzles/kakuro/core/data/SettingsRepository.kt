@@ -19,6 +19,7 @@ enum class Toggle(
     HIGHLIGHT_RUNS(Settings::highlightRuns),
     SHOW_TIMER(Settings::showTimer),
     SHOW_COMBINATIONS(Settings::showCombinations, default = false),
+    GREY_USED_DIGITS(Settings::greyUsedDigits),
 }
 
 data class Settings(
@@ -29,6 +30,7 @@ data class Settings(
     val highlightRuns: Boolean = true,
     val showTimer: Boolean = true,
     val showCombinations: Boolean = false,
+    val greyUsedDigits: Boolean = true,
 )
 
 class SettingsRepository(
@@ -46,6 +48,7 @@ class SettingsRepository(
                 highlightRuns = on(Toggle.HIGHLIGHT_RUNS),
                 showTimer = on(Toggle.SHOW_TIMER),
                 showCombinations = on(Toggle.SHOW_COMBINATIONS),
+                greyUsedDigits = on(Toggle.GREY_USED_DIGITS),
             )
         }
 

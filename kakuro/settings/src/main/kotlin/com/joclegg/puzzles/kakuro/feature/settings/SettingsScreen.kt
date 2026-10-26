@@ -114,6 +114,13 @@ fun SettingsScreen(
                     "Sum helper",
                     detail = "List the digit combinations that still fit the selected cell's runs.",
                 )
+                ToggleRow(
+                    settings,
+                    Toggle.GREY_USED_DIGITS,
+                    onToggle,
+                    "Grey out used-up numbers",
+                    detail = "Dim a number on the pad once every cell that needs it has it.",
+                )
             }
         }
     }
