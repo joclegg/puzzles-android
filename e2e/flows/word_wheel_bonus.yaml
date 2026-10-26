@@ -5,6 +5,7 @@ name: Word Wheel - a real word that isn't in the crossword counts as a bonus
     clearState: true
     arguments:
       fixture: "word_wheel_two_words"
+- waitForAnimationToEnd
 - tapOn:
     id: "wheel_letter_4"
 - tapOn:

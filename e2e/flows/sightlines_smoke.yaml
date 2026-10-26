@@ -5,14 +5,17 @@ tags:
 ---
 - launchApp:
     clearState: true
+- waitForAnimationToEnd
 - scrollUntilVisible:
     element:
       id: "game_sightlines"
     centerElement: true
 - tapOn:
     id: "game_sightlines"
+- waitForAnimationToEnd
 - tapOn:
     id: "size_6"
+- waitForAnimationToEnd
 - assertVisible:
     id: "dot_r6c6"
 - assertVisible:

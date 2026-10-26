@@ -7,6 +7,7 @@ tags:
     clearState: true
     arguments:
       fixture: "classic_easy"
+- waitForAnimationToEnd
 - tapOn:
     id: "cell_r1c3"
 - tapOn:

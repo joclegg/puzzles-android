@@ -3,20 +3,25 @@ name: Turning on Reverse deals reverse games
 ---
 - launchApp:
     clearState: true
+- waitForAnimationToEnd
 - scrollUntilVisible:
     element:
       id: "game_solitaire"
     centerElement: true
 - tapOn:
     id: "game_solitaire"
+- waitForAnimationToEnd
 - tapOn:
     id: "settings"
+- waitForAnimationToEnd
 - tapOn:
     id: "setting_reverse"
 - tapOn:
     id: "back"
+- waitForAnimationToEnd
 - tapOn:
     id: "play"
+- waitForAnimationToEnd
 - assertVisible:
     id: "game_title"
     text: "Draw 1 · Reverse"

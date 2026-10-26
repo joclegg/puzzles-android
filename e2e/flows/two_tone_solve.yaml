@@ -7,6 +7,7 @@ tags:
     clearState: true
     arguments:
       fixture: "two_tone_one_left"
+- waitForAnimationToEnd
 - tapOn:
     id: "tile_r1c2"
 - tapOn:
@@ -17,8 +18,10 @@ tags:
     id: "new_best"
 - tapOn:
     id: "solved_home"
+- waitForAnimationToEnd
 - tapOn:
     id: "stats"
+- waitForAnimationToEnd
 - assertVisible:
     id: "size_4_solved"
     text: "1/1"

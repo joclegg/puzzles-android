@@ -3,19 +3,23 @@ name: Kakuro - with Number first on, picking a digit then a cell fills it
 ---
 - launchApp:
     clearState: true
+- waitForAnimationToEnd
 - scrollUntilVisible:
     element:
       id: "game_kakuro"
     centerElement: true
 - tapOn:
     id: "game_kakuro"
+- waitForAnimationToEnd
 - tapOn:
     id: "settings"
+- waitForAnimationToEnd
 - tapOn:
     id: "setting_digit_first"
 - launchApp:
     arguments:
       fixture: "kakuro_one_left"
+- waitForAnimationToEnd
 - tapOn:
     id: "digit_4"
 - tapOn:

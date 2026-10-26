@@ -5,6 +5,7 @@ name: Sightlines - a number shows how many blue dots it sees now
     clearState: true
     arguments:
       fixture: "sightlines_two_left"
+- waitForAnimationToEnd
 - assertVisible:
     id: "dot_r1c1_seen"
     text: "1"

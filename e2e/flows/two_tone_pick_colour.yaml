@@ -3,19 +3,23 @@ name: Two Tone - with Pick a colour on, picking blue and tapping fills the last 
 ---
 - launchApp:
     clearState: true
+- waitForAnimationToEnd
 - scrollUntilVisible:
     element:
       id: "game_two_tone"
     centerElement: true
 - tapOn:
     id: "game_two_tone"
+- waitForAnimationToEnd
 - tapOn:
     id: "settings"
+- waitForAnimationToEnd
 - tapOn:
     id: "setting_pick_colour"
 - launchApp:
     arguments:
       fixture: "two_tone_one_left"
+- waitForAnimationToEnd
 - tapOn:
     id: "colour_blue"
 - tapOn:

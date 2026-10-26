@@ -5,6 +5,7 @@ name: Puzzle menu - restart clears entries, show solution fills the board and en
     clearState: true
     arguments:
       fixture: "classic_easy"
+- waitForAnimationToEnd
 - tapOn:
     id: "cell_r1c3"
 - tapOn:
@@ -33,6 +34,8 @@ name: Puzzle menu - restart clears entries, show solution fills the board and en
     id: "solution_shown"
 - tapOn:
     id: "back"
+- waitForAnimationToEnd
 - tapOn:
     id: "history"
+- waitForAnimationToEnd
 - assertVisible: ".*Solution shown.*"

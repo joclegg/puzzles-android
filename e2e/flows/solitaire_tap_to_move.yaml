@@ -7,6 +7,7 @@ tags:
     clearState: true
     arguments:
       fixture: "simple"
+- waitForAnimationToEnd
 - tapOn:
     id: "card_AH"
 - assertVisible:

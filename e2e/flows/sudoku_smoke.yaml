@@ -5,15 +5,18 @@ tags:
 ---
 - launchApp:
     clearState: true
+- waitForAnimationToEnd
 - scrollUntilVisible:
     element:
       id: "game_sudoku"
     centerElement: true
 - tapOn:
     id: "game_sudoku"
+- waitForAnimationToEnd
 - assertVisible: "Sudoku"
 - tapOn:
     id: "level_easy"
+- waitForAnimationToEnd
 - assertVisible:
     id: "cell_r1c1"
 - assertVisible:

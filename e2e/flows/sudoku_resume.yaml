@@ -5,20 +5,24 @@ name: A game in progress, and its undo history, survive the app being closed
     clearState: true
     arguments:
       fixture: "classic_easy"
+- waitForAnimationToEnd
 - tapOn:
     id: "cell_r1c3"
 - tapOn:
     id: "digit_4"
 - launchApp:
     stopApp: true
+- waitForAnimationToEnd
 - scrollUntilVisible:
     element:
       id: "game_sudoku"
     centerElement: true
 - tapOn:
     id: "game_sudoku"
+- waitForAnimationToEnd
 - tapOn:
     id: "continue"
+- waitForAnimationToEnd
 - assertVisible:
     text: "4"
     childOf:
