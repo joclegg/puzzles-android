@@ -14,6 +14,9 @@ var SemanticsPropertyReceiver.cellGiven by CellGivenKey
 val CellWrongKey = SemanticsPropertyKey<Boolean>("CellWrong")
 var SemanticsPropertyReceiver.cellWrong by CellWrongKey
 
+val CellMarkedKey = SemanticsPropertyKey<Boolean>("CellMarked")
+var SemanticsPropertyReceiver.cellMarked by CellMarkedKey
+
 val CageWrongKey = SemanticsPropertyKey<Boolean>("CageWrong")
 var SemanticsPropertyReceiver.cageWrong by CageWrongKey
 

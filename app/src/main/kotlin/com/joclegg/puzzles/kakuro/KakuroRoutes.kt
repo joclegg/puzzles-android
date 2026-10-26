@@ -59,6 +59,7 @@ object KakuroRoutes {
                         )
                     },
                 onOpenGame = { navController.openKakuroGame(it) },
+                onSettings = { navController.navigate(SettingsHub.route(SettingsTab.KAKURO)) },
                 onHome = { navController.popBackStack(HOME, inclusive = false) },
             )
         }

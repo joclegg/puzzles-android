@@ -52,6 +52,7 @@ object TwoToneRoutes {
                         GameViewModel(id, container.games, container.settings, SystemClock::elapsedRealtime, container.newSeed)
                     },
                 onOpenGame = { navController.openTwoToneGame(it) },
+                onSettings = { navController.navigate(SettingsHub.route(SettingsTab.TWO_TONE)) },
                 onHome = { navController.popBackStack(HOME, inclusive = false) },
             )
         }

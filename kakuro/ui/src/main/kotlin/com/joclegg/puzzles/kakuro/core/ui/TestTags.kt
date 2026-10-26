@@ -13,6 +13,9 @@ fun Modifier.dialogTestTags(): Modifier = semantics { testTagsAsResourceId = tru
 val CellWrongKey = SemanticsPropertyKey<Boolean>("CellWrong")
 var SemanticsPropertyReceiver.cellWrong by CellWrongKey
 
+val CellMarkedKey = SemanticsPropertyKey<Boolean>("CellMarked")
+var SemanticsPropertyReceiver.cellMarked by CellMarkedKey
+
 val CellGivenKey = SemanticsPropertyKey<Boolean>("CellGiven")
 var SemanticsPropertyReceiver.cellGiven by CellGivenKey
 

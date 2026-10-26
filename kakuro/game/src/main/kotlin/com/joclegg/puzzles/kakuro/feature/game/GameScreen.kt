@@ -33,6 +33,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joclegg.puzzles.kakuro.core.ui.BackButton
 import com.joclegg.puzzles.kakuro.core.ui.KakuroBoard
 import com.joclegg.puzzles.kakuro.core.ui.KakuroIcons
+import com.joclegg.puzzles.kakuro.core.ui.KeypadTool
 import com.joclegg.puzzles.kakuro.core.ui.NumberPad
 import com.joclegg.puzzles.kakuro.core.ui.ToolButton
 import com.joclegg.puzzles.kakuro.core.ui.dialogTestTags
@@ -43,6 +44,7 @@ import kotlinx.coroutines.launch
 fun GameRoute(
     viewModel: GameViewModel,
     onOpenGame: (Long) -> Unit,
+    onSettings: () -> Unit,
     onHome: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -59,9 +61,12 @@ fun GameRoute(
             onDigitClick = viewModel::onDigitClick,
             onErase = viewModel::onErase,
             onToggleNotes = viewModel::onToggleNotes,
+            onMark = viewModel::onMark,
             onUndo = viewModel::onUndo,
+            onRedo = viewModel::onRedo,
             onRestart = viewModel::onRestart,
             onNewPuzzle = { scope.launch { onOpenGame(viewModel.newPuzzle()) } },
+            onSettings = onSettings,
             onHome = onHome,
             modifier = modifier,
         )
@@ -75,9 +80,12 @@ fun GameScreen(
     onDigitClick: (Int) -> Unit,
     onErase: () -> Unit,
     onToggleNotes: () -> Unit,
+    onMark: () -> Unit,
     onUndo: () -> Unit,
+    onRedo: () -> Unit,
     onRestart: () -> Unit,
     onNewPuzzle: () -> Unit,
+    onSettings: () -> Unit,
     onHome: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -99,12 +107,13 @@ fun GameScreen(
                 }
             }
             ToolButton(KakuroIcons.Undo, "Undo the last tap", onUndo, tag = "undo", enabled = state.canUndo)
+            ToolButton(KakuroIcons.Redo, "Redo the tap you undid", onRedo, tag = "redo", enabled = state.canRedo)
             ToolButton(KakuroIcons.Rules, "Show the rules", { rulesOpen = true }, tag = "rules")
             Column {
                 IconButton(onClick = { menuOpen = true }, modifier = Modifier.testTag("game_menu")) {
                     Icon(KakuroIcons.More, contentDescription = "More")
                 }
-                DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
+                DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }, modifier = Modifier.dialogTestTags()) {
                     DropdownMenuItem(
                         text = { Text("Restart this puzzle") },
                         enabled = !state.solved,
@@ -122,6 +131,14 @@ fun GameScreen(
                         },
                         modifier = Modifier.testTag("new_puzzle"),
                     )
+                    DropdownMenuItem(
+                        text = { Text("Settings") },
+                        onClick = {
+                            menuOpen = false
+                            onSettings()
+                        },
+                        modifier = Modifier.testTag("menu_settings"),
+                    )
                 }
             }
         }
@@ -132,36 +149,47 @@ fun GameScreen(
             Text(it, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.padding(horizontal = 16.dp).testTag("combinations"))
         }
         Spacer(Modifier.weight(1f))
-        Row(Modifier.padding(horizontal = 8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            ToolButton(
-                KakuroIcons.Eraser,
-                when {
-                    !state.digitFirst -> "Clear the selected cell"
-                    state.eraserActive -> "Erase is on: tap cells to clear them"
-                    else -> "Turn on erase, then tap cells to clear them"
-                },
-                onErase,
-                tag = "erase",
-                on = state.eraserActive,
-            )
-            ToolButton(
-                on = state.notesMode,
-                icon = KakuroIcons.Pencil,
-                description =
-                    if (state.notesMode) {
-                        "Notes are on: digits go in as notes"
-                    } else {
-                        "Notes are off: digits go in as answers"
-                    },
-                onClick = onToggleNotes,
-                tag = "notes",
-            )
-        }
         NumberPad(
             onDigitClick,
             Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 16.dp),
             activeDigit = state.activeDigit,
             doneDigits = state.doneDigits,
+            tools =
+                listOf(
+                    KeypadTool(
+                        KakuroIcons.Eraser,
+                        when {
+                            !state.digitFirst -> "Clear the selected cell"
+                            state.eraserActive -> "Erase is on: tap cells to clear them"
+                            else -> "Turn on erase, then tap cells to clear them"
+                        },
+                        onErase,
+                        tag = "erase",
+                        on = state.eraserActive,
+                    ),
+                    KeypadTool(
+                        KakuroIcons.Pencil,
+                        if (state.notesMode) {
+                            "Notes are on: digits go in as notes"
+                        } else {
+                            "Notes are off: digits go in as answers"
+                        },
+                        onToggleNotes,
+                        tag = "notes",
+                        on = state.notesMode,
+                    ),
+                    KeypadTool(
+                        KakuroIcons.Mark,
+                        if (state.digitFirst) {
+                            "Mark: tap cells to box them in red, tap again to stop"
+                        } else {
+                            "Box the selected cell in red, to remember where a trial started"
+                        },
+                        onMark,
+                        tag = "mark",
+                        on = state.markActive,
+                    ),
+                ),
         )
     }
     if (rulesOpen) {

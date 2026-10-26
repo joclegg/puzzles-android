@@ -41,6 +41,8 @@ data class GameUiState(
     val showMistakeCount: Boolean,
     val combinations: List<String>,
     val canUndo: Boolean,
+    val canRedo: Boolean = false,
+    val markActive: Boolean = false,
     val solved: Boolean,
     val newBest: Boolean,
     val resultSaved: Boolean,
@@ -99,6 +101,10 @@ class GameViewModel(
     fun onErase() = move { it.erase() }
 
     fun onUndo() = move { it.undo() }
+
+    fun onRedo() = move { it.redo() }
+
+    fun onMark() = move { it.mark() }
 
     fun onToggleNotes() = move { it.toggleNotes() }
 
@@ -238,6 +244,8 @@ class GameViewModel(
                         emptyList()
                     },
                 canUndo = current.changes.isNotEmpty() && !current.isSolved,
+                canRedo = current.undone.isNotEmpty() && !current.isSolved,
+                markActive = current.markActive,
                 solved = current.isSolved,
                 newBest = newBest,
                 resultSaved = resultSaved,

@@ -238,4 +238,67 @@ class GameStateTest {
         // Assert
         assertEquals(played.notes, replayed.notes)
     }
+
+    @Test
+    fun `given two undone taps when redo is used twice then both are back, pencil marks included`() {
+        // Arrange
+        val played =
+            GameState(small)
+                .toggleNotes()
+                .tapCell(5)
+                .tapDigit(1)
+                .toggleNotes()
+                .tapCell(4)
+                .tapDigit(1)
+
+        // Act
+        val redone =
+            played
+                .undo()
+                .undo()
+                .redo()
+                .redo()
+
+        // Assert
+        assertEquals(played.values to played.notes, redone.values to redone.notes)
+        assertEquals(played.changes, redone.changes)
+    }
+
+    @Test
+    fun `given an undone tap when a new digit is placed then there is nothing to redo`() {
+        // Arrange
+        val undone = GameState(small).tapCell(4).tapDigit(1).undo()
+
+        // Act
+        val next = undone.tapDigit(2)
+
+        // Assert
+        assertEquals(next, next.redo())
+    }
+
+    @Test
+    fun `given a selected cell when mark is used twice then it is marked and then unmarked`() {
+        // Arrange
+        val selected = GameState(small).tapCell(4)
+
+        // Act
+        val marked = selected.mark()
+
+        // Assert
+        assertEquals(setOf(4), marked.marked)
+        assertEquals(emptySet(), marked.mark().marked)
+    }
+
+    @Test
+    fun `given number first with mark on when cells are tapped then they are marked and nothing is entered`() {
+        // Arrange
+        val marking = GameState(small, inputMode = InputMode.DIGIT_FIRST).mark()
+
+        // Act
+        val next = marking.tapCell(4).tapCell(5)
+
+        // Assert
+        assertEquals(setOf(4, 5), next.marked)
+        assertEquals(marking.values, next.values)
+    }
 }

@@ -99,13 +99,15 @@ Rules marked (lint) are enforced by `spotlessCheck`, Android Lint or the build.
 - MUST take colours only from `LocalBoardColors` or `MaterialTheme`.
 - MUST show given cells with a grey background. MUST draw given and entered digits in the same text colour.
 - MUST draw every highlight in the blue palette: selected cell, same digit, peers, active digit, matching notes.
-- MUST use red only for errors: wrong digits, wrong cages and clashing entries.
+- MUST use red only for errors (wrong digits, wrong cages and clashing entries) and the trial mark (`trialMark`), a red box the player puts on a cell with the Mark tool.
 - MUST use gold and silver (`medalGold`, `medalSilver`) only for daily medals.
 - MUST define a dark-mode value for every board colour token.
 - MUST NOT add a hint, auto-solve or cage-combination helper.
 - MUST put every player preference in Settings, per mode (`ModeSettings`, `Toggle`) unless it only makes sense shared (input mode). Default to on unless there's a reason (grey starting cells are off in killer), and apply changes live.
 - MUST make tool buttons icon-only, with a tooltip on long press that says what the button does. The tooltip is also the content description.
 - MUST NOT duplicate a Settings choice as a button on the game screens. Cell first or number first lives only in Settings.
+- MUST keep Undo and Redo in the game header, next to the ⋮ menu, not on the number pad. The pad holds the digits, Erase, Notes and Mark, six keys to a row. Kakuro uses the same layout.
+- MUST put a Settings item in every game's ⋮ menu that opens that game's Settings tab.
 
 ### Solitaire look
 

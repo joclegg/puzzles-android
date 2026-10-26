@@ -2,6 +2,7 @@ package com.joclegg.puzzles.sudoku.core.ui
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -50,6 +52,7 @@ data class CellUi(
     val wrong: Boolean = false,
     val highlight: Highlight = Highlight.NONE,
     val numberHighlighted: Boolean = false,
+    val marked: Boolean = false,
 )
 
 @Immutable
@@ -75,6 +78,7 @@ fun GameState.toBoardUi() =
                     wrong = isWrong(cell) || rejected?.clashes?.contains(cell) == true,
                     highlight = highlight(cell),
                     numberHighlighted = isNumberHighlighted(cell),
+                    marked = cell in marked,
                 )
             },
         cages = puzzle.cages,
@@ -251,11 +255,18 @@ private fun SudokuCell(
         modifier
             .fillMaxSize()
             .background(background)
-            .clickable(onClick = onClick)
+            .then(
+                if (cell.marked) {
+                    Modifier.padding(1.dp).border(2.5.dp, colors.trialMark, RoundedCornerShape(3.dp))
+                } else {
+                    Modifier
+                },
+            ).clickable(onClick = onClick)
             .semantics(mergeDescendants = true) {
                 cellHighlight = cell.highlight
                 cellGiven = cell.given
                 cellWrong = cell.wrong
+                cellMarked = cell.marked
                 this.cageWrong = cageWrong
             },
         contentAlignment = Alignment.Center,

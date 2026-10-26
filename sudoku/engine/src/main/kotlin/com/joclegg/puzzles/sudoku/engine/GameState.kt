@@ -54,10 +54,13 @@ data class GameState(
     val mistakeCheck: MistakeCheck = MistakeCheck.SHOW_WRONG,
     val mistakes: Int = 0,
     val undoStack: List<Move> = emptyList(),
+    val redoStack: List<Move> = emptyList(),
     val options: PlayOptions = PlayOptions(),
     val rejected: Rejection? = null,
     val eraserActive: Boolean = false,
     val lastPlaced: Int? = null,
+    val marked: Set<Int> = emptySet(),
+    val markActive: Boolean = false,
 ) {
     val effectiveMistakeCheck: MistakeCheck
         get() =
@@ -142,6 +145,7 @@ data class GameState(
         val digit = activeDigit
         return when {
             inputMode != InputMode.DIGIT_FIRST -> next
+            markActive -> next.toggleMark(cell)
             eraserActive -> next.clear(cell)
             digit != null -> next.enter(cell, digit)
             else -> next
@@ -155,6 +159,7 @@ data class GameState(
         return when (inputMode) {
             InputMode.DIGIT_FIRST -> {
                 copy(
+                    markActive = false,
                     activeDigit =
                         if (activeDigit == digit) {
                             null
@@ -177,10 +182,30 @@ data class GameState(
             return this
         }
         if (inputMode == InputMode.DIGIT_FIRST) {
-            return copy(eraserActive = !eraserActive, activeDigit = null, rejected = null)
+            return copy(eraserActive = !eraserActive, markActive = false, activeDigit = null, rejected = null)
         }
         return selected?.let(::clear) ?: this
     }
+
+    fun mark(): GameState {
+        if (isComplete) {
+            return this
+        }
+        if (inputMode == InputMode.DIGIT_FIRST) {
+            return copy(markActive = !markActive, eraserActive = false, activeDigit = null, rejected = null)
+        }
+        return selected?.let(::toggleMark) ?: this
+    }
+
+    private fun toggleMark(cell: Int) =
+        copy(
+            marked =
+                if (cell in marked) {
+                    marked - cell
+                } else {
+                    marked + cell
+                },
+        )
 
     private fun clear(cell: Int): GameState {
         if (isGiven(cell) || (values[cell] == 0 && notes[cell] == 0)) {
@@ -194,13 +219,27 @@ data class GameState(
             return this
         }
         val last = undoStack.lastOrNull() ?: return this
+        return applied(last).copy(undoStack = undoStack.dropLast(1), redoStack = redoStack + listOf(snapshot(last)))
+    }
+
+    fun redo(): GameState {
+        if (isComplete) {
+            return this
+        }
+        val next = redoStack.lastOrNull() ?: return this
+        return applied(next).copy(undoStack = undoStack + listOf(snapshot(next)), redoStack = redoStack.dropLast(1))
+    }
+
+    private fun snapshot(move: Move): Move = move.map { CellChange(it.cell, values[it.cell], notes[it.cell]) }
+
+    private fun applied(move: Move): GameState {
         val restoredValues = values.toMutableList()
         val restoredNotes = notes.toMutableList()
-        for (change in last) {
+        for (change in move) {
             restoredValues[change.cell] = change.value
             restoredNotes[change.cell] = change.notes
         }
-        return copy(values = restoredValues, notes = restoredNotes, undoStack = undoStack.dropLast(1), rejected = null, lastPlaced = null)
+        return copy(values = restoredValues, notes = restoredNotes, rejected = null, lastPlaced = null)
     }
 
     fun restart(): GameState =
@@ -272,7 +311,7 @@ data class GameState(
 
     private fun record(next: GameState): GameState {
         val changed = values.indices.filter { values[it] != next.values[it] || notes[it] != next.notes[it] }
-        return next.copy(undoStack = undoStack + listOf(changed.map { CellChange(it, values[it], notes[it]) }))
+        return next.copy(undoStack = undoStack + listOf(changed.map { CellChange(it, values[it], notes[it]) }), redoStack = emptyList())
     }
 
     private fun isPeer(

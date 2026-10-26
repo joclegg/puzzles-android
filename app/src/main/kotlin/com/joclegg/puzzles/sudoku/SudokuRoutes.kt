@@ -53,6 +53,7 @@ object SudokuRoutes {
             val id = entry.arguments!!.getLong("id")
             GameRoute(
                 viewModel = viewModel { GameViewModel(id, container.games, container.settings, SystemClock::elapsedRealtime) },
+                onSettings = { navController.navigate(SettingsHub.route(SettingsTab.SUDOKU, it.name)) },
                 onHome = { navController.popBackStack(HOME, inclusive = false) },
             )
         }

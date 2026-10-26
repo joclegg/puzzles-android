@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -36,6 +37,7 @@ data class BoardUi(
     val runCells: Set<Int>,
     val wrong: Set<Int>,
     val sameDigit: Set<Int> = emptySet(),
+    val marked: Set<Int> = emptySet(),
 )
 
 fun GameState.toBoardUi(): BoardUi {
@@ -55,6 +57,7 @@ fun GameState.toBoardUi(): BoardUi {
             activeDigit
                 ?.let { digit -> values.indices.filter { values[it] == digit }.toSet() }
                 .orEmpty(),
+        marked = marked,
     )
 }
 
@@ -104,11 +107,18 @@ private fun WhiteCell(
     BoxWithConstraints(
         modifier
             .background(background)
-            .clickable { onCellClick(cell) }
+            .then(
+                if (cell in board.marked) {
+                    Modifier.padding(1.dp).border(2.5.dp, colors.trialMark, RoundedCornerShape(3.dp))
+                } else {
+                    Modifier
+                },
+            ).clickable { onCellClick(cell) }
             .testTag(cellTag(cell, board.puzzle.size))
             .semantics {
                 cellWrong = wrong
                 cellGiven = given
+                cellMarked = cell in board.marked
             },
         contentAlignment = Alignment.Center,
     ) {
