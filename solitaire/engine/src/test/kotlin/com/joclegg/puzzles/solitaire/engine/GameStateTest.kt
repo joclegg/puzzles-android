@@ -241,7 +241,13 @@ class GameStateTest {
     @Test
     fun `given cards build up when auto finish is played then the foundations build down from the kings`() {
         // Arrange
-        val foundations = Suit.entries.joinToString("|") { suit -> Card.deck.filter { it.suit == suit && it.rank > Card.ACE }.reversed().joinToString("") { it.code } }
+        val foundations =
+            Suit.entries.joinToString("|") { suit ->
+                Card.deck
+                    .filter { it.suit == suit && it.rank > Card.ACE }
+                    .reversed()
+                    .joinToString("") { it.code }
+            }
         val game = GameState(board("/AC|/AD|/AH|/AS;;;$foundations"), DrawMode.DRAW_ONE, order = BuildOrder.UP)
 
         // Act
