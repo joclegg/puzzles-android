@@ -2,6 +2,7 @@ package com.joclegg.puzzles.solitaire.engine
 
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 import org.junit.jupiter.params.provider.ValueSource
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -201,5 +202,102 @@ class GameStateTest {
 
         // Assert
         assertEquals(0, after.moveCount)
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        delimiter = '#',
+        value = [
+            "/KH|/AHQS;;;||| # true",
+            "KH/|/AHQS;;;||| # false",
+            "/KH|/AH;QS;;||| # false",
+            "/KH|/AH;;QS;||| # false",
+        ],
+    )
+    fun `given a board when auto finish is checked then it is offered only with every card face up and nothing to draw`(
+        text: String,
+        expected: Boolean,
+    ) {
+        // Act
+        val offered = state(text).canAutoFinish
+
+        // Assert
+        assertEquals(expected, offered)
+    }
+
+    @Test
+    fun `given every card face up when auto finish is played then the game is won`() {
+        // Arrange
+        val game = state("/KC|/KD|/KH|/KS;;;${foundationsMissingKings()}")
+
+        // Act
+        val after = game.autoFinish()
+
+        // Assert
+        assertEquals(4, game.autoFinishMoves().size)
+        assertEquals(true, after.isWon)
+    }
+
+    @Test
+    fun `given cards build up when auto finish is played then the foundations build down from the kings`() {
+        // Arrange
+        val foundations = Suit.entries.joinToString("|") { suit -> Card.deck.filter { it.suit == suit && it.rank > Card.ACE }.reversed().joinToString("") { it.code } }
+        val game = GameState(board("/AC|/AD|/AH|/AS;;;$foundations"), DrawMode.DRAW_ONE, order = BuildOrder.UP)
+
+        // Act
+        val after = game.autoFinish()
+
+        // Assert
+        assertEquals(true, after.isWon)
+    }
+
+    @Test
+    fun `given a face down card when auto finish is played then nothing changes`() {
+        // Arrange
+        val game = state("KH/AH|/;;;|||")
+
+        // Act
+        val after = game.autoFinish()
+
+        // Assert
+        assertEquals(game, after)
+    }
+
+    @ParameterizedTest
+    @CsvSource("0, false", "3, false", "4, true")
+    fun `given three cards to draw when the stock is drawn some times then it counts as cycled only after a full pass`(
+        draws: Int,
+        expected: Boolean,
+    ) {
+        // Arrange
+        val game = state("/KH|/;2C3C4C;;|||")
+
+        // Act
+        val drawn = (1..draws).fold(game) { played, _ -> played.tapStock() }
+
+        // Assert
+        assertEquals(expected, drawn.cycledStock)
+    }
+
+    @Test
+    fun `given a full pass when a card is played then the stock is no longer cycled`() {
+        // Arrange
+        val cycled = (1..4).fold(state("/4S|/;5C3H;;|||")) { played, _ -> played.tapStock() }
+
+        // Act
+        val played = cycled.drop(Pile.Waste, cycled.board.waste.size - 1, Pile.Tableau(0)).tapStock()
+
+        // Assert
+        assertEquals(true, cycled.cycledStock)
+        assertEquals(false, played.cycledStock)
+    }
+
+    @Test
+    fun `given nothing left to draw when the stock is checked then it counts as cycled`() {
+        // Act
+        val cycled = state("/KH|/QS;;;|||").cycledStock
+
+        // Assert
+        assertEquals(true, cycled)
     }
 }

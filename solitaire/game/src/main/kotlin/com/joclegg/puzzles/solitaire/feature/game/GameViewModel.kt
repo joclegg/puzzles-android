@@ -41,6 +41,7 @@ data class GameUiState(
     val newBest: Boolean,
     val resultSaved: Boolean,
     val unwinnable: Boolean = false,
+    val canFinish: Boolean = false,
 )
 
 class GameViewModel(
@@ -106,6 +107,8 @@ class GameViewModel(
     ) = move { it.drop(from, index, to) }
 
     fun onUndo() = move { it.undo() }
+
+    fun onFinish() = move { it.autoFinish() }
 
     fun onRestart() {
         val current = game ?: return
@@ -196,7 +199,7 @@ class GameViewModel(
         check?.cancel()
         unwinnable = false
         val current = game ?: return
-        if (!display.warnUnwinnable || current.isWon || current.board.cardCount != Card.deck.size) {
+        if (!display.warnUnwinnable || current.isWon || !current.cycledStock || current.board.cardCount != Card.deck.size) {
             return
         }
         val moves = current.moves.size
@@ -269,6 +272,7 @@ class GameViewModel(
                 newBest = newBest,
                 resultSaved = resultSaved,
                 unwinnable = unwinnable && !warningDismissed && !current.isWon,
+                canFinish = current.canAutoFinish,
             )
         }
     }

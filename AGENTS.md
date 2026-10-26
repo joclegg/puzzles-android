@@ -115,10 +115,11 @@ Rules marked (lint) are enforced by `spotlessCheck`, Android Lint or the build.
 - MUST draw every highlight (the selected card or run) in blue (`selected`).
 - MUST use red only for red suits.
 - MUST define a dark-mode value for every table colour token.
-- MUST NOT add a hint or auto-solve.
+- MUST NOT add a hint or auto-solve. The one exception is Finish (`GameState.autoFinish`), offered only once the stock and waste are empty and every card is face up.
 - MUST put every player preference in Settings (`Settings`, `Toggle`). Default to on unless there's a reason, and apply changes live.
 - MUST NOT duplicate a Settings choice as a button on the game screen.
 - MUST only report a deal as unwinnable when `Solver` has searched every move (`Verdict.UNWINNABLE`). Out of time or budget is `UNKNOWN`, and says nothing.
+- MUST only run that check once the player has drawn through the whole stock without another move (`GameState.cycledStock`).
 - MUST run the solver off the main thread with a time limit (`CHECK_LIMIT_MS`).
 
 ### Two Tone and Sightlines look

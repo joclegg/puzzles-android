@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -67,6 +68,7 @@ fun GameRoute(
                 }
             },
             onUndo = viewModel::onUndo,
+            onFinish = viewModel::onFinish,
             onRestart = viewModel::onRestart,
             onNewDeal = { scope.launch { onOpenGame(viewModel.newDeal()) } },
             onSettings = onSettings,
@@ -87,6 +89,7 @@ fun GameScreen(
     onDismissUnwinnable: () -> Unit,
     onGiveUp: () -> Unit,
     onUndo: () -> Unit,
+    onFinish: () -> Unit,
     onRestart: () -> Unit,
     onNewDeal: () -> Unit,
     onSettings: () -> Unit,
@@ -151,6 +154,14 @@ fun GameScreen(
             modifier = Modifier.weight(1f),
             onCardDrop = onCardDrop,
         )
+        if (state.canFinish) {
+            Button(
+                onClick = onFinish,
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp).testTag("finish"),
+            ) {
+                Text("Finish")
+            }
+        }
     }
     if (state.unwinnable) {
         AlertDialog(

@@ -98,7 +98,7 @@ fun SettingsScreen(
                 Toggle.WARN_UNWINNABLE,
                 onToggle,
                 "Tell me when a deal can't be won",
-                detail = "Checks after each move, and offers to undo back to the last winnable position.",
+                detail = "Checks once you have been through the whole stock without playing a card, and offers to undo back to the last winnable position.",
             )
             ToggleRow(settings, Toggle.SHOW_TIMER, onToggle, "Show the timer")
             ToggleRow(settings, Toggle.SHOW_MOVE_COUNT, onToggle, "Show the move counter")
