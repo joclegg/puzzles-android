@@ -186,6 +186,57 @@ class GameStateTest {
     }
 
     @Test
+    fun `given a selected cell when mark is used twice then it is marked and then unmarked`() {
+        // Arrange
+        val selected = game.tapCell(emptyCellAnswer4)
+
+        // Act
+        val marked = selected.mark()
+
+        // Assert
+        assertEquals(setOf(emptyCellAnswer4), marked.marked)
+        assertEquals(emptySet(), marked.mark().marked)
+    }
+
+    @Test
+    fun `given number first with mark on when cells are tapped then they are marked and nothing is entered`() {
+        // Arrange
+        val marking = game.copy(inputMode = InputMode.DIGIT_FIRST).mark()
+
+        // Act
+        val next = marking.tapCell(emptyCellAnswer4).tapCell(emptyCellAnswer6)
+
+        // Assert
+        assertEquals(setOf(emptyCellAnswer4, emptyCellAnswer6), next.marked)
+        assertEquals(marking.values, next.values)
+    }
+
+    @Test
+    fun `given an undone move when redo is used then the move is back, and the notes it cleared are cleared again`() {
+        // Arrange
+        val placed = game.tapCell(emptyCellAnswer4).tapDigit(4)
+
+        // Act
+        val redone = placed.undo().redo()
+
+        // Assert
+        assertEquals(placed.values to placed.notes, redone.values to redone.notes)
+        assertEquals(placed.undoStack.size, redone.undoStack.size)
+    }
+
+    @Test
+    fun `given an undone move when a new move is made then there is nothing to redo`() {
+        // Arrange
+        val undone = game.tapCell(emptyCellAnswer4).tapDigit(4).undo()
+
+        // Act
+        val next = undone.tapCell(emptyCellAnswer6).tapDigit(6)
+
+        // Assert
+        assertEquals(next, next.redo())
+    }
+
+    @Test
     fun `given a placed digit when undo is used then the cell is empty again`() {
         // Arrange
         val placed = game.tapCell(emptyCellAnswer4).tapDigit(4)

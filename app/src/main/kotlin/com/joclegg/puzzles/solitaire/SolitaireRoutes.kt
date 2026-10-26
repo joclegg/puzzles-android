@@ -52,6 +52,7 @@ object SolitaireRoutes {
                         GameViewModel(id, container.games, container.settings, SystemClock::elapsedRealtime, container.newSeed)
                     },
                 onOpenGame = { navController.openSolitaireGame(it) },
+                onSettings = { navController.navigate(SettingsHub.route(SettingsTab.SOLITAIRE)) },
                 onHome = { navController.popBackStack(HOME, inclusive = false) },
             )
         }

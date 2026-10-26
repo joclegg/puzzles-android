@@ -59,6 +59,7 @@ object SlideOutRoutes {
                         )
                     },
                 onOpenGame = { navController.openSlideOutGame(it) },
+                onSettings = { navController.navigate(SettingsHub.route(SettingsTab.SLIDE_OUT)) },
                 onHome = { navController.popBackStack(HOME, inclusive = false) },
             )
         }

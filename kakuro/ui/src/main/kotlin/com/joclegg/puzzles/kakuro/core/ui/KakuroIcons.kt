@@ -10,6 +10,8 @@ import androidx.compose.ui.unit.dp
 
 object KakuroIcons {
     val Undo = outline("undo", "M9 14L4 9l5-5", "M4 9h10.5a5.5 5.5 0 0 1 0 11H11")
+    val Mark = outline("mark", "M5 5h14v14H5z")
+    val Redo = outline("redo", "M15 14l5-5-5-5", "M20 9H9.5a5.5 5.5 0 0 0 0 11H13")
     val Back = outline("back", "M15 5l-7 7 7 7")
     val More =
         outline(

@@ -20,6 +20,7 @@ data class KakuroColors(
     val run: Color,
     val sameDigit: Color,
     val wrong: Color,
+    val trialMark: Color,
 )
 
 private val Light =
@@ -35,6 +36,7 @@ private val Light =
         run = Color(0xFFE5F0FE),
         sameDigit = Color(0xFFBCD9FC),
         wrong = Color(0xFFD32F2F),
+        trialMark = Color(0xFFE53935),
     )
 
 private val Dark =
@@ -50,6 +52,7 @@ private val Dark =
         run = Color(0xFF1A2B40),
         sameDigit = Color(0xFF244A78),
         wrong = Color(0xFFFF6B6B),
+        trialMark = Color(0xFFFF5252),
     )
 
 val LocalKakuroColors = staticCompositionLocalOf { Light }

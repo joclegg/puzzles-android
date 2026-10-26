@@ -51,6 +51,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun GameRoute(
     viewModel: GameViewModel,
+    onSettings: (GameMode) -> Unit,
     onHome: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -73,10 +74,13 @@ fun GameRoute(
             onCellClick = viewModel::onCellClick,
             onDigitClick = viewModel::onDigitClick,
             onUndo = viewModel::onUndo,
+            onRedo = viewModel::onRedo,
             onErase = viewModel::onErase,
             onToggleNotes = viewModel::onToggleNotes,
+            onMark = viewModel::onMark,
             onRestart = viewModel::onRestart,
             onRevealSolution = viewModel::onRevealSolution,
+            onSettings = { onSettings(it.mode) },
             onHome = onHome,
             modifier = modifier,
         )
@@ -125,10 +129,13 @@ fun GameScreen(
     onCellClick: (Int) -> Unit,
     onDigitClick: (Int) -> Unit,
     onUndo: () -> Unit,
+    onRedo: () -> Unit,
     onErase: () -> Unit,
     onToggleNotes: () -> Unit,
+    onMark: () -> Unit,
     onRestart: () -> Unit,
     onRevealSolution: () -> Unit,
+    onSettings: () -> Unit,
     onHome: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -141,6 +148,9 @@ fun GameScreen(
             onBack = onHome,
             onRestart = onRestart,
             onRevealSolution = onRevealSolution,
+            onUndo = onUndo,
+            onRedo = onRedo,
+            onSettings = onSettings,
             modifier = Modifier.padding(horizontal = 12.dp),
         )
         SudokuBoard(board = state.board, onCellClick = onCellClick)
@@ -181,7 +191,18 @@ fun GameScreen(
                         tag = "notes",
                         on = state.notesMode,
                     ),
-                    KeypadTool(SudokuIcons.Undo, "Undo the last move", onUndo, tag = "undo"),
+                    KeypadTool(
+                        icon = SudokuIcons.Mark,
+                        description =
+                            if (state.inputMode == InputMode.DIGIT_FIRST) {
+                                "Mark: tap cells to box them in red, tap again to stop"
+                            } else {
+                                "Box the selected cell in red, to remember where a trial started"
+                            },
+                        onClick = onMark,
+                        tag = "mark",
+                        on = state.markActive,
+                    ),
                 ),
             modifier = Modifier.padding(horizontal = 8.dp),
         )
@@ -194,6 +215,9 @@ private fun GameHeader(
     onBack: () -> Unit,
     onRestart: () -> Unit,
     onRevealSolution: () -> Unit,
+    onUndo: () -> Unit,
+    onRedo: () -> Unit,
+    onSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val title =
@@ -228,7 +252,13 @@ private fun GameHeader(
                 modifier = Modifier.testTag("timer"),
             )
         }
-        PuzzleMenu(state, onRestart, onRevealSolution)
+        IconButton(onClick = onUndo, enabled = state.canUndo, modifier = Modifier.testTag("undo")) {
+            Icon(SudokuIcons.Undo, contentDescription = "Undo the last move")
+        }
+        IconButton(onClick = onRedo, enabled = state.canRedo, modifier = Modifier.testTag("redo")) {
+            Icon(SudokuIcons.Redo, contentDescription = "Redo the move you undid")
+        }
+        PuzzleMenu(state, onRestart, onRevealSolution, onSettings)
     }
 }
 
@@ -239,6 +269,7 @@ private fun PuzzleMenu(
     state: GameUiState,
     onRestart: () -> Unit,
     onRevealSolution: () -> Unit,
+    onSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var open by remember { mutableStateOf(false) }
@@ -266,6 +297,14 @@ private fun PuzzleMenu(
                     confirming = PuzzleAction.REVEAL
                 },
                 modifier = Modifier.testTag("menu_solution"),
+            )
+            DropdownMenuItem(
+                text = { Text("Settings") },
+                onClick = {
+                    open = false
+                    onSettings()
+                },
+                modifier = Modifier.testTag("menu_settings"),
             )
         }
     }

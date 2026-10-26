@@ -9,6 +9,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -36,6 +40,7 @@ import kotlinx.coroutines.launch
 fun GameRoute(
     viewModel: GameViewModel,
     onOpenGame: (Long) -> Unit,
+    onSettings: () -> Unit,
     onHome: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -56,6 +61,7 @@ fun GameRoute(
                 context.startActivity(Intent.createChooser(send, null))
             },
             onNewPractice = { scope.launch { onOpenGame(viewModel.newPractice()) } },
+            onSettings = onSettings,
             onHome = onHome,
             modifier = modifier,
         )
@@ -70,10 +76,12 @@ fun GameScreen(
     onDeleteClick: () -> Unit,
     onShare: () -> Unit,
     onNewPractice: () -> Unit,
+    onSettings: () -> Unit,
     onHome: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var rulesOpen by remember { mutableStateOf(false) }
+    var menuOpen by remember { mutableStateOf(false) }
     var resultClosed by remember { mutableStateOf(false) }
     Column(modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         Row(Modifier.fillMaxWidth().padding(horizontal = 4.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -88,6 +96,21 @@ fun GameScreen(
                 ToolButton(FiveLettersIcons.Share, "Share your result", onShare, tag = "share")
             }
             ToolButton(FiveLettersIcons.Rules, "Show the rules", { rulesOpen = true }, tag = "rules")
+            Column {
+                IconButton(onClick = { menuOpen = true }, modifier = Modifier.testTag("game_menu")) {
+                    Icon(FiveLettersIcons.More, contentDescription = "More")
+                }
+                DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }, modifier = Modifier.dialogTestTags()) {
+                    DropdownMenuItem(
+                        text = { Text("Settings") },
+                        onClick = {
+                            menuOpen = false
+                            onSettings()
+                        },
+                        modifier = Modifier.testTag("menu_settings"),
+                    )
+                }
+            }
         }
         Spacer(Modifier.height(12.dp))
         WordBoard(state.board, Modifier.weight(1f).padding(horizontal = 48.dp))

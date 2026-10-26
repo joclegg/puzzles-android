@@ -10,6 +10,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -40,6 +44,7 @@ import kotlinx.coroutines.launch
 fun GameRoute(
     viewModel: GameViewModel,
     onOpenGame: (Long) -> Unit,
+    onSettings: () -> Unit,
     onHome: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -58,6 +63,7 @@ fun GameRoute(
             onShuffle = viewModel::onShuffle,
             onHint = viewModel::onHint,
             onNewPuzzle = { scope.launch { onOpenGame(viewModel.newPuzzle()) } },
+            onSettings = onSettings,
             onHome = onHome,
             modifier = modifier,
         )
@@ -73,10 +79,12 @@ fun GameScreen(
     onShuffle: () -> Unit,
     onHint: () -> Unit,
     onNewPuzzle: () -> Unit,
+    onSettings: () -> Unit,
     onHome: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var rulesOpen by remember { mutableStateOf(false) }
+    var menuOpen by remember { mutableStateOf(false) }
     Column(modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         Row(Modifier.fillMaxWidth().padding(horizontal = 4.dp), verticalAlignment = Alignment.CenterVertically) {
             BackButton(onHome)
@@ -96,6 +104,21 @@ fun GameScreen(
             }
             ToolButton(WordWheelIcons.Hint, "Show a letter", onHint, tag = "hint", enabled = !state.solved)
             ToolButton(WordWheelIcons.Rules, "Show the rules", { rulesOpen = true }, tag = "rules")
+            Column {
+                IconButton(onClick = { menuOpen = true }, modifier = Modifier.testTag("game_menu")) {
+                    Icon(WordWheelIcons.More, contentDescription = "More")
+                }
+                DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }, modifier = Modifier.dialogTestTags()) {
+                    DropdownMenuItem(
+                        text = { Text("Settings") },
+                        onClick = {
+                            menuOpen = false
+                            onSettings()
+                        },
+                        modifier = Modifier.testTag("menu_settings"),
+                    )
+                }
+            }
         }
         WordGrid(state.grid, Modifier.weight(1f).padding(horizontal = 16.dp, vertical = 8.dp))
         Text(

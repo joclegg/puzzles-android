@@ -55,6 +55,9 @@ data class GameState(
     val mistakes: Int = 0,
     val rejected: Int? = null,
     val autoRemoveNotes: Boolean = true,
+    val undone: List<Change> = emptyList(),
+    val marked: Set<Int> = emptySet(),
+    val markActive: Boolean = false,
 ) {
     val isSolved: Boolean get() = values == puzzle.solution
 
@@ -95,6 +98,9 @@ data class GameState(
             return this
         }
         val selectedHere = copy(selected = cell, rejected = null)
+        if (inputMode == InputMode.DIGIT_FIRST && markActive && !isSolved) {
+            return selectedHere.toggleMark(cell)
+        }
         if (inputMode == InputMode.CELL_FIRST || isSolved || isGiven(cell)) {
             return selectedHere
         }
@@ -114,7 +120,7 @@ data class GameState(
                 } else {
                     digit
                 }
-            return copy(activeDigit = next, eraserActive = false, rejected = null)
+            return copy(activeDigit = next, eraserActive = false, markActive = false, rejected = null)
         }
         val cell = selected ?: return this
         if (isSolved || isGiven(cell)) {
@@ -125,7 +131,7 @@ data class GameState(
 
     fun erase(): GameState {
         if (inputMode == InputMode.DIGIT_FIRST) {
-            return copy(eraserActive = !eraserActive, activeDigit = null, rejected = null)
+            return copy(eraserActive = !eraserActive, markActive = false, activeDigit = null, rejected = null)
         }
         val cell = selected ?: return this
         if (isSolved || isGiven(cell)) {
@@ -134,7 +140,28 @@ data class GameState(
         return set(cell, 0, 0)
     }
 
-    fun withInputMode(mode: InputMode): GameState = copy(inputMode = mode, activeDigit = null, eraserActive = false, rejected = null)
+    fun mark(): GameState {
+        if (isSolved) {
+            return this
+        }
+        if (inputMode == InputMode.DIGIT_FIRST) {
+            return copy(markActive = !markActive, eraserActive = false, activeDigit = null, rejected = null)
+        }
+        return selected?.let(::toggleMark) ?: this
+    }
+
+    private fun toggleMark(cell: Int) =
+        copy(
+            marked =
+                if (cell in marked) {
+                    marked - cell
+                } else {
+                    marked + cell
+                },
+        )
+
+    fun withInputMode(mode: InputMode): GameState =
+        copy(inputMode = mode, activeDigit = null, eraserActive = false, markActive = false, rejected = null)
 
     private fun place(
         cell: Int,
@@ -190,6 +217,21 @@ data class GameState(
             notes = restored,
             changes = changes.dropLast(1),
             selected = last.cell,
+            undone = undone + last,
+        )
+    }
+
+    fun redo(): GameState {
+        val next = undone.lastOrNull() ?: return this
+        if (isSolved) {
+            return this
+        }
+        return copy(
+            values = values.replaced(next.cell, next.toValue),
+            notes = applyNotes(next),
+            changes = changes + next,
+            selected = next.cell,
+            undone = undone.dropLast(1),
         )
     }
 
@@ -214,7 +256,7 @@ data class GameState(
                 emptyList()
             }
         val change = Change(cell, values[cell], notes[cell], value, cellNotes, cleared)
-        return copy(values = values.replaced(cell, value), notes = applyNotes(change), changes = changes + change)
+        return copy(values = values.replaced(cell, value), notes = applyNotes(change), changes = changes + change, undone = emptyList())
     }
 
     private fun applyNotes(change: Change): List<Int> =

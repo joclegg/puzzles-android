@@ -44,6 +44,7 @@ import kotlinx.coroutines.launch
 fun GameRoute(
     viewModel: GameViewModel,
     onOpenGame: (Long) -> Unit,
+    onSettings: () -> Unit,
     onHome: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -62,6 +63,7 @@ fun GameRoute(
             onHint = viewModel::onHint,
             onRestart = viewModel::onRestart,
             onNewPuzzle = { scope.launch { onOpenGame(viewModel.newPuzzle()) } },
+            onSettings = onSettings,
             onHome = onHome,
             modifier = modifier,
         )
@@ -77,6 +79,7 @@ fun GameScreen(
     onHint: () -> Unit,
     onRestart: () -> Unit,
     onNewPuzzle: () -> Unit,
+    onSettings: () -> Unit,
     onHome: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -104,7 +107,7 @@ fun GameScreen(
                 IconButton(onClick = { menuOpen = true }, modifier = Modifier.testTag("game_menu")) {
                     Icon(TwoToneIcons.More, contentDescription = "More")
                 }
-                DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
+                DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }, modifier = Modifier.dialogTestTags()) {
                     DropdownMenuItem(
                         text = { Text("Restart this puzzle") },
                         enabled = !state.solved,
@@ -121,6 +124,14 @@ fun GameScreen(
                             onNewPuzzle()
                         },
                         modifier = Modifier.testTag("new_puzzle"),
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Settings") },
+                        onClick = {
+                            menuOpen = false
+                            onSettings()
+                        },
+                        modifier = Modifier.testTag("menu_settings"),
                     )
                 }
             }

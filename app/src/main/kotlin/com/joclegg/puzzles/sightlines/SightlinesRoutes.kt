@@ -52,6 +52,7 @@ object SightlinesRoutes {
                         GameViewModel(id, container.games, container.settings, SystemClock::elapsedRealtime, container.newSeed)
                     },
                 onOpenGame = { navController.openSightlinesGame(it) },
+                onSettings = { navController.navigate(SettingsHub.route(SettingsTab.SIGHTLINES)) },
                 onHome = { navController.popBackStack(HOME, inclusive = false) },
             )
         }

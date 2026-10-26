@@ -41,6 +41,7 @@ import kotlinx.coroutines.launch
 fun GameRoute(
     viewModel: GameViewModel,
     onOpenGame: (Long) -> Unit,
+    onSettings: () -> Unit,
     onHome: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -68,6 +69,7 @@ fun GameRoute(
             onUndo = viewModel::onUndo,
             onRestart = viewModel::onRestart,
             onNewDeal = { scope.launch { onOpenGame(viewModel.newDeal()) } },
+            onSettings = onSettings,
             onHome = onHome,
             modifier = modifier,
         )
@@ -87,6 +89,7 @@ fun GameScreen(
     onUndo: () -> Unit,
     onRestart: () -> Unit,
     onNewDeal: () -> Unit,
+    onSettings: () -> Unit,
     onHome: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -111,7 +114,7 @@ fun GameScreen(
                 IconButton(onClick = { menuOpen = true }, modifier = Modifier.testTag("game_menu")) {
                     Icon(SolitaireIcons.More, contentDescription = "More")
                 }
-                DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
+                DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }, modifier = Modifier.dialogTestTags()) {
                     DropdownMenuItem(
                         text = { Text("Restart this deal") },
                         enabled = !state.won,
@@ -128,6 +131,14 @@ fun GameScreen(
                             onNewDeal()
                         },
                         modifier = Modifier.testTag("new_deal"),
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Settings") },
+                        onClick = {
+                            menuOpen = false
+                            onSettings()
+                        },
+                        modifier = Modifier.testTag("menu_settings"),
                     )
                 }
             }

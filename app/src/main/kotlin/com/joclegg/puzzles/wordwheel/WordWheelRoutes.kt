@@ -59,6 +59,7 @@ object WordWheelRoutes {
                         )
                     },
                 onOpenGame = { navController.openWordWheelGame(it) },
+                onSettings = { navController.navigate(SettingsHub.route(SettingsTab.WORD_WHEEL)) },
                 onHome = { navController.popBackStack(HOME, inclusive = false) },
             )
         }

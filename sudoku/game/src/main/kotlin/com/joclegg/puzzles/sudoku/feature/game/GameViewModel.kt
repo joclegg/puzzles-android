@@ -33,6 +33,9 @@ data class GameUiState(
     val custom: Boolean,
     val answerKnown: Boolean,
     val board: BoardUi,
+    val canUndo: Boolean = false,
+    val canRedo: Boolean = false,
+    val markActive: Boolean = false,
     val elapsedMs: Long,
     val mistakes: Int,
     val checking: Boolean,
@@ -117,6 +120,10 @@ class GameViewModel(
     fun onErase() = move { it.erase() }
 
     fun onUndo() = move { it.undo() }
+
+    fun onRedo() = move { it.redo() }
+
+    fun onMark() = move { it.mark() }
 
     fun onToggleNotes() = move { it.toggleNotesMode() }
 
@@ -278,6 +285,9 @@ class GameViewModel(
                         }
                     },
                 completed = current.isComplete,
+                canUndo = current.undoStack.isNotEmpty() && !current.isComplete,
+                canRedo = current.redoStack.isNotEmpty() && !current.isComplete,
+                markActive = current.markActive,
                 newBest = newBest,
                 resultSaved = resultSaved,
                 revealed = revealed,
