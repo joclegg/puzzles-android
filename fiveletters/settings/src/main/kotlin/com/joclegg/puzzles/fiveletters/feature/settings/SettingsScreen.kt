@@ -66,15 +66,6 @@ fun SettingsScreen(
                     "High contrast colours",
                     detail = "Orange and blue instead of green and yellow.",
                 )
-                ToggleRow(
-                    settings,
-                    Toggle.NYT_WORD,
-                    onToggle,
-                    "Use the New York Times word",
-                    detail =
-                        "The daily game uses today's Wordle answer, fetched from nytimes.com. " +
-                            "Falls back to the Puzzles word when offline. Applies to new daily games.",
-                )
             }
         }
     }

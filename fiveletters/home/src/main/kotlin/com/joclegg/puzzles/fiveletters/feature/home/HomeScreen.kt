@@ -42,15 +42,20 @@ fun HomeRoute(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
     var starting by remember { mutableStateOf(false) }
+    var nytUnavailable by remember { mutableStateOf(false) }
 
-    fun launchGame(start: suspend () -> Long) {
+    fun launchGame(start: suspend () -> Long?) {
         if (starting) {
             return
         }
         starting = true
         scope.launch {
             try {
-                onOpenGame(start())
+                val id = start()
+                nytUnavailable = id == null
+                if (id != null) {
+                    onOpenGame(id)
+                }
             } finally {
                 starting = false
             }
@@ -59,6 +64,8 @@ fun HomeRoute(
     HomeScreen(
         state = state,
         onDaily = { launchGame { viewModel.openDaily() } },
+        onNytDaily = { launchGame { viewModel.openNytDaily() } },
+        nytUnavailable = nytUnavailable,
         onPractice = {
             val practice = state.practice
             if (practice != null) {
@@ -79,6 +86,8 @@ fun HomeRoute(
 fun HomeScreen(
     state: HomeUiState,
     onDaily: () -> Unit,
+    onNytDaily: () -> Unit,
+    nytUnavailable: Boolean,
     onPractice: () -> Unit,
     onNewPractice: () -> Unit,
     onStats: () -> Unit,
@@ -100,17 +109,21 @@ fun HomeScreen(
         Button(onClick = onDaily, modifier = Modifier.fillMaxWidth().testTag("daily")) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text("Today's word · #${state.dailyNumber}")
-                val result =
-                    when (state.dailyResult) {
-                        GameStatus.WON -> "Solved ✓"
-                        GameStatus.LOST -> "Missed today"
-                        GameStatus.IN_PROGRESS -> "In progress"
-                        GameStatus.ABANDONED, null -> null
-                    }
-                if (result != null) {
-                    Text(result, style = MaterialTheme.typography.labelSmall)
-                }
+                state.dailyResult.label()?.let { Text(it, style = MaterialTheme.typography.labelSmall) }
             }
+        }
+        OutlinedButton(onClick = onNytDaily, modifier = Modifier.fillMaxWidth().testTag("nyt_daily")) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text("NY Times daily")
+                state.nytResult.label()?.let { Text(it, style = MaterialTheme.typography.labelSmall) }
+            }
+        }
+        if (nytUnavailable) {
+            Text(
+                "Couldn't reach the New York Times. Check your connection and try again.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.error,
+            )
         }
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             OutlinedButton(onClick = onPractice, modifier = Modifier.weight(1f).testTag("practice")) {
@@ -134,3 +147,11 @@ fun HomeScreen(
         )
     }
 }
+
+private fun GameStatus?.label(): String? =
+    when (this) {
+        GameStatus.WON -> "Solved ✓"
+        GameStatus.LOST -> "Missed today"
+        GameStatus.IN_PROGRESS -> "In progress"
+        GameStatus.ABANDONED, null -> null
+    }

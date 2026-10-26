@@ -11,9 +11,11 @@ data class WordRef(
 ) {
     val isDaily: Boolean get() = id.startsWith(DAILY_PREFIX)
 
+    val isNyt: Boolean get() = id.startsWith(NYT_PREFIX)
+
     val slot: String
         get() =
-            if (isDaily) {
+            if (isDaily || isNyt) {
                 id
             } else {
                 PRACTICE_SLOT
@@ -21,6 +23,7 @@ data class WordRef(
 
     companion object {
         const val DAILY_PREFIX = "daily_"
+        const val NYT_PREFIX = "nyt_"
         private const val PRACTICE_SLOT = "practice"
 
         fun dailyId(date: LocalDate) = "$DAILY_PREFIX$date"
@@ -28,8 +31,14 @@ data class WordRef(
         fun daily(
             words: Words,
             date: LocalDate,
-            nytWord: String? = null,
-        ) = WordRef(dailyId(date), nytWord ?: words.daily(date))
+        ) = WordRef(dailyId(date), words.daily(date))
+
+        fun nytId(date: LocalDate) = "$NYT_PREFIX$date"
+
+        fun nyt(
+            date: LocalDate,
+            answer: String,
+        ) = WordRef(nytId(date), answer)
 
         fun practice(
             words: Words,

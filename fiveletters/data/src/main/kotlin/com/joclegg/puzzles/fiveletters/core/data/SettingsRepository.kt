@@ -13,13 +13,11 @@ enum class Toggle(
 ) {
     HARD_MODE(Settings::hardMode, default = false),
     HIGH_CONTRAST(Settings::highContrast, default = false),
-    NYT_WORD(Settings::nytWord, default = false),
 }
 
 data class Settings(
     val hardMode: Boolean = false,
     val highContrast: Boolean = false,
-    val nytWord: Boolean = false,
 )
 
 class SettingsRepository(
@@ -30,7 +28,6 @@ class SettingsRepository(
             Settings(
                 hardMode = prefs[Toggle.HARD_MODE.key] ?: Toggle.HARD_MODE.default,
                 highContrast = prefs[Toggle.HIGH_CONTRAST.key] ?: Toggle.HIGH_CONTRAST.default,
-                nytWord = prefs[Toggle.NYT_WORD.key] ?: Toggle.NYT_WORD.default,
             )
         }
 
