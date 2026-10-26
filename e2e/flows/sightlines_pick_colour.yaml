@@ -3,19 +3,23 @@ name: Sightlines - with Pick a colour on, picking blue and tapping fills the las
 ---
 - launchApp:
     clearState: true
+- waitForAnimationToEnd
 - scrollUntilVisible:
     element:
       id: "game_sightlines"
     centerElement: true
 - tapOn:
     id: "game_sightlines"
+- waitForAnimationToEnd
 - tapOn:
     id: "settings"
+- waitForAnimationToEnd
 - tapOn:
     id: "setting_pick_colour"
 - launchApp:
     arguments:
       fixture: "sightlines_one_left"
+- waitForAnimationToEnd
 - tapOn:
     id: "colour_blue"
 - tapOn:

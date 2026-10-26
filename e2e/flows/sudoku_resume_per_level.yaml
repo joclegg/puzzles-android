@@ -5,25 +5,31 @@ name: Each level keeps its own game in progress
     clearState: true
     arguments:
       fixture: "classic_easy"
+- waitForAnimationToEnd
 - tapOn:
     id: "cell_r1c3"
 - tapOn:
     id: "digit_4"
 - tapOn:
     id: "back"
+- waitForAnimationToEnd
 - tapOn:
     id: "level_medium"
+- waitForAnimationToEnd
 - assertVisible:
     id: "game_title"
     text: "Classic · Medium"
 - tapOn:
     id: "back"
+- waitForAnimationToEnd
 - tapOn:
     id: "level_easy"
+- waitForAnimationToEnd
 - assertVisible:
     id: "resume_dialog"
 - tapOn:
     id: "resume_game"
+- waitForAnimationToEnd
 - assertVisible:
     id: "game_title"
     text: "Classic · Easy"
@@ -33,10 +39,13 @@ name: Each level keeps its own game in progress
       id: "cell_r1c3"
 - tapOn:
     id: "back"
+- waitForAnimationToEnd
 - tapOn:
     id: "level_easy"
+- waitForAnimationToEnd
 - tapOn:
     id: "new_game"
+- waitForAnimationToEnd
 - assertVisible:
     id: "game_title"
     text: "Classic · Easy"

@@ -5,6 +5,7 @@ name: Completing a puzzle records a best time and history entry
     clearState: true
     arguments:
       fixture: "classic_one_left"
+- waitForAnimationToEnd
 - tapOn:
     id: "cell_r1c3"
 - tapOn:
@@ -19,12 +20,14 @@ name: Completing a puzzle records a best time and history entry
     timeout: 15000
 - tapOn:
     id: "stats"
+- waitForAnimationToEnd
 - assertVisible:
     id: "best_classic_easy_solved"
     text: "1"
 - back
 - tapOn:
     id: "history"
+- waitForAnimationToEnd
 - assertVisible:
     id: "history_item"
 - assertVisible: "Classic · Easy"

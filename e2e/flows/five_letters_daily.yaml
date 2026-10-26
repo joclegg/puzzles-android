@@ -5,14 +5,17 @@ tags:
 ---
 - launchApp:
     clearState: true
+- waitForAnimationToEnd
 - scrollUntilVisible:
     element:
       id: "game_five_letters"
     centerElement: true
 - tapOn:
     id: "game_five_letters"
+- waitForAnimationToEnd
 - tapOn:
     id: "daily"
+- waitForAnimationToEnd
 - assertVisible:
     id: "game_title"
     text: "Five Letters.*"
@@ -30,14 +33,17 @@ tags:
     id: "key_enter"
 - launchApp:
     stopApp: true
+- waitForAnimationToEnd
 - scrollUntilVisible:
     element:
       id: "game_five_letters"
     centerElement: true
 - tapOn:
     id: "game_five_letters"
+- waitForAnimationToEnd
 - tapOn:
     id: "daily"
+- waitForAnimationToEnd
 - assertVisible:
     text: "A"
     childOf:

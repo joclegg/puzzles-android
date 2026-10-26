@@ -5,14 +5,17 @@ tags:
 ---
 - launchApp:
     clearState: true
+- waitForAnimationToEnd
 - scrollUntilVisible:
     element:
       id: "game_word_wheel"
     centerElement: true
 - tapOn:
     id: "game_word_wheel"
+- waitForAnimationToEnd
 - tapOn:
     id: "level_6"
+- waitForAnimationToEnd
 - assertVisible:
     id: "game_title"
     text: "6 letters"

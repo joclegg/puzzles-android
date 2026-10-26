@@ -3,19 +3,23 @@ name: With one tap move off, a card moves by tapping it and then its target
 ---
 - launchApp:
     clearState: true
+- waitForAnimationToEnd
 - scrollUntilVisible:
     element:
       id: "game_solitaire"
     centerElement: true
 - tapOn:
     id: "game_solitaire"
+- waitForAnimationToEnd
 - tapOn:
     id: "settings"
+- waitForAnimationToEnd
 - tapOn:
     id: "setting_one_tap_move"
 - launchApp:
     arguments:
       fixture: "simple"
+- waitForAnimationToEnd
 - tapOn:
     id: "card_QH"
 - assertVisible:

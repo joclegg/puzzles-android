@@ -5,6 +5,7 @@ name: Sightlines - a hint points out a wrong dot, and undo clears it
     clearState: true
     arguments:
       fixture: "sightlines_two_left"
+- waitForAnimationToEnd
 - tapOn:
     id: "dot_r1c3"
 - tapOn:

@@ -5,13 +5,16 @@ name: Kakuro - Settings in the game menu opens Kakuro's settings
     clearState: true
     arguments:
       fixture: "kakuro_empty"
+- waitForAnimationToEnd
 - tapOn:
     id: "game_menu"
 - tapOn:
     id: "menu_settings"
+- waitForAnimationToEnd
 - assertVisible:
     id: "setting_digit_first"
 - tapOn:
     id: "back"
+- waitForAnimationToEnd
 - assertVisible:
     id: "game_menu"

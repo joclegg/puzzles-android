@@ -3,14 +3,17 @@ name: Custom entry - clashes, multiple solutions, and a real puzzle
 ---
 - launchApp:
     clearState: true
+- waitForAnimationToEnd
 - scrollUntilVisible:
     element:
       id: "game_sudoku"
     centerElement: true
 - tapOn:
     id: "game_sudoku"
+- waitForAnimationToEnd
 - tapOn:
     id: "enter_puzzle"
+- waitForAnimationToEnd
 - tapOn:
     id: "cell_r1c1"
 - tapOn:
@@ -21,6 +24,7 @@ name: Custom entry - clashes, multiple solutions, and a real puzzle
     id: "digit_5"
 - tapOn:
     id: "fix_puzzle"
+- waitForAnimationToEnd
 - assertVisible:
     id: "entry_problem"
 - tapOn:
@@ -29,20 +33,24 @@ name: Custom entry - clashes, multiple solutions, and a real puzzle
     id: "erase"
 - tapOn:
     id: "fix_puzzle"
+- waitForAnimationToEnd
 - assertVisible:
     id: "unverified_dialog"
 - tapOn: "Keep editing"
 - launchApp:
     arguments:
       draft: "classic_easy_missing_r1c1"
+- waitForAnimationToEnd
 - tapOn:
     id: "enter_puzzle"
+- waitForAnimationToEnd
 - tapOn:
     id: "cell_r1c1"
 - tapOn:
     id: "digit_5"
 - tapOn:
     id: "fix_puzzle"
+- waitForAnimationToEnd
 - assertVisible:
     id: "game_title"
     text: "Custom · Easy"

@@ -5,6 +5,7 @@ name: Killer - wrong cage entries are flagged, then the puzzle completes
     clearState: true
     arguments:
       fixture: "killer_one_cage"
+- waitForAnimationToEnd
 - assertVisible:
     id: "game_title"
     text: "Killer · Easy"
@@ -39,6 +40,7 @@ name: Killer - wrong cage entries are flagged, then the puzzle completes
     timeout: 15000
 - tapOn:
     id: "stats"
+- waitForAnimationToEnd
 - assertVisible:
     id: "best_killer_easy_solved"
     text: "1"

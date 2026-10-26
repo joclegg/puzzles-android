@@ -5,6 +5,7 @@ name: Finish plays the last face-up cards to the foundations and wins
     clearState: true
     arguments:
       fixture: "one_move_to_win"
+- waitForAnimationToEnd
 - tapOn:
     id: "finish"
 - extendedWaitUntil:

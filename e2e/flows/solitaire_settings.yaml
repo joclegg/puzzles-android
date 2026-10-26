@@ -3,20 +3,25 @@ name: Turning off the timer in settings hides it in the game
 ---
 - launchApp:
     clearState: true
+- waitForAnimationToEnd
 - scrollUntilVisible:
     element:
       id: "game_solitaire"
     centerElement: true
 - tapOn:
     id: "game_solitaire"
+- waitForAnimationToEnd
 - tapOn:
     id: "settings"
+- waitForAnimationToEnd
 - tapOn:
     id: "setting_show_timer"
 - tapOn:
     id: "back"
+- waitForAnimationToEnd
 - tapOn:
     id: "play"
+- waitForAnimationToEnd
 - assertVisible:
     id: "stock"
 - assertNotVisible:

@@ -3,20 +3,25 @@ name: Choosing Draw 3 in settings deals Draw 3 games
 ---
 - launchApp:
     clearState: true
+- waitForAnimationToEnd
 - scrollUntilVisible:
     element:
       id: "game_solitaire"
     centerElement: true
 - tapOn:
     id: "game_solitaire"
+- waitForAnimationToEnd
 - tapOn:
     id: "settings"
+- waitForAnimationToEnd
 - tapOn:
     id: "setting_draw_three"
 - tapOn:
     id: "back"
+- waitForAnimationToEnd
 - tapOn:
     id: "play"
+- waitForAnimationToEnd
 - assertVisible:
     id: "game_title"
     text: "Draw 3"

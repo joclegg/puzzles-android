@@ -5,6 +5,7 @@ name: Putting the last card up wins, records a best time and shows in stats and 
     clearState: true
     arguments:
       fixture: "one_move_to_win"
+- waitForAnimationToEnd
 - tapOn:
     id: "card_KS"
 - extendedWaitUntil:
@@ -15,13 +16,17 @@ name: Putting the last card up wins, records a best time and shows in stats and 
     id: "new_best"
 - tapOn:
     id: "won_home"
+- waitForAnimationToEnd
 - tapOn:
     id: "stats"
+- waitForAnimationToEnd
 - assertVisible:
     id: "draw_one_won"
     text: "1"
 - tapOn:
     id: "back"
+- waitForAnimationToEnd
 - tapOn:
     id: "history"
+- waitForAnimationToEnd
 - assertVisible: "Won · 1 moves"

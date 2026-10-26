@@ -3,24 +3,30 @@ name: Tapping New game with a game in progress offers Resume or New deal
 ---
 - launchApp:
     clearState: true
+- waitForAnimationToEnd
 - scrollUntilVisible:
     element:
       id: "game_solitaire"
     centerElement: true
 - tapOn:
     id: "game_solitaire"
+- waitForAnimationToEnd
 - tapOn:
     id: "play"
+- waitForAnimationToEnd
 - tapOn:
     id: "stock"
 - tapOn:
     id: "back"
+- waitForAnimationToEnd
 - tapOn:
     id: "play"
+- waitForAnimationToEnd
 - assertVisible:
     id: "resume_dialog"
 - tapOn:
     id: "resume_game"
+- waitForAnimationToEnd
 - assertVisible:
     id: "move_count"
     text: "Moves 1"

@@ -5,15 +5,18 @@ tags:
 ---
 - launchApp:
     clearState: true
+- waitForAnimationToEnd
 - scrollUntilVisible:
     element:
       id: "game_solitaire"
     centerElement: true
 - tapOn:
     id: "game_solitaire"
+- waitForAnimationToEnd
 - assertVisible: "Solitaire"
 - tapOn:
     id: "play"
+- waitForAnimationToEnd
 - assertVisible:
     id: "stock"
 - assertVisible:

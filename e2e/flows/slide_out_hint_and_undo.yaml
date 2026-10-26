@@ -5,6 +5,7 @@ name: Slide Out - undo takes a move back, and a hint is shown
     clearState: true
     arguments:
       fixture: "slide_out_two_moves"
+- waitForAnimationToEnd
 - swipe:
     from:
       id: "block_1"
