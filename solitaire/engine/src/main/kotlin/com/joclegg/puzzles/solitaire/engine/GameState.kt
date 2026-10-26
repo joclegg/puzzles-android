@@ -53,8 +53,18 @@ data class GameState(
             val next =
                 current.tableau.indices
                     .filter { current.tableau[it].cards.isNotEmpty() }
-                    .map { Move.Transfer(Pile.Tableau(it), 1, Pile.Foundation(current.tableau[it].cards.last().suit.ordinal)) }
-                    .firstOrNull { current.canMove(it.from, it.count, it.to, order) }
+                    .map {
+                        Move.Transfer(
+                            Pile.Tableau(it),
+                            1,
+                            Pile.Foundation(
+                                current.tableau[it]
+                                    .cards
+                                    .last()
+                                    .suit.ordinal,
+                            ),
+                        )
+                    }.firstOrNull { current.canMove(it.from, it.count, it.to, order) }
                     ?: return emptyList()
             finishing += next
             current = current.move(next.from, next.count, next.to)
