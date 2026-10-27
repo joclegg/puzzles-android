@@ -92,9 +92,11 @@ private fun BlockView(
     val cellPx = with(LocalDensity.current) { cell.toPx() }
     var drag by remember(block) { mutableFloatStateOf(0f) }
     val currentOnSlide by rememberUpdatedState(onSlide)
-    val currentRange by rememberUpdatedState(range)
-    val low = (currentRange.first - block.position) * cellPx
-    val high = (currentRange.last - block.position) * cellPx
+    val low = (range.first - block.position) * cellPx
+    val high = (range.last - block.position) * cellPx
+    val currentLow by rememberUpdatedState(low)
+    val currentHigh by rememberUpdatedState(high)
+    val currentCellPx by rememberUpdatedState(cellPx)
     val shift = drag.coerceIn(low, high).roundToInt()
     val (face, edge) =
         if (index == 0) {
@@ -135,7 +137,7 @@ private fun BlockView(
             .pointerInput(block) {
                 detectDragGestures(
                     onDragEnd = {
-                        val steps = (drag.coerceIn(low, high) / cellPx).roundToInt()
+                        val steps = (drag.coerceIn(currentLow, currentHigh) / currentCellPx).roundToInt()
                         drag = 0f
                         currentOnSlide(index, block.position + steps)
                     },
