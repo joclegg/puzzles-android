@@ -5,17 +5,20 @@ tags:
 ---
 - launchApp:
     clearState: true
-- waitForAnimationToEnd
+- waitForAnimationToEnd:
+    timeout: 1500
 - scrollUntilVisible:
     element:
       id: "game_sightlines"
     centerElement: true
 - tapOn:
     id: "game_sightlines"
-- waitForAnimationToEnd
+- waitForAnimationToEnd:
+    timeout: 1500
 - tapOn:
     id: "size_6"
-- waitForAnimationToEnd
+- waitForAnimationToEnd:
+    timeout: 1500
 - assertVisible:
     id: "dot_r6c6"
 - assertVisible:

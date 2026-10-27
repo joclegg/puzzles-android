@@ -16,6 +16,8 @@ enum class ThemeMode { SYSTEM, LIGHT, DARK }
 
 enum class DigitCounts { COUNT_UP, COUNT_DOWN, OFF }
 
+enum class HintStyle { POINT, FILL }
+
 data class ModeSettings(
     val mistakeCheck: MistakeCheck = MistakeCheck.SHOW_WRONG,
     val showMistakeCount: Boolean = true,
@@ -30,6 +32,10 @@ data class ModeSettings(
     val boldPlacedDigits: Boolean = true,
     val highlightLastPlaced: Boolean = true,
     val greyGivenCells: Boolean = true,
+    val showHints: Boolean = true,
+    val showTutorial: Boolean = true,
+    val allowReveal: Boolean = true,
+    val hintStyle: HintStyle = HintStyle.POINT,
 ) {
     val playOptions get() = PlayOptions(highlightHouses, highlightCage, sameNumberStyle, notesStyle, autoRemoveNotes, highlightLastPlaced)
 }
@@ -64,6 +70,9 @@ enum class Toggle(
     BOLD_PLACED_DIGITS(ModeSettings::boldPlacedDigits),
     HIGHLIGHT_LAST_PLACED(ModeSettings::highlightLastPlaced),
     GREY_GIVEN_CELLS(ModeSettings::greyGivenCells, killerDefault = false),
+    SHOW_HINTS(ModeSettings::showHints),
+    SHOW_TUTORIAL(ModeSettings::showTutorial),
+    ALLOW_REVEAL(ModeSettings::allowReveal),
     ;
 
     fun defaultFor(mode: GameMode) =
@@ -118,6 +127,13 @@ class SettingsRepository(
         store.edit { it[styleKey("notes", mode)] = style.name }
     }
 
+    suspend fun setHintStyle(
+        mode: GameMode,
+        style: HintStyle,
+    ) {
+        store.edit { it[hintStyleKey(mode)] = style.name }
+    }
+
     suspend fun setDigitCounts(
         mode: GameMode,
         counts: DigitCounts,
@@ -159,6 +175,8 @@ private fun styleKey(
 
 private fun digitCountsKey(mode: GameMode) = stringPreferencesKey("digit_counts_${mode.name.lowercase()}")
 
+private fun hintStyleKey(mode: GameMode) = stringPreferencesKey("hint_style_${mode.name.lowercase()}")
+
 private fun mistakeKey(mode: GameMode) = stringPreferencesKey("mistakes_${mode.name.lowercase()}")
 
 private fun Preferences.modeSettings(mode: GameMode): ModeSettings {
@@ -180,5 +198,9 @@ private fun Preferences.modeSettings(mode: GameMode): ModeSettings {
         boldPlacedDigits = on(Toggle.BOLD_PLACED_DIGITS),
         highlightLastPlaced = on(Toggle.HIGHLIGHT_LAST_PLACED),
         greyGivenCells = on(Toggle.GREY_GIVEN_CELLS),
+        showHints = on(Toggle.SHOW_HINTS),
+        showTutorial = on(Toggle.SHOW_TUTORIAL),
+        allowReveal = on(Toggle.ALLOW_REVEAL),
+        hintStyle = this[hintStyleKey(mode)]?.let { saved -> HintStyle.entries.find { it.name == saved } } ?: HintStyle.POINT,
     )
 }

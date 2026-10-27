@@ -32,12 +32,16 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joclegg.puzzles.wordwheel.core.ui.BackButton
+import com.joclegg.puzzles.wordwheel.core.ui.HowToPlayButton
 import com.joclegg.puzzles.wordwheel.core.ui.LetterWheel
 import com.joclegg.puzzles.wordwheel.core.ui.ToolButton
+import com.joclegg.puzzles.wordwheel.core.ui.TourStep
 import com.joclegg.puzzles.wordwheel.core.ui.WordGrid
 import com.joclegg.puzzles.wordwheel.core.ui.WordWheelIcons
 import com.joclegg.puzzles.wordwheel.core.ui.dialogTestTags
 import com.joclegg.puzzles.wordwheel.core.ui.formatDuration
+import com.joclegg.puzzles.wordwheel.core.ui.rememberTourState
+import com.joclegg.puzzles.wordwheel.core.ui.tourTarget
 import kotlinx.coroutines.launch
 
 @Composable
@@ -62,6 +66,7 @@ fun GameRoute(
             onClear = viewModel::onClear,
             onShuffle = viewModel::onShuffle,
             onHint = viewModel::onHint,
+            onRevealSolution = viewModel::onRevealSolution,
             onNewPuzzle = { scope.launch { onOpenGame(viewModel.newPuzzle()) } },
             onSettings = onSettings,
             onHome = onHome,
@@ -78,12 +83,14 @@ fun GameScreen(
     onClear: () -> Unit,
     onShuffle: () -> Unit,
     onHint: () -> Unit,
+    onRevealSolution: () -> Unit,
     onNewPuzzle: () -> Unit,
     onSettings: () -> Unit,
     onHome: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var rulesOpen by remember { mutableStateOf(false) }
+    var revealing by remember { mutableStateOf(false) }
+    val tour = rememberTourState()
     var menuOpen by remember { mutableStateOf(false) }
     Column(modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         Row(Modifier.fillMaxWidth().padding(horizontal = 4.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -102,13 +109,34 @@ fun GameScreen(
                     }
                 }
             }
-            ToolButton(WordWheelIcons.Hint, "Show a letter", onHint, tag = "hint", enabled = !state.solved)
-            ToolButton(WordWheelIcons.Rules, "Show the rules", { rulesOpen = true }, tag = "rules")
+            if (state.showHints) {
+                ToolButton(
+                    WordWheelIcons.Hint,
+                    "Show a letter",
+                    onHint,
+                    tag = "hint",
+                    modifier = Modifier.tourTarget(tour, "hint"),
+                    enabled = !state.solved,
+                )
+            }
+            if (state.showTutorial) {
+                HowToPlayButton(RULES, TUTORIAL, tour)
+            }
             Column {
-                IconButton(onClick = { menuOpen = true }, modifier = Modifier.testTag("game_menu")) {
+                IconButton(onClick = { menuOpen = true }, modifier = Modifier.testTag("game_menu").tourTarget(tour, "menu")) {
                     Icon(WordWheelIcons.More, contentDescription = "More")
                 }
                 DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }, modifier = Modifier.dialogTestTags()) {
+                    if (state.allowReveal && !state.solved) {
+                        DropdownMenuItem(
+                            text = { Text("Show solution") },
+                            onClick = {
+                                menuOpen = false
+                                revealing = true
+                            },
+                            modifier = Modifier.testTag("menu_solution"),
+                        )
+                    }
                     DropdownMenuItem(
                         text = { Text("Settings") },
                         onClick = {
@@ -120,7 +148,7 @@ fun GameScreen(
                 }
             }
         }
-        WordGrid(state.grid, Modifier.weight(1f).padding(horizontal = 16.dp, vertical = 8.dp))
+        WordGrid(state.grid, Modifier.tourTarget(tour, "grid").weight(1f).padding(horizontal = 16.dp, vertical = 8.dp))
         Text(
             state.chosen
                 .map { state.wheel[it] }
@@ -132,7 +160,7 @@ fun GameScreen(
         )
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             ToolButton(WordWheelIcons.Shuffle, "Shuffle the letters", onShuffle, tag = "shuffle")
-            LetterWheel(state.wheel, state.chosen, onChosenChange, onSubmit, Modifier.width(260.dp).padding(8.dp))
+            LetterWheel(state.wheel, state.chosen, onChosenChange, onSubmit, Modifier.tourTarget(tour, "wheel").width(260.dp).padding(8.dp))
             Column {
                 ToolButton(WordWheelIcons.Check, "Enter the word", onSubmit, tag = "submit_word")
                 ToolButton(WordWheelIcons.Clear, "Clear the word", onClear, tag = "clear_word")
@@ -140,22 +168,24 @@ fun GameScreen(
         }
         Spacer(Modifier.height(16.dp))
     }
-    if (rulesOpen) {
+    if (revealing) {
         AlertDialog(
-            onDismissRequest = { rulesOpen = false },
-            modifier = Modifier.dialogTestTags().testTag("rules_dialog"),
-            title = { Text("How to play") },
-            text = {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("Swipe across the letters to make a word, or tap them and press the tick.")
-                    Text("Find every word in the crossword. Other real words count as bonus words.")
-                    Text("Each letter can be used once per word.")
-                }
+            onDismissRequest = { revealing = false },
+            title = { Text("Show the solution?") },
+            text = { Text("This ends the puzzle. It won't count towards best times.") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        revealing = false
+                        onRevealSolution()
+                    },
+                    modifier = Modifier.testTag("confirm_reveal"),
+                ) { Text("Show solution") }
             },
-            confirmButton = { TextButton(onClick = { rulesOpen = false }) { Text("Got it") } },
+            dismissButton = { TextButton(onClick = { revealing = false }) { Text("Cancel") } },
         )
     }
-    if (state.solved && state.resultSaved) {
+    if (state.solved && state.resultSaved && !state.revealedAll) {
         AlertDialog(
             onDismissRequest = {},
             modifier = Modifier.dialogTestTags().testTag("solved_dialog"),
@@ -179,3 +209,18 @@ fun GameScreen(
         )
     }
 }
+
+private val RULES =
+    listOf(
+        "Swipe across the letters to make a word, or tap them and press the tick.",
+        "Find every word in the crossword. Other real words count as bonus words.",
+        "Each letter can be used once per word.",
+    )
+
+private val TUTORIAL =
+    listOf(
+        TourStep("grid", "Find every word in this crossword."),
+        TourStep("wheel", "Swipe across the letters to make a word, or tap them in turn and press the tick."),
+        TourStep("hint", "Stuck? The bulb fills in one letter of the crossword."),
+        TourStep("menu", "Show the solution and settings live in this menu."),
+    )

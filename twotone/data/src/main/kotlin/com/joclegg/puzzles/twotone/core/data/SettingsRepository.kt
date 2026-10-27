@@ -16,6 +16,9 @@ enum class Toggle(
     MARK_BROKEN_RULES(Settings::markBrokenRules),
     SHOW_TIMER(Settings::showTimer),
     SHOW_PROGRESS(Settings::showProgress),
+    SHOW_HINTS(Settings::showHints),
+    SHOW_TUTORIAL(Settings::showTutorial),
+    ALLOW_REVEAL(Settings::allowReveal),
 }
 
 data class Settings(
@@ -23,6 +26,9 @@ data class Settings(
     val markBrokenRules: Boolean = true,
     val showTimer: Boolean = true,
     val showProgress: Boolean = true,
+    val showHints: Boolean = true,
+    val showTutorial: Boolean = true,
+    val allowReveal: Boolean = true,
 )
 
 class SettingsRepository(
@@ -35,6 +41,9 @@ class SettingsRepository(
                 markBrokenRules = prefs[Toggle.MARK_BROKEN_RULES.key] ?: true,
                 showTimer = prefs[Toggle.SHOW_TIMER.key] ?: true,
                 showProgress = prefs[Toggle.SHOW_PROGRESS.key] ?: true,
+                showHints = prefs[Toggle.SHOW_HINTS.key] ?: true,
+                showTutorial = prefs[Toggle.SHOW_TUTORIAL.key] ?: true,
+                allowReveal = prefs[Toggle.ALLOW_REVEAL.key] ?: true,
             )
         }
 

@@ -1,0 +1,19 @@
+name: Notify puzzles
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ask joclegg/puzzles to move its submodules
+        env:
+          GH_TOKEN: ${{ secrets.PUZZLES_DISPATCH_TOKEN }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "PUZZLES_DISPATCH_TOKEN is not set, so joclegg/puzzles was not told"
+            exit 0
+          fi
+          gh api repos/joclegg/puzzles/dispatches -f event_type=submodule-merged

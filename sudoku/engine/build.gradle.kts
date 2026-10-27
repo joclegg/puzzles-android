@@ -9,7 +9,7 @@ tasks.register<JavaExec>("generateBank") {
     mainClass.set("com.joclegg.puzzles.sudoku.engine.BankGeneratorKt")
     workingDir = rootDir
     args(
-        providers.gradleProperty("bankDir").getOrElse("app/src/main/assets/puzzles"),
+        providers.gradleProperty("bankDir").getOrElse("puzzles-data/sudoku"),
         providers.gradleProperty("bankSize").getOrElse("300"),
     )
 }

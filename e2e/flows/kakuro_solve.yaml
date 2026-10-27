@@ -7,7 +7,8 @@ tags:
     clearState: true
     arguments:
       fixture: "kakuro_one_left"
-- waitForAnimationToEnd
+- waitForAnimationToEnd:
+    timeout: 1500
 - tapOn:
     id: "cell_r3c3"
 - tapOn:
@@ -16,6 +17,7 @@ tags:
     id: "solved_dialog"
 - tapOn:
     id: "solved_home"
-- waitForAnimationToEnd
+- waitForAnimationToEnd:
+    timeout: 1500
 - assertVisible:
     id: "size_6"

@@ -31,13 +31,18 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joclegg.puzzles.kakuro.core.ui.BackButton
+import com.joclegg.puzzles.kakuro.core.ui.HintButton
+import com.joclegg.puzzles.kakuro.core.ui.HowToPlayButton
 import com.joclegg.puzzles.kakuro.core.ui.KakuroBoard
 import com.joclegg.puzzles.kakuro.core.ui.KakuroIcons
 import com.joclegg.puzzles.kakuro.core.ui.KeypadTool
 import com.joclegg.puzzles.kakuro.core.ui.NumberPad
 import com.joclegg.puzzles.kakuro.core.ui.ToolButton
+import com.joclegg.puzzles.kakuro.core.ui.TourStep
 import com.joclegg.puzzles.kakuro.core.ui.dialogTestTags
 import com.joclegg.puzzles.kakuro.core.ui.formatDuration
+import com.joclegg.puzzles.kakuro.core.ui.rememberTourState
+import com.joclegg.puzzles.kakuro.core.ui.tourTarget
 import kotlinx.coroutines.launch
 
 @Composable
@@ -65,6 +70,8 @@ fun GameRoute(
             onUndo = viewModel::onUndo,
             onRedo = viewModel::onRedo,
             onRestart = viewModel::onRestart,
+            onRevealSolution = viewModel::onRevealSolution,
+            onHint = viewModel::onHint,
             onNewPuzzle = { scope.launch { onOpenGame(viewModel.newPuzzle()) } },
             onSettings = onSettings,
             onHome = onHome,
@@ -84,13 +91,16 @@ fun GameScreen(
     onUndo: () -> Unit,
     onRedo: () -> Unit,
     onRestart: () -> Unit,
+    onRevealSolution: () -> Unit,
+    onHint: () -> Unit,
     onNewPuzzle: () -> Unit,
     onSettings: () -> Unit,
     onHome: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var menuOpen by remember { mutableStateOf(false) }
-    var rulesOpen by remember { mutableStateOf(false) }
+    var revealing by remember { mutableStateOf(false) }
+    val tour = rememberTourState()
     Column(modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         Row(Modifier.fillMaxWidth().padding(horizontal = 4.dp), verticalAlignment = Alignment.CenterVertically) {
             BackButton(onHome)
@@ -108,9 +118,14 @@ fun GameScreen(
             }
             ToolButton(KakuroIcons.Undo, "Undo the last tap", onUndo, tag = "undo", enabled = state.canUndo)
             ToolButton(KakuroIcons.Redo, "Redo the tap you undid", onRedo, tag = "redo", enabled = state.canRedo)
-            ToolButton(KakuroIcons.Rules, "Show the rules", { rulesOpen = true }, tag = "rules")
+            if (state.showHints) {
+                HintButton(onHint, enabled = !state.solved, modifier = Modifier.tourTarget(tour, "hint"))
+            }
+            if (state.showTutorial) {
+                HowToPlayButton(RULES, TUTORIAL, tour)
+            }
             Column {
-                IconButton(onClick = { menuOpen = true }, modifier = Modifier.testTag("game_menu")) {
+                IconButton(onClick = { menuOpen = true }, modifier = Modifier.testTag("game_menu").tourTarget(tour, "menu")) {
                     Icon(KakuroIcons.More, contentDescription = "More")
                 }
                 DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }, modifier = Modifier.dialogTestTags()) {
@@ -131,6 +146,16 @@ fun GameScreen(
                         },
                         modifier = Modifier.testTag("new_puzzle"),
                     )
+                    if (state.allowReveal && !state.solved) {
+                        DropdownMenuItem(
+                            text = { Text("Show solution") },
+                            onClick = {
+                                menuOpen = false
+                                revealing = true
+                            },
+                            modifier = Modifier.testTag("menu_solution"),
+                        )
+                    }
                     DropdownMenuItem(
                         text = { Text("Settings") },
                         onClick = {
@@ -143,7 +168,12 @@ fun GameScreen(
             }
         }
         Spacer(Modifier.height(24.dp))
-        KakuroBoard(state.board, onCellClick, Modifier.fillMaxWidth().padding(horizontal = 8.dp))
+        KakuroBoard(state.board, onCellClick, Modifier.tourTarget(tour, "board").fillMaxWidth().padding(horizontal = 8.dp))
+        Text(
+            state.hintMessage.orEmpty(),
+            style = MaterialTheme.typography.titleSmall,
+            modifier = Modifier.padding(horizontal = 16.dp).testTag("hint_message"),
+        )
         Spacer(Modifier.height(12.dp))
         state.combinations.forEach {
             Text(it, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.padding(horizontal = 16.dp).testTag("combinations"))
@@ -192,32 +222,26 @@ fun GameScreen(
                 ),
         )
     }
-    if (rulesOpen) {
-        RulesDialog(onDismiss = { rulesOpen = false })
+    if (revealing) {
+        AlertDialog(
+            onDismissRequest = { revealing = false },
+            title = { Text("Show the solution?") },
+            text = { Text("This ends the puzzle. It won't count towards best times.") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        revealing = false
+                        onRevealSolution()
+                    },
+                    modifier = Modifier.testTag("confirm_reveal"),
+                ) { Text("Show solution") }
+            },
+            dismissButton = { TextButton(onClick = { revealing = false }) { Text("Cancel") } },
+        )
     }
     if (state.solved && state.resultSaved) {
         SolvedDialog(state, onNewPuzzle, onHome)
     }
-}
-
-@Composable
-private fun RulesDialog(
-    onDismiss: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        modifier = modifier.dialogTestTags().testTag("rules_dialog"),
-        title = { Text("Rules") },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text("Fill each white cell with a digit from 1 to 9.")
-                Text("The number above a diagonal is the sum of the run to its right; below it, the run beneath.")
-                Text("A digit can't repeat within a run.")
-            }
-        },
-        confirmButton = { TextButton(onClick = onDismiss) { Text("Got it") } },
-    )
 }
 
 @Composable
@@ -252,3 +276,17 @@ private fun SolvedDialog(
         },
     )
 }
+
+private val RULES =
+    listOf(
+        "Fill each white cell with a digit from 1 to 9.",
+        "The number above a diagonal is the sum of the run to its right; below it, the run beneath.",
+        "A digit can't repeat within a run.",
+    )
+
+private val TUTORIAL =
+    listOf(
+        TourStep("board", "Each white cell takes a digit from 1 to 9. A clue is the sum of the run to its right or below it."),
+        TourStep("hint", "Stuck? The bulb shows you the next step."),
+        TourStep("menu", "Restart, show the solution and settings live in this menu."),
+    )

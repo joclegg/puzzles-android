@@ -5,7 +5,7 @@ import com.joclegg.puzzles.sightlines.engine.Generator
 import com.joclegg.puzzles.sightlines.engine.Puzzle
 import java.time.LocalDate
 
-enum class GameStatus { IN_PROGRESS, SOLVED, ABANDONED }
+enum class GameStatus { IN_PROGRESS, SOLVED, ABANDONED, REVEALED }
 
 data class PuzzleRef(
     val id: String,

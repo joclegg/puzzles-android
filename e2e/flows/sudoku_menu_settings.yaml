@@ -5,16 +5,19 @@ name: Sudoku - Settings in the puzzle menu opens Sudoku's settings
     clearState: true
     arguments:
       fixture: "classic_easy"
-- waitForAnimationToEnd
+- waitForAnimationToEnd:
+    timeout: 1500
 - tapOn:
     id: "puzzle_menu"
 - tapOn:
     id: "menu_settings"
-- waitForAnimationToEnd
+- waitForAnimationToEnd:
+    timeout: 1500
 - assertVisible:
     id: "setting_digit_first"
 - tapOn:
     id: "back"
-- waitForAnimationToEnd
+- waitForAnimationToEnd:
+    timeout: 1500
 - assertVisible:
     id: "puzzle_menu"

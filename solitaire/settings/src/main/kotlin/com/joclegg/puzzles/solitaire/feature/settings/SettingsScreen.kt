@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.joclegg.puzzles.solitaire.core.data.HintStyle
 import com.joclegg.puzzles.solitaire.core.data.Settings
 import com.joclegg.puzzles.solitaire.core.data.Toggle
 import com.joclegg.puzzles.solitaire.core.ui.BackButton
@@ -39,6 +40,7 @@ fun SettingsRoute(
     SettingsScreen(
         settings = settings,
         onToggle = viewModel::onToggle,
+        onHintStyleChange = viewModel::onHintStyleChange,
         onDrawModeChange = viewModel::onDrawModeChange,
         onBack = onBack,
         modifier = modifier,
@@ -49,6 +51,7 @@ fun SettingsRoute(
 fun SettingsScreen(
     settings: Settings,
     onToggle: (Toggle, Boolean) -> Unit,
+    onHintStyleChange: (HintStyle) -> Unit,
     onDrawModeChange: (DrawMode) -> Unit,
     onBack: (() -> Unit)?,
     modifier: Modifier = Modifier,
@@ -102,6 +105,17 @@ fun SettingsScreen(
             )
             ToggleRow(settings, Toggle.SHOW_TIMER, onToggle, "Show the timer")
             ToggleRow(settings, Toggle.SHOW_MOVE_COUNT, onToggle, "Show the move counter")
+            ToggleRow(settings, Toggle.SHOW_HINTS, onToggle, "Hints", detail = "Show the hint button.")
+            ToggleRow(
+                settings,
+                Toggle.SHOW_TUTORIAL,
+                onToggle,
+                "How to play",
+                detail = "Show the ? button with the rules and a walkthrough.",
+            )
+            if (settings.showHints) {
+                HintStyleRow(settings.hintStyle, onHintStyleChange)
+            }
         }
     }
 }
@@ -170,6 +184,37 @@ private fun ToggleRow(
             checked = toggle.read(settings),
             onCheckedChange = { onToggle(toggle, it) },
             modifier = Modifier.testTag("setting_${toggle.name.lowercase()}"),
+        )
+    }
+}
+
+@Composable
+private fun HintStyleRow(
+    style: HintStyle,
+    onChange: (HintStyle) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Column(Modifier.weight(1f)) {
+            Text("Hints fill the answer in")
+            Text(
+                "Off: a hint points at the next step and says why.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        Switch(
+            checked = style == HintStyle.FILL,
+            onCheckedChange = {
+                onChange(
+                    if (it) {
+                        HintStyle.FILL
+                    } else {
+                        HintStyle.POINT
+                    },
+                )
+            },
+            modifier = Modifier.testTag("setting_hint_fill"),
         )
     }
 }

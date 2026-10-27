@@ -9,7 +9,7 @@ tasks.register<JavaExec>("generateBank") {
     mainClass.set("com.joclegg.puzzles.slideout.engine.BankGeneratorKt")
     workingDir = rootDir
     args(
-        providers.gradleProperty("bankDir").getOrElse("app/src/main/assets/slideout"),
+        providers.gradleProperty("bankDir").getOrElse("puzzles-data/slideout"),
         *providers
             .gradleProperty("bankSizes")
             .getOrElse("150,150,150,100,60")

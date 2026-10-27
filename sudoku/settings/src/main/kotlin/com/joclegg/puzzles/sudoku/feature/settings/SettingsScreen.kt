@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joclegg.puzzles.sudoku.core.data.DigitCounts
 import com.joclegg.puzzles.sudoku.core.data.GameMode
+import com.joclegg.puzzles.sudoku.core.data.HintStyle
 import com.joclegg.puzzles.sudoku.core.data.ModeSettings
 import com.joclegg.puzzles.sudoku.core.data.Settings
 import com.joclegg.puzzles.sudoku.core.data.Toggle
@@ -56,6 +57,7 @@ fun SettingsRoute(
         onInputModeChange = viewModel::onInputModeChange,
         onMistakeLevelChange = viewModel::onMistakeLevelChange,
         onDigitCountsChange = viewModel::onDigitCountsChange,
+        onHintStyleChange = viewModel::onHintStyleChange,
         onSameNumberStyleChange = viewModel::onSameNumberStyleChange,
         onNotesStyleChange = viewModel::onNotesStyleChange,
         onBack = onBack,
@@ -71,6 +73,7 @@ fun SettingsScreen(
     onInputModeChange: (InputMode) -> Unit,
     onMistakeLevelChange: (GameMode, MistakeCheck) -> Unit,
     onDigitCountsChange: (GameMode, DigitCounts) -> Unit,
+    onHintStyleChange: (GameMode, HintStyle) -> Unit,
     onSameNumberStyleChange: (GameMode, HighlightStyle) -> Unit,
     onNotesStyleChange: (GameMode, HighlightStyle) -> Unit,
     onBack: (() -> Unit)?,
@@ -161,6 +164,19 @@ fun SettingsScreen(
                 Hint("Count up shows how many of each number are placed; count down shows how many are left.")
                 ToggleRow(current, Toggle.DISABLE_COMPLETED_DIGITS, toggle, "Disable finished numbers", detail = "Once all are placed")
                 ToggleRow(current, Toggle.SHOW_TIMER, toggle, "Show timer", detail = "Best times are still recorded")
+                Section("Help")
+                ToggleRow(current, Toggle.SHOW_HINTS, toggle, "Hints", detail = "Show the hint button.")
+                if (current.showHints) {
+                    HintStyleRow(current.hintStyle, { onHintStyleChange(mode, it) })
+                }
+                ToggleRow(
+                    current,
+                    Toggle.SHOW_TUTORIAL,
+                    toggle,
+                    "How to play",
+                    detail = "Show the ? button with the rules and a walkthrough.",
+                )
+                ToggleRow(current, Toggle.ALLOW_REVEAL, toggle, "Show solution", detail = "Offer Show solution in the game menu.")
             }
         }
     }
@@ -328,6 +344,37 @@ private fun ToggleRow(
             checked = toggle.read(settings),
             onCheckedChange = { onToggle(toggle, it) },
             modifier = Modifier.testTag("setting_${toggle.name.lowercase()}"),
+        )
+    }
+}
+
+@Composable
+private fun HintStyleRow(
+    style: HintStyle,
+    onChange: (HintStyle) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Column(Modifier.weight(1f)) {
+            Text("Hints fill the answer in")
+            Text(
+                "Off: a hint points at the next step and says why.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        Switch(
+            checked = style == HintStyle.FILL,
+            onCheckedChange = {
+                onChange(
+                    if (it) {
+                        HintStyle.FILL
+                    } else {
+                        HintStyle.POINT
+                    },
+                )
+            },
+            modifier = Modifier.testTag("setting_hint_fill"),
         )
     }
 }

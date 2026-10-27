@@ -250,6 +250,8 @@ data class GameState(
             options = options,
         )
 
+    fun placeHint(hint: Hint): GameState = copy(notesMode = false, selected = hint.cell).enter(hint.cell, hint.digit)
+
     fun revealSolution(): GameState {
         val solution = puzzle.solution ?: return this
         return copy(values = solution, notes = notes.map { 0 }, selected = null, activeDigit = null, rejected = null)

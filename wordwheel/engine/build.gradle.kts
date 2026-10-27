@@ -10,7 +10,7 @@ tasks.register<JavaExec>("generateBank") {
     workingDir = rootDir
     args(
         "wordwheel/engine/data",
-        providers.gradleProperty("bankDir").getOrElse("app/src/main/assets/wordwheel"),
+        providers.gradleProperty("bankDir").getOrElse("puzzles-data/wordwheel"),
         *providers
             .gradleProperty("bankSizes")
             .getOrElse("200,200,200")

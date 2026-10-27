@@ -5,7 +5,8 @@ name: Kakuro - redo puts an undone digit back, and Mark boxes a cell
     clearState: true
     arguments:
       fixture: "kakuro_empty"
-- waitForAnimationToEnd
+- waitForAnimationToEnd:
+    timeout: 1500
 - tapOn:
     id: "cell_r2c2"
 - tapOn:

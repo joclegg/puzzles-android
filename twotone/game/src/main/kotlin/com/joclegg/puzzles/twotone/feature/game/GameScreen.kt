@@ -33,11 +33,16 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joclegg.puzzles.twotone.core.ui.BackButton
 import com.joclegg.puzzles.twotone.core.ui.ColourPicker
+import com.joclegg.puzzles.twotone.core.ui.HintButton
+import com.joclegg.puzzles.twotone.core.ui.HowToPlayButton
 import com.joclegg.puzzles.twotone.core.ui.ToolButton
+import com.joclegg.puzzles.twotone.core.ui.TourStep
 import com.joclegg.puzzles.twotone.core.ui.TwoToneBoard
 import com.joclegg.puzzles.twotone.core.ui.TwoToneIcons
 import com.joclegg.puzzles.twotone.core.ui.dialogTestTags
 import com.joclegg.puzzles.twotone.core.ui.formatDuration
+import com.joclegg.puzzles.twotone.core.ui.rememberTourState
+import com.joclegg.puzzles.twotone.core.ui.tourTarget
 import com.joclegg.puzzles.twotone.engine.Tile
 import kotlinx.coroutines.launch
 
@@ -63,6 +68,7 @@ fun GameRoute(
             onUndo = viewModel::onUndo,
             onHint = viewModel::onHint,
             onRestart = viewModel::onRestart,
+            onRevealSolution = viewModel::onRevealSolution,
             onNewPuzzle = { scope.launch { onOpenGame(viewModel.newPuzzle()) } },
             onSettings = onSettings,
             onHome = onHome,
@@ -79,13 +85,15 @@ fun GameScreen(
     onUndo: () -> Unit,
     onHint: () -> Unit,
     onRestart: () -> Unit,
+    onRevealSolution: () -> Unit,
     onNewPuzzle: () -> Unit,
     onSettings: () -> Unit,
     onHome: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var menuOpen by remember { mutableStateOf(false) }
-    var rulesOpen by remember { mutableStateOf(false) }
+    var revealing by remember { mutableStateOf(false) }
+    val tour = rememberTourState()
     var showGivens by rememberSaveable { mutableStateOf(false) }
     Column(modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         Row(Modifier.fillMaxWidth().padding(horizontal = 4.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -113,10 +121,21 @@ fun GameScreen(
                 { showGivens = !showGivens },
                 tag = "starting_tiles",
             )
-            ToolButton(TwoToneIcons.Hint, "Show a hint", onHint, tag = "hint", enabled = !state.solved)
-            ToolButton(TwoToneIcons.Rules, "Show the rules", { rulesOpen = true }, tag = "rules")
+            if (state.showHints) {
+                ToolButton(
+                    TwoToneIcons.Hint,
+                    "Show a hint",
+                    onHint,
+                    tag = "hint",
+                    modifier = Modifier.tourTarget(tour, "hint"),
+                    enabled = !state.solved,
+                )
+            }
+            if (state.showTutorial) {
+                HowToPlayButton(RULES, TUTORIAL, tour)
+            }
             Column {
-                IconButton(onClick = { menuOpen = true }, modifier = Modifier.testTag("game_menu")) {
+                IconButton(onClick = { menuOpen = true }, modifier = Modifier.testTag("game_menu").tourTarget(tour, "menu")) {
                     Icon(TwoToneIcons.More, contentDescription = "More")
                 }
                 DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }, modifier = Modifier.dialogTestTags()) {
@@ -137,6 +156,16 @@ fun GameScreen(
                         },
                         modifier = Modifier.testTag("new_puzzle"),
                     )
+                    if (state.allowReveal && !state.solved) {
+                        DropdownMenuItem(
+                            text = { Text("Show solution") },
+                            onClick = {
+                                menuOpen = false
+                                revealing = true
+                            },
+                            modifier = Modifier.testTag("menu_solution"),
+                        )
+                    }
                     DropdownMenuItem(
                         text = { Text("Settings") },
                         onClick = {
@@ -149,7 +178,11 @@ fun GameScreen(
             }
         }
         Spacer(Modifier.height(24.dp))
-        TwoToneBoard(state.board.copy(showGivens = showGivens), onTileClick, Modifier.fillMaxWidth().padding(horizontal = 12.dp))
+        TwoToneBoard(
+            state.board.copy(showGivens = showGivens),
+            onTileClick,
+            Modifier.tourTarget(tour, "board").fillMaxWidth().padding(horizontal = 12.dp),
+        )
         Spacer(Modifier.height(16.dp))
         if (state.pickColour) {
             ColourPicker(state.colour, onColourClick)
@@ -163,33 +196,26 @@ fun GameScreen(
             )
         }
     }
-    if (rulesOpen) {
-        RulesDialog(onDismiss = { rulesOpen = false })
+    if (revealing) {
+        AlertDialog(
+            onDismissRequest = { revealing = false },
+            title = { Text("Show the solution?") },
+            text = { Text("This ends the puzzle. It won't count towards best times.") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        revealing = false
+                        onRevealSolution()
+                    },
+                    modifier = Modifier.testTag("confirm_reveal"),
+                ) { Text("Show solution") }
+            },
+            dismissButton = { TextButton(onClick = { revealing = false }) { Text("Cancel") } },
+        )
     }
     if (state.solved && state.resultSaved) {
         SolvedDialog(state, onNewPuzzle, onHome)
     }
-}
-
-@Composable
-private fun RulesDialog(
-    onDismiss: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        modifier = modifier.dialogTestTags().testTag("rules_dialog"),
-        title = { Text("Rules") },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text("Fill every tile red or blue. Tap a tile to cycle it: red, blue, empty.")
-                Text("No three tiles of the same colour next to each other in a row or column.")
-                Text("Every row and column has as many red tiles as blue.")
-                Text("No two rows are the same, and no two columns are the same.")
-            }
-        },
-        confirmButton = { TextButton(onClick = onDismiss) { Text("Got it") } },
-    )
 }
 
 @Composable
@@ -227,3 +253,21 @@ private fun SolvedDialog(
         },
     )
 }
+
+private val RULES =
+    listOf(
+        "Fill every tile red or blue. Tap a tile to cycle it: red, blue, empty.",
+        "No three tiles of the same colour next to each other in a row or column.",
+        "Every row and column has as many red tiles as blue.",
+        "No two rows are the same, and no two columns are the same.",
+    )
+
+private val TUTORIAL =
+    listOf(
+        TourStep(
+            "board",
+            "Tap a tile to cycle it red, blue, empty. No three of a colour in a line, and each row and column is half red, half blue.",
+        ),
+        TourStep("hint", "Stuck? The bulb shows you the next step."),
+        TourStep("menu", "Restart, show the solution and settings live in this menu."),
+    )

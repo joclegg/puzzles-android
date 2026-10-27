@@ -163,6 +163,10 @@ data class GameState(
     fun withInputMode(mode: InputMode): GameState =
         copy(inputMode = mode, activeDigit = null, eraserActive = false, markActive = false, rejected = null)
 
+    fun placeHint(hint: Hint): GameState = copy(notesMode = false, selected = hint.cell, rejected = null).place(hint.cell, hint.digit)
+
+    fun revealSolution(): GameState = copy(values = puzzle.solution, notes = notes.map { 0 }, selected = null, rejected = null)
+
     private fun place(
         cell: Int,
         digit: Int,

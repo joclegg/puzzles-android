@@ -1,0 +1,25 @@
+appId: com.joclegg.puzzles
+name: How to play walks through the screen one step at a time
+---
+- launchApp:
+    clearState: true
+    arguments:
+      fixture: "classic_easy"
+- waitForAnimationToEnd:
+    timeout: 1500
+- tapOn:
+    id: "rules"
+- tapOn:
+    id: "walkthrough_start"
+- assertVisible:
+    id: "walkthrough_text"
+    text: "Tap a cell.*"
+- tapOn:
+    id: "walkthrough_next"
+- assertVisible:
+    id: "walkthrough_text"
+    text: "Then tap a number.*"
+- tapOn:
+    id: "walkthrough_close"
+- assertNotVisible:
+    id: "walkthrough"

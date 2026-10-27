@@ -5,17 +5,20 @@ tags:
 ---
 - launchApp:
     clearState: true
-- waitForAnimationToEnd
+- waitForAnimationToEnd:
+    timeout: 1500
 - scrollUntilVisible:
     element:
       id: "game_two_tone"
     centerElement: true
 - tapOn:
     id: "game_two_tone"
-- waitForAnimationToEnd
+- waitForAnimationToEnd:
+    timeout: 1500
 - tapOn:
     id: "size_6"
-- waitForAnimationToEnd
+- waitForAnimationToEnd:
+    timeout: 1500
 - assertVisible:
     id: "tile_r6c6"
 - assertVisible:

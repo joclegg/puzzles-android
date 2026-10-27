@@ -9,7 +9,8 @@ enum class Level(
     EASY(10..16),
     MEDIUM(17..24),
     HARD(25..32),
-    EXPERT(33..60),
+    EXPERT(33..40),
+    EVIL(41..60),
 }
 
 data class Puzzle(

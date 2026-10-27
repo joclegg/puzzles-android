@@ -8,6 +8,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joclegg.puzzles.kakuro.core.data.GameRepository
+import com.joclegg.puzzles.kakuro.core.data.HintStyle
 import com.joclegg.puzzles.kakuro.core.data.PuzzleBank
 import com.joclegg.puzzles.kakuro.core.data.PuzzleRef
 import com.joclegg.puzzles.kakuro.core.data.SavedGame
@@ -22,6 +23,7 @@ import com.joclegg.puzzles.kakuro.engine.GameTimer
 import com.joclegg.puzzles.kakuro.engine.InputMode
 import com.joclegg.puzzles.kakuro.engine.MAX_DIGIT
 import com.joclegg.puzzles.kakuro.engine.MistakeCheck
+import com.joclegg.puzzles.kakuro.engine.findHint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
@@ -51,6 +53,11 @@ data class GameUiState(
     val solved: Boolean,
     val newBest: Boolean,
     val resultSaved: Boolean,
+    val showHints: Boolean = true,
+    val showTutorial: Boolean = true,
+    val allowReveal: Boolean = true,
+    val revealed: Boolean = false,
+    val hintMessage: String? = null,
 )
 
 class GameViewModel(
@@ -70,6 +77,8 @@ class GameViewModel(
     private var newBest = false
     private var resultSaved = false
     private var display = Settings()
+    private var revealed = false
+    private var hintMessage: String? = null
 
     private val _uiState = MutableStateFlow<GameUiState?>(null)
     val uiState: StateFlow<GameUiState?> = _uiState.asStateFlow()
@@ -112,6 +121,36 @@ class GameViewModel(
     fun onMark() = move { it.mark() }
 
     fun onToggleNotes() = move { it.toggleNotes() }
+
+    fun onHint() {
+        val current = game ?: return
+        if (current.isSolved) {
+            return
+        }
+        val hint = current.findHint() ?: return
+        if (display.hintStyle == HintStyle.FILL) {
+            move { it.placeHint(hint) }
+            return
+        }
+        game = current.copy(selected = hint.cell)
+        hintMessage = hint.message
+        publish()
+    }
+
+    fun onRevealSolution() {
+        val current = game ?: return
+        if (current.isSolved || revealed) {
+            return
+        }
+        timer = timer.pause(monotonicNowMs())
+        ticker?.cancel()
+        pendingSave?.cancel()
+        game = current.revealSolution()
+        revealed = true
+        val snapshot = snapshot() ?: return
+        viewModelScope.launch { withContext(NonCancellable) { games.reveal(snapshot) } }
+        publish()
+    }
 
     fun onRestart() {
         val current = game ?: return
@@ -162,12 +201,16 @@ class GameViewModel(
     }
 
     private fun move(change: (GameState) -> GameState) {
+        if (revealed) {
+            return
+        }
         val before = game ?: return
         val after = change(before)
         if (after == before) {
             return
         }
         game = after
+        hintMessage = null
         if (!before.isSolved && after.isSolved) {
             finish()
         } else if (after.changes != before.changes || after.mistakes != before.mistakes) {
@@ -217,6 +260,11 @@ class GameViewModel(
         val board = current.toBoardUi()
         _uiState.value =
             GameUiState(
+                showHints = display.showHints,
+                showTutorial = display.showTutorial,
+                allowReveal = display.allowReveal,
+                revealed = revealed,
+                hintMessage = hintMessage,
                 title = ref.title(),
                 board =
                     if (display.highlightRuns) {

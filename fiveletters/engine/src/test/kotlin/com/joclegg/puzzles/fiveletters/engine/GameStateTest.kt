@@ -123,4 +123,25 @@ class GameStateTest {
         // Assert
         assertEquals(true, after.isWon)
     }
+
+    @Test
+    fun `given a guess when a hint is asked for then it gives the first letter not yet found in place`() {
+        // Arrange
+        val game = GameState("CRANE", guesses = listOf("CLOUD"))
+
+        // Act
+        val hint = game.hintLetter()
+
+        // Assert
+        assertEquals(1 to 'R', hint)
+    }
+
+    @Test
+    fun `given a game when the word is revealed then the game is over and lost`() {
+        // Act
+        val game = GameState("CRANE", guesses = listOf("CLOUD")).revealWord()
+
+        // Assert
+        assertEquals(true to true, game.isOver to game.isLost)
+    }
 }

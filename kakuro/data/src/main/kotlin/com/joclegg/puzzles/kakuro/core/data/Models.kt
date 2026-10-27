@@ -5,7 +5,7 @@ import com.joclegg.puzzles.kakuro.engine.Puzzle
 import java.time.LocalDate
 import kotlin.random.Random
 
-enum class GameStatus { IN_PROGRESS, SOLVED, ABANDONED }
+enum class GameStatus { IN_PROGRESS, SOLVED, ABANDONED, REVEALED }
 
 data class PuzzleRef(
     val id: String,

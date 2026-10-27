@@ -41,11 +41,12 @@ Each game has its own modules under `sudoku/`, `solitaire/`, `twotone/`, `sightl
 - `<game>/game/`, `<game>/home/`, `<game>/stats/`, `<game>/settings/`: the screens
 - `core/testing/`: shared test utilities, such as `TestCompletionSource`
 - `app/`: `MainActivity`, `PuzzlesApp.kt` (navigation), `LauncherScreen`, and per game a container (`<Game>Container`), a routes file (`<Game>Routes`) and debug-only e2e fixtures in `src/debug/` (`<Game>Fixtures`)
-- `app/src/main/assets/puzzles/`: the generated sudoku bank, one file per mode and level
-- `app/src/main/assets/kakuro/`: the generated Kakuro bank, one file per size (`./gradlew :kakuro:engine:generateBank`)
-- `app/src/main/assets/slideout/`: the generated Slide Out bank, one file per level (`./gradlew :slideout:engine:generateBank`, which saves each puzzle as it's found and resumes)
-- `app/src/main/assets/wordwheel/`: the Word Wheel bank and accepted words (`./gradlew :wordwheel:engine:generateBank`), built from the 12dicts lists in `wordwheel/engine/data/` (see its NOTICE)
-- `app/src/main/assets/words/`: Five Letters word lists: `answers.txt` (hand-picked common words, British spelling, no plurals) and `guesses.txt` (the public-domain ENABLE list)
+- `puzzles-data/`: a git submodule ([joclegg/puzzles-data](https://github.com/joclegg/puzzles-data)) holding every puzzle bank and word list, shared with puzzles-web and packaged as the app's assets. Clone with `--recurse-submodules`, or run `git submodule update --init`. Commit bank changes there first, then bump the submodule here.
+- `puzzles-data/sudoku/`: the generated sudoku bank, one file per mode and level
+- `puzzles-data/kakuro/`: the generated Kakuro bank, one file per size (`./gradlew :kakuro:engine:generateBank`)
+- `puzzles-data/slideout/`: the generated Slide Out bank, one file per level (`./gradlew :slideout:engine:generateBank`, which saves each puzzle as it's found and resumes)
+- `puzzles-data/wordwheel/`: the Word Wheel bank and accepted words (`./gradlew :wordwheel:engine:generateBank`), built from the 12dicts lists in `wordwheel/engine/data/` (see its NOTICE)
+- `puzzles-data/words/`: Five Letters word lists: `answers.txt` (hand-picked common words, British spelling, no plurals) and `guesses.txt` (the public-domain ENABLE list)
 - `e2e/flows/`: Maestro flows, one behaviour per file, named `sudoku_*`, `solitaire_*`, `two_tone_*`, `sightlines_*` or `five_letters_*`, `kakuro_*`, `slide_out_*`, `word_wheel_*`
 - `build-logic/`: convention plugins shared by every module
 

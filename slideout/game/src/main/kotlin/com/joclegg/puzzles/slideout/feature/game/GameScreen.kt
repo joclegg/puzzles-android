@@ -31,11 +31,16 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joclegg.puzzles.slideout.core.ui.BackButton
+import com.joclegg.puzzles.slideout.core.ui.HintButton
+import com.joclegg.puzzles.slideout.core.ui.HowToPlayButton
 import com.joclegg.puzzles.slideout.core.ui.SlideBoard
 import com.joclegg.puzzles.slideout.core.ui.SlideOutIcons
 import com.joclegg.puzzles.slideout.core.ui.ToolButton
+import com.joclegg.puzzles.slideout.core.ui.TourStep
 import com.joclegg.puzzles.slideout.core.ui.dialogTestTags
 import com.joclegg.puzzles.slideout.core.ui.formatDuration
+import com.joclegg.puzzles.slideout.core.ui.rememberTourState
+import com.joclegg.puzzles.slideout.core.ui.tourTarget
 import kotlinx.coroutines.launch
 
 @Composable
@@ -59,6 +64,7 @@ fun GameRoute(
             onUndo = viewModel::onUndo,
             onHint = viewModel::onHint,
             onRestart = viewModel::onRestart,
+            onRevealSolution = viewModel::onRevealSolution,
             onNewPuzzle = { scope.launch { onOpenGame(viewModel.newPuzzle()) } },
             onSettings = onSettings,
             onHome = onHome,
@@ -74,13 +80,15 @@ fun GameScreen(
     onUndo: () -> Unit,
     onHint: () -> Unit,
     onRestart: () -> Unit,
+    onRevealSolution: () -> Unit,
     onNewPuzzle: () -> Unit,
     onSettings: () -> Unit,
     onHome: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var menuOpen by remember { mutableStateOf(false) }
-    var rulesOpen by remember { mutableStateOf(false) }
+    var revealing by remember { mutableStateOf(false) }
+    val tour = rememberTourState()
     Column(modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         Row(Modifier.fillMaxWidth().padding(horizontal = 4.dp), verticalAlignment = Alignment.CenterVertically) {
             BackButton(onHome)
@@ -99,10 +107,21 @@ fun GameScreen(
                 }
             }
             ToolButton(SlideOutIcons.Undo, "Undo the last move", onUndo, tag = "undo", enabled = state.canUndo)
-            ToolButton(SlideOutIcons.Hint, "Show a hint", onHint, tag = "hint", enabled = !state.solved)
-            ToolButton(SlideOutIcons.Rules, "Show the rules", { rulesOpen = true }, tag = "rules")
+            if (state.showHints) {
+                ToolButton(
+                    SlideOutIcons.Hint,
+                    "Show a hint",
+                    onHint,
+                    tag = "hint",
+                    modifier = Modifier.tourTarget(tour, "hint"),
+                    enabled = !state.solved,
+                )
+            }
+            if (state.showTutorial) {
+                HowToPlayButton(RULES, TUTORIAL, tour)
+            }
             Column {
-                IconButton(onClick = { menuOpen = true }, modifier = Modifier.testTag("game_menu")) {
+                IconButton(onClick = { menuOpen = true }, modifier = Modifier.testTag("game_menu").tourTarget(tour, "menu")) {
                     Icon(SlideOutIcons.More, contentDescription = "More")
                 }
                 DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }, modifier = Modifier.dialogTestTags()) {
@@ -123,6 +142,16 @@ fun GameScreen(
                         },
                         modifier = Modifier.testTag("new_puzzle"),
                     )
+                    if (state.allowReveal && !state.solved) {
+                        DropdownMenuItem(
+                            text = { Text("Show solution") },
+                            onClick = {
+                                menuOpen = false
+                                revealing = true
+                            },
+                            modifier = Modifier.testTag("menu_solution"),
+                        )
+                    }
                     DropdownMenuItem(
                         text = { Text("Settings") },
                         onClick = {
@@ -135,34 +164,28 @@ fun GameScreen(
             }
         }
         Spacer(Modifier.height(24.dp))
-        SlideBoard(state.board, onSlide, Modifier.fillMaxWidth().padding(horizontal = 16.dp))
+        SlideBoard(state.board, onSlide, Modifier.tourTarget(tour, "board").fillMaxWidth().padding(horizontal = 16.dp))
     }
-    if (rulesOpen) {
-        RulesDialog(onDismiss = { rulesOpen = false })
+    if (revealing) {
+        AlertDialog(
+            onDismissRequest = { revealing = false },
+            title = { Text("Show the solution?") },
+            text = { Text("This ends the puzzle. It won't count towards best times.") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        revealing = false
+                        onRevealSolution()
+                    },
+                    modifier = Modifier.testTag("confirm_reveal"),
+                ) { Text("Show solution") }
+            },
+            dismissButton = { TextButton(onClick = { revealing = false }) { Text("Cancel") } },
+        )
     }
     if (state.solved && state.resultSaved) {
         SolvedDialog(state, onNewPuzzle, onHome)
     }
-}
-
-@Composable
-private fun RulesDialog(
-    onDismiss: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        modifier = modifier.dialogTestTags().testTag("rules_dialog"),
-        title = { Text("Rules") },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text("Slide the red block out through the gap on the right.")
-                Text("Blocks only slide along their length: across ones left and right, upright ones up and down.")
-                Text("Each slide of a block is one move, however far it goes. Par is the fewest moves possible.")
-            }
-        },
-        confirmButton = { TextButton(onClick = onDismiss) { Text("Got it") } },
-    )
 }
 
 @Composable
@@ -208,3 +231,17 @@ private fun SolvedDialog(
         },
     )
 }
+
+private val RULES =
+    listOf(
+        "Slide the red block out through the gap on the right.",
+        "Blocks only slide along their length: across ones left and right, upright ones up and down.",
+        "Each slide of a block is one move, however far it goes. Par is the fewest moves possible.",
+    )
+
+private val TUTORIAL =
+    listOf(
+        TourStep("board", "Drag a block along its length to slide it. Free the red block through the gap on the right."),
+        TourStep("hint", "Stuck? The bulb shows you the next step."),
+        TourStep("menu", "Restart, show the solution and settings live in this menu."),
+    )

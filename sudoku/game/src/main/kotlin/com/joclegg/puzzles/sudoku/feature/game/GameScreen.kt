@@ -35,15 +35,21 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joclegg.puzzles.sudoku.core.data.GameMode
 import com.joclegg.puzzles.sudoku.core.ui.BackButton
+import com.joclegg.puzzles.sudoku.core.ui.HintButton
+import com.joclegg.puzzles.sudoku.core.ui.HowToPlayButton
 import com.joclegg.puzzles.sudoku.core.ui.KeypadTool
 import com.joclegg.puzzles.sudoku.core.ui.LocalBoardColors
 import com.joclegg.puzzles.sudoku.core.ui.NumberPad
 import com.joclegg.puzzles.sudoku.core.ui.SudokuBoard
 import com.joclegg.puzzles.sudoku.core.ui.SudokuIcons
+import com.joclegg.puzzles.sudoku.core.ui.TourState
+import com.joclegg.puzzles.sudoku.core.ui.TourStep
 import com.joclegg.puzzles.sudoku.core.ui.dialogTestTags
 import com.joclegg.puzzles.sudoku.core.ui.formatDuration
 import com.joclegg.puzzles.sudoku.core.ui.gameTitle
 import com.joclegg.puzzles.sudoku.core.ui.label
+import com.joclegg.puzzles.sudoku.core.ui.rememberTourState
+import com.joclegg.puzzles.sudoku.core.ui.tourTarget
 import com.joclegg.puzzles.sudoku.engine.Difficulty
 import com.joclegg.puzzles.sudoku.engine.InputMode
 import kotlinx.coroutines.delay
@@ -80,6 +86,7 @@ fun GameRoute(
             onMark = viewModel::onMark,
             onRestart = viewModel::onRestart,
             onRevealSolution = viewModel::onRevealSolution,
+            onHint = viewModel::onHint,
             onSettings = { onSettings(it.mode) },
             onHome = onHome,
             modifier = modifier,
@@ -135,25 +142,34 @@ fun GameScreen(
     onMark: () -> Unit,
     onRestart: () -> Unit,
     onRevealSolution: () -> Unit,
+    onHint: () -> Unit,
     onSettings: () -> Unit,
     onHome: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val tour = rememberTourState()
     Column(
         modifier.fillMaxSize().padding(vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         GameHeader(
             state,
+            tour = tour,
             onBack = onHome,
             onRestart = onRestart,
             onRevealSolution = onRevealSolution,
+            onHint = onHint,
             onUndo = onUndo,
             onRedo = onRedo,
             onSettings = onSettings,
             modifier = Modifier.padding(horizontal = 12.dp),
         )
-        SudokuBoard(board = state.board, onCellClick = onCellClick)
+        SudokuBoard(board = state.board, onCellClick = onCellClick, modifier = Modifier.tourTarget(tour, "board"))
+        Text(
+            state.hintMessage.orEmpty(),
+            style = MaterialTheme.typography.titleSmall,
+            modifier = Modifier.padding(horizontal = 16.dp).testTag("hint_message"),
+        )
         NumberPad(
             onDigit = onDigitClick,
             activeDigit = state.activeDigit.takeIf { state.inputMode == InputMode.DIGIT_FIRST },
@@ -204,7 +220,7 @@ fun GameScreen(
                         on = state.markActive,
                     ),
                 ),
-            modifier = Modifier.padding(horizontal = 8.dp),
+            modifier = Modifier.padding(horizontal = 8.dp).tourTarget(tour, "pad"),
         )
     }
 }
@@ -212,9 +228,11 @@ fun GameScreen(
 @Composable
 private fun GameHeader(
     state: GameUiState,
+    tour: TourState,
     onBack: () -> Unit,
     onRestart: () -> Unit,
     onRevealSolution: () -> Unit,
+    onHint: () -> Unit,
     onUndo: () -> Unit,
     onRedo: () -> Unit,
     onSettings: () -> Unit,
@@ -258,9 +276,29 @@ private fun GameHeader(
         IconButton(onClick = onRedo, enabled = state.canRedo, modifier = Modifier.testTag("redo")) {
             Icon(SudokuIcons.Redo, contentDescription = "Redo the move you undid")
         }
-        PuzzleMenu(state, onRestart, onRevealSolution, onSettings)
+        if (state.showHints) {
+            HintButton(onHint, enabled = !state.completed && !state.revealed, modifier = Modifier.tourTarget(tour, "hint"))
+        }
+        if (state.showTutorial) {
+            HowToPlayButton(RULES, TUTORIAL, tour)
+        }
+        PuzzleMenu(state, onRestart, onRevealSolution, onSettings, Modifier.tourTarget(tour, "menu"))
     }
 }
+
+private val RULES =
+    listOf(
+        "Fill the grid so every row, column and box has each number once.",
+        "In killer sudoku the numbers in each dashed cage also add up to its total, with no number repeated in a cage.",
+    )
+
+private val TUTORIAL =
+    listOf(
+        TourStep("board", "Tap a cell to select it. Shaded cells are givens and can't change."),
+        TourStep("pad", "Then tap a number to place it. The pencil puts numbers in as notes, the eraser clears a cell."),
+        TourStep("hint", "Stuck? The bulb points at a cell you can fill next and says why."),
+        TourStep("menu", "Restart, show the solution and settings live in this menu."),
+    )
 
 private enum class PuzzleAction { RESTART, REVEAL }
 
@@ -289,15 +327,17 @@ private fun PuzzleMenu(
                 },
                 modifier = Modifier.testTag("menu_restart"),
             )
-            DropdownMenuItem(
-                text = { Text("Show solution") },
-                enabled = playing && state.answerKnown,
-                onClick = {
-                    open = false
-                    confirming = PuzzleAction.REVEAL
-                },
-                modifier = Modifier.testTag("menu_solution"),
-            )
+            if (state.allowReveal) {
+                DropdownMenuItem(
+                    text = { Text("Show solution") },
+                    enabled = playing && state.answerKnown,
+                    onClick = {
+                        open = false
+                        confirming = PuzzleAction.REVEAL
+                    },
+                    modifier = Modifier.testTag("menu_solution"),
+                )
+            }
             DropdownMenuItem(
                 text = { Text("Settings") },
                 onClick = {

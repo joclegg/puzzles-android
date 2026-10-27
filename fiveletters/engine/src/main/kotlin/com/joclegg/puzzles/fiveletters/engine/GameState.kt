@@ -43,12 +43,13 @@ data class GameState(
     val typing: String = "",
     val hardMode: Boolean = false,
     val rejection: Rejection? = null,
+    val revealed: Boolean = false,
 ) {
     val marks: List<List<Mark>> get() = guesses.map { score(it, answer) }
 
     val isWon: Boolean get() = answer in guesses
 
-    val isLost: Boolean get() = !isWon && guesses.size == MAX_GUESSES
+    val isLost: Boolean get() = !isWon && (revealed || guesses.size == MAX_GUESSES)
 
     val isOver: Boolean get() = isWon || isLost
 
@@ -59,6 +60,13 @@ data class GameState(
                 .flatMap { (guess, marks) -> guess.toList().zip(marks) }
                 .groupBy({ it.first }, { it.second })
                 .mapValues { (_, marks) -> marks.minBy { it.ordinal } }
+
+    fun hintLetter(): Pair<Int, Char>? {
+        val index = answer.indices.firstOrNull { i -> guesses.none { it[i] == answer[i] } } ?: return null
+        return index to answer[index]
+    }
+
+    fun revealWord(): GameState = copy(typing = "", rejection = null, revealed = true)
 
     fun type(letter: Char): GameState {
         if (isOver || typing.length == WORD_LENGTH || !letter.isLetter()) {

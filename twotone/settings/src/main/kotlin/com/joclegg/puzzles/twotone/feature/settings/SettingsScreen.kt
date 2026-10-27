@@ -92,6 +92,15 @@ fun SettingsScreen(
                 )
                 ToggleRow(settings, Toggle.SHOW_TIMER, onToggle, "Show the timer")
                 ToggleRow(settings, Toggle.SHOW_PROGRESS, onToggle, "Show how much is filled in")
+                ToggleRow(settings, Toggle.SHOW_HINTS, onToggle, "Hints", detail = "Show the hint button.")
+                ToggleRow(
+                    settings,
+                    Toggle.SHOW_TUTORIAL,
+                    onToggle,
+                    "How to play",
+                    detail = "Show the ? button with the rules and a walkthrough.",
+                )
+                ToggleRow(settings, Toggle.ALLOW_REVEAL, onToggle, "Show solution", detail = "Offer Show solution in the game menu.")
             }
         }
     }

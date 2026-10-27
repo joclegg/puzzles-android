@@ -35,6 +35,10 @@ data class GameUiState(
     val solved: Boolean,
     val newBest: Boolean,
     val resultSaved: Boolean,
+    val showHints: Boolean = true,
+    val showTutorial: Boolean = true,
+    val allowReveal: Boolean = true,
+    val revealed: Boolean = false,
 )
 
 class GameViewModel(
@@ -55,6 +59,7 @@ class GameViewModel(
     private var newBest = false
     private var resultSaved = false
     private var display = Settings()
+    private var revealed = false
 
     private val _uiState = MutableStateFlow<GameUiState?>(null)
     val uiState: StateFlow<GameUiState?> = _uiState.asStateFlow()
@@ -96,6 +101,21 @@ class GameViewModel(
                 persistSoon()
                 current.withHint()
             }
+        publish()
+    }
+
+    fun onRevealSolution() {
+        val current = game ?: return
+        if (current.isSolved || revealed) {
+            return
+        }
+        timer = timer.pause(monotonicNowMs())
+        ticker?.cancel()
+        pendingSave?.cancel()
+        game = current.revealSolution()
+        revealed = true
+        val snapshot = snapshot() ?: return
+        viewModelScope.launch { withContext(NonCancellable) { games.reveal(snapshot) } }
         publish()
     }
 
@@ -149,6 +169,9 @@ class GameViewModel(
     }
 
     private fun move(change: (GameState) -> GameState) {
+        if (revealed) {
+            return
+        }
         val before = game ?: return
         val after = change(before)
         if (after == before) {
@@ -203,6 +226,10 @@ class GameViewModel(
         val ref = saved?.ref ?: return
         _uiState.value =
             GameUiState(
+                showHints = display.showHints,
+                showTutorial = display.showTutorial,
+                allowReveal = display.allowReveal,
+                revealed = revealed,
                 title = ref.title(),
                 board = BoardUi(current.board, current.hint),
                 elapsedMs = timer.elapsedMs(monotonicNowMs()),

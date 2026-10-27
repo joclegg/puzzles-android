@@ -2,6 +2,7 @@ package com.joclegg.puzzles.solitaire.feature.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.joclegg.puzzles.solitaire.core.data.HintStyle
 import com.joclegg.puzzles.solitaire.core.data.Settings
 import com.joclegg.puzzles.solitaire.core.data.SettingsRepository
 import com.joclegg.puzzles.solitaire.core.data.Toggle
@@ -26,6 +27,10 @@ class SettingsViewModel(
 
     fun onDrawModeChange(drawMode: DrawMode) {
         viewModelScope.launch { settings.setDrawMode(drawMode) }
+    }
+
+    fun onHintStyleChange(style: HintStyle) {
+        viewModelScope.launch { settings.setHintStyle(style) }
     }
 
     private companion object {

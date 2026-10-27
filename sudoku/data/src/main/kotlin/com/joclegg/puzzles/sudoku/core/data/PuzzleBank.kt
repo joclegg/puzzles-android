@@ -16,7 +16,7 @@ class PuzzleBank(
     ): List<String> =
         synchronized(cache) {
             val name = fileName(mode, difficulty)
-            cache.getOrPut(name) { open("puzzles/$name.txt").lines().filter { it.isNotBlank() } }
+            cache.getOrPut(name) { open("sudoku/$name.txt").lines().filter { it.isNotBlank() } }
         }
 
     fun size(

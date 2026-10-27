@@ -13,11 +13,17 @@ enum class Toggle(
 ) {
     HARD_MODE(Settings::hardMode, default = false),
     HIGH_CONTRAST(Settings::highContrast, default = false),
+    SHOW_HINTS(Settings::showHints, default = true),
+    SHOW_TUTORIAL(Settings::showTutorial, default = true),
+    ALLOW_REVEAL(Settings::allowReveal, default = true),
 }
 
 data class Settings(
     val hardMode: Boolean = false,
     val highContrast: Boolean = false,
+    val showHints: Boolean = true,
+    val showTutorial: Boolean = true,
+    val allowReveal: Boolean = true,
 )
 
 class SettingsRepository(
@@ -28,6 +34,9 @@ class SettingsRepository(
             Settings(
                 hardMode = prefs[Toggle.HARD_MODE.key] ?: Toggle.HARD_MODE.default,
                 highContrast = prefs[Toggle.HIGH_CONTRAST.key] ?: Toggle.HIGH_CONTRAST.default,
+                showHints = prefs[Toggle.SHOW_HINTS.key] ?: true,
+                showTutorial = prefs[Toggle.SHOW_TUTORIAL.key] ?: true,
+                allowReveal = prefs[Toggle.ALLOW_REVEAL.key] ?: true,
             )
         }
 

@@ -37,6 +37,10 @@ data class GameUiState(
     val solved: Boolean,
     val newBest: Boolean,
     val resultSaved: Boolean,
+    val showHints: Boolean = true,
+    val showTutorial: Boolean = true,
+    val allowReveal: Boolean = true,
+    val revealedAll: Boolean = false,
 )
 
 class GameViewModel(
@@ -56,6 +60,7 @@ class GameViewModel(
     private var newBest = false
     private var resultSaved = false
     private var display = Settings()
+    private var revealedAll = false
     private val random = Random(newSeed())
 
     private val _uiState = MutableStateFlow<GameUiState?>(null)
@@ -111,6 +116,20 @@ class GameViewModel(
         return games.start { PuzzleRef.random(bank, level, seed) }.id
     }
 
+    fun onRevealSolution() {
+        val current = game ?: return
+        if (current.isSolved || revealedAll) {
+            return
+        }
+        pause()
+        game = current.revealAll()
+        revealedAll = true
+        chosen = emptyList()
+        val snapshot = snapshot() ?: return
+        viewModelScope.launch { withContext(NonCancellable) { games.reveal(snapshot) } }
+        publish()
+    }
+
     fun onVisible() {
         if (game?.isSolved == true || runningSince != null) {
             return
@@ -140,6 +159,9 @@ class GameViewModel(
     }
 
     private fun update(after: GameState) {
+        if (revealedAll) {
+            return
+        }
         val before = game ?: return
         game = after
         if (!before.isSolved && after.isSolved) {
@@ -179,6 +201,10 @@ class GameViewModel(
                 .toSet()
         _uiState.value =
             GameUiState(
+                showHints = display.showHints,
+                showTutorial = display.showTutorial,
+                allowReveal = display.allowReveal,
+                revealedAll = revealedAll,
                 title = ref.title(),
                 grid = GridUi(ref.puzzle.crossword, foundCells, current.revealed - foundCells),
                 wheel = current.wheel,

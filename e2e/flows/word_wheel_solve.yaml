@@ -7,7 +7,8 @@ tags:
     clearState: true
     arguments:
       fixture: "word_wheel_two_words"
-- waitForAnimationToEnd
+- waitForAnimationToEnd:
+    timeout: 1500
 - tapOn:
     id: "wheel_letter_4"
 - tapOn:

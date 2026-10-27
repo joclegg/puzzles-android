@@ -48,26 +48,30 @@ fun HomeRoute(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
-    var starting by remember { mutableStateOf(false) }
+    var starting by remember { mutableStateOf<DealKind?>(null) }
 
-    fun launchGame(start: suspend () -> Long) {
-        if (starting) {
+    fun launchGame(
+        kind: DealKind,
+        start: suspend () -> Long,
+    ) {
+        if (starting != null) {
             return
         }
-        starting = true
+        starting = kind
         scope.launch {
             try {
                 onOpenGame(start())
             } finally {
-                starting = false
+                starting = null
             }
         }
     }
     HomeScreen(
         state = state,
+        dealing = starting,
         onResume = onOpenGame,
-        onStart = { launchGame { viewModel.start() } },
-        onDaily = { launchGame { viewModel.openDaily() } },
+        onStart = { launchGame(DealKind.NEW) { viewModel.start() } },
+        onDaily = { launchGame(DealKind.DAILY) { viewModel.openDaily() } },
         onStats = onStats,
         onHistory = onHistory,
         onSettings = onSettings,
@@ -79,6 +83,7 @@ fun HomeRoute(
 @Composable
 fun HomeScreen(
     state: HomeUiState,
+    dealing: DealKind?,
     onResume: (Long) -> Unit,
     onStart: () -> Unit,
     onDaily: () -> Unit,
@@ -110,18 +115,27 @@ fun HomeScreen(
                     onStart()
                 }
             },
+            enabled = dealing == null,
             modifier = Modifier.fillMaxWidth().testTag("play"),
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text("New game")
+                Text(
+                    if (dealing == DealKind.NEW) {
+                        "Dealing…"
+                    } else {
+                        "New game"
+                    },
+                )
                 if (saved != null) {
                     Text("In progress · ${formatDuration(saved.elapsedMs)}", style = MaterialTheme.typography.labelSmall)
                 }
             }
         }
-        OutlinedButton(onClick = onDaily, modifier = Modifier.fillMaxWidth().testTag("daily")) {
+        OutlinedButton(onClick = onDaily, enabled = dealing == null, modifier = Modifier.fillMaxWidth().testTag("daily")) {
             Text(
-                if (state.dailyWon) {
+                if (dealing == DealKind.DAILY) {
+                    "Dealing…"
+                } else if (state.dailyWon) {
                     "Daily deal · Won ✓"
                 } else {
                     "Daily deal"
@@ -173,4 +187,9 @@ private fun ContinueCard(
             Text("${game.deal.title()} · ${formatDuration(game.elapsedMs)} · ${game.moves.size} moves")
         }
     }
+}
+
+enum class DealKind {
+    NEW,
+    DAILY,
 }

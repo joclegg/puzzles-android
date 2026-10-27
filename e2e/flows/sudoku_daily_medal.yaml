@@ -5,7 +5,8 @@ name: Finishing today's daily earns a silver medal on Home and in the calendar
     clearState: true
     arguments:
       fixture: "daily_classic_one_left"
-- waitForAnimationToEnd
+- waitForAnimationToEnd:
+    timeout: 1500
 - tapOn:
     id: "cell_r1c3"
 - tapOn:
@@ -25,7 +26,8 @@ name: Finishing today's daily earns a silver medal on Home and in the calendar
       id: "daily_today"
 - tapOn:
     id: "daily_today"
-- waitForAnimationToEnd
+- waitForAnimationToEnd:
+    timeout: 1500
 - assertVisible:
     id: "daily_choice"
 - assertVisible:

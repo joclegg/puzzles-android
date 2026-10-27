@@ -32,11 +32,16 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joclegg.puzzles.sightlines.core.ui.BackButton
 import com.joclegg.puzzles.sightlines.core.ui.ColourPicker
+import com.joclegg.puzzles.sightlines.core.ui.HintButton
+import com.joclegg.puzzles.sightlines.core.ui.HowToPlayButton
 import com.joclegg.puzzles.sightlines.core.ui.SightlinesBoard
 import com.joclegg.puzzles.sightlines.core.ui.SightlinesIcons
 import com.joclegg.puzzles.sightlines.core.ui.ToolButton
+import com.joclegg.puzzles.sightlines.core.ui.TourStep
 import com.joclegg.puzzles.sightlines.core.ui.dialogTestTags
 import com.joclegg.puzzles.sightlines.core.ui.formatDuration
+import com.joclegg.puzzles.sightlines.core.ui.rememberTourState
+import com.joclegg.puzzles.sightlines.core.ui.tourTarget
 import com.joclegg.puzzles.sightlines.engine.Dot
 import kotlinx.coroutines.launch
 
@@ -62,6 +67,7 @@ fun GameRoute(
             onUndo = viewModel::onUndo,
             onHint = viewModel::onHint,
             onRestart = viewModel::onRestart,
+            onRevealSolution = viewModel::onRevealSolution,
             onNewPuzzle = { scope.launch { onOpenGame(viewModel.newPuzzle()) } },
             onSettings = onSettings,
             onHome = onHome,
@@ -78,13 +84,15 @@ fun GameScreen(
     onUndo: () -> Unit,
     onHint: () -> Unit,
     onRestart: () -> Unit,
+    onRevealSolution: () -> Unit,
     onNewPuzzle: () -> Unit,
     onSettings: () -> Unit,
     onHome: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var menuOpen by remember { mutableStateOf(false) }
-    var rulesOpen by remember { mutableStateOf(false) }
+    var revealing by remember { mutableStateOf(false) }
+    val tour = rememberTourState()
     Column(modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         Row(Modifier.fillMaxWidth().padding(horizontal = 4.dp), verticalAlignment = Alignment.CenterVertically) {
             BackButton(onHome)
@@ -101,10 +109,21 @@ fun GameScreen(
                 }
             }
             ToolButton(SightlinesIcons.Undo, "Undo the last tap", onUndo, tag = "undo", enabled = state.canUndo)
-            ToolButton(SightlinesIcons.Hint, "Show a hint", onHint, tag = "hint", enabled = !state.solved)
-            ToolButton(SightlinesIcons.Rules, "Show the rules", { rulesOpen = true }, tag = "rules")
+            if (state.showHints) {
+                ToolButton(
+                    SightlinesIcons.Hint,
+                    "Show a hint",
+                    onHint,
+                    tag = "hint",
+                    modifier = Modifier.tourTarget(tour, "hint"),
+                    enabled = !state.solved,
+                )
+            }
+            if (state.showTutorial) {
+                HowToPlayButton(RULES, TUTORIAL, tour)
+            }
             Column {
-                IconButton(onClick = { menuOpen = true }, modifier = Modifier.testTag("game_menu")) {
+                IconButton(onClick = { menuOpen = true }, modifier = Modifier.testTag("game_menu").tourTarget(tour, "menu")) {
                     Icon(SightlinesIcons.More, contentDescription = "More")
                 }
                 DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }, modifier = Modifier.dialogTestTags()) {
@@ -125,6 +144,16 @@ fun GameScreen(
                         },
                         modifier = Modifier.testTag("new_puzzle"),
                     )
+                    if (state.allowReveal && !state.solved) {
+                        DropdownMenuItem(
+                            text = { Text("Show solution") },
+                            onClick = {
+                                menuOpen = false
+                                revealing = true
+                            },
+                            modifier = Modifier.testTag("menu_solution"),
+                        )
+                    }
                     DropdownMenuItem(
                         text = { Text("Settings") },
                         onClick = {
@@ -137,7 +166,7 @@ fun GameScreen(
             }
         }
         Spacer(Modifier.height(24.dp))
-        SightlinesBoard(state.board, onDotClick, Modifier.fillMaxWidth().padding(horizontal = 12.dp))
+        SightlinesBoard(state.board, onDotClick, Modifier.tourTarget(tour, "board").fillMaxWidth().padding(horizontal = 12.dp))
         Spacer(Modifier.height(16.dp))
         if (state.pickColour) {
             ColourPicker(state.colour, onColourClick)
@@ -151,33 +180,26 @@ fun GameScreen(
             )
         }
     }
-    if (rulesOpen) {
-        RulesDialog(onDismiss = { rulesOpen = false })
+    if (revealing) {
+        AlertDialog(
+            onDismissRequest = { revealing = false },
+            title = { Text("Show the solution?") },
+            text = { Text("This ends the puzzle. It won't count towards best times.") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        revealing = false
+                        onRevealSolution()
+                    },
+                    modifier = Modifier.testTag("confirm_reveal"),
+                ) { Text("Show solution") }
+            },
+            dismissButton = { TextButton(onClick = { revealing = false }) { Text("Cancel") } },
+        )
     }
     if (state.solved && state.resultSaved) {
         SolvedDialog(state, onNewPuzzle, onHome)
     }
-}
-
-@Composable
-private fun RulesDialog(
-    onDismiss: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        modifier = modifier.dialogTestTags().testTag("rules_dialog"),
-        title = { Text("Rules") },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text("Fill every dot blue or red. Tap a dot to cycle it: blue, red, empty.")
-                Text("Blue dots can see other blue dots in their own row and column. Red dots block the view.")
-                Text("A number says how many blue dots that dot can see.")
-                Text("Every blue dot must see at least one other.")
-            }
-        },
-        confirmButton = { TextButton(onClick = onDismiss) { Text("Got it") } },
-    )
 }
 
 @Composable
@@ -215,3 +237,18 @@ private fun SolvedDialog(
         },
     )
 }
+
+private val RULES =
+    listOf(
+        "Fill every dot blue or red. Tap a dot to cycle it: blue, red, empty.",
+        "Blue dots can see other blue dots in their own row and column. Red dots block the view.",
+        "A number says how many blue dots that dot can see.",
+        "Every blue dot must see at least one other.",
+    )
+
+private val TUTORIAL =
+    listOf(
+        TourStep("board", "Tap a dot to cycle it blue, red, empty. A number says how many blue dots it can see; red dots block the view."),
+        TourStep("hint", "Stuck? The bulb shows you the next step."),
+        TourStep("menu", "Restart, show the solution and settings live in this menu."),
+    )

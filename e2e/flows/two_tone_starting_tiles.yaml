@@ -5,7 +5,8 @@ name: Two Tone - the starting tiles show only when asked
     clearState: true
     arguments:
       fixture: "two_tone_two_left"
-- waitForAnimationToEnd
+- waitForAnimationToEnd:
+    timeout: 1500
 - assertNotVisible:
     id: "given_marker"
 - tapOn:

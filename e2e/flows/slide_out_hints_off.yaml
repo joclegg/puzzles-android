@@ -1,0 +1,26 @@
+appId: com.joclegg.puzzles
+name: Slide Out - turning Hints off hides the hint button
+---
+- launchApp:
+    clearState: true
+    arguments:
+      fixture: "slide_out_two_moves"
+- waitForAnimationToEnd:
+    timeout: 1500
+- tapOn:
+    id: "game_menu"
+- tapOn:
+    id: "menu_settings"
+- waitForAnimationToEnd:
+    timeout: 1500
+- scrollUntilVisible:
+    element:
+      id: "setting_show_hints"
+- tapOn:
+    id: "setting_show_hints"
+- tapOn:
+    id: "back"
+- waitForAnimationToEnd:
+    timeout: 1500
+- assertNotVisible:
+    id: "hint"

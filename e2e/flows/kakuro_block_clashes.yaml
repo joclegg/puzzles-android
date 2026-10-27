@@ -3,23 +3,27 @@ name: Kakuro - with Block clashes on, a digit already in the run is refused and 
 ---
 - launchApp:
     clearState: true
-- waitForAnimationToEnd
+- waitForAnimationToEnd:
+    timeout: 1500
 - scrollUntilVisible:
     element:
       id: "game_kakuro"
     centerElement: true
 - tapOn:
     id: "game_kakuro"
-- waitForAnimationToEnd
+- waitForAnimationToEnd:
+    timeout: 1500
 - tapOn:
     id: "settings"
-- waitForAnimationToEnd
+- waitForAnimationToEnd:
+    timeout: 1500
 - tapOn:
     id: "setting_mistakes_block_clashes"
 - launchApp:
     arguments:
       fixture: "kakuro_empty"
-- waitForAnimationToEnd
+- waitForAnimationToEnd:
+    timeout: 1500
 - tapOn:
     id: "cell_r2c2"
 - tapOn:

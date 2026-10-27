@@ -5,17 +5,20 @@ tags:
 ---
 - launchApp:
     clearState: true
-- waitForAnimationToEnd
+- waitForAnimationToEnd:
+    timeout: 1500
 - scrollUntilVisible:
     element:
       id: "game_five_letters"
     centerElement: true
 - tapOn:
     id: "game_five_letters"
-- waitForAnimationToEnd
+- waitForAnimationToEnd:
+    timeout: 1500
 - tapOn:
     id: "daily"
-- waitForAnimationToEnd
+- waitForAnimationToEnd:
+    timeout: 1500
 - assertVisible:
     id: "game_title"
     text: "Five Letters.*"
@@ -33,17 +36,20 @@ tags:
     id: "key_enter"
 - launchApp:
     stopApp: true
-- waitForAnimationToEnd
+- waitForAnimationToEnd:
+    timeout: 1500
 - scrollUntilVisible:
     element:
       id: "game_five_letters"
     centerElement: true
 - tapOn:
     id: "game_five_letters"
-- waitForAnimationToEnd
+- waitForAnimationToEnd:
+    timeout: 1500
 - tapOn:
     id: "daily"
-- waitForAnimationToEnd
+- waitForAnimationToEnd:
+    timeout: 1500
 - assertVisible:
     text: "A"
     childOf:

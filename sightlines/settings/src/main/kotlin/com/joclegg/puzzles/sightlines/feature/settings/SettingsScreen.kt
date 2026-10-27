@@ -99,6 +99,15 @@ fun SettingsScreen(
                     "Show what numbers see now",
                     detail = "A small count on each number of the blue dots it can see so far.",
                 )
+                ToggleRow(settings, Toggle.SHOW_HINTS, onToggle, "Hints", detail = "Show the hint button.")
+                ToggleRow(
+                    settings,
+                    Toggle.SHOW_TUTORIAL,
+                    onToggle,
+                    "How to play",
+                    detail = "Show the ? button with the rules and a walkthrough.",
+                )
+                ToggleRow(settings, Toggle.ALLOW_REVEAL, onToggle, "Show solution", detail = "Offer Show solution in the game menu.")
             }
         }
     }
