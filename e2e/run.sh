@@ -98,14 +98,15 @@ for pid in "${INSTALLS[@]}"; do wait "$pid"; done
 
 SHARD_ARGS=()
 [[ ${#DEVICES[@]} -gt 1 ]] && SHARD_ARGS=(--shard-split "${#DEVICES[@]}")
-DEVICE_LOST_MARKER="${E2E_DEVICE_LOST_MARKER:-}"
+FLOWS_FAILED_MARKER="${E2E_FLOWS_FAILED_MARKER:-}"
 if maestro --device "$(IFS=,; echo "${DEVICES[*]}")" test ${SHARD_ARGS[@]+"${SHARD_ARGS[@]}"} ${TAGS[@]+"${TAGS[@]}"} "${FLOWS[@]}"; then
   exit 0
 fi
 for serial in "${DEVICES[@]}"; do
   if [[ "$(adb -s "$serial" get-state 2>/dev/null)" != "device" ]]; then
     echo "$serial was lost during the run" >&2
-    [[ -n "$DEVICE_LOST_MARKER" ]] && touch "$DEVICE_LOST_MARKER"
+    exit 1
   fi
 done
+[[ -n "$FLOWS_FAILED_MARKER" ]] && touch "$FLOWS_FAILED_MARKER"
 exit 1

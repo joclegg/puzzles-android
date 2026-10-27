@@ -84,7 +84,7 @@ jobs:
         continue-on-error: true
         uses: reactivecircus/android-emulator-runner@v2
         env:
-          E2E_DEVICE_LOST_MARKER: ${{ runner.temp }}/e2e-device-lost
+          E2E_FLOWS_FAILED_MARKER: ${{ runner.temp }}/e2e-flows-failed
         with:
           api-level: ${{ env.API_LEVEL }}
           target: google_apis
@@ -94,19 +94,18 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: e2e/run.sh --part ${{ matrix.part }}/3
-      - name: Check whether the emulator died
+      - name: Check whether a flow failed or the emulator did
         id: emulator
         if: steps.flows.outcome == 'failure'
         run: |
-          if [ -f "$RUNNER_TEMP/e2e-device-lost" ]; then
-            echo "Emulator died during the run, retrying on a fresh one"
-            echo "lost=true" >> "$GITHUB_OUTPUT"
-          else
+          if [ -f "$RUNNER_TEMP/e2e-flows-failed" ]; then
             echo "A flow failed on a working emulator"
             exit 1
           fi
+          echo "The emulator failed to start or died during the run, retrying on a fresh one"
+          echo "broken=true" >> "$GITHUB_OUTPUT"
       - name: Run the flows again on a fresh emulator
-        if: steps.emulator.outputs.lost == 'true'
+        if: steps.emulator.outputs.broken == 'true'
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ env.API_LEVEL }}
