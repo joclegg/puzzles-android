@@ -22,7 +22,11 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.PlatformTextStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.joclegg.puzzles.kakuro.engine.Combinations
 import com.joclegg.puzzles.kakuro.engine.GameState
@@ -137,14 +141,22 @@ private fun WhiteCell(
             )
         } else if (board.notes[cell] != 0) {
             val noteSize = with(LocalDensity.current) { (maxHeight * NOTE_FRACTION).toSp() }
+            val noteStyle =
+                TextStyle(
+                    fontSize = noteSize,
+                    lineHeight = noteSize,
+                    textAlign = TextAlign.Center,
+                    platformStyle = PlatformTextStyle(includeFontPadding = false),
+                    lineHeightStyle = LineHeightStyle(LineHeightStyle.Alignment.Center, LineHeightStyle.Trim.Both),
+                )
             Column(Modifier.fillMaxSize().padding(1.dp)) {
                 for (noteRow in 0 until NOTE_GRID) {
                     Row(Modifier.weight(1f)) {
                         for (noteCol in 0 until NOTE_GRID) {
                             val digit = noteRow * NOTE_GRID + noteCol + 1
-                            Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                            Box(Modifier.weight(1f).fillMaxSize(), contentAlignment = Alignment.Center) {
                                 if (board.notes[cell] and Combinations.bit(digit) != 0) {
-                                    Text(digit.toString(), fontSize = noteSize, color = colors.note)
+                                    Text(digit.toString(), style = noteStyle, color = colors.note)
                                 }
                             }
                         }
