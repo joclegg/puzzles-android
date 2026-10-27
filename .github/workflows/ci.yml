@@ -79,7 +79,35 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: false
           script: echo "Snapshot created."
-      - uses: reactivecircus/android-emulator-runner@v2
+      - name: Run the flows
+        id: flows
+        continue-on-error: true
+        uses: reactivecircus/android-emulator-runner@v2
+        env:
+          E2E_DEVICE_LOST_MARKER: ${{ runner.temp }}/e2e-device-lost
+        with:
+          api-level: ${{ env.API_LEVEL }}
+          target: google_apis
+          arch: x86_64
+          profile: pixel_7
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: e2e/run.sh --part ${{ matrix.part }}/3
+      - name: Check whether the emulator died
+        id: emulator
+        if: steps.flows.outcome == 'failure'
+        run: |
+          if [ -f "$RUNNER_TEMP/e2e-device-lost" ]; then
+            echo "Emulator died during the run, retrying on a fresh one"
+            echo "lost=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "A flow failed on a working emulator"
+            exit 1
+          fi
+      - name: Run the flows again on a fresh emulator
+        if: steps.emulator.outputs.lost == 'true'
+        uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ env.API_LEVEL }}
           target: google_apis
@@ -90,7 +118,7 @@ jobs:
           disable-animations: true
           script: e2e/run.sh --part ${{ matrix.part }}/3
       - uses: actions/upload-artifact@v4
-        if: failure()
+        if: failure() || steps.flows.outcome == 'failure'
         with:
           name: e2e-part-${{ matrix.part }}
           path: ~/.maestro/tests
