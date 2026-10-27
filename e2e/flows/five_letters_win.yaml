@@ -7,6 +7,8 @@ tags:
     clearState: true
     arguments:
       fixture: "five_letters_crane"
+- waitForAnimationToEnd:
+    timeout: 1500
 - tapOn:
     id: "key_T"
 - tapOn:
@@ -40,6 +42,8 @@ tags:
     text: "Got it in 2!"
 - tapOn:
     id: "result_new_practice"
+- waitForAnimationToEnd:
+    timeout: 1500
 - assertVisible:
     id: "game_title"
     text: "Practice"

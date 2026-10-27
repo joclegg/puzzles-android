@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joclegg.puzzles.solitaire.core.data.DealRef
 import com.joclegg.puzzles.solitaire.core.data.GameRepository
+import com.joclegg.puzzles.solitaire.core.data.HintStyle
 import com.joclegg.puzzles.solitaire.core.data.SavedGame
 import com.joclegg.puzzles.solitaire.core.data.Settings
 import com.joclegg.puzzles.solitaire.core.data.SettingsRepository
@@ -13,9 +14,11 @@ import com.joclegg.puzzles.solitaire.core.ui.toTableUi
 import com.joclegg.puzzles.solitaire.engine.Card
 import com.joclegg.puzzles.solitaire.engine.GameState
 import com.joclegg.puzzles.solitaire.engine.GameTimer
+import com.joclegg.puzzles.solitaire.engine.Hint
 import com.joclegg.puzzles.solitaire.engine.Pile
 import com.joclegg.puzzles.solitaire.engine.Solver
 import com.joclegg.puzzles.solitaire.engine.Verdict
+import com.joclegg.puzzles.solitaire.engine.findHint
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -42,6 +45,9 @@ data class GameUiState(
     val resultSaved: Boolean,
     val unwinnable: Boolean = false,
     val canFinish: Boolean = false,
+    val showHints: Boolean = true,
+    val showTutorial: Boolean = true,
+    val hintMessage: String? = null,
 )
 
 class GameViewModel(
@@ -65,6 +71,7 @@ class GameViewModel(
     private var lastWinnableMoves: Int? = null
     private var unwinnable = false
     private var warningDismissed = false
+    private var hintMessage: String? = null
 
     private val _uiState = MutableStateFlow<GameUiState?>(null)
     val uiState: StateFlow<GameUiState?> = _uiState.asStateFlow()
@@ -109,6 +116,42 @@ class GameViewModel(
     fun onUndo() = move { it.undo() }
 
     fun onFinish() = move { it.autoFinish() }
+
+    fun onHint() {
+        val current = game ?: return
+        when (val hint = current.findHint()) {
+            null -> {
+                hintMessage = "No moves left."
+                publish()
+            }
+
+            Hint.Draw -> {
+                if (display.hintStyle == HintStyle.FILL) {
+                    move { it.tapStock() }
+                } else {
+                    hintMessage = "Draw from the stock."
+                    publish()
+                }
+            }
+
+            is Hint.Transfer -> {
+                if (display.hintStyle == HintStyle.FILL) {
+                    move { it.drop(hint.selection.pile, it.board.cardsIn(hint.selection.pile).size - hint.selection.count, hint.to) }
+                } else {
+                    val card = current.board.cardsIn(hint.selection.pile).let { it[it.size - hint.selection.count] }
+                    val target =
+                        if (hint.to is Pile.Foundation) {
+                            "its foundation"
+                        } else {
+                            "another column"
+                        }
+                    game = current.copy(selection = hint.selection)
+                    hintMessage = "Move the ${card.rankLabel}${card.suit.symbol} to $target."
+                    publish()
+                }
+            }
+        }
+    }
 
     fun onRestart() {
         val current = game ?: return
@@ -166,6 +209,7 @@ class GameViewModel(
             return
         }
         game = after
+        hintMessage = null
         if (!before.isWon && after.isWon) {
             finish()
         } else if (after.moves != before.moves) {
@@ -273,6 +317,9 @@ class GameViewModel(
                 resultSaved = resultSaved,
                 unwinnable = unwinnable && !warningDismissed && !current.isWon,
                 canFinish = current.canAutoFinish,
+                showHints = display.showHints,
+                showTutorial = display.showTutorial,
+                hintMessage = hintMessage,
             )
         }
     }

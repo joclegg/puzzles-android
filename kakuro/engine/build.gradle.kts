@@ -9,7 +9,7 @@ tasks.register<JavaExec>("generateBank") {
     mainClass.set("com.joclegg.puzzles.kakuro.engine.BankGeneratorKt")
     workingDir = rootDir
     args(
-        providers.gradleProperty("bankDir").getOrElse("app/src/main/assets/kakuro"),
+        providers.gradleProperty("bankDir").getOrElse("puzzles-data/kakuro"),
         *providers
             .gradleProperty("bankSizes")
             .getOrElse("200,200,150,60")

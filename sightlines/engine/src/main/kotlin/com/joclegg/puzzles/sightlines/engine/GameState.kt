@@ -88,6 +88,8 @@ data class GameState(
 
     fun restart(): GameState = GameState(puzzle)
 
+    fun revealSolution(): GameState = copy(grid = puzzle.solution, hint = null)
+
     fun withHint(): GameState {
         if (isSolved) {
             return this

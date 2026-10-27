@@ -54,6 +54,15 @@ fun SettingsScreen(
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 ToggleRow(settings, Toggle.SHOW_TIMER, onToggle, "Show the timer")
                 ToggleRow(settings, Toggle.SHOW_BONUS_COUNT, onToggle, "Show the bonus word count")
+                ToggleRow(settings, Toggle.SHOW_HINTS, onToggle, "Hints", detail = "Show the hint button.")
+                ToggleRow(
+                    settings,
+                    Toggle.SHOW_TUTORIAL,
+                    onToggle,
+                    "How to play",
+                    detail = "Show the ? button with the rules and a walkthrough.",
+                )
+                ToggleRow(settings, Toggle.ALLOW_REVEAL, onToggle, "Show solution", detail = "Offer Show solution in the game menu.")
             }
         }
     }

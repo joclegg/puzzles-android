@@ -5,6 +5,8 @@ name: Two Tone - a hint points out a wrong tile, and undo clears it
     clearState: true
     arguments:
       fixture: "two_tone_two_left"
+- waitForAnimationToEnd:
+    timeout: 1500
 - tapOn:
     id: "tile_r1c2"
 - tapOn:

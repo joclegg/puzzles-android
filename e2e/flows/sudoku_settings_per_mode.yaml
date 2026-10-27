@@ -3,16 +3,24 @@ name: Settings open on the Home mode and apply to that mode
 ---
 - launchApp:
     clearState: true
+- waitForAnimationToEnd:
+    timeout: 1500
 - scrollUntilVisible:
     element:
       id: "game_sudoku"
     centerElement: true
 - tapOn:
     id: "game_sudoku"
+- waitForAnimationToEnd:
+    timeout: 1500
 - tapOn:
     id: "mode_killer"
+- waitForAnimationToEnd:
+    timeout: 1500
 - tapOn:
     id: "settings"
+- waitForAnimationToEnd:
+    timeout: 1500
 - assertVisible:
     id: "settings_tab_killer"
     selected: true
@@ -28,12 +36,16 @@ name: Settings open on the Home mode and apply to that mode
 - launchApp:
     arguments:
       fixture: "killer_one_cage"
+- waitForAnimationToEnd:
+    timeout: 1500
 - assertVisible:
     id: "digit_1"
     enabled: true
 - launchApp:
     arguments:
       fixture: "classic_one_left"
+- waitForAnimationToEnd:
+    timeout: 1500
 - assertVisible:
     id: "digit_1"
     enabled: false

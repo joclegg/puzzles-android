@@ -105,6 +105,7 @@ private fun HistoryItem(
             GameStatus.SOLVED -> "Solved"
             GameStatus.IN_PROGRESS -> "In progress"
             GameStatus.ABANDONED -> "Abandoned"
+            GameStatus.REVEALED -> "Solution shown"
         }
     Row(
         modifier

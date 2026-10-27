@@ -3,19 +3,27 @@ name: Finishing a number by hand disables its button
 ---
 - launchApp:
     clearState: true
+- waitForAnimationToEnd:
+    timeout: 1500
 - scrollUntilVisible:
     element:
       id: "game_sudoku"
     centerElement: true
 - tapOn:
     id: "game_sudoku"
+- waitForAnimationToEnd:
+    timeout: 1500
 - tapOn:
     id: "settings"
+- waitForAnimationToEnd:
+    timeout: 1500
 - tapOn:
     id: "setting_digit_first"
 - launchApp:
     arguments:
       fixture: "classic_easy"
+- waitForAnimationToEnd:
+    timeout: 1500
 - tapOn:
     id: "digit_1"
 - tapOn:

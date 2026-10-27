@@ -2,6 +2,7 @@ package com.joclegg.puzzles.kakuro.feature.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.joclegg.puzzles.kakuro.core.data.HintStyle
 import com.joclegg.puzzles.kakuro.core.data.Settings
 import com.joclegg.puzzles.kakuro.core.data.SettingsRepository
 import com.joclegg.puzzles.kakuro.core.data.Toggle
@@ -31,6 +32,10 @@ class SettingsViewModel(
 
     fun onMistakeCheckChange(level: MistakeCheck) {
         viewModelScope.launch { settings.setMistakeCheck(level) }
+    }
+
+    fun onHintStyleChange(style: HintStyle) {
+        viewModelScope.launch { settings.setHintStyle(style) }
     }
 
     private companion object {

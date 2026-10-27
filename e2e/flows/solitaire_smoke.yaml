@@ -5,15 +5,25 @@ tags:
 ---
 - launchApp:
     clearState: true
+- waitForAnimationToEnd:
+    timeout: 1500
 - scrollUntilVisible:
     element:
       id: "game_solitaire"
     centerElement: true
 - tapOn:
     id: "game_solitaire"
+- waitForAnimationToEnd:
+    timeout: 1500
 - assertVisible: "Solitaire"
 - tapOn:
     id: "play"
+- extendedWaitUntil:
+    visible:
+      id: "stock"
+    timeout: 60000
+- waitForAnimationToEnd:
+    timeout: 1500
 - assertVisible:
     id: "stock"
 - assertVisible:

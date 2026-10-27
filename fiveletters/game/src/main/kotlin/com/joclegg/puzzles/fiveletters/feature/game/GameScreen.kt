@@ -30,10 +30,15 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joclegg.puzzles.fiveletters.core.ui.BackButton
 import com.joclegg.puzzles.fiveletters.core.ui.FiveLettersIcons
+import com.joclegg.puzzles.fiveletters.core.ui.HintButton
+import com.joclegg.puzzles.fiveletters.core.ui.HowToPlayButton
 import com.joclegg.puzzles.fiveletters.core.ui.Keyboard
 import com.joclegg.puzzles.fiveletters.core.ui.ToolButton
+import com.joclegg.puzzles.fiveletters.core.ui.TourStep
 import com.joclegg.puzzles.fiveletters.core.ui.WordBoard
 import com.joclegg.puzzles.fiveletters.core.ui.dialogTestTags
+import com.joclegg.puzzles.fiveletters.core.ui.rememberTourState
+import com.joclegg.puzzles.fiveletters.core.ui.tourTarget
 import kotlinx.coroutines.launch
 
 @Composable
@@ -53,6 +58,8 @@ fun GameRoute(
             onLetterClick = viewModel::onLetterClick,
             onEnterClick = viewModel::onEnterClick,
             onDeleteClick = viewModel::onDeleteClick,
+            onHint = viewModel::onHint,
+            onRevealWord = viewModel::onRevealWord,
             onShare = {
                 val send =
                     Intent(Intent.ACTION_SEND)
@@ -74,13 +81,16 @@ fun GameScreen(
     onLetterClick: (Char) -> Unit,
     onEnterClick: () -> Unit,
     onDeleteClick: () -> Unit,
+    onHint: () -> Unit,
+    onRevealWord: () -> Unit,
     onShare: () -> Unit,
     onNewPractice: () -> Unit,
     onSettings: () -> Unit,
     onHome: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var rulesOpen by remember { mutableStateOf(false) }
+    var revealing by remember { mutableStateOf(false) }
+    val tour = rememberTourState()
     var menuOpen by remember { mutableStateOf(false) }
     var resultClosed by remember { mutableStateOf(false) }
     Column(modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -95,12 +105,27 @@ fun GameScreen(
             if (state.won || state.lost) {
                 ToolButton(FiveLettersIcons.Share, "Share your result", onShare, tag = "share")
             }
-            ToolButton(FiveLettersIcons.Rules, "Show the rules", { rulesOpen = true }, tag = "rules")
+            if (state.showHints) {
+                HintButton(onHint, enabled = !state.won && !state.lost, modifier = Modifier.tourTarget(tour, "hint"))
+            }
+            if (state.showTutorial) {
+                HowToPlayButton(RULES, TUTORIAL, tour)
+            }
             Column {
-                IconButton(onClick = { menuOpen = true }, modifier = Modifier.testTag("game_menu")) {
+                IconButton(onClick = { menuOpen = true }, modifier = Modifier.testTag("game_menu").tourTarget(tour, "menu")) {
                     Icon(FiveLettersIcons.More, contentDescription = "More")
                 }
                 DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }, modifier = Modifier.dialogTestTags()) {
+                    if (state.allowReveal && !state.won && !state.lost) {
+                        DropdownMenuItem(
+                            text = { Text("Show the word") },
+                            onClick = {
+                                menuOpen = false
+                                revealing = true
+                            },
+                            modifier = Modifier.testTag("menu_solution"),
+                        )
+                    }
                     DropdownMenuItem(
                         text = { Text("Settings") },
                         onClick = {
@@ -113,9 +138,9 @@ fun GameScreen(
             }
         }
         Spacer(Modifier.height(12.dp))
-        WordBoard(state.board, Modifier.weight(1f, fill = false).padding(horizontal = 12.dp))
+        WordBoard(state.board, Modifier.tourTarget(tour, "board").weight(1f, fill = false).padding(horizontal = 12.dp))
         Text(
-            state.message.orEmpty(),
+            (state.message ?: state.hint).orEmpty(),
             style = MaterialTheme.typography.titleSmall,
             modifier = Modifier.padding(vertical = 8.dp).testTag("message"),
         )
@@ -124,23 +149,25 @@ fun GameScreen(
             onLetterClick = onLetterClick,
             onEnterClick = onEnterClick,
             onDeleteClick = onDeleteClick,
-            modifier = Modifier.padding(start = 6.dp, end = 6.dp, bottom = 12.dp),
+            modifier = Modifier.padding(start = 6.dp, end = 6.dp, bottom = 12.dp).tourTarget(tour, "keyboard"),
         )
     }
-    if (rulesOpen) {
+    if (revealing) {
         AlertDialog(
-            onDismissRequest = { rulesOpen = false },
-            modifier = Modifier.dialogTestTags().testTag("rules_dialog"),
-            title = { Text("How to play") },
-            text = {
-                Column {
-                    Text("Guess the five-letter word in six tries. After each guess the tiles change colour:")
-                    Text("Green: right letter, right place.")
-                    Text("Yellow: in the word, wrong place.")
-                    Text("Grey: not in the word.")
-                }
+            onDismissRequest = { revealing = false },
+            modifier = Modifier.dialogTestTags(),
+            title = { Text("Show the word?") },
+            text = { Text("This ends the game and counts as a loss.") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        revealing = false
+                        onRevealWord()
+                    },
+                    modifier = Modifier.testTag("confirm_reveal"),
+                ) { Text("Show the word") }
             },
-            confirmButton = { TextButton(onClick = { rulesOpen = false }) { Text("Got it") } },
+            dismissButton = { TextButton(onClick = { revealing = false }) { Text("Cancel") } },
         )
     }
     if ((state.won || state.lost) && !resultClosed) {
@@ -188,3 +215,22 @@ private fun ResultDialog(
         },
     )
 }
+
+private val RULES =
+    listOf(
+        "Guess the five-letter word in six tries. After each guess the tiles change colour:",
+        "Green: right letter, right place.",
+        "Yellow: in the word, wrong place.",
+        "Grey: not in the word.",
+    )
+
+private val TUTORIAL =
+    listOf(
+        TourStep(
+            "board",
+            "Guess the word in six tries. Green is the right letter in the right place, yellow is in the word but elsewhere, grey is not in it.",
+        ),
+        TourStep("keyboard", "Type with these keys, then press Enter."),
+        TourStep("hint", "Stuck? The bulb tells you one letter and where it goes."),
+        TourStep("menu", "Show the word and settings live in this menu."),
+    )

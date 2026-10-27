@@ -5,14 +5,20 @@ tags:
 ---
 - launchApp:
     clearState: true
+- waitForAnimationToEnd:
+    timeout: 1500
 - scrollUntilVisible:
     element:
       id: "game_word_wheel"
     centerElement: true
 - tapOn:
     id: "game_word_wheel"
+- waitForAnimationToEnd:
+    timeout: 1500
 - tapOn:
     id: "level_6"
+- waitForAnimationToEnd:
+    timeout: 1500
 - assertVisible:
     id: "game_title"
     text: "6 letters"

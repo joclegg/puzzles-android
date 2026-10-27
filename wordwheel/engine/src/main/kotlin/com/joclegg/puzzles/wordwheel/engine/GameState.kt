@@ -40,6 +40,8 @@ data class GameState(
         }
     }
 
+    fun revealAll(): GameState = copy(found = puzzle.crossword.words.toList(), last = null)
+
     fun shuffle(order: List<Int>): GameState = copy(wheel = order.map { wheel[it] }.joinToString(""), last = null)
 
     fun reveal(pick: (List<Pair<Int, Int>>) -> Pair<Int, Int>?): GameState {

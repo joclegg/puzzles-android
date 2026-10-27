@@ -3,13 +3,17 @@ package com.joclegg.puzzles.fiveletters.feature.game
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joclegg.puzzles.fiveletters.core.data.GameRepository
+import com.joclegg.puzzles.fiveletters.core.data.GameStatus
 import com.joclegg.puzzles.fiveletters.core.data.SavedGame
+import com.joclegg.puzzles.fiveletters.core.data.Settings
+import com.joclegg.puzzles.fiveletters.core.data.SettingsRepository
 import com.joclegg.puzzles.fiveletters.core.data.WordRef
 import com.joclegg.puzzles.fiveletters.core.ui.BoardUi
 import com.joclegg.puzzles.fiveletters.core.ui.message
 import com.joclegg.puzzles.fiveletters.core.ui.title
 import com.joclegg.puzzles.fiveletters.core.ui.toBoardUi
 import com.joclegg.puzzles.fiveletters.engine.GameState
+import com.joclegg.puzzles.fiveletters.engine.MAX_GUESSES
 import com.joclegg.puzzles.fiveletters.engine.Words
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,17 +33,24 @@ data class GameUiState(
     val answer: String,
     val shareText: String,
     val isDaily: Boolean,
+    val showHints: Boolean = true,
+    val showTutorial: Boolean = true,
+    val allowReveal: Boolean = true,
+    val hint: String? = null,
 )
 
 class GameViewModel(
     private val gameId: Long,
     private val games: GameRepository,
+    private val settings: SettingsRepository,
     private val words: suspend () -> Words,
     private val newSeed: () -> Long,
 ) : ViewModel() {
     private var saved: SavedGame? = null
     private var game: GameState? = null
     private var wordList: Words? = null
+    private var display = Settings()
+    private var hint: String? = null
 
     private val _uiState = MutableStateFlow<GameUiState?>(null)
     val uiState: StateFlow<GameUiState?> = _uiState.asStateFlow()
@@ -49,9 +60,43 @@ class GameViewModel(
             val loaded = games.get(gameId) ?: return@launch
             wordList = words()
             saved = loaded
-            game = GameState(loaded.ref.answer, loaded.guesses, hardMode = loaded.hardMode)
+            game =
+                GameState(
+                    loaded.ref.answer,
+                    loaded.guesses,
+                    hardMode = loaded.hardMode,
+                    revealed =
+                        loaded.status == GameStatus.LOST && loaded.guesses.size < MAX_GUESSES,
+                )
             publish()
         }
+        viewModelScope.launch {
+            settings.settings.collect {
+                display = it
+                publish()
+            }
+        }
+    }
+
+    fun onHint() {
+        val current = game ?: return
+        if (current.isOver) {
+            return
+        }
+        hint = current.hintLetter()?.let { (index, letter) -> "Letter ${index + 1} is $letter." }
+        publish()
+    }
+
+    fun onRevealWord() {
+        val current = game ?: return
+        if (current.isOver) {
+            return
+        }
+        game = current.revealWord()
+        hint = null
+        val snapshot = saved ?: return
+        viewModelScope.launch { withContext(NonCancellable) { games.finish(snapshot, won = false) } }
+        publish()
     }
 
     fun onLetterClick(letter: Char) = change { it.type(letter) }
@@ -106,6 +151,10 @@ class GameViewModel(
                 answer = current.answer,
                 shareText = current.shareText(ref.title()),
                 isDaily = ref.isDaily || ref.isNyt,
+                showHints = display.showHints,
+                showTutorial = display.showTutorial,
+                allowReveal = display.allowReveal,
+                hint = hint.takeUnless { current.isOver },
             )
     }
 }

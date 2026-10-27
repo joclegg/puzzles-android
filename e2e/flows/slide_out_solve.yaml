@@ -7,6 +7,8 @@ tags:
     clearState: true
     arguments:
       fixture: "slide_out_two_moves"
+- waitForAnimationToEnd:
+    timeout: 1500
 - swipe:
     from:
       id: "block_1"

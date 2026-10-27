@@ -30,11 +30,16 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joclegg.puzzles.solitaire.core.ui.BackButton
+import com.joclegg.puzzles.solitaire.core.ui.HintButton
+import com.joclegg.puzzles.solitaire.core.ui.HowToPlayButton
 import com.joclegg.puzzles.solitaire.core.ui.SolitaireIcons
 import com.joclegg.puzzles.solitaire.core.ui.SolitaireTable
 import com.joclegg.puzzles.solitaire.core.ui.ToolButton
+import com.joclegg.puzzles.solitaire.core.ui.TourStep
 import com.joclegg.puzzles.solitaire.core.ui.dialogTestTags
 import com.joclegg.puzzles.solitaire.core.ui.formatDuration
+import com.joclegg.puzzles.solitaire.core.ui.rememberTourState
+import com.joclegg.puzzles.solitaire.core.ui.tourTarget
 import com.joclegg.puzzles.solitaire.engine.Pile
 import kotlinx.coroutines.launch
 
@@ -69,6 +74,7 @@ fun GameRoute(
             },
             onUndo = viewModel::onUndo,
             onFinish = viewModel::onFinish,
+            onHint = viewModel::onHint,
             onRestart = viewModel::onRestart,
             onNewDeal = { scope.launch { onOpenGame(viewModel.newDeal()) } },
             onSettings = onSettings,
@@ -90,6 +96,7 @@ fun GameScreen(
     onGiveUp: () -> Unit,
     onUndo: () -> Unit,
     onFinish: () -> Unit,
+    onHint: () -> Unit,
     onRestart: () -> Unit,
     onNewDeal: () -> Unit,
     onSettings: () -> Unit,
@@ -97,6 +104,7 @@ fun GameScreen(
     modifier: Modifier = Modifier,
 ) {
     var menuOpen by remember { mutableStateOf(false) }
+    val tour = rememberTourState()
     Column(modifier.fillMaxSize()) {
         Row(Modifier.fillMaxWidth().padding(horizontal = 4.dp), verticalAlignment = Alignment.CenterVertically) {
             BackButton(onHome)
@@ -113,8 +121,14 @@ fun GameScreen(
                 }
             }
             ToolButton(SolitaireIcons.Undo, "Undo the last move", onUndo, tag = "undo", enabled = state.canUndo)
+            if (state.showHints) {
+                HintButton(onHint, enabled = !state.won, modifier = Modifier.tourTarget(tour, "hint"))
+            }
+            if (state.showTutorial) {
+                HowToPlayButton(RULES, TUTORIAL, tour)
+            }
             Column {
-                IconButton(onClick = { menuOpen = true }, modifier = Modifier.testTag("game_menu")) {
+                IconButton(onClick = { menuOpen = true }, modifier = Modifier.testTag("game_menu").tourTarget(tour, "menu")) {
                     Icon(SolitaireIcons.More, contentDescription = "More")
                 }
                 DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }, modifier = Modifier.dialogTestTags()) {
@@ -151,9 +165,16 @@ fun GameScreen(
             onStockClick = onStockClick,
             onCardClick = onCardClick,
             onEmptyPileClick = onEmptyPileClick,
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.tourTarget(tour, "table").weight(1f),
             onCardDrop = onCardDrop,
         )
+        state.hintMessage?.let {
+            Text(
+                it,
+                style = MaterialTheme.typography.titleSmall,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp).testTag("hint_message"),
+            )
+        }
         if (state.canFinish) {
             Button(
                 onClick = onFinish,
@@ -226,3 +247,21 @@ private fun WonDialog(
         },
     )
 }
+
+private val RULES =
+    listOf(
+        "Move every card up to the four foundations, Ace to King.",
+        "In the columns, build down in alternating colours. Any face-up run can move together.",
+        "Only a King can fill an empty column.",
+        "Tap a card to send it to the best place, or drag it.",
+    )
+
+private val TUTORIAL =
+    listOf(
+        TourStep(
+            "table",
+            "Tap the stock to turn cards over. Build the columns down in alternating colours, and the foundations up from Ace to King.",
+        ),
+        TourStep("hint", "Stuck? The bulb suggests a move."),
+        TourStep("menu", "Restart, deal again and settings live in this menu."),
+    )

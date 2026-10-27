@@ -5,6 +5,8 @@ name: Five Letters - a word that isn't in the list is refused and kept
     clearState: true
     arguments:
       fixture: "five_letters_crane"
+- waitForAnimationToEnd:
+    timeout: 1500
 - tapOn:
     id: "key_Z"
 - tapOn:

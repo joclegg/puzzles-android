@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger
 import kotlin.random.Random
 
 fun main(args: Array<String>) {
-    val outDir = File(args.getOrElse(0) { "app/src/main/assets/puzzles" }).apply { mkdirs() }
+    val outDir = File(args.getOrElse(0) { "puzzles-data/sudoku" }).apply { mkdirs() }
     val perFile = args.getOrElse(1) { "300" }.toInt()
     val seed = args.getOrElse(2) { "2026" }.toLong()
     for (killer in listOf(false, true)) {

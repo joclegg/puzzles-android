@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.joclegg.puzzles.sudoku.core.data.DigitCounts
 import com.joclegg.puzzles.sudoku.core.data.GameMode
 import com.joclegg.puzzles.sudoku.core.data.GameRepository
+import com.joclegg.puzzles.sudoku.core.data.HintStyle
 import com.joclegg.puzzles.sudoku.core.data.ModeSettings
 import com.joclegg.puzzles.sudoku.core.data.SavedGame
 import com.joclegg.puzzles.sudoku.core.data.Settings
@@ -15,6 +16,7 @@ import com.joclegg.puzzles.sudoku.engine.Difficulty
 import com.joclegg.puzzles.sudoku.engine.GameState
 import com.joclegg.puzzles.sudoku.engine.GameTimer
 import com.joclegg.puzzles.sudoku.engine.InputMode
+import com.joclegg.puzzles.sudoku.engine.findHint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
@@ -52,6 +54,10 @@ data class GameUiState(
     val newBest: Boolean,
     val resultSaved: Boolean = false,
     val revealed: Boolean = false,
+    val showHints: Boolean = true,
+    val showTutorial: Boolean = true,
+    val allowReveal: Boolean = true,
+    val hintMessage: String? = null,
 )
 
 class GameViewModel(
@@ -70,6 +76,7 @@ class GameViewModel(
     private var resultSaved = false
     private var revealed = false
     private var display = ModeSettings()
+    private var hintMessage: String? = null
 
     private val _uiState = MutableStateFlow<GameUiState?>(null)
     val uiState: StateFlow<GameUiState?> = _uiState.asStateFlow()
@@ -141,6 +148,21 @@ class GameViewModel(
         publish()
     }
 
+    fun onHint() {
+        val current = game ?: return
+        if (current.isComplete) {
+            return
+        }
+        val hint = current.findHint() ?: return
+        if (display.hintStyle == HintStyle.FILL) {
+            move { it.placeHint(hint) }
+            return
+        }
+        game = current.copy(selected = hint.cell)
+        hintMessage = hint.message
+        publish()
+    }
+
     fun onRevealSolution() {
         val current = game ?: return
         if (current.isComplete || current.puzzle.solution == null) {
@@ -191,6 +213,7 @@ class GameViewModel(
             return
         }
         game = after
+        hintMessage = null
         if (!before.isComplete &&
             after.isComplete
         ) {
@@ -288,6 +311,10 @@ class GameViewModel(
                 canUndo = current.undoStack.isNotEmpty() && !current.isComplete,
                 canRedo = current.redoStack.isNotEmpty() && !current.isComplete,
                 markActive = current.markActive,
+                showHints = display.showHints,
+                showTutorial = display.showTutorial,
+                allowReveal = display.allowReveal,
+                hintMessage = hintMessage,
                 newBest = newBest,
                 resultSaved = resultSaved,
                 revealed = revealed,

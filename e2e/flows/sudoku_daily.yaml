@@ -3,24 +3,34 @@ name: Daily puzzle - shows its level, starts it, and resumes it the same day
 ---
 - launchApp:
     clearState: true
+- waitForAnimationToEnd:
+    timeout: 1500
 - scrollUntilVisible:
     element:
       id: "game_sudoku"
     centerElement: true
 - tapOn:
     id: "game_sudoku"
+- waitForAnimationToEnd:
+    timeout: 1500
 - assertVisible:
     text: "Daily puzzle · .*"
     childOf:
       id: "daily"
 - tapOn:
     id: "daily"
+- waitForAnimationToEnd:
+    timeout: 1500
 - assertVisible:
     id: "game_title"
 - tapOn:
     id: "back"
+- waitForAnimationToEnd:
+    timeout: 1500
 - tapOn:
     id: "daily"
+- waitForAnimationToEnd:
+    timeout: 1500
 - assertNotVisible:
     id: "resume_dialog"
 - assertVisible:

@@ -5,6 +5,8 @@ name: Sightlines - a puzzle in progress survives the app being closed
     clearState: true
     arguments:
       fixture: "sightlines_two_left"
+- waitForAnimationToEnd:
+    timeout: 1500
 - tapOn:
     id: "dot_r1c2"
 - assertVisible:
@@ -12,14 +14,20 @@ name: Sightlines - a puzzle in progress survives the app being closed
     text: "50%"
 - launchApp:
     stopApp: true
+- waitForAnimationToEnd:
+    timeout: 1500
 - scrollUntilVisible:
     element:
       id: "game_sightlines"
     centerElement: true
 - tapOn:
     id: "game_sightlines"
+- waitForAnimationToEnd:
+    timeout: 1500
 - tapOn:
     id: "continue"
+- waitForAnimationToEnd:
+    timeout: 1500
 - assertVisible:
     id: "progress"
     text: "50%"

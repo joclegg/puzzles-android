@@ -5,14 +5,20 @@ tags:
 ---
 - launchApp:
     clearState: true
+- waitForAnimationToEnd:
+    timeout: 1500
 - scrollUntilVisible:
     element:
       id: "game_kakuro"
     centerElement: true
 - tapOn:
     id: "game_kakuro"
+- waitForAnimationToEnd:
+    timeout: 1500
 - tapOn:
     id: "size_8"
+- waitForAnimationToEnd:
+    timeout: 1500
 - assertVisible:
     id: "game_title"
     text: "8 x 8"

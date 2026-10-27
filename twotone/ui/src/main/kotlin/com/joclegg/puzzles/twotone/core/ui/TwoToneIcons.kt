@@ -30,6 +30,7 @@ object TwoToneIcons {
             "M12 8.6a3.4 3.4 0 1 1 0 6.8a3.4 3.4 0 1 1 0-6.8z",
         )
     val Clear = outline("clear", "M6 6l12 12", "M18 6L6 18")
+    val StartingTiles = outline("starting_tiles", "M12 21a9 9 0 1 0 0-18a9 9 0 1 0 0 18z", "M12 12h.01")
     val Hint = outline("hint", "M9 18h6", "M10 21h4", "M12 3a6 6 0 0 0-3.5 10.9V16h7v-2.1A6 6 0 0 0 12 3z")
     val Rules = outline("rules", "M12 21a9 9 0 1 0 0-18a9 9 0 1 0 0 18z", "M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6", "M12 17h.01")
 

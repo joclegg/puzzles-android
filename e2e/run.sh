@@ -76,7 +76,11 @@ DEVICES=($(running | awk -v n="$SHARDS" 'NR <= n'))
 for serial in "${DEVICES[@]}"; do
   adb -s "$serial" wait-for-device
   until [[ "$(adb -s "$serial" shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')" == "1" ]]; do sleep 1; done
-  until adb -s "$serial" shell pm path android >/dev/null 2>&1; do sleep 1; done
+  for attempt in $(seq 120); do
+    adb -s "$serial" shell pm path android >/dev/null 2>&1 && break
+    [[ $attempt -eq 120 ]] && { echo "$serial never came up: no package manager" >&2; exit 1; }
+    sleep 1
+  done
   for setting in window_animation_scale transition_animation_scale animator_duration_scale; do
     adb -s "$serial" shell settings put global "$setting" 0
   done

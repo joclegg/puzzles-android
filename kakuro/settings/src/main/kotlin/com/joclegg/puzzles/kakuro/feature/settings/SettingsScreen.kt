@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.joclegg.puzzles.kakuro.core.data.HintStyle
 import com.joclegg.puzzles.kakuro.core.data.Settings
 import com.joclegg.puzzles.kakuro.core.data.Toggle
 import com.joclegg.puzzles.kakuro.core.ui.BackButton
@@ -35,13 +36,22 @@ fun SettingsRoute(
     modifier: Modifier = Modifier,
 ) {
     val settings by viewModel.uiState.collectAsStateWithLifecycle()
-    SettingsScreen(settings, viewModel::onToggle, viewModel::onInputModeChange, viewModel::onMistakeCheckChange, onBack, modifier)
+    SettingsScreen(
+        settings,
+        viewModel::onToggle,
+        viewModel::onHintStyleChange,
+        viewModel::onInputModeChange,
+        viewModel::onMistakeCheckChange,
+        onBack,
+        modifier,
+    )
 }
 
 @Composable
 fun SettingsScreen(
     settings: Settings,
     onToggle: (Toggle, Boolean) -> Unit,
+    onHintStyleChange: (HintStyle) -> Unit,
     onInputModeChange: (InputMode) -> Unit,
     onMistakeCheckChange: (MistakeCheck) -> Unit,
     onBack: (() -> Unit)?,
@@ -114,6 +124,25 @@ fun SettingsScreen(
                     "Sum helper",
                     detail = "List the digit combinations that still fit the selected cell's runs.",
                 )
+                ToggleRow(
+                    settings,
+                    Toggle.GREY_USED_DIGITS,
+                    onToggle,
+                    "Grey out used-up numbers",
+                    detail = "Dim a number on the pad once every cell that needs it has it.",
+                )
+                ToggleRow(settings, Toggle.SHOW_HINTS, onToggle, "Hints", detail = "Show the hint button.")
+                ToggleRow(
+                    settings,
+                    Toggle.SHOW_TUTORIAL,
+                    onToggle,
+                    "How to play",
+                    detail = "Show the ? button with the rules and a walkthrough.",
+                )
+                ToggleRow(settings, Toggle.ALLOW_REVEAL, onToggle, "Show solution", detail = "Offer Show solution in the game menu.")
+                if (settings.showHints) {
+                    HintStyleRow(settings.hintStyle, onHintStyleChange)
+                }
             }
         }
     }
@@ -171,4 +200,35 @@ private fun Hint(
     modifier: Modifier = Modifier,
 ) {
     Text(text, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = modifier)
+}
+
+@Composable
+private fun HintStyleRow(
+    style: HintStyle,
+    onChange: (HintStyle) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Column(Modifier.weight(1f)) {
+            Text("Hints fill the answer in")
+            Text(
+                "Off: a hint points at the next step and says why.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        Switch(
+            checked = style == HintStyle.FILL,
+            onCheckedChange = {
+                onChange(
+                    if (it) {
+                        HintStyle.FILL
+                    } else {
+                        HintStyle.POINT
+                    },
+                )
+            },
+            modifier = Modifier.testTag("setting_hint_fill"),
+        )
+    }
 }

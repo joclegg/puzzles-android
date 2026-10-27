@@ -20,6 +20,8 @@ jobs:
       RESULTS_BRANCH: generate/slide-out-results-${{ matrix.shard }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: true
       - uses: actions/setup-java@v4
         with:
           distribution: temurin

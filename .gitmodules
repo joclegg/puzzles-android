@@ -1,0 +1,3 @@
+[submodule "puzzles-data"]
+	path = puzzles-data
+	url = https://github.com/joclegg/puzzles-data.git

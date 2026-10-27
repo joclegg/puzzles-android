@@ -36,6 +36,20 @@ class GameStateTest {
     }
 
     @Test
+    fun `given a filled cell in notes mode when a digit is tapped then the cell keeps its digit`() {
+        // Act
+        val game =
+            GameState(small)
+                .tapCell(4)
+                .tapDigit(1)
+                .toggleNotes()
+                .tapDigit(2)
+
+        // Assert
+        assertEquals(1 to 0, game.values[4] to game.notes[4])
+    }
+
+    @Test
     fun `given a starting digit when a digit is tapped on it then it does not change`() {
         // Act
         val game = GameState(small.copy(givens = setOf(4))).tapCell(4).tapDigit(9)

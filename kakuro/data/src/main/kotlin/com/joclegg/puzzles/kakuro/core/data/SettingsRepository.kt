@@ -10,6 +10,8 @@ import com.joclegg.puzzles.kakuro.engine.MistakeCheck
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
+enum class HintStyle { POINT, FILL }
+
 enum class Toggle(
     val read: (Settings) -> Boolean,
     val default: Boolean = true,
@@ -19,6 +21,10 @@ enum class Toggle(
     HIGHLIGHT_RUNS(Settings::highlightRuns),
     SHOW_TIMER(Settings::showTimer),
     SHOW_COMBINATIONS(Settings::showCombinations, default = false),
+    GREY_USED_DIGITS(Settings::greyUsedDigits),
+    SHOW_HINTS(Settings::showHints),
+    SHOW_TUTORIAL(Settings::showTutorial),
+    ALLOW_REVEAL(Settings::allowReveal),
 }
 
 data class Settings(
@@ -29,6 +35,11 @@ data class Settings(
     val highlightRuns: Boolean = true,
     val showTimer: Boolean = true,
     val showCombinations: Boolean = false,
+    val greyUsedDigits: Boolean = true,
+    val showHints: Boolean = true,
+    val showTutorial: Boolean = true,
+    val allowReveal: Boolean = true,
+    val hintStyle: HintStyle = HintStyle.POINT,
 )
 
 class SettingsRepository(
@@ -46,6 +57,11 @@ class SettingsRepository(
                 highlightRuns = on(Toggle.HIGHLIGHT_RUNS),
                 showTimer = on(Toggle.SHOW_TIMER),
                 showCombinations = on(Toggle.SHOW_COMBINATIONS),
+                greyUsedDigits = on(Toggle.GREY_USED_DIGITS),
+                showHints = on(Toggle.SHOW_HINTS),
+                showTutorial = on(Toggle.SHOW_TUTORIAL),
+                allowReveal = on(Toggle.ALLOW_REVEAL),
+                hintStyle = prefs[HINT_STYLE]?.let { saved -> HintStyle.entries.find { it.name == saved } } ?: HintStyle.POINT,
             )
         }
 
@@ -55,6 +71,10 @@ class SettingsRepository(
 
     suspend fun setMistakeCheck(level: MistakeCheck) {
         store.edit { it[MISTAKE_CHECK] = level.name }
+    }
+
+    suspend fun setHintStyle(style: HintStyle) {
+        store.edit { it[HINT_STYLE] = style.name }
     }
 
     suspend fun set(
@@ -69,3 +89,5 @@ private val Toggle.key get() = booleanPreferencesKey(name.lowercase())
 
 private val INPUT_MODE = stringPreferencesKey("input_mode")
 private val MISTAKE_CHECK = stringPreferencesKey("mistake_check")
+
+private val HINT_STYLE = stringPreferencesKey("hint_style")

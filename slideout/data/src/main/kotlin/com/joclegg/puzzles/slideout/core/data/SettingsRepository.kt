@@ -12,11 +12,17 @@ enum class Toggle(
 ) {
     SHOW_TIMER(Settings::showTimer),
     SHOW_PAR(Settings::showPar),
+    SHOW_HINTS(Settings::showHints),
+    SHOW_TUTORIAL(Settings::showTutorial),
+    ALLOW_REVEAL(Settings::allowReveal),
 }
 
 data class Settings(
     val showTimer: Boolean = true,
     val showPar: Boolean = true,
+    val showHints: Boolean = true,
+    val showTutorial: Boolean = true,
+    val allowReveal: Boolean = true,
 )
 
 class SettingsRepository(
@@ -27,6 +33,9 @@ class SettingsRepository(
             Settings(
                 showTimer = prefs[Toggle.SHOW_TIMER.key] ?: true,
                 showPar = prefs[Toggle.SHOW_PAR.key] ?: true,
+                showHints = prefs[Toggle.SHOW_HINTS.key] ?: true,
+                showTutorial = prefs[Toggle.SHOW_TUTORIAL.key] ?: true,
+                allowReveal = prefs[Toggle.ALLOW_REVEAL.key] ?: true,
             )
         }
 

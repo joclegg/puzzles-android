@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joclegg.puzzles.sudoku.core.data.DigitCounts
 import com.joclegg.puzzles.sudoku.core.data.GameMode
+import com.joclegg.puzzles.sudoku.core.data.HintStyle
 import com.joclegg.puzzles.sudoku.core.data.Settings
 import com.joclegg.puzzles.sudoku.core.data.SettingsRepository
 import com.joclegg.puzzles.sudoku.core.data.Toggle
@@ -34,6 +35,13 @@ class SettingsViewModel(
         level: MistakeCheck,
     ) {
         viewModelScope.launch { settings.setMistakeCheck(mode, level) }
+    }
+
+    fun onHintStyleChange(
+        mode: GameMode,
+        style: HintStyle,
+    ) {
+        viewModelScope.launch { settings.setHintStyle(mode, style) }
     }
 
     fun onDigitCountsChange(

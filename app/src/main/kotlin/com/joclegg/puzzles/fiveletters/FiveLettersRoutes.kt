@@ -58,7 +58,7 @@ object FiveLettersRoutes {
                 viewModel =
                     viewModel(
                         key = "five_letters_game_$id",
-                    ) { GameViewModel(id, container.games, container::words, container.newSeed) },
+                    ) { GameViewModel(id, container.games, container.settings, container::words, container.newSeed) },
                 onOpenGame = { navController.openFiveLettersGame(it) },
                 onSettings = { navController.navigate(SettingsHub.route(SettingsTab.FIVE_LETTERS)) },
                 onHome = { navController.popBackStack(HOME, inclusive = false) },

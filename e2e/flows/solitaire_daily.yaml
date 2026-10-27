@@ -3,14 +3,20 @@ name: The daily deal opens and comes back to the same game
 ---
 - launchApp:
     clearState: true
+- waitForAnimationToEnd:
+    timeout: 1500
 - scrollUntilVisible:
     element:
       id: "game_solitaire"
     centerElement: true
 - tapOn:
     id: "game_solitaire"
+- waitForAnimationToEnd:
+    timeout: 1500
 - tapOn:
     id: "daily"
+- waitForAnimationToEnd:
+    timeout: 1500
 - assertVisible:
     id: "game_title"
     text: "Daily.*"
@@ -18,8 +24,12 @@ name: The daily deal opens and comes back to the same game
     id: "stock"
 - tapOn:
     id: "back"
+- waitForAnimationToEnd:
+    timeout: 1500
 - tapOn:
     id: "daily"
+- waitForAnimationToEnd:
+    timeout: 1500
 - assertVisible:
     id: "move_count"
     text: "Moves 1"

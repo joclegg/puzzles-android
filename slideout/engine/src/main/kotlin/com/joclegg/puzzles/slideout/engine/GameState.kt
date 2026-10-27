@@ -54,6 +54,8 @@ data class GameState(
 
     fun restart(): GameState = GameState(puzzle)
 
+    fun revealSolution(): GameState = copy(moves = moves + Solver.shortest(board).orEmpty(), hint = null)
+
     fun withHint(): GameState {
         if (isSolved) {
             return this
