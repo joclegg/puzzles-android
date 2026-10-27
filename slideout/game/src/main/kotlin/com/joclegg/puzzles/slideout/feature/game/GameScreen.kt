@@ -169,6 +169,7 @@ fun GameScreen(
     if (revealing) {
         AlertDialog(
             onDismissRequest = { revealing = false },
+            modifier = Modifier.dialogTestTags(),
             title = { Text("Show the solution?") },
             text = { Text("This ends the puzzle. It won't count towards best times.") },
             confirmButton = {

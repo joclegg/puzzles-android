@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -245,44 +246,59 @@ private fun GameHeader(
             difficulty = state.difficulty,
             answerKnown = state.answerKnown,
         )
-    Row(modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        BackButton(onBack)
-        Text(title, style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f).testTag("game_title"))
-        if (state.checking && state.showMistakeCount) {
+    Column(modifier.fillMaxWidth()) {
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            BackButton(onBack)
             Text(
-                "Mistakes: ${state.mistakes}",
-                color =
-                    if (state.mistakes > 0) {
-                        LocalBoardColors.current.wrong
-                    } else {
-                        MaterialTheme.colorScheme.onSurfaceVariant
-                    },
-                modifier = Modifier.padding(end = 16.dp).testTag("mistakes"),
-            )
-        }
-        if (state.revealed) {
-            Text("Solution shown", color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.testTag("solution_shown"))
-        } else if (state.showTimer) {
-            Text(
-                formatDuration(state.elapsedMs),
+                title,
                 style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Medium,
-                modifier = Modifier.testTag("timer"),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f).testTag("game_title"),
             )
+            PuzzleMenu(state, onRestart, onRevealSolution, onSettings, Modifier.tourTarget(tour, "menu"))
         }
-        IconButton(onClick = onUndo, enabled = state.canUndo, modifier = Modifier.testTag("undo")) {
-            Icon(SudokuIcons.Undo, contentDescription = "Undo the last move")
+        Row(Modifier.fillMaxWidth().padding(start = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+            if (state.checking && state.showMistakeCount) {
+                Text(
+                    "Mistakes: ${state.mistakes}",
+                    color =
+                        if (state.mistakes > 0) {
+                            LocalBoardColors.current.wrong
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        },
+                    modifier = Modifier.padding(end = 12.dp).testTag("mistakes"),
+                )
+            }
+            if (state.revealed) {
+                Text(
+                    "Solution shown",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.testTag("solution_shown"),
+                )
+            } else if (state.showTimer) {
+                Text(
+                    formatDuration(state.elapsedMs),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier.testTag("timer"),
+                )
+            }
+            Spacer(Modifier.weight(1f))
+            IconButton(onClick = onUndo, enabled = state.canUndo, modifier = Modifier.testTag("undo")) {
+                Icon(SudokuIcons.Undo, contentDescription = "Undo the last move")
+            }
+            IconButton(onClick = onRedo, enabled = state.canRedo, modifier = Modifier.testTag("redo")) {
+                Icon(SudokuIcons.Redo, contentDescription = "Redo the move you undid")
+            }
+            if (state.showHints) {
+                HintButton(onHint, enabled = !state.completed && !state.revealed, modifier = Modifier.tourTarget(tour, "hint"))
+            }
+            if (state.showTutorial) {
+                HowToPlayButton(RULES, TUTORIAL, tour)
+            }
         }
-        IconButton(onClick = onRedo, enabled = state.canRedo, modifier = Modifier.testTag("redo")) {
-            Icon(SudokuIcons.Redo, contentDescription = "Redo the move you undid")
-        }
-        if (state.showHints) {
-            HintButton(onHint, enabled = !state.completed && !state.revealed, modifier = Modifier.tourTarget(tour, "hint"))
-        }
-        if (state.showTutorial) {
-            HowToPlayButton(RULES, TUTORIAL, tour)
-        }
-        PuzzleMenu(state, onRestart, onRevealSolution, onSettings, Modifier.tourTarget(tour, "menu"))
     }
 }
 

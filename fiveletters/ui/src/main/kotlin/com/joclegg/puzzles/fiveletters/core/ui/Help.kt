@@ -92,6 +92,7 @@ fun HowToPlayButton(
     if (open) {
         AlertDialog(
             onDismissRequest = { open = false },
+            modifier = Modifier.dialogTestTags(),
             title = { Text("How to play") },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -128,7 +129,7 @@ private fun Walkthrough(
     val last = index == steps.lastIndex
     val highlight = MaterialTheme.colorScheme.primary
     Popup(popupPositionProvider = WindowOrigin, onDismissRequest = onClose, properties = PopupProperties(focusable = true)) {
-        Box(Modifier.fillMaxSize()) {
+        Box(Modifier.fillMaxSize().dialogTestTags()) {
             Canvas(Modifier.fillMaxSize()) {
                 drawRect(Color.Black.copy(alpha = 0.4f))
                 tour.bounds[step.target]?.let { target ->

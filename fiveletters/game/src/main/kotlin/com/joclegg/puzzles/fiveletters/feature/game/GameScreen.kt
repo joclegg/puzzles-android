@@ -155,6 +155,7 @@ fun GameScreen(
     if (revealing) {
         AlertDialog(
             onDismissRequest = { revealing = false },
+            modifier = Modifier.dialogTestTags(),
             title = { Text("Show the word?") },
             text = { Text("This ends the game and counts as a loss.") },
             confirmButton = {
