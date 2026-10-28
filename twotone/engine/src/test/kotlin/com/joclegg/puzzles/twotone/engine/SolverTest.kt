@@ -40,6 +40,7 @@ class SolverTest {
 
         // Assert
         assertEquals(Triple(listOf(31), Tile.RED, Reason.UNIQUE), Triple(deduction?.cells, deduction?.tile, deduction?.reason))
+        assertEquals(Line(isRow = true, index = 0), deduction?.twin)
     }
 
     @Test

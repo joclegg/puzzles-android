@@ -12,6 +12,7 @@ data class Deduction(
     val tile: Tile,
     val reason: Reason,
     val line: Line,
+    val twin: Line? = null,
 )
 
 object Solver {
@@ -87,7 +88,7 @@ object Solver {
             val matchesFilled = tiles.indices.all { tiles[it] == Tile.EMPTY || tiles[it] == twinTiles[it] }
             if (matchesFilled) {
                 val first = cells.indexOf(empties[0])
-                return Deduction(listOf(empties[0]), twinTiles[first].other, Reason.UNIQUE, line)
+                return Deduction(listOf(empties[0]), twinTiles[first].other, Reason.UNIQUE, line, twin)
             }
         }
         return null

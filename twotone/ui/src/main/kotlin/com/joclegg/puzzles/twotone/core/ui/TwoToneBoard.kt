@@ -35,6 +35,7 @@ data class BoardUi(
     val broken: Set<Int> = emptySet(),
     val hintLine: Set<Int> = emptySet(),
     val hintTargets: Set<Int> = emptySet(),
+    val hintTwin: Set<Int> = emptySet(),
     val showGivens: Boolean = false,
 )
 
@@ -64,6 +65,12 @@ fun GameState.toBoardUi(markBrokenRules: Boolean): BoardUi {
                 is Hint.Mistake -> currentHint.cells.toSet()
                 null -> emptySet()
             },
+        hintTwin =
+            (currentHint as? Hint.Next)
+                ?.deduction
+                ?.twin
+                ?.let { grid.cellsOf(it).toSet() }
+                .orEmpty(),
     )
 }
 
@@ -126,6 +133,7 @@ private fun TileView(
             .then(
                 when {
                     hinted -> Modifier.border(3.dp, colors.hintTarget, TileShape)
+                    cell in board.hintTwin -> Modifier.border(3.dp, colors.hintTarget.copy(alpha = 0.5f), TileShape)
                     broken -> Modifier.border(3.dp, colors.broken, TileShape)
                     else -> Modifier
                 },
