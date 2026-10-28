@@ -12,6 +12,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -38,6 +39,9 @@ import com.joclegg.puzzles.wordwheel.core.ui.WordWheelTheme
 @Composable
 fun LauncherScreen(
     darkTheme: Boolean,
+    account: String?,
+    onSignInClick: () -> Unit,
+    onSignOutClick: () -> Unit,
     onSettingsClick: () -> Unit,
     onSudokuClick: () -> Unit,
     onSolitaireClick: () -> Unit,
@@ -52,6 +56,15 @@ fun LauncherScreen(
     Column(modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text("Puzzles", style = MaterialTheme.typography.headlineLarge, modifier = Modifier.weight(1f))
+            if (account == null) {
+                OutlinedButton(onClick = onSignInClick, modifier = Modifier.testTag("sign_in")) {
+                    Text("Sign in to sync")
+                }
+            } else {
+                OutlinedButton(onClick = onSignOutClick, modifier = Modifier.testTag("sign_out")) {
+                    Text("Sign out")
+                }
+            }
             IconButton(onClick = onSettingsClick, modifier = Modifier.testTag("settings")) {
                 Icon(SudokuIcons.Settings, contentDescription = "Settings")
             }

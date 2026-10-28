@@ -8,12 +8,15 @@ import androidx.room.Insert
 import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.RoomDatabase
+import androidx.room.Transaction
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
-@Entity(tableName = "games", indices = [Index("status")])
+@Entity(tableName = "games", indices = [Index("uuid", unique = true), Index("updatedAt"), Index("status")])
 data class GameEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val uuid: String,
+    val updatedAt: Long,
     val dealId: String,
     val drawMode: String,
     val buildOrder: String,
@@ -34,6 +37,33 @@ interface GameDao {
     @Update
     suspend fun update(game: GameEntity)
 
+    @Query("SELECT uuid FROM games WHERE id = :id")
+    suspend fun uuidOf(id: Long): String?
+
+    @Query("SELECT * FROM games WHERE uuid = :uuid")
+    suspend fun byUuid(uuid: String): GameEntity?
+
+    @Query("SELECT * FROM games WHERE updatedAt > :since")
+    suspend fun changedSince(since: Long): List<GameEntity>
+
+    @Query("DELETE FROM games WHERE uuid = :uuid")
+    suspend fun deleteByUuid(uuid: String)
+
+    @Transaction
+    suspend fun save(game: GameEntity) {
+        update(game.copy(uuid = uuidOf(game.id) ?: game.uuid))
+    }
+
+    @Transaction
+    suspend fun importGame(game: GameEntity) {
+        val existing = byUuid(game.uuid)
+        if (existing == null) {
+            insert(game.copy(id = 0))
+        } else {
+            update(game.copy(id = existing.id))
+        }
+    }
+
     @Query("SELECT * FROM games WHERE id = :id")
     suspend fun get(id: Long): GameEntity?
 
@@ -53,7 +83,7 @@ interface GameDao {
     ): Long?
 }
 
-@Database(entities = [GameEntity::class], version = 1, exportSchema = true)
+@Database(entities = [GameEntity::class], version = 2, exportSchema = true)
 abstract class GameDatabase : RoomDatabase() {
     abstract fun gameDao(): GameDao
 }

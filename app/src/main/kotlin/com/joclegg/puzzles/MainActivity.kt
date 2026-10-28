@@ -1,6 +1,8 @@
 package com.joclegg.puzzles
 
+import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
@@ -34,6 +36,7 @@ class MainActivity : ComponentActivity() {
         val app = application as PuzzlesApplication
         if (savedInstanceState == null) {
             openFixture(app)
+            completeSignIn(intent)
         }
         setContent {
             val settings by app.sudoku.settings.settings
@@ -54,8 +57,58 @@ class MainActivity : ComponentActivity() {
                 enableEdgeToEdge(statusBarStyle = style, navigationBarStyle = style)
                 onDispose {}
             }
+            val account by app.auth.email.collectAsStateWithLifecycle(initialValue = null)
             SudokuTheme(darkTheme = darkTheme) {
-                PuzzlesApp(app, darkTheme, openGame = openGame.value, onConsumeOpenGame = { openGame.value = null })
+                PuzzlesApp(
+                    app,
+                    darkTheme,
+                    openGame = openGame.value,
+                    onConsumeOpenGame = { openGame.value = null },
+                    account = account,
+                    onSignInClick = ::signIn,
+                    onSignOutClick = { app.background.launch { app.auth.signOut() } },
+                )
+            }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        completeSignIn(intent)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        syncInBackground()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        syncInBackground()
+    }
+
+    private fun syncInBackground() {
+        val app = application as PuzzlesApplication
+        app.background.launch { app.sync.sync() }
+    }
+
+    private fun signIn() {
+        val app = application as PuzzlesApplication
+        lifecycleScope.launch {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(app.auth.signInUrl())))
+        }
+    }
+
+    private fun completeSignIn(intent: Intent) {
+        val data = intent.data ?: return
+        val code = data.getQueryParameter("code")
+        if (data.scheme != AUTH_SCHEME || code == null) {
+            return
+        }
+        val app = application as PuzzlesApplication
+        app.background.launch {
+            if (app.auth.complete(code)) {
+                app.sync.sync()
             }
         }
     }
@@ -157,5 +210,6 @@ class MainActivity : ComponentActivity() {
 
     private companion object {
         const val FIXTURE_EXTRA = "fixture"
+        const val AUTH_SCHEME = "com.joclegg.puzzles"
     }
 }

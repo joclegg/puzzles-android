@@ -43,6 +43,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.core.sync)
     implementation(projects.sudoku.data)
     implementation(projects.sudoku.ui)
     implementation(projects.sudoku.game)

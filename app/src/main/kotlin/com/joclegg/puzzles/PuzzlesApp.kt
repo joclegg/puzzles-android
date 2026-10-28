@@ -60,6 +60,9 @@ fun PuzzlesApp(
     darkTheme: Boolean,
     openGame: OpenGame?,
     onConsumeOpenGame: () -> Unit,
+    account: String?,
+    onSignInClick: () -> Unit,
+    onSignOutClick: () -> Unit,
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
 ) {
@@ -146,6 +149,9 @@ fun PuzzlesApp(
             composable(LAUNCHER) {
                 LauncherScreen(
                     darkTheme = darkTheme,
+                    account = account,
+                    onSignInClick = onSignInClick,
+                    onSignOutClick = onSignOutClick,
                     onSettingsClick = { navController.navigate(SettingsHub.route(SettingsTab.GENERAL)) },
                     onSudokuClick = { navController.navigate(SudokuRoutes.HOME) },
                     onSolitaireClick = { navController.navigate(SolitaireRoutes.HOME) },
