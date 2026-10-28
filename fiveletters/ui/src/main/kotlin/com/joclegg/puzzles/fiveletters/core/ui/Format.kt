@@ -4,13 +4,17 @@ import com.joclegg.puzzles.fiveletters.core.data.WordRef
 import com.joclegg.puzzles.fiveletters.engine.Rejection
 import com.joclegg.puzzles.fiveletters.engine.Words
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
+import java.util.Locale
+
+private val WORDLE_LAUNCH = LocalDate.of(2021, 6, 19)
 
 fun WordRef.title(): String =
     if (isDaily) {
         "Five Letters ${Words.dayNumber(LocalDate.parse(id.removePrefix(WordRef.DAILY_PREFIX)))}"
     } else if (isNyt) {
-        "NY Times · ${LocalDate.parse(id.removePrefix(WordRef.NYT_PREFIX)).format(DateTimeFormatter.ofPattern("d MMM"))}"
+        val wordleNumber = ChronoUnit.DAYS.between(WORDLE_LAUNCH, LocalDate.parse(id.removePrefix(WordRef.NYT_PREFIX)))
+        "Wordle ${"%,d".format(Locale.US, wordleNumber)}"
     } else {
         "Practice"
     }
