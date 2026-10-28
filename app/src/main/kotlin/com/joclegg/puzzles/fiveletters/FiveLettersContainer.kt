@@ -3,6 +3,7 @@ package com.joclegg.puzzles.fiveletters
 import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
+import com.joclegg.puzzles.core.sync.StampedPreferences
 import com.joclegg.puzzles.fiveletters.core.data.GameDatabase
 import com.joclegg.puzzles.fiveletters.core.data.GameRepository
 import com.joclegg.puzzles.fiveletters.core.data.NytWordSource
@@ -20,9 +21,15 @@ private val Context.fiveLettersSettingsStore by preferencesDataStore(name = "fiv
 class FiveLettersContainer(
     private val context: Context,
 ) {
-    private val database = Room.databaseBuilder(context, GameDatabase::class.java, "five_letters.db").build()
+    private val database =
+        Room
+            .databaseBuilder(context, GameDatabase::class.java, "five_letters.db")
+            .fallbackToDestructiveMigration(dropAllTables = true)
+            .build()
     val games = GameRepository(database.gameDao())
-    val settings = SettingsRepository(context.fiveLettersSettingsStore)
+    private val settingsStore = StampedPreferences(context.fiveLettersSettingsStore)
+    val settings = SettingsRepository(settingsStore)
+    val sync = fiveLettersSyncSource(database.gameDao(), settings, settingsStore)
     val newSeed: () -> Long = { Random.nextLong() }
     val today: () -> LocalDate = LocalDate::now
     val nytWords = NytWordSource()

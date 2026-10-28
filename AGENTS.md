@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Puzzles: an offline Android app with five games: sudoku (classic and killer), Klondike solitaire, Two Tone (red/blue binary grid, like 0h h1), Sightlines (blue dots that count what they see, like 0h n0) Five Letters (a Wordle-style word game), Kakuro (cross sums), Slide Out (like Unblock Me) and Word Wheel (like Word Trip). A launcher screen picks the game.
+Puzzles: an Android app, playable offline, with five games: sudoku (classic and killer), Klondike solitaire, Two Tone (red/blue binary grid, like 0h h1), Sightlines (blue dots that count what they see, like 0h n0) Five Letters (a Wordle-style word game), Kakuro (cross sums), Slide Out (like Unblock Me) and Word Wheel (like Word Trip). A launcher screen picks the game.
 
 ## Stack
 
@@ -40,6 +40,8 @@ Each game has its own modules under `sudoku/`, `solitaire/`, `twotone/`, `sightl
 - `<game>/ui/`: theme, colour tokens (`BoardColors` for sudoku, `TableColors` for solitaire, `TileColors` for twotone and sightlines, `LetterColors` for fiveletters) and shared components
 - `<game>/game/`, `<game>/home/`, `<game>/stats/`, `<game>/settings/`: the screens
 - `core/testing/`: shared test utilities, such as `TestCompletionSource`
+- `core/sync/`: optional Google sign-in and sync with the Supabase project in [joclegg/puzzles-backend](https://github.com/joclegg/puzzles-backend): `SupabaseAuth` (browser sign-in with PKCE, back through the `com.joclegg.puzzles://auth` deep link), `SyncEngine` (pushes rows changed since the last push, pulls newer ones, last write wins), `SyncStore` and `StampedPreferences` (stamps every settings edit)
+- `app/.../<game>/<Game>Sync.kt`: each game's `SyncSource`, which converts its Room rows and settings to and from the same JSON puzzles-web stores, under the same game keys (`sudoku`, `solitaire`, `twoTone`, `sightlines`, `fiveLetters`, `kakuro`, `slideOut`, `wordWheel`)
 - `app/`: `MainActivity`, `PuzzlesApp.kt` (navigation), `LauncherScreen`, and per game a container (`<Game>Container`), a routes file (`<Game>Routes`) and debug-only e2e fixtures in `src/debug/` (`<Game>Fixtures`)
 - `puzzles-data/`: a git submodule ([joclegg/puzzles-data](https://github.com/joclegg/puzzles-data)) holding every puzzle bank and word list, shared with puzzles-web and packaged as the app's assets. Clone with `--recurse-submodules`, or run `git submodule update --init`. Commit bank changes there first, then bump the submodule here.
 - `puzzles-data/sudoku/`: the generated sudoku bank, one file per mode and level
@@ -67,17 +69,17 @@ Rules marked (lint) are enforced by `spotlessCheck`, Android Lint or the build.
 
 ### Offline
 
-- MUST keep every game playable offline. The only network call is the Five Letters **NY Times daily**, a separate game next to the Puzzles daily that fetches today's Wordle answer (`NytWordSource`). It needs a connection; every other game, including the Puzzles daily, does not. MUST NOT add any other network call.
-- MUST NOT add the `ACCESS_NETWORK_STATE` permission. `INTERNET` is allowed only for the NYT word. (lint: `verify<Variant>Permissions`)
-- MUST NOT add analytics, crash reporting, ads, cloud sync or any network library. Use the JDK's `HttpURLConnection`.
-- MUST keep all data on the device, in Room or DataStore.
+- MUST keep every game playable offline and signed out. Sign-in is optional and Google only; it only syncs saves and settings through `core:sync`, when the app opens or goes to the background. The only other network call is the Five Letters **NY Times daily**, a separate game next to the Puzzles daily that fetches today's Wordle answer (`NytWordSource`). It needs a connection; every other game, including the Puzzles daily, does not. MUST NOT add any other network call.
+- MUST NOT add the `ACCESS_NETWORK_STATE` permission. `INTERNET` is allowed only for the NYT word and sync. (lint: `verify<Variant>Permissions`)
+- MUST NOT add analytics, crash reporting, ads or any network library. Use the JDK's `HttpURLConnection`.
+- MUST keep all data on the device, in Room or DataStore. Every saved game has a `uuid` and an `updatedAt` so sync can find and order it; repositories save through `GameDao.save`, which keeps the row's `uuid`.
 - MUST pick daily sudoku puzzles locally from the bundled bank, deal daily solitaire games locally, seeded by date (`DealRef.daily`), generate daily Two Tone and Sightlines puzzles locally, seeded by date (`PuzzleRef.daily`), and pick the daily Five Letters word locally from the bundled list (`Words.daily`). The NY Times daily is a separate game (`WordRef.nyt`) and never replaces it.
 
 ### Modules
 
 - MUST put each game rule in that game's `engine` module as a pure function on its `GameState`. ViewModels only orchestrate.
 - MUST NOT add Android dependencies to an `engine` module.
-- MUST NOT depend on one game's modules from the other game's modules. Only `app` and `core:testing` are shared.
+- MUST NOT depend on one game's modules from the other game's modules. Only `app`, `core:sync` and `core:testing` are shared.
 - MUST read sudoku sizes from the puzzle's `Grid` (`puzzle.grid`, `Grid.STANDARD`, `Grid.FAST`). MUST NOT hard-code 9, 81 or 3x3 boxes.
 - MUST read solitaire pile counts from `Board.COLUMNS` and `Board.FOUNDATIONS`, and ranks from `Card.ACE`..`Card.KING`.
 - MUST put shared build configuration in a `build-logic` convention plugin. Module `build.gradle.kts` files stay a few lines.
@@ -150,7 +152,7 @@ Rules marked (lint) are enforced by `spotlessCheck`, Android Lint or the build.
 - MUST give every puzzle exactly one solution, using as few starting digits (`givens`, shown on grey cells) as the generator can find.
 - MUST keep the sum helper (`SHOW_COMBINATIONS`) off by default.
 - MUST offer the same entry options as sudoku: Cell first or Number first (`InputMode`), and mistake checking Off, Block clashes or Show wrong (`MistakeCheck`), with a mistake counter.
-- Database changes MUST come with a Room migration (Kakuro is at version 2, auto-migrated from 1) and a migration test.
+- Kakuro's database is at version 3. Like every game's, it is rebuilt when its schema changes (`fallbackToDestructiveMigration`): signed-in players get their games back from sync.
 
 ### Slide Out
 
@@ -186,7 +188,7 @@ Rules marked (lint) are enforced by `spotlessCheck`, Android Lint or the build.
 - MUST regenerate the bank with `generateBank`. MUST NOT edit the puzzle files by hand.
 - MUST get new puzzles through `PuzzleSupply`: bundled first, then the generated stock, then one made on the spot. Top-ups run in `PuzzleTopUpWorker` only when a level's stock falls below `LOW_WATERMARK`.
 - MUST keep custom puzzles out of best times.
-- MUST NOT add any screen, dialog or option for entering past best times. Past bests from other apps go straight into the `past_bests` table on the device.
+- MUST NOT add any screen, dialog or option for entering past best times. Past bests from other apps go straight into the `past_bests` table on the device. They also sync as `pastBests` in the Sudoku settings JSON, which puzzles-web shows in its best times.
 
 ### Tests
 

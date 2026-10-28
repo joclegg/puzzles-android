@@ -8,6 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import java.util.UUID
 
 class GameRepository(
     private val dao: GameDao,
@@ -28,7 +29,7 @@ class GameRepository(
             .inProgress()
             .map { it.toModel() }
             .filter { it.ref.slot == ref.slot }
-            .forEach { dao.update(it.copy(status = GameStatus.ABANDONED).toEntity()) }
+            .forEach { dao.save(it.copy(status = GameStatus.ABANDONED).toEntity(now())) }
         val game =
             SavedGame(
                 id = 0,
@@ -40,17 +41,17 @@ class GameRepository(
                 startedAt = now(),
                 finishedAt = null,
             )
-        return game.copy(id = dao.insert(game.toEntity()))
+        return game.copy(id = dao.insert(game.toEntity(now())))
     }
 
-    suspend fun save(game: SavedGame) = dao.update(withContext(background) { game.toEntity() })
+    suspend fun save(game: SavedGame) = dao.save(withContext(background) { game.toEntity(now()) })
 
     suspend fun reveal(game: SavedGame) {
-        dao.update(withContext(background) { game.copy(status = GameStatus.REVEALED, finishedAt = now()).toEntity() })
+        dao.save(withContext(background) { game.copy(status = GameStatus.REVEALED, finishedAt = now()).toEntity(now()) })
     }
 
     suspend fun solve(game: SavedGame): Boolean {
-        dao.update(withContext(background) { game.copy(status = GameStatus.SOLVED, finishedAt = now()).toEntity() })
+        dao.save(withContext(background) { game.copy(status = GameStatus.SOLVED, finishedAt = now()).toEntity(now()) })
         val previous = dao.bestTimeExcluding(game.ref.size, game.id)
         return previous == null || game.elapsedMs < previous
     }
@@ -73,9 +74,11 @@ private fun List<GameEntity>.statsFor(size: Int): SizeStats {
     )
 }
 
-internal fun SavedGame.toEntity() =
+internal fun SavedGame.toEntity(updatedAt: Long) =
     GameEntity(
         id = id,
+        uuid = UUID.randomUUID().toString(),
+        updatedAt = updatedAt,
         puzzleId = ref.id,
         size = ref.size,
         puzzle = ref.puzzle.encode(),

@@ -21,7 +21,7 @@ abstract class NetworkPermissionTask : DefaultTask() {
         val banned = listOf("android.permission.ACCESS_NETWORK_STATE").filter { it in manifest }
         if (banned.isNotEmpty()) {
             throw GradleException(
-                "Merged manifest requests $banned, but the app only needs INTERNET for the opt-in NYT word. Remove it with tools:node=\"remove\".",
+                "Merged manifest requests $banned, but the app only needs INTERNET for the opt-in NYT word and sync. Remove it with tools:node=\"remove\".",
             )
         }
         report.get().asFile.writeText("OK\n")
