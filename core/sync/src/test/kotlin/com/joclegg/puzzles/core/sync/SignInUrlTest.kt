@@ -28,8 +28,8 @@ class SignInUrlTest(
         @Parameterized.Parameters
         fun providers() =
             listOf(
-                arrayOf(SignInProvider.GOOGLE, "provider=google"),
-                arrayOf(SignInProvider.MICROSOFT, "provider=azure&scopes=email"),
+                arrayOf<Any>(SignInProvider.GOOGLE, "provider=google"),
+                arrayOf<Any>(SignInProvider.MICROSOFT, "provider=azure&scopes=email"),
             )
     }
 }
