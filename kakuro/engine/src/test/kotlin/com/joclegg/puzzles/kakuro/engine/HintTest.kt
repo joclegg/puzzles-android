@@ -12,7 +12,7 @@ class HintTest {
         val hint = GameState(small).findHint()
 
         // Assert
-        assertEquals(Hint(4, 1, "Only 1 fits here."), hint)
+        assertEquals(Hint(4, 1, "Only 1 fits here: 3 in 2 across and 4 in 2 down leave no other digit."), hint)
     }
 
     @Test
