@@ -17,6 +17,9 @@ name: Custom killer - draw cages with sums, then play it
     id: "mode_killer"
 - waitForAnimationToEnd:
     timeout: 1500
+- scrollUntilVisible:
+    element:
+      id: "enter_puzzle"
 - tapOn:
     id: "enter_puzzle"
 - waitForAnimationToEnd:

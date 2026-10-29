@@ -17,8 +17,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.joclegg.puzzles.core.ui.MenuPanel
 import com.joclegg.puzzles.solitaire.core.data.DrawStats
 import com.joclegg.puzzles.solitaire.core.ui.BackButton
+import com.joclegg.puzzles.solitaire.core.ui.LocalTableColors
 import com.joclegg.puzzles.solitaire.core.ui.formatDuration
 import com.joclegg.puzzles.solitaire.core.ui.label
 
@@ -38,6 +40,7 @@ fun StatsScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val accent = LocalTableColors.current.accent
     Column(
         modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp),
@@ -48,7 +51,7 @@ fun StatsScreen(
         }
         stats.forEach { mode ->
             val tag = mode.drawMode.name.lowercase()
-            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            MenuPanel(accent) {
                 Text(mode.drawMode.label(), style = MaterialTheme.typography.titleLarge)
                 StatRow("Played", mode.played.toString(), "${tag}_played")
                 StatRow("Won", mode.won.toString(), "${tag}_won")

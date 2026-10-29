@@ -18,8 +18,10 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.joclegg.puzzles.core.ui.MenuPanel
 import com.joclegg.puzzles.slideout.core.data.LevelStats
 import com.joclegg.puzzles.slideout.core.ui.BackButton
+import com.joclegg.puzzles.slideout.core.ui.LocalSlideColors
 import com.joclegg.puzzles.slideout.core.ui.formatDuration
 import com.joclegg.puzzles.slideout.core.ui.label
 
@@ -39,6 +41,7 @@ fun StatsScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val accent = LocalSlideColors.current.accent
     Column(
         modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -47,15 +50,17 @@ fun StatsScreen(
             BackButton(onBack)
             Text("Stats", style = MaterialTheme.typography.headlineMedium)
         }
-        StatsRow("Level", "Solved", "At par", "Best", header = true)
-        stats.forEach { level ->
-            StatsRow(
-                level.level.label(),
-                "${level.solved}/${level.played}",
-                level.atPar.toString(),
-                level.bestMs?.let(::formatDuration) ?: "–",
-                tag = "level_${level.level.name.lowercase()}",
-            )
+        MenuPanel(accent) {
+            StatsRow("Level", "Solved", "At par", "Best", header = true)
+            stats.forEach { level ->
+                StatsRow(
+                    level.level.label(),
+                    "${level.solved}/${level.played}",
+                    level.atPar.toString(),
+                    level.bestMs?.let(::formatDuration) ?: "–",
+                    tag = "level_${level.level.name.lowercase()}",
+                )
+            }
         }
         Text(
             "Solved out of played. At par means solved in the fewest possible moves.",

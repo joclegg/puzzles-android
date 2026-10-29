@@ -18,6 +18,7 @@ data class LetterColors(
     val text: Color,
     val key: Color,
     val keyText: Color,
+    val accent: Color,
 )
 
 private val Light =
@@ -31,6 +32,7 @@ private val Light =
         text = Color(0xFF14181F),
         key = Color(0xFFE2E5EA),
         keyText = Color(0xFF14181F),
+        accent = Color(0xFF4F9A53),
     )
 
 private val Dark =
@@ -44,6 +46,7 @@ private val Dark =
         text = Color(0xFFE9ECF1),
         key = Color(0xFF555E6C),
         keyText = Color(0xFFE9ECF1),
+        accent = Color(0xFF72BF6D),
     )
 
 private val LightContrast = Light.copy(correct = Color(0xFFE5793A), present = Color(0xFF6CB7E8))

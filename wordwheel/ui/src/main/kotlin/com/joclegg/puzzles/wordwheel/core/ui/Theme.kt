@@ -19,6 +19,7 @@ data class WheelColors(
     val chosen: Color,
     val chosenText: Color,
     val line: Color,
+    val accent: Color,
 )
 
 private val Light =
@@ -33,6 +34,7 @@ private val Light =
         chosen = Color(0xFF1565D8),
         chosenText = Color(0xFFFFFFFF),
         line = Color(0xFF1565D8),
+        accent = Color(0xFF4F5BD5),
     )
 
 private val Dark =
@@ -47,6 +49,7 @@ private val Dark =
         chosen = Color(0xFF7DB5FF),
         chosenText = Color(0xFF0B2545),
         line = Color(0xFF7DB5FF),
+        accent = Color(0xFF939BFF),
     )
 
 val LocalWheelColors = staticCompositionLocalOf { Light }

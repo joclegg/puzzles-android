@@ -18,8 +18,10 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.joclegg.puzzles.core.ui.MenuPanel
 import com.joclegg.puzzles.kakuro.core.data.SizeStats
 import com.joclegg.puzzles.kakuro.core.ui.BackButton
+import com.joclegg.puzzles.kakuro.core.ui.LocalKakuroColors
 import com.joclegg.puzzles.kakuro.core.ui.formatDuration
 import com.joclegg.puzzles.kakuro.core.ui.sizeLabel
 
@@ -39,6 +41,7 @@ fun StatsScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val accent = LocalKakuroColors.current.accent
     Column(
         modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -47,15 +50,17 @@ fun StatsScreen(
             BackButton(onBack)
             Text("Stats", style = MaterialTheme.typography.headlineMedium)
         }
-        StatsRow("Size", "Solved", "Best", "Average", header = true)
-        stats.forEach { size ->
-            StatsRow(
-                sizeLabel(size.size),
-                "${size.solved}/${size.played}",
-                size.bestMs?.let(::formatDuration) ?: "–",
-                size.averageMs?.let(::formatDuration) ?: "–",
-                tag = "size_${size.size}",
-            )
+        MenuPanel(accent) {
+            StatsRow("Size", "Solved", "Best", "Average", header = true)
+            stats.forEach { size ->
+                StatsRow(
+                    sizeLabel(size.size),
+                    "${size.solved}/${size.played}",
+                    size.bestMs?.let(::formatDuration) ?: "–",
+                    size.averageMs?.let(::formatDuration) ?: "–",
+                    tag = "size_${size.size}",
+                )
+            }
         }
         Text(
             "Solved out of played. Abandoned puzzles count as played. Daily puzzles count under their size.",

@@ -1,6 +1,7 @@
 package com.joclegg.puzzles.sudoku.feature.stats
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,7 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.FilterChip
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -21,10 +22,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.joclegg.puzzles.core.ui.MenuEmptyState
+import com.joclegg.puzzles.core.ui.MenuFilterChip
+import com.joclegg.puzzles.core.ui.MenuPanel
 import com.joclegg.puzzles.sudoku.core.data.GameMode
 import com.joclegg.puzzles.sudoku.core.data.GameStatus
 import com.joclegg.puzzles.sudoku.core.data.SavedGame
 import com.joclegg.puzzles.sudoku.core.ui.BackButton
+import com.joclegg.puzzles.sudoku.core.ui.LocalBoardColors
 import com.joclegg.puzzles.sudoku.core.ui.formatDuration
 import com.joclegg.puzzles.sudoku.core.ui.gameTitle
 import com.joclegg.puzzles.sudoku.core.ui.label
@@ -66,29 +71,34 @@ fun HistoryScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    val accent = LocalBoardColors.current.accent
+    Column(modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             BackButton(onBack)
             Text("History", style = MaterialTheme.typography.headlineMedium)
         }
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            FilterChip(selected = state.filter == null, onClick = { onFilter(null) }, label = { Text("All") })
+        Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            MenuFilterChip("All", selected = state.filter == null, accent = accent, onClick = { onFilter(null) })
             HistoryFilter.entries.forEach { filter ->
-                FilterChip(
+                MenuFilterChip(
+                    label = filter.name.lowercase().replaceFirstChar { it.uppercase() },
                     selected = state.filter == filter,
+                    accent = accent,
                     onClick = { onFilter(filter) },
-                    label = { Text(filter.name.lowercase().replaceFirstChar { it.uppercase() }) },
                     modifier = Modifier.testTag("filter_${filter.name.lowercase()}"),
                 )
             }
         }
         if (state.history.isEmpty()) {
-            Text("No games yet.", color = MaterialTheme.colorScheme.onSurfaceVariant)
-        }
-        LazyColumn {
-            items(state.history, key = { it.id }) { game ->
-                HistoryItem(game, onClick = { onGameClick(game) })
-                HorizontalDivider()
+            MenuEmptyState("No games yet.", accent)
+        } else {
+            MenuPanel(accent, Modifier.weight(1f, fill = false)) {
+                LazyColumn {
+                    items(state.history, key = { it.id }) { game ->
+                        HistoryItem(game, onClick = { onGameClick(game) })
+                        HorizontalDivider()
+                    }
+                }
             }
         }
     }

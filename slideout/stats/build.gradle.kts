@@ -4,6 +4,7 @@ plugins {
 }
 
 dependencies {
+    implementation(projects.core.ui)
     implementation(projects.slideout.data)
     implementation(projects.slideout.ui)
     implementation(libs.androidx.lifecycle.viewmodel.compose)

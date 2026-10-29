@@ -17,6 +17,7 @@ data class SlideColors(
     val targetEdge: Color,
     val exit: Color,
     val hint: Color,
+    val accent: Color,
 )
 
 private val Light =
@@ -29,6 +30,7 @@ private val Light =
         targetEdge = Color(0xFFB54A30),
         exit = Color(0xFFE0603F),
         hint = Color(0xFF8EC0FA),
+        accent = Color(0xFFC27A2C),
     )
 
 private val Dark =
@@ -41,6 +43,7 @@ private val Dark =
         targetEdge = Color(0xFFA6432C),
         exit = Color(0xFFD5583A),
         hint = Color(0xFF7DB5FF),
+        accent = Color(0xFFE3A85C),
     )
 
 val LocalSlideColors = staticCompositionLocalOf { Light }

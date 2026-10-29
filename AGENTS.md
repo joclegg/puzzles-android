@@ -40,6 +40,7 @@ Each game has its own modules under `sudoku/`, `solitaire/`, `twotone/`, `sightl
 - `<game>/ui/`: theme, colour tokens (`BoardColors` for sudoku, `TableColors` for solitaire, `TileColors` for twotone and sightlines, `LetterColors` for fiveletters) and shared components
 - `<game>/game/`, `<game>/home/`, `<game>/stats/`, `<game>/settings/`: the screens
 - `core/testing/`: shared test utilities, such as `TestCompletionSource`
+- `core/ui/`: the shared pieces of every game's Home, Stats and History screens (`GameHero`, `ContinueCard`, `MenuSection`, `MenuTile`, `DailyTile`, `IconTile`, `LevelMeter`, `TileGrid`, `MenuPanel`, `MenuFilterChip`, `MenuEmptyState`, `MenuIcons`). They take the game's `accent` colour, the `accent` token in its colour set (`LocalBoardColors.current.accent` and so on), the same accents puzzles-web uses
 - `core/sync/`: optional Google sign-in and sync with the Supabase project in [joclegg/puzzles-backend](https://github.com/joclegg/puzzles-backend): `SupabaseAuth` (browser sign-in with PKCE, back through the `com.joclegg.puzzles://auth` deep link), `SyncEngine` (pushes rows changed since the last push, then pulls rows the server stored since the last pull by `synced_at`, a page at a time, last write wins; retries twice, 30 seconds apart), `SyncStore` and `StampedPreferences` (stamps every settings edit). The `sync` DataStore holds the session, so it is left out of backups (`res/xml/backup_rules.xml`, `data_extraction_rules.xml`); a refresh token the server rejects signs the player out
 - `app/.../<game>/<Game>Sync.kt`: each game's `SyncSource`, which converts its Room rows and settings to and from the same JSON puzzles-web stores, under the same game keys (`sudoku`, `solitaire`, `twoTone`, `sightlines`, `fiveLetters`, `kakuro`, `slideOut`, `wordWheel`)
 - `app/`: `MainActivity`, `PuzzlesApp.kt` (navigation), `LauncherScreen`, and per game a container (`<Game>Container`), a routes file (`<Game>Routes`) and debug-only e2e fixtures in `src/debug/` (`<Game>Fixtures`)
@@ -79,7 +80,7 @@ Rules marked (lint) are enforced by `spotlessCheck`, Android Lint or the build.
 
 - MUST put each game rule in that game's `engine` module as a pure function on its `GameState`. ViewModels only orchestrate.
 - MUST NOT add Android dependencies to an `engine` module.
-- MUST NOT depend on one game's modules from the other game's modules. Only `app`, `core:sync` and `core:testing` are shared.
+- MUST NOT depend on one game's modules from the other game's modules. Only `app`, `core:sync`, `core:ui` and `core:testing` are shared.
 - MUST read sudoku sizes from the puzzle's `Grid` (`puzzle.grid`, `Grid.STANDARD`, `Grid.FAST`). MUST NOT hard-code 9, 81 or 3x3 boxes.
 - MUST read solitaire pile counts from `Board.COLUMNS` and `Board.FOUNDATIONS`, and ranks from `Card.ACE`..`Card.KING`.
 - MUST put shared build configuration in a `build-logic` convention plugin. Module `build.gradle.kts` files stay a few lines.

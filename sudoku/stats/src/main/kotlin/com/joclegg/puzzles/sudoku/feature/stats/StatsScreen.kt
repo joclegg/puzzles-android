@@ -18,10 +18,12 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.joclegg.puzzles.core.ui.MenuPanel
 import com.joclegg.puzzles.sudoku.core.data.BestTime
 import com.joclegg.puzzles.sudoku.core.data.GameMode
 import com.joclegg.puzzles.sudoku.core.data.levels
 import com.joclegg.puzzles.sudoku.core.ui.BackButton
+import com.joclegg.puzzles.sudoku.core.ui.LocalBoardColors
 import com.joclegg.puzzles.sudoku.core.ui.formatDuration
 import com.joclegg.puzzles.sudoku.core.ui.label
 
@@ -41,6 +43,7 @@ fun StatsScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val accent = LocalBoardColors.current.accent
     Column(
         modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp),
@@ -50,7 +53,7 @@ fun StatsScreen(
             Text("Best times", style = MaterialTheme.typography.headlineMedium)
         }
         GameMode.entries.forEach { mode ->
-            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            MenuPanel(accent) {
                 Text(
                     if (mode == GameMode.CLASSIC) {
                         "Classic"

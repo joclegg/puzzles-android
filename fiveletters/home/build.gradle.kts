@@ -4,6 +4,7 @@ plugins {
 }
 
 dependencies {
+    implementation(projects.core.ui)
     implementation(projects.fiveletters.data)
     implementation(projects.fiveletters.ui)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
