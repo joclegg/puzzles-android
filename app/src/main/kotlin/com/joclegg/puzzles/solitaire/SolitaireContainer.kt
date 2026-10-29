@@ -7,6 +7,7 @@ import com.joclegg.puzzles.core.sync.StampedPreferences
 import com.joclegg.puzzles.solitaire.core.data.GameDatabase
 import com.joclegg.puzzles.solitaire.core.data.GameRepository
 import com.joclegg.puzzles.solitaire.core.data.SettingsRepository
+import com.joclegg.puzzles.solitaire.core.data.WinnableDeals
 import java.time.LocalDate
 import kotlin.random.Random
 
@@ -24,6 +25,13 @@ class SolitaireContainer(
     private val settingsStore = StampedPreferences(context.solitaireSettingsStore)
     val settings = SettingsRepository(settingsStore)
     val sync = solitaireSyncSource(database.gameDao(), settings, settingsStore)
+    val winnableDeals =
+        WinnableDeals { path ->
+            context.assets
+                .open(path)
+                .bufferedReader()
+                .use { it.readText() }
+        }
     val newSeed: () -> Long = { Random.nextLong() }
     val today: () -> LocalDate = LocalDate::now
 }

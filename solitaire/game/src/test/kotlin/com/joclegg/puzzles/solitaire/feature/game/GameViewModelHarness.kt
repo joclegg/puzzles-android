@@ -7,6 +7,7 @@ import com.joclegg.puzzles.solitaire.core.data.GameStatus
 import com.joclegg.puzzles.solitaire.core.data.SavedGame
 import com.joclegg.puzzles.solitaire.core.data.Settings
 import com.joclegg.puzzles.solitaire.core.data.SettingsRepository
+import com.joclegg.puzzles.solitaire.core.data.WinnableDeals
 import com.joclegg.puzzles.solitaire.engine.BoardCodec
 import com.joclegg.puzzles.solitaire.engine.Card
 import com.joclegg.puzzles.solitaire.engine.DrawMode
@@ -42,7 +43,7 @@ internal class GameViewModelHarness {
     suspend fun openGame(): GameViewModel =
         GameViewModel(GAME_ID, games, settingsRepository, {
             clockMs
-        }, { 7L }, solving = Dispatchers.Main).also { it.uiState.filterNotNull().first() }
+        }, { 7L }, WinnableDeals { "7\n" }, solving = Dispatchers.Main).also { it.uiState.filterNotNull().first() }
 
     private fun oneMoveToWin(): SavedGame {
         val foundations =

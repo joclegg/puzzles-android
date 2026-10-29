@@ -7,6 +7,7 @@ import com.joclegg.puzzles.solitaire.core.data.GameRepository
 import com.joclegg.puzzles.solitaire.core.data.GameStatus
 import com.joclegg.puzzles.solitaire.core.data.SavedGame
 import com.joclegg.puzzles.solitaire.core.data.SettingsRepository
+import com.joclegg.puzzles.solitaire.core.data.WinnableDeals
 import com.joclegg.puzzles.solitaire.engine.DrawMode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
@@ -29,6 +30,7 @@ class HomeViewModel(
     private val settings: SettingsRepository,
     private val newSeed: () -> Long,
     private val today: () -> LocalDate,
+    private val winnable: WinnableDeals,
 ) : ViewModel() {
     val uiState: StateFlow<HomeUiState> =
         combine(games.inProgress, games.history) { inProgress, history ->
@@ -39,7 +41,12 @@ class HomeViewModel(
     suspend fun start(): Long {
         val prefs = settings.settings.first()
         val seed = newSeed()
-        return games.start(withContext(Dispatchers.Default) { DealRef.random(seed, prefs.drawMode, prefs.order, prefs.winnableOnly) }).id
+        return games
+            .start(
+                withContext(Dispatchers.Default) {
+                    DealRef.random(seed, prefs.drawMode, prefs.order, winnable.takeIf { prefs.winnableOnly })
+                },
+            ).id
     }
 
     suspend fun openDaily(): Long {
@@ -49,7 +56,12 @@ class HomeViewModel(
         if (existing != null) {
             return existing.id
         }
-        return games.start(withContext(Dispatchers.Default) { DealRef.daily(date, prefs.drawMode, prefs.order, prefs.winnableOnly) }).id
+        return games
+            .start(
+                withContext(Dispatchers.Default) {
+                    DealRef.daily(date, prefs.drawMode, prefs.order, winnable.takeIf { prefs.winnableOnly })
+                },
+            ).id
     }
 
     private companion object {

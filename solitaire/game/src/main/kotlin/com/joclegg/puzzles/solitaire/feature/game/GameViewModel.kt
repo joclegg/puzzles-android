@@ -8,9 +8,11 @@ import com.joclegg.puzzles.solitaire.core.data.HintStyle
 import com.joclegg.puzzles.solitaire.core.data.SavedGame
 import com.joclegg.puzzles.solitaire.core.data.Settings
 import com.joclegg.puzzles.solitaire.core.data.SettingsRepository
+import com.joclegg.puzzles.solitaire.core.data.WinnableDeals
 import com.joclegg.puzzles.solitaire.core.ui.TableUi
 import com.joclegg.puzzles.solitaire.core.ui.title
 import com.joclegg.puzzles.solitaire.core.ui.toTableUi
+import com.joclegg.puzzles.solitaire.engine.Board
 import com.joclegg.puzzles.solitaire.engine.Card
 import com.joclegg.puzzles.solitaire.engine.GameState
 import com.joclegg.puzzles.solitaire.engine.GameTimer
@@ -56,6 +58,7 @@ class GameViewModel(
     private val settings: SettingsRepository,
     private val monotonicNowMs: () -> Long,
     private val newSeed: () -> Long,
+    private val winnableDeals: WinnableDeals,
     private val solving: CoroutineDispatcher = Dispatchers.Default,
 ) : ViewModel() {
     private var saved: SavedGame? = null
@@ -129,7 +132,7 @@ class GameViewModel(
                 if (display.hintStyle == HintStyle.FILL) {
                     move { it.tapStock() }
                 } else {
-                    hintMessage = "Draw from the stock."
+                    hintMessage = "Nothing on the table can move, so draw from the stock."
                     publish()
                 }
             }
@@ -138,15 +141,8 @@ class GameViewModel(
                 if (display.hintStyle == HintStyle.FILL) {
                     move { it.drop(hint.selection.pile, it.board.cardsIn(hint.selection.pile).size - hint.selection.count, hint.to) }
                 } else {
-                    val card = current.board.cardsIn(hint.selection.pile).let { it[it.size - hint.selection.count] }
-                    val target =
-                        if (hint.to is Pile.Foundation) {
-                            "its foundation"
-                        } else {
-                            "another column"
-                        }
                     game = current.copy(selection = hint.selection)
-                    hintMessage = "Move the ${card.rankLabel}${card.suit.symbol} to $target."
+                    hintMessage = hintText(current.board, hint)
                     publish()
                 }
             }
@@ -170,7 +166,7 @@ class GameViewModel(
     suspend fun newDeal(): Long {
         val deal = saved?.deal ?: return gameId
         val seed = newSeed()
-        val winnable = display.winnableOnly
+        val winnable = winnableDeals.takeIf { display.winnableOnly }
         return games.start(withContext(solving) { DealRef.random(seed, deal.drawMode, deal.order, winnable) }).id
     }
 
@@ -330,3 +326,33 @@ class GameViewModel(
         const val CHECK_LIMIT_MS = 2_000L
     }
 }
+
+internal fun hintText(
+    board: Board,
+    hint: Hint.Transfer,
+): String {
+    val name = board.cardsIn(hint.selection.pile).let { it[it.size - hint.selection.count] }.label()
+    val to = hint.to
+    if (to is Pile.Foundation) {
+        return "Move the $name to its foundation."
+    }
+    val target = board.cardsIn(to).lastOrNull()
+    val where =
+        if (target == null) {
+            "to the empty column ${(to as Pile.Tableau).index + 1}"
+        } else {
+            "onto the ${target.label()}"
+        }
+    val from = hint.selection.pile
+    if (from is Pile.Tableau) {
+        val column = board.tableau[from.index]
+        return if (column.faceUpFrom > 0 && column.cards.size - hint.selection.count == column.faceUpFrom) {
+            "Move the $name $where to turn over the card under it."
+        } else {
+            "Move the $name $where."
+        }
+    }
+    return "Move the $name from the waste $where, so the card under it can be played."
+}
+
+private fun Card.label() = "$rankLabel${suit.symbol}"

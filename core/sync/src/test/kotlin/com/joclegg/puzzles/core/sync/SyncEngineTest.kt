@@ -29,4 +29,38 @@ class SyncEngineTest {
         // Assert
         assertEquals("DbC1snRZOVoipAXVvVZPSrh6e3JgPBCKMq65iE8dsdI", challenge)
     }
+
+    @Test
+    fun `given no earlier pull when the pull start is worked out then it starts from the beginning`() {
+        // Act
+        val since = SyncEngine.pullSince(null)
+
+        // Assert
+        assertEquals("1970-01-01T00:00:00Z", since)
+    }
+
+    @Test
+    fun `given an earlier pull when the pull start is worked out then it overlaps by a minute`() {
+        // Act
+        val since = SyncEngine.pullSince("2026-10-29T12:00:00Z")
+
+        // Assert
+        assertEquals("2026-10-29T11:59:00Z", since)
+    }
+
+    @Test
+    fun `given pulled rows when the cursor is moved then it is the latest synced time`() {
+        // Arrange
+        val rows =
+            listOf(
+                JSONObject().put("synced_at", "2026-10-29T12:00:00.5+00:00"),
+                JSONObject().put("synced_at", "2026-10-29T11:00:00+00:00"),
+            )
+
+        // Act
+        val cursor = SyncEngine.pulledUpTo("2026-10-29T10:00:00Z", rows)
+
+        // Assert
+        assertEquals("2026-10-29T12:00:00.5+00:00", cursor)
+    }
 }

@@ -116,6 +116,22 @@ class GameStateTest {
     }
 
     @Test
+    fun `given answers when one is appended then every earlier daily word stays the same`() {
+        // Arrange
+        val answers = (0 until 944).map { index -> (0 until 5).map { 'a' + (index shr (it * 2) and 3) + it * 4 }.joinToString("") }
+        val before = Words(answers, emptyList())
+        val after = Words(answers + "zesty", emptyList())
+        val days = (0L until 944L).map { Words.FIRST_DAY.plusDays(it) }
+
+        // Act
+        val changed = days.filter { before.daily(it) != after.daily(it) }
+
+        // Assert
+        assertEquals(emptyList(), changed)
+        assertEquals("ZESTY", after.daily(Words.FIRST_DAY.plusDays(944)))
+    }
+
+    @Test
     fun `given an answer missing from the word list when it is guessed then it is accepted and wins`() {
         // Act
         val after = GameState("GEEKY").enter("geeky")

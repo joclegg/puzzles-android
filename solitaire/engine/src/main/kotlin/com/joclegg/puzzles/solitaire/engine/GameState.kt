@@ -38,9 +38,25 @@ data class GameState(
 
     val cycledStock: Boolean
         get() {
-            val cards = board.stock.size + board.waste.size
             val draws = moves.takeLastWhile { it == Move.Draw }.size
-            return cards == 0 || draws >= (cards + drawMode.cards - 1) / drawMode.cards + 1
+            var current = moves.dropLast(draws).fold(start) { board, move -> board.apply(move) }
+            val cards = current.stock.size + current.waste.size
+            if (cards == 0) {
+                return true
+            }
+            if (drawMode.cards == 1) {
+                return draws >= cards + 1
+            }
+            var drawsSinceTurnOver = -1
+            repeat(draws) {
+                if (drawsSinceTurnOver >= 0) {
+                    drawsSinceTurnOver++
+                } else if (current.stock.isEmpty()) {
+                    drawsSinceTurnOver = 0
+                }
+                current = current.draw(drawMode)
+            }
+            return drawsSinceTurnOver >= (cards + drawMode.cards - 1) / drawMode.cards
         }
 
     fun autoFinishMoves(): List<Move> {

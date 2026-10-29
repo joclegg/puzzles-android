@@ -96,6 +96,8 @@ data class Board(
 
     fun encode() = blocks.joinToString(",") { it.encode() }
 
+    fun identity(): String = (listOf(blocks.first().encode()) + blocks.drop(1).map { it.encode() }.sorted()).joinToString(",")
+
     companion object {
         fun decode(text: String) = Board(text.split(',').map(Block::decode))
     }

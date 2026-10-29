@@ -11,7 +11,7 @@ A puzzle app for Android that plays offline, with eight games:
 - **Slide Out**: slide the blocks to free the red one (like Unblock Me). Beginner to Expert, graded by the fewest moves, with par, hints and undo.
 - **Word Wheel**: swipe the letters on the wheel to fill a small crossword (like Word Trip). Bonus words, shuffle and letter hints.
 
-Plays fully offline: no account, no ads. The one exception is Five Letters' NY Times daily, which fetches that day's Wordle answer.
+Plays fully offline: no ads, and no account needed. Sign in with Google to sync games and settings with the website and other devices. The only other call out is Five Letters' NY Times daily, which fetches that day's Wordle answer.
 
 See [`AGENTS.md`](AGENTS.md) for commands and coding rules.
 
