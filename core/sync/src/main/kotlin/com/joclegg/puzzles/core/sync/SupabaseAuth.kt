@@ -17,12 +17,10 @@ class SupabaseAuth(
 ) {
     val email: Flow<String?> = store.session.map { session -> session?.let { it.email.orEmpty() } }
 
-    suspend fun signInUrl(): String {
+    suspend fun signInUrl(provider: SignInProvider): String {
         val verifier = randomVerifier()
         store.setVerifier(verifier)
-        val redirect = URLEncoder.encode(SupabaseConfig.REDIRECT, "UTF-8")
-        return "${SupabaseConfig.URL}/auth/v1/authorize?provider=google&redirect_to=$redirect" +
-            "&code_challenge=${challengeOf(verifier)}&code_challenge_method=s256"
+        return authorizeUrl(provider, challengeOf(verifier))
     }
 
     suspend fun complete(code: String): Boolean {
@@ -96,6 +94,16 @@ class SupabaseAuth(
     companion object {
         private const val REFRESH_MARGIN_MS = 60_000L
         private val REJECTED_CODES = setOf(400, 401, 403)
+
+        fun authorizeUrl(
+            provider: SignInProvider,
+            challenge: String,
+        ): String {
+            val scopes = provider.scopes?.let { "&scopes=$it" }.orEmpty()
+            val redirect = URLEncoder.encode(SupabaseConfig.REDIRECT, "UTF-8")
+            return "${SupabaseConfig.URL}/auth/v1/authorize?provider=${provider.id}$scopes&redirect_to=$redirect" +
+                "&code_challenge=$challenge&code_challenge_method=s256"
+        }
 
         fun challengeOf(verifier: String): String =
             Base64
