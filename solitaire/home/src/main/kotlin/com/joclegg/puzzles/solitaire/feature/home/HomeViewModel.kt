@@ -41,7 +41,12 @@ class HomeViewModel(
     suspend fun start(): Long {
         val prefs = settings.settings.first()
         val seed = newSeed()
-        return games.start(withContext(Dispatchers.Default) { DealRef.random(seed, prefs.drawMode, prefs.order, winnable.takeIf { prefs.winnableOnly }) }).id
+        return games
+            .start(
+                withContext(Dispatchers.Default) {
+                    DealRef.random(seed, prefs.drawMode, prefs.order, winnable.takeIf { prefs.winnableOnly })
+                },
+            ).id
     }
 
     suspend fun openDaily(): Long {
@@ -51,7 +56,12 @@ class HomeViewModel(
         if (existing != null) {
             return existing.id
         }
-        return games.start(withContext(Dispatchers.Default) { DealRef.daily(date, prefs.drawMode, prefs.order, winnable.takeIf { prefs.winnableOnly }) }).id
+        return games
+            .start(
+                withContext(Dispatchers.Default) {
+                    DealRef.daily(date, prefs.drawMode, prefs.order, winnable.takeIf { prefs.winnableOnly })
+                },
+            ).id
     }
 
     private companion object {

@@ -356,4 +356,3 @@ internal fun hintText(
 }
 
 private fun Card.label() = "$rankLabel${suit.symbol}"
-

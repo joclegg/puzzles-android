@@ -151,8 +151,7 @@ class SyncEngine(
         private const val RETRY_MS = 30_000L
         private const val PULL_OVERLAP_MS = 60_000L
 
-        fun pullSince(cursor: String?): String =
-            cursor?.let { formatTimestamp(parseTimestamp(it) - PULL_OVERLAP_MS) } ?: formatTimestamp(0)
+        fun pullSince(cursor: String?): String = cursor?.let { formatTimestamp(parseTimestamp(it) - PULL_OVERLAP_MS) } ?: formatTimestamp(0)
 
         fun pulledUpTo(
             cursor: String?,

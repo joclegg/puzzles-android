@@ -36,7 +36,16 @@ object SolitaireRoutes {
     ) {
         screen(HOME, darkTheme) {
             HomeRoute(
-                viewModel = viewModel { HomeViewModel(container.games, container.settings, container.newSeed, container.today, container.winnableDeals) },
+                viewModel =
+                    viewModel {
+                        HomeViewModel(
+                            container.games,
+                            container.settings,
+                            container.newSeed,
+                            container.today,
+                            container.winnableDeals,
+                        )
+                    },
                 onOpenGame = { navController.openSolitaireGame(it) },
                 onStats = { navController.navigate(STATS) },
                 onHistory = { navController.navigate(HISTORY) },
@@ -49,7 +58,14 @@ object SolitaireRoutes {
             GameRoute(
                 viewModel =
                     viewModel(key = "solitaire_game_$id") {
-                        GameViewModel(id, container.games, container.settings, SystemClock::elapsedRealtime, container.newSeed, container.winnableDeals)
+                        GameViewModel(
+                            id,
+                            container.games,
+                            container.settings,
+                            SystemClock::elapsedRealtime,
+                            container.newSeed,
+                            container.winnableDeals,
+                        )
                     },
                 onOpenGame = { navController.openSolitaireGame(it) },
                 onSettings = { navController.navigate(SettingsHub.route(SettingsTab.SOLITAIRE)) },
