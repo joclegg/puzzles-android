@@ -158,7 +158,7 @@ Rules marked (lint) are enforced by `spotlessCheck`, Android Lint or the build.
 
 - MUST take colours only from `LocalSlideColors` or `MaterialTheme`.
 - MUST get puzzles from the bundled bank, graded by fewest moves (`Level`), with par shown from the solver. Each slide of one block is one move, however far it goes.
-- Expert generation is slow: run it on GitHub Actions by pushing to `generate/slide-out`. Each of 16 runners saves to `generate/slide-out-results-<n>` every 10 minutes and resumes from it.
+- Expert and Evil generation is slow: run it on GitHub Actions by pushing to `generate/slide-out` (set `LEVELS` and `BANK_SIZES` in `generate-slide-out.yml`). Each of 16 runners saves to `generate/slide-out-shard-<n>` every 10 minutes, resumes from it, and skips puzzles the bank or other shards already have. The last job uploads the merged banks, without repeats, as the `slide-out-banks` artifact to copy into puzzles-data.
 
 ### Word Wheel
 
