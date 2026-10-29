@@ -8,12 +8,22 @@ jobs:
   notify:
     runs-on: ubuntu-latest
     steps:
+      # A 1-hour token from the joclegg-puzzles-dispatch GitHub App, which can
+      # only write to joclegg/puzzles. joclegg-infra sets the Client ID and key.
+      - id: app-token
+        if: vars.PUZZLES_DISPATCH_APP_CLIENT_ID != ''
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.PUZZLES_DISPATCH_APP_CLIENT_ID }}
+          private-key: ${{ secrets.PUZZLES_DISPATCH_APP_KEY }}
+          owner: joclegg
+          repositories: puzzles
       - name: Ask joclegg/puzzles to move its submodules
         env:
-          GH_TOKEN: ${{ secrets.PUZZLES_DISPATCH_TOKEN }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           if [ -z "$GH_TOKEN" ]; then
-            echo "PUZZLES_DISPATCH_TOKEN is not set, so joclegg/puzzles was not told"
+            echo "PUZZLES_DISPATCH_APP_CLIENT_ID is not set, so joclegg/puzzles was not told"
             exit 0
           fi
           gh api repos/joclegg/puzzles/dispatches -f event_type=submodule-merged
