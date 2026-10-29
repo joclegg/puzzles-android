@@ -29,6 +29,7 @@ data class BoardColors(
     val cageSum: Color,
     val medalGold: Color,
     val medalSilver: Color,
+    val accent: Color,
 )
 
 private val LightBoard =
@@ -50,6 +51,7 @@ private val LightBoard =
         cageSum = Color(0xFF262C35),
         medalGold = Color(0xFFE2B33C),
         medalSilver = Color(0xFFAEB6C1),
+        accent = Color(0xFF1565D8),
     )
 
 private val DarkBoard =
@@ -71,6 +73,7 @@ private val DarkBoard =
         cageSum = Color(0xFFDDE1E7),
         medalGold = Color(0xFFD9A93A),
         medalSilver = Color(0xFF8E97A3),
+        accent = Color(0xFF7DB5FF),
     )
 
 private val Blue = Color(0xFF1565D8)

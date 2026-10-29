@@ -8,11 +8,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -25,9 +23,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.joclegg.puzzles.core.ui.GameHero
+import com.joclegg.puzzles.core.ui.MenuIcons
+import com.joclegg.puzzles.core.ui.MenuSection
+import com.joclegg.puzzles.core.ui.MenuTile
+import com.joclegg.puzzles.core.ui.todayLabel
 import com.joclegg.puzzles.fiveletters.core.data.GameStatus
 import com.joclegg.puzzles.fiveletters.core.ui.BackButton
+import com.joclegg.puzzles.fiveletters.core.ui.FiveLettersGameIcon
 import com.joclegg.puzzles.fiveletters.core.ui.FiveLettersIcons
+import com.joclegg.puzzles.fiveletters.core.ui.LocalLetterColors
 import kotlinx.coroutines.launch
 
 @Composable
@@ -95,62 +100,90 @@ fun HomeScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val accent = LocalLetterColors.current.accent
     Column(
         modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             BackButton(onBack)
             Text("Five Letters", style = MaterialTheme.typography.headlineLarge, modifier = Modifier.weight(1f))
+            IconButton(onClick = onStats, modifier = Modifier.testTag("stats")) {
+                Icon(MenuIcons.Stats, contentDescription = "Stats")
+            }
             IconButton(onClick = onSettings, modifier = Modifier.testTag("settings")) {
                 Icon(FiveLettersIcons.Settings, contentDescription = "Settings")
             }
         }
-        Button(onClick = onDaily, modifier = Modifier.fillMaxWidth().testTag("daily")) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text("Today's word · #${state.dailyNumber}")
-                state.dailyResult.label()?.let { Text(it, style = MaterialTheme.typography.labelSmall) }
-            }
-        }
-        OutlinedButton(onClick = onNytDaily, modifier = Modifier.fillMaxWidth().testTag("nyt_daily")) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text("NY Times daily")
-                state.nytResult.label()?.let { Text(it, style = MaterialTheme.typography.labelSmall) }
-            }
-        }
-        if (nytUnavailable) {
-            Text(
-                "Couldn't reach the New York Times. Check your connection and try again.",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.error,
+        GameHero("Guess the word in six tries, a new one every day", accent) { FiveLettersGameIcon() }
+        MenuSection("Today", aside = todayLabel()) {
+            MenuTile(
+                label = "Today's word · #${state.dailyNumber}",
+                accent = accent,
+                onClick = onDaily,
+                modifier = Modifier.fillMaxWidth().testTag("daily"),
+                detail = state.dailyResult.label(),
+                icon = MenuIcons.Today,
+                active = state.dailyResult == GameStatus.IN_PROGRESS,
+                done = state.dailyResult == GameStatus.WON,
             )
-        }
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            OutlinedButton(onClick = onPractice, modifier = Modifier.weight(1f).testTag("practice")) {
+            MenuTile(
+                label = "NY Times daily",
+                accent = accent,
+                onClick = onNytDaily,
+                modifier = Modifier.fillMaxWidth().testTag("nyt_daily"),
+                detail = state.nytResult.label(),
+                icon = MenuIcons.News,
+                active = state.nytResult == GameStatus.IN_PROGRESS,
+                done = state.nytResult == GameStatus.WON,
+            )
+            if (nytUnavailable) {
                 Text(
-                    if (state.practice != null) {
-                        "Continue practice"
-                    } else {
-                        "Practice"
-                    },
+                    "Couldn't reach the New York Times. Check your connection and try again.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(horizontal = 4.dp),
                 )
             }
-            if (state.practice != null) {
-                OutlinedButton(onClick = onNewPractice, modifier = Modifier.weight(1f).testTag("new_practice")) { Text("New word") }
+        }
+        MenuSection("Practice") {
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                MenuTile(
+                    label =
+                        if (state.practice != null) {
+                            "Continue practice"
+                        } else {
+                            "Practice"
+                        },
+                    accent = accent,
+                    onClick = onPractice,
+                    modifier = Modifier.weight(1f).testTag("practice"),
+                    icon = MenuIcons.Practice,
+                    active = state.practice != null,
+                )
+                if (state.practice != null) {
+                    MenuTile(
+                        label = "New word",
+                        accent = accent,
+                        onClick = onNewPractice,
+                        modifier = Modifier.weight(1f).testTag("new_practice"),
+                        icon = MenuIcons.Restart,
+                    )
+                }
             }
         }
-        OutlinedButton(onClick = onStats, modifier = Modifier.fillMaxWidth().testTag("stats")) { Text("Stats") }
         Text(
             "Everyone with Puzzles gets the same word each day, so you can compare grids.",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(horizontal = 4.dp),
         )
     }
 }
 
 private fun GameStatus?.label(): String? =
     when (this) {
-        GameStatus.WON -> "Solved ✓"
+        GameStatus.WON -> "Solved"
         GameStatus.LOST -> "Missed today"
         GameStatus.IN_PROGRESS -> "In progress"
         GameStatus.ABANDONED, null -> null

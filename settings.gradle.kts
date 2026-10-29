@@ -22,6 +22,7 @@ rootProject.name = "puzzles"
 include(
     ":app",
     ":core:sync",
+    ":core:ui",
     ":core:testing",
     ":sudoku:engine",
     ":sudoku:data",

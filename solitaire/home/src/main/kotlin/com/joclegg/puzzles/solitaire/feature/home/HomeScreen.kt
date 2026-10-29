@@ -9,12 +9,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -28,8 +25,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.joclegg.puzzles.core.ui.ContinueCard
+import com.joclegg.puzzles.core.ui.GameHero
+import com.joclegg.puzzles.core.ui.MenuIcons
+import com.joclegg.puzzles.core.ui.MenuSection
+import com.joclegg.puzzles.core.ui.MenuTile
+import com.joclegg.puzzles.core.ui.todayLabel
 import com.joclegg.puzzles.solitaire.core.data.SavedGame
 import com.joclegg.puzzles.solitaire.core.ui.BackButton
+import com.joclegg.puzzles.solitaire.core.ui.LocalTableColors
+import com.joclegg.puzzles.solitaire.core.ui.SolitaireGameIcon
 import com.joclegg.puzzles.solitaire.core.ui.SolitaireIcons
 import com.joclegg.puzzles.solitaire.core.ui.dialogTestTags
 import com.joclegg.puzzles.solitaire.core.ui.formatDuration
@@ -94,57 +99,78 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
 ) {
     var resumeChoice by remember { mutableStateOf<SavedGame?>(null) }
+    val accent = LocalTableColors.current.accent
     Column(
         modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             BackButton(onBack)
             Text("Solitaire", style = MaterialTheme.typography.headlineLarge, modifier = Modifier.weight(1f))
+            IconButton(onClick = onStats, modifier = Modifier.testTag("stats")) {
+                Icon(MenuIcons.Stats, contentDescription = "Stats")
+            }
+            IconButton(onClick = onHistory, modifier = Modifier.testTag("history")) {
+                Icon(MenuIcons.History, contentDescription = "History")
+            }
             IconButton(onClick = onSettings, modifier = Modifier.testTag("settings")) {
                 Icon(SolitaireIcons.Settings, contentDescription = "Settings")
             }
         }
-        state.inProgress.firstOrNull()?.let { latest -> ContinueCard(latest, onContinue = { onResume(latest.id) }) }
-        val saved = state.savedDeal
-        Button(
-            onClick = {
-                if (saved != null) {
-                    resumeChoice = saved
-                } else {
-                    onStart()
-                }
-            },
-            enabled = dealing == null,
-            modifier = Modifier.fillMaxWidth().testTag("play"),
-        ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
+        GameHero("Klondike, draw 1 or 3, or reverse", accent) { SolitaireGameIcon() }
+        state.inProgress.firstOrNull()?.let { latest ->
+            ContinueCard(
+                detail = "${latest.deal.title()} · ${formatDuration(latest.elapsedMs)} · ${latest.moves.size} moves",
+                accent = accent,
+                onClick = { onResume(latest.id) },
+                modifier = Modifier.testTag("continue"),
+            )
+        }
+        MenuSection("Today", aside = todayLabel()) {
+            MenuTile(
+                label =
+                    if (dealing == DealKind.DAILY) {
+                        "Dealing…"
+                    } else {
+                        "Daily deal"
+                    },
+                accent = accent,
+                onClick = onDaily,
+                modifier = Modifier.fillMaxWidth().testTag("daily"),
+                detail =
+                    if (state.dailyWon) {
+                        "Won"
+                    } else {
+                        null
+                    },
+                icon = MenuIcons.Today,
+                done = state.dailyWon,
+                enabled = dealing == null,
+            )
+        }
+        MenuSection("New game") {
+            val saved = state.savedDeal
+            MenuTile(
+                label =
                     if (dealing == DealKind.NEW) {
                         "Dealing…"
                     } else {
                         "New game"
                     },
-                )
-                if (saved != null) {
-                    Text("In progress · ${formatDuration(saved.elapsedMs)}", style = MaterialTheme.typography.labelSmall)
-                }
-            }
-        }
-        OutlinedButton(onClick = onDaily, enabled = dealing == null, modifier = Modifier.fillMaxWidth().testTag("daily")) {
-            Text(
-                if (dealing == DealKind.DAILY) {
-                    "Dealing…"
-                } else if (state.dailyWon) {
-                    "Daily deal · Won ✓"
-                } else {
-                    "Daily deal"
+                accent = accent,
+                onClick = {
+                    if (saved != null) {
+                        resumeChoice = saved
+                    } else {
+                        onStart()
+                    }
                 },
+                modifier = Modifier.fillMaxWidth().testTag("play"),
+                detail = saved?.let { "In progress · ${formatDuration(it.elapsedMs)}" },
+                icon = MenuIcons.Deal,
+                active = saved != null,
+                enabled = dealing == null,
             )
-        }
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            OutlinedButton(onClick = onStats, modifier = Modifier.weight(1f).testTag("stats")) { Text("Stats") }
-            OutlinedButton(onClick = onHistory, modifier = Modifier.weight(1f).testTag("history")) { Text("History") }
         }
     }
     resumeChoice?.let { saved ->
@@ -172,20 +198,6 @@ fun HomeScreen(
                 ) { Text("New deal") }
             },
         )
-    }
-}
-
-@Composable
-private fun ContinueCard(
-    game: SavedGame,
-    onContinue: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Card(onClick = onContinue, modifier = modifier.fillMaxWidth().testTag("continue")) {
-        Column(Modifier.padding(16.dp)) {
-            Text("Continue", style = MaterialTheme.typography.titleMedium)
-            Text("${game.deal.title()} · ${formatDuration(game.elapsedMs)} · ${game.moves.size} moves")
-        }
     }
 }
 

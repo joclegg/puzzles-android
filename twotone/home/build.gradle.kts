@@ -4,6 +4,7 @@ plugins {
 }
 
 dependencies {
+    implementation(projects.core.ui)
     implementation(projects.twotone.data)
     implementation(projects.twotone.ui)
     implementation(libs.androidx.lifecycle.viewmodel.compose)

@@ -22,6 +22,7 @@ data class TableColors(
     val redSuit: Color,
     val selected: Color,
     val onFelt: Color,
+    val accent: Color,
 )
 
 private val LightTable =
@@ -36,6 +37,7 @@ private val LightTable =
         redSuit = Color(0xFFC62828),
         selected = Color(0xFF8EC0FA),
         onFelt = Color(0xFFF1F5F2),
+        accent = Color(0xFF2E8B57),
     )
 
 private val DarkTable =
@@ -50,6 +52,7 @@ private val DarkTable =
         redSuit = Color(0xFFB3261E),
         selected = Color(0xFF7DB5FF),
         onFelt = Color(0xFFDDE1E7),
+        accent = Color(0xFF5CC58A),
     )
 
 private val Blue = Color(0xFF1565D8)

@@ -13,6 +13,9 @@ name: Custom entry - clashes, multiple solutions, and a real puzzle
     id: "game_sudoku"
 - waitForAnimationToEnd:
     timeout: 1500
+- scrollUntilVisible:
+    element:
+      id: "enter_puzzle"
 - tapOn:
     id: "enter_puzzle"
 - waitForAnimationToEnd:
@@ -47,6 +50,9 @@ name: Custom entry - clashes, multiple solutions, and a real puzzle
       draft: "classic_easy_missing_r1c1"
 - waitForAnimationToEnd:
     timeout: 1500
+- scrollUntilVisible:
+    element:
+      id: "enter_puzzle"
 - tapOn:
     id: "enter_puzzle"
 - waitForAnimationToEnd:

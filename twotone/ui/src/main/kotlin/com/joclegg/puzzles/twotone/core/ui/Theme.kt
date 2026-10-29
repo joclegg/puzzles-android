@@ -17,6 +17,7 @@ data class TileColors(
     val broken: Color,
     val hintLine: Color,
     val hintTarget: Color,
+    val accent: Color,
 )
 
 private val LightTiles =
@@ -29,6 +30,7 @@ private val LightTiles =
         broken = Color(0xFF14181F),
         hintLine = Color(0xFFE5F0FE),
         hintTarget = Color(0xFF1565D8),
+        accent = Color(0xFFE0603F),
     )
 
 private val DarkTiles =
@@ -41,6 +43,7 @@ private val DarkTiles =
         broken = Color(0xFFF1F3F6),
         hintLine = Color(0xFF1A2B40),
         hintTarget = Color(0xFF7DB5FF),
+        accent = Color(0xFFEC7F62),
     )
 
 val LocalTileColors = staticCompositionLocalOf { LightTiles }

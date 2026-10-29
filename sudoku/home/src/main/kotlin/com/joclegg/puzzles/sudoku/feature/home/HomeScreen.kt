@@ -2,19 +2,19 @@ package com.joclegg.puzzles.sudoku.feature.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
@@ -32,13 +32,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.joclegg.puzzles.core.ui.ContinueCard
+import com.joclegg.puzzles.core.ui.GameHero
+import com.joclegg.puzzles.core.ui.IconTile
+import com.joclegg.puzzles.core.ui.LevelMeter
+import com.joclegg.puzzles.core.ui.MenuIcons
+import com.joclegg.puzzles.core.ui.MenuSection
+import com.joclegg.puzzles.core.ui.MenuTile
+import com.joclegg.puzzles.core.ui.TileGrid
+import com.joclegg.puzzles.core.ui.todayLabel
 import com.joclegg.puzzles.sudoku.core.data.GameMode
 import com.joclegg.puzzles.sudoku.core.data.Medal
 import com.joclegg.puzzles.sudoku.core.data.SavedGame
 import com.joclegg.puzzles.sudoku.core.data.levels
 import com.joclegg.puzzles.sudoku.core.ui.BackButton
+import com.joclegg.puzzles.sudoku.core.ui.LocalBoardColors
 import com.joclegg.puzzles.sudoku.core.ui.MedalBadge
 import com.joclegg.puzzles.sudoku.core.ui.MedalColour
+import com.joclegg.puzzles.sudoku.core.ui.SudokuGameIcon
 import com.joclegg.puzzles.sudoku.core.ui.SudokuIcons
 import com.joclegg.puzzles.sudoku.core.ui.dialogTestTags
 import com.joclegg.puzzles.sudoku.core.ui.formatDuration
@@ -110,18 +121,33 @@ fun HomeScreen(
 ) {
     var mode by rememberSaveable { mutableStateOf(initialMode) }
     var resumeChoice by remember { mutableStateOf<Pair<Difficulty, SavedGame>?>(null) }
+    val accent = LocalBoardColors.current.accent
     Column(
         modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             BackButton(onBack)
             Text("Sudoku", style = MaterialTheme.typography.headlineLarge, modifier = Modifier.weight(1f))
+            IconButton(onClick = onStats, modifier = Modifier.testTag("stats")) {
+                Icon(MenuIcons.Stats, contentDescription = "Best times")
+            }
+            IconButton(onClick = onHistory, modifier = Modifier.testTag("history")) {
+                Icon(MenuIcons.History, contentDescription = "History")
+            }
             IconButton(onClick = { onSettings(mode) }, modifier = Modifier.testTag("settings")) {
                 Icon(SudokuIcons.Settings, contentDescription = "Settings")
             }
         }
-        state.inProgress.firstOrNull()?.let { latest -> ContinueCard(latest, onContinue = { onResume(latest.id) }) }
+        GameHero("Classic and killer, from 6x6 to evil", accent) { SudokuGameIcon() }
+        state.inProgress.firstOrNull()?.let { latest ->
+            ContinueCard(
+                detail = "${continueTitle(latest)} · ${formatDuration(latest.elapsedMs)}",
+                accent = accent,
+                onClick = { onResume(latest.id) },
+                modifier = Modifier.testTag("continue"),
+            )
+        }
         SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
             GameMode.entries.forEachIndexed { index, option ->
                 SegmentedButton(
@@ -140,45 +166,58 @@ fun HomeScreen(
                 }
             }
         }
-        mode.levels.forEach { level ->
-            val saved = state.savedFor(mode, level)
-            Button(
-                onClick = {
-                    if (saved != null) {
-                        resumeChoice = level to saved
-                    } else {
-                        onStart(mode, level)
-                    }
-                },
-                modifier = Modifier.fillMaxWidth().testTag("level_${level.name.lowercase()}"),
-            ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(level.label())
-                    if (saved != null) {
-                        Text("In progress · ${formatDuration(saved.elapsedMs)}", style = MaterialTheme.typography.labelSmall)
-                    }
-                }
+        MenuSection("Today", aside = todayLabel()) {
+            Row(Modifier.fillMaxWidth().height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                MenuTile(
+                    label = state.dailyLevels[mode]?.let { "Daily puzzle · ${it.label()}" } ?: "Daily puzzle",
+                    accent = accent,
+                    onClick = { onDaily(mode) },
+                    modifier = Modifier.weight(1f).fillMaxHeight().testTag("daily"),
+                    icon = MenuIcons.Today,
+                    active = state.todaysMedal != Medal.NONE,
+                    trailing =
+                        if (state.todaysMedal == Medal.NONE) {
+                            null
+                        } else {
+                            { TodaysMedal(state.todaysMedal) }
+                        },
+                )
+                IconTile(
+                    icon = MenuIcons.Calendar,
+                    contentDescription = "Daily calendar",
+                    accent = accent,
+                    onClick = onDailyCalendar,
+                    modifier = Modifier.fillMaxHeight().testTag("daily_calendar"),
+                )
             }
         }
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            OutlinedButton(onClick = { onDaily(mode) }, modifier = Modifier.weight(1f).testTag("daily")) {
-                Text(state.dailyLevels[mode]?.let { "Daily puzzle · ${it.label()}" } ?: "Daily puzzle")
-                when (state.todaysMedal) {
-                    Medal.GOLD -> MedalBadge(MedalColour.GOLD, Modifier.padding(start = 8.dp).testTag("todays_medal_gold"))
-                    Medal.SILVER -> MedalBadge(MedalColour.SILVER, Modifier.padding(start = 8.dp).testTag("todays_medal_silver"))
-                    Medal.NONE -> Unit
-                }
+        MenuSection("New game") {
+            TileGrid(count = mode.levels.size, columns = 2) { index, tileModifier ->
+                val level = mode.levels[index]
+                val saved = state.savedFor(mode, level)
+                MenuTile(
+                    label = level.label(),
+                    accent = accent,
+                    onClick = {
+                        if (saved != null) {
+                            resumeChoice = level to saved
+                        } else {
+                            onStart(mode, level)
+                        }
+                    },
+                    modifier = tileModifier.testTag("level_${level.name.lowercase()}"),
+                    detail = saved?.let { "In progress · ${formatDuration(it.elapsedMs)}" },
+                    active = saved != null,
+                    meter = { LevelMeter(rank = index, count = mode.levels.size, accent = accent) },
+                )
             }
-            IconButton(onClick = onDailyCalendar, modifier = Modifier.testTag("daily_calendar")) {
-                Icon(SudokuIcons.Calendar, contentDescription = "Daily calendar")
-            }
-        }
-        OutlinedButton(onClick = { onEnterPuzzle(mode) }, modifier = Modifier.fillMaxWidth().testTag("enter_puzzle")) {
-            Text("Enter puzzle")
-        }
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            OutlinedButton(onClick = onStats, modifier = Modifier.weight(1f).testTag("stats")) { Text("Best times") }
-            OutlinedButton(onClick = onHistory, modifier = Modifier.weight(1f).testTag("history")) { Text("History") }
+            MenuTile(
+                label = "Enter puzzle",
+                accent = accent,
+                onClick = { onEnterPuzzle(mode) },
+                modifier = Modifier.fillMaxWidth().testTag("enter_puzzle"),
+                icon = MenuIcons.Pencil,
+            )
         }
     }
     resumeChoice?.let { (level, saved) ->
@@ -210,22 +249,21 @@ fun HomeScreen(
 }
 
 @Composable
-private fun ContinueCard(
-    game: SavedGame,
-    onContinue: () -> Unit,
+private fun TodaysMedal(
+    medal: Medal,
     modifier: Modifier = Modifier,
 ) {
-    val title =
-        gameTitle(
-            killer = game.ref.mode == GameMode.KILLER,
-            custom = game.ref.custom,
-            difficulty = game.ref.difficulty,
-            answerKnown = game.ref.puzzle.solution != null,
-        )
-    Card(onClick = onContinue, modifier = modifier.fillMaxWidth().testTag("continue")) {
-        Column(Modifier.padding(16.dp)) {
-            Text("Continue", style = MaterialTheme.typography.titleMedium)
-            Text("$title · ${formatDuration(game.elapsedMs)}")
-        }
+    if (medal == Medal.GOLD) {
+        MedalBadge(MedalColour.GOLD, modifier.testTag("todays_medal_gold"), size = 24.dp)
+    } else {
+        MedalBadge(MedalColour.SILVER, modifier.testTag("todays_medal_silver"), size = 24.dp)
     }
 }
+
+private fun continueTitle(game: SavedGame): String =
+    gameTitle(
+        killer = game.ref.mode == GameMode.KILLER,
+        custom = game.ref.custom,
+        difficulty = game.ref.difficulty,
+        answerKnown = game.ref.puzzle.solution != null,
+    )
