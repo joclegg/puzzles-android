@@ -11,4 +11,4 @@ name: A Solitaire hint suggests a move
     id: "hint"
 - assertVisible:
     id: "hint_message"
-    text: "(Move the .*|Draw from the stock\\.)"
+    text: "(Move the .*|.*draw from the stock\\.)"

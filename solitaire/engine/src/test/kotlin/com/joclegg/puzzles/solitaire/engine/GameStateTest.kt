@@ -298,6 +298,23 @@ class GameStateTest {
         assertEquals(false, played.cycledStock)
     }
 
+    @ParameterizedTest
+    @CsvSource("3, false", "4, false", "5, true")
+    fun `given draw three and a played card when the stock is drawn then it is cycled only after a whole pass from the turn over`(
+        draws: Int,
+        expected: Boolean,
+    ) {
+        // Arrange
+        val drawnOnce = GameState(board("/KH|/;2C3C4C5CQS7C6C;;|||"), DrawMode.DRAW_THREE).tapStock()
+        val played = drawnOnce.drop(Pile.Waste, drawnOnce.board.waste.size - 1, Pile.Tableau(0))
+
+        // Act
+        val drawn = (1..draws).fold(played) { game, _ -> game.tapStock() }
+
+        // Assert
+        assertEquals(expected, drawn.cycledStock)
+    }
+
     @Test
     fun `given nothing left to draw when the stock is checked then it counts as cycled`() {
         // Act

@@ -4,7 +4,6 @@ import com.joclegg.puzzles.solitaire.engine.Board
 import com.joclegg.puzzles.solitaire.engine.BuildOrder
 import com.joclegg.puzzles.solitaire.engine.DrawMode
 import com.joclegg.puzzles.solitaire.engine.Move
-import com.joclegg.puzzles.solitaire.engine.Solver
 import java.time.LocalDate
 
 enum class GameStatus { IN_PROGRESS, WON, LOST, ABANDONED }
@@ -34,29 +33,27 @@ data class DealRef(
             seed: Long,
             drawMode: DrawMode,
             order: BuildOrder = BuildOrder.DOWN,
-            winnable: Boolean = false,
-        ) = DealRef("$RANDOM_PREFIX$seed", drawMode, deal(seed, drawMode, order, winnable), order)
+            winnable: WinnableDeals? = null,
+        ) = DealRef(
+            "$RANDOM_PREFIX$seed",
+            drawMode,
+            Board.deal(winnable?.random(seed, drawMode, order) ?: seed),
+            order,
+        )
 
         fun daily(
             date: LocalDate,
             drawMode: DrawMode,
             order: BuildOrder = BuildOrder.DOWN,
-            winnable: Boolean = false,
-        ) = DealRef(dailyId(date), drawMode, deal(date.toEpochDay() * DAILY_SEED_SPREAD, drawMode, order, winnable), order)
+            winnable: WinnableDeals? = null,
+        ) = DealRef(
+            dailyId(date),
+            drawMode,
+            Board.deal(winnable?.daily(date, drawMode, order) ?: (date.toEpochDay() * DAILY_SEED_SPREAD)),
+            order,
+        )
 
         fun dailyId(date: LocalDate) = "$DAILY_PREFIX$date"
-
-        private fun deal(
-            seed: Long,
-            drawMode: DrawMode,
-            order: BuildOrder,
-            winnable: Boolean,
-        ): Board =
-            if (winnable) {
-                Solver.winnableDeal(seed, drawMode, order)
-            } else {
-                Board.deal(seed)
-            }
 
         private const val DAILY_SEED_SPREAD = 7_919L
     }
