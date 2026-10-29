@@ -2,7 +2,7 @@ name: Generate Slide Out puzzles
 
 on:
   push:
-    branches: ["generate/slide-out"]
+    branches: ["generate/slide-out", "generate/slide-out-run"]
 
 permissions:
   contents: write
