@@ -14,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import com.joclegg.puzzles.core.sync.SignInProvider
 import com.joclegg.puzzles.fiveletters.FiveLettersFixtures
 import com.joclegg.puzzles.kakuro.KakuroFixtures
 import com.joclegg.puzzles.sightlines.SightlinesFixtures
@@ -92,10 +93,10 @@ class MainActivity : ComponentActivity() {
         app.background.launch { app.sync.sync() }
     }
 
-    private fun signIn() {
+    private fun signIn(provider: SignInProvider) {
         val app = application as PuzzlesApplication
         lifecycleScope.launch {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(app.auth.signInUrl())))
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(app.auth.signInUrl(provider))))
         }
     }
 

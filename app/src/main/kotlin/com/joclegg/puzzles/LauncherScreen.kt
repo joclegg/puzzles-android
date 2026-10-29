@@ -8,17 +8,24 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import com.joclegg.puzzles.core.sync.SignInProvider
 import com.joclegg.puzzles.fiveletters.core.ui.FiveLettersGameIcon
 import com.joclegg.puzzles.fiveletters.core.ui.FiveLettersTheme
 import com.joclegg.puzzles.kakuro.core.ui.KakuroGameIcon
@@ -31,6 +38,7 @@ import com.joclegg.puzzles.solitaire.core.ui.SolitaireGameIcon
 import com.joclegg.puzzles.solitaire.core.ui.SolitaireTheme
 import com.joclegg.puzzles.sudoku.core.ui.SudokuGameIcon
 import com.joclegg.puzzles.sudoku.core.ui.SudokuIcons
+import com.joclegg.puzzles.sudoku.core.ui.dialogTestTags
 import com.joclegg.puzzles.twotone.core.ui.TwoToneGameIcon
 import com.joclegg.puzzles.twotone.core.ui.TwoToneTheme
 import com.joclegg.puzzles.wordwheel.core.ui.WordWheelGameIcon
@@ -40,7 +48,7 @@ import com.joclegg.puzzles.wordwheel.core.ui.WordWheelTheme
 fun LauncherScreen(
     darkTheme: Boolean,
     account: String?,
-    onSignInClick: () -> Unit,
+    onSignInClick: (SignInProvider) -> Unit,
     onSignOutClick: () -> Unit,
     onSettingsClick: () -> Unit,
     onSudokuClick: () -> Unit,
@@ -53,11 +61,21 @@ fun LauncherScreen(
     onWordWheelClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var choosingSignIn by remember { mutableStateOf(false) }
+    if (choosingSignIn) {
+        SignInDialog(
+            onProviderClick = { provider ->
+                choosingSignIn = false
+                onSignInClick(provider)
+            },
+            onDismiss = { choosingSignIn = false },
+        )
+    }
     Column(modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text("Puzzles", style = MaterialTheme.typography.headlineLarge, modifier = Modifier.weight(1f))
             if (account == null) {
-                OutlinedButton(onClick = onSignInClick, modifier = Modifier.testTag("sign_in")) {
+                OutlinedButton(onClick = { choosingSignIn = true }, modifier = Modifier.testTag("sign_in")) {
                     Text("Sign in to sync")
                 }
             } else {
@@ -99,6 +117,30 @@ fun LauncherScreen(
             WordWheelTheme(darkTheme) { WordWheelGameIcon() }
         }
     }
+}
+
+@Composable
+private fun SignInDialog(
+    onProviderClick: (SignInProvider) -> Unit,
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        modifier = modifier.dialogTestTags(),
+        title = { Text("Sign in to sync") },
+        text = { Text("Sync your games and settings with the website and other devices.") },
+        confirmButton = {
+            TextButton(onClick = { onProviderClick(SignInProvider.MICROSOFT) }, modifier = Modifier.testTag("sign_in_microsoft")) {
+                Text("Microsoft")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = { onProviderClick(SignInProvider.GOOGLE) }, modifier = Modifier.testTag("sign_in_google")) {
+                Text("Google")
+            }
+        },
+    )
 }
 
 @Composable

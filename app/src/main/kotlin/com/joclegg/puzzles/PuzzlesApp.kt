@@ -18,6 +18,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.joclegg.puzzles.core.sync.SignInProvider
 import com.joclegg.puzzles.fiveletters.FiveLettersRoutes
 import com.joclegg.puzzles.fiveletters.FiveLettersRoutes.fiveLettersGraph
 import com.joclegg.puzzles.fiveletters.FiveLettersRoutes.openFiveLettersGame
@@ -61,7 +62,7 @@ fun PuzzlesApp(
     openGame: OpenGame?,
     onConsumeOpenGame: () -> Unit,
     account: String?,
-    onSignInClick: () -> Unit,
+    onSignInClick: (SignInProvider) -> Unit,
     onSignOutClick: () -> Unit,
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
