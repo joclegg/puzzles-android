@@ -33,6 +33,12 @@ class SyncStore(
         store.edit { it[VERIFIER] = verifier }
     }
 
+    suspend fun pulled(): String? = store.data.first()[PULLED]
+
+    suspend fun setPulled(at: String) {
+        store.edit { it[PULLED] = at }
+    }
+
     suspend fun pushed(game: String): Long = store.data.first()[pushedKey(game)] ?: 0
 
     suspend fun setPushed(
@@ -63,6 +69,7 @@ class SyncStore(
     private companion object {
         val SESSION = stringPreferencesKey("session")
         val VERIFIER = stringPreferencesKey("verifier")
+        val PULLED = stringPreferencesKey("pulled")
 
         fun pushedKey(game: String) = longPreferencesKey("pushed_$game")
 

@@ -41,10 +41,19 @@ class SupabaseAuth(
             return session.accessToken
         }
         val body = JSONObject().put("refresh_token", session.refreshToken).toString()
-        return if (requestSession("refresh_token", body)) {
-            store.session()?.accessToken
-        } else {
-            null
+        return when (requestSessionResult("refresh_token", body)) {
+            SessionResult.OK -> {
+                store.session()?.accessToken
+            }
+
+            SessionResult.REJECTED -> {
+                signOut()
+                null
+            }
+
+            SessionResult.UNREACHABLE -> {
+                null
+            }
         }
     }
 
@@ -55,7 +64,12 @@ class SupabaseAuth(
     private suspend fun requestSession(
         grant: String,
         body: String,
-    ): Boolean {
+    ): Boolean = requestSessionResult(grant, body) == SessionResult.OK
+
+    private suspend fun requestSessionResult(
+        grant: String,
+        body: String,
+    ): SessionResult {
         val response =
             withContext(Dispatchers.IO) {
                 runCatching {
@@ -67,15 +81,21 @@ class SupabaseAuth(
                     )
                 }.getOrNull()
             }
+        if (response != null && response.code in REJECTED_CODES) {
+            return SessionResult.REJECTED
+        }
         if (response == null || !response.ok) {
-            return false
+            return SessionResult.UNREACHABLE
         }
         store.setSession(Session.fromTokenResponse(response.body, now()))
-        return true
+        return SessionResult.OK
     }
+
+    private enum class SessionResult { OK, REJECTED, UNREACHABLE }
 
     companion object {
         private const val REFRESH_MARGIN_MS = 60_000L
+        private val REJECTED_CODES = setOf(400, 401, 403)
 
         fun challengeOf(verifier: String): String =
             Base64

@@ -39,7 +39,16 @@ jobs:
         env:
           BANK_SEED_BASE: ${{ matrix.shard }}
           BANK_MINUTES: 320
+          BANK_SEEN: out/seen.txt
         run: |
+          share() {
+            cat puzzles-data/slideout/expert.txt > out/seen.new
+            for branch in $(git ls-remote origin 'refs/heads/generate/slide-out-results-*' | awk '{print $2}' | grep -v "/$RESULTS_BRANCH\$"); do
+              git fetch -q origin "$branch" && git show FETCH_HEAD:expert.txt >> out/seen.new || true
+            done
+            mv out/seen.new out/seen.txt
+          }
+          share
           ./gradlew -q :slideout:engine:generateBank -PbankDir=out -PbankSizes=0,0,0,0,1000 &
           generator=$!
           save() {
@@ -55,5 +64,38 @@ jobs:
           while kill -0 "$generator" 2>/dev/null; do
             sleep 600
             save
+            share
           done
           save
+
+  merge:
+    name: Merge every shard without repeats
+    runs-on: ubuntu-latest
+    needs: generate
+    if: always()
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Combine the shards into one expert bank
+        run: |
+          cp puzzles-data/slideout/expert.txt combined.txt
+          for branch in $(git ls-remote origin 'refs/heads/generate/slide-out-results-*' | awk '{print $2}'); do
+            git fetch -q origin "$branch" && git show FETCH_HEAD:expert.txt >> combined.txt
+          done
+          python3 - <<'PY'
+          lines = [line for line in open("combined.txt").read().splitlines() if line]
+          seen, kept = set(), []
+          for line in lines:
+              blocks = line.split(";")[1].split(",")
+              key = (blocks[0], tuple(sorted(blocks[1:])))
+              if key not in seen:
+                  seen.add(key)
+                  kept.append(line)
+          open("expert.txt", "w").write("\n".join(kept) + "\n")
+          print(f"{len(lines)} lines, {len(kept)} unique")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: slide-out-expert
+          path: expert.txt

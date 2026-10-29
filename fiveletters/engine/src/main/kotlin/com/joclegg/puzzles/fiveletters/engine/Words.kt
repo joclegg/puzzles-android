@@ -20,10 +20,13 @@ class Words(
 
     fun random(seed: Long): String = this.answers.random(Random(seed))
 
-    private val dailyOrder: List<String> by lazy { this.answers.shuffled(Random(DAILY_ORDER_SEED)) }
+    private val dailyOrder: List<String> by lazy {
+        this.answers.take(SHUFFLED_ANSWER_COUNT).shuffled(Random(DAILY_ORDER_SEED)) + this.answers.drop(SHUFFLED_ANSWER_COUNT)
+    }
 
     companion object {
         private const val DAILY_ORDER_SEED = 5L
+        private const val SHUFFLED_ANSWER_COUNT = 944
         val FIRST_DAY: LocalDate = LocalDate.of(2026, 10, 25)
 
         fun dayNumber(date: LocalDate) = ChronoUnit.DAYS.between(FIRST_DAY, date).toInt() + 1

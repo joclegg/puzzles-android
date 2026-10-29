@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 
 class BoardTest {
     private val board = Board.decode("202H,033V,412H")
@@ -38,5 +39,29 @@ class BoardTest {
 
         // Assert
         assertEquals(true, solved)
+    }
+
+    @Test
+    fun `given the same blocks in another order when identified then the identities match`() {
+        // Arrange
+        val reordered = Board.decode("202H,412H,033V")
+
+        // Act
+        val identities = board.identity() to reordered.identity()
+
+        // Assert
+        assertEquals(identities.first, identities.second)
+    }
+
+    @Test
+    fun `given a different red block when identified then the identities differ`() {
+        // Arrange
+        val other = Board.decode("412H,202H,033V")
+
+        // Act
+        val identities = board.identity() to other.identity()
+
+        // Assert
+        assertNotEquals(identities.first, identities.second)
     }
 }
