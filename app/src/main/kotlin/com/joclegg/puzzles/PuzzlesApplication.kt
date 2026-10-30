@@ -32,6 +32,7 @@ class PuzzlesApplication : Application() {
     private val syncStore by lazy { SyncStore(syncPreferences) }
     val background = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     val auth by lazy { SupabaseAuth(syncStore) }
+    val banks by lazy { BankStore(this) }
     val sync by lazy {
         SyncEngine(
             sources =

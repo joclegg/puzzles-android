@@ -83,11 +83,17 @@ class MainActivity : ComponentActivity() {
     override fun onStart() {
         super.onStart()
         syncInBackground()
+        updateBanksInBackground()
     }
 
     override fun onStop() {
         super.onStop()
         syncInBackground()
+    }
+
+    private fun updateBanksInBackground() {
+        val app = application as PuzzlesApplication
+        app.background.launch { app.banks.update() }
     }
 
     private fun syncInBackground() {

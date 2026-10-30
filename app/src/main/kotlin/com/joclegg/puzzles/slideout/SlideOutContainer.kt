@@ -3,6 +3,7 @@ package com.joclegg.puzzles.slideout
 import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
+import com.joclegg.puzzles.BankStore
 import com.joclegg.puzzles.core.sync.StampedPreferences
 import com.joclegg.puzzles.slideout.core.data.GameDatabase
 import com.joclegg.puzzles.slideout.core.data.GameRepository
@@ -27,10 +28,7 @@ class SlideOutContainer(
     val sync = slideOutSyncSource(database.gameDao(), settings, settingsStore)
     val bank =
         PuzzleBank { path ->
-            context.assets
-                .open(path)
-                .bufferedReader()
-                .use { it.readText() }
+            BankStore(context).read(path)
         }
     val newSeed: () -> Long = { Random.nextLong() }
     val today: () -> LocalDate = LocalDate::now
