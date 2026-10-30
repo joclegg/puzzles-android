@@ -56,13 +56,27 @@ private suspend fun todaysDailies(
     navController: NavHostController,
 ): List<DailyLeft> {
     val sudokuMedal =
-        dailyDays(app.sudoku.games.history.first(), ZoneId.systemDefault())[app.solitaire.today()]?.medal ?: Medal.NONE
+        dailyDays(
+            app.sudoku.games.history
+                .first(),
+            ZoneId.systemDefault(),
+        )[app.solitaire.today()]?.medal ?: Medal.NONE
     val solitaireDaily = DealRef.dailyId(app.solitaire.today())
-    val twoTone = app.twoTone.games.history.first()
-    val sightlines = app.sightlines.games.history.first()
-    val kakuro = app.kakuro.games.history.first()
-    val slideOut = app.slideOut.games.history.first()
-    val wordWheel = app.wordWheel.games.history.first()
+    val twoTone =
+        app.twoTone.games.history
+            .first()
+    val sightlines =
+        app.sightlines.games.history
+            .first()
+    val kakuro =
+        app.kakuro.games.history
+            .first()
+    val slideOut =
+        app.slideOut.games.history
+            .first()
+    val wordWheel =
+        app.wordWheel.games.history
+            .first()
     val fiveLettersDaily = WordRef.dailyId(app.fiveLetters.today())
     val fiveLettersDone =
         app.fiveLetters.games.history.first().any {
@@ -81,7 +95,10 @@ private suspend fun todaysDailies(
             ),
             Triple(
                 SettingsTab.SOLITAIRE,
-                if (app.solitaire.games.history.first().any { it.deal.id == solitaireDaily && it.status == SolitaireStatus.WON }) {
+                if (app.solitaire.games.history
+                        .first()
+                        .any { it.deal.id == solitaireDaily && it.status == SolitaireStatus.WON }
+                ) {
                     0
                 } else {
                     1
