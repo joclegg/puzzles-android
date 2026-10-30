@@ -190,12 +190,16 @@ fun GameScreen(
             modifier = Modifier.dialogTestTags().testTag("unwinnable_dialog"),
             title = { Text("This deal can't be won now") },
             text = {
-                Text(
-                    "No sequence of moves from here wins. Undo back to the last position that could still be won, or start a new deal.",
-                )
+                Text(unwinnableText(state))
             },
             confirmButton = {
-                TextButton(onClick = onUndoToWinnable, modifier = Modifier.testTag("undo_to_winnable")) { Text("Undo to winnable") }
+                TextButton(
+                    onClick = onUndoToWinnable,
+                    enabled = !state.findingLostMove,
+                    modifier = Modifier.testTag("undo_to_winnable"),
+                ) {
+                    Text(undoToWinnableLabel(state))
+                }
             },
             dismissButton = {
                 Row {
@@ -265,3 +269,22 @@ private val TUTORIAL =
         TourStep("hint", "Stuck? The bulb suggests a move."),
         TourStep("menu", "Restart, deal again and settings live in this menu."),
     )
+
+private fun unwinnableText(state: GameUiState): String {
+    val checked =
+        "You've been through the whole stock with nothing new to play, " +
+            "so the solver checked every line from here: none of them wins."
+    return if (state.findingLostMove || state.lastWinnableMove == 0) {
+        checked
+    } else {
+        "$checked\n\nIt could still be won up to move ${state.lastWinnableMove}. " +
+            "Move ${state.lastWinnableMove + 1} is where it slipped away."
+    }
+}
+
+private fun undoToWinnableLabel(state: GameUiState): String =
+    when {
+        state.findingLostMove -> "Finding where it went wrong…"
+        state.lastWinnableMove == 0 -> "Start the deal again"
+        else -> "Undo ${state.moveCount - state.lastWinnableMove} moves"
+    }

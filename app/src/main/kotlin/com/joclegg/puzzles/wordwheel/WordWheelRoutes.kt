@@ -10,8 +10,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.joclegg.puzzles.AccentColors
 import com.joclegg.puzzles.SettingsHub
 import com.joclegg.puzzles.SettingsTab
+import com.joclegg.puzzles.wordwheel.core.ui.LocalWheelColors
 import com.joclegg.puzzles.wordwheel.core.ui.WordWheelTheme
 import com.joclegg.puzzles.wordwheel.feature.game.GameRoute
 import com.joclegg.puzzles.wordwheel.feature.game.GameViewModel
@@ -81,7 +83,9 @@ object WordWheelRoutes {
         darkTheme: Boolean,
     ) {
         WordWheelTheme(darkTheme) {
-            SettingsRoute(viewModel { SettingsViewModel(container.settings) }, onBack = null)
+            AccentColors(LocalWheelColors.current.accent) {
+                SettingsRoute(viewModel { SettingsViewModel(container.settings) }, onBack = null)
+            }
         }
     }
 

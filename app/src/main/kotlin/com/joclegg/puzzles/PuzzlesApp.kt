@@ -134,6 +134,7 @@ fun PuzzlesApp(
                     viewModel = viewModel { AppSettingsViewModel(app.sudoku.settings) },
                     initialTab = SettingsTab.valueOf(entry.arguments!!.getString("tab")!!),
                     onBack = navController::popBackStack,
+                    accentOf = { tab -> settingsAccent(tab, darkTheme) },
                     tabContent = { tab ->
                         when (tab) {
                             SettingsTab.GENERAL -> Unit

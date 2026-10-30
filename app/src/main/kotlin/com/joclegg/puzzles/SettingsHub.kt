@@ -1,5 +1,6 @@
 package com.joclegg.puzzles
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,7 @@ import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,7 +24,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -85,11 +90,12 @@ fun SettingsHubRoute(
     viewModel: AppSettingsViewModel,
     initialTab: SettingsTab,
     onBack: () -> Unit,
+    accentOf: @Composable (SettingsTab) -> Color,
     tabContent: @Composable (SettingsTab) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    SettingsHubScreen(state, initialTab, viewModel::onThemeChange, onBack, tabContent, modifier)
+    SettingsHubScreen(state, initialTab, viewModel::onThemeChange, onBack, accentOf, tabContent, modifier)
 }
 
 @Composable
@@ -98,30 +104,50 @@ fun SettingsHubScreen(
     initialTab: SettingsTab,
     onThemeChange: (ThemeMode) -> Unit,
     onBack: () -> Unit,
+    accentOf: @Composable (SettingsTab) -> Color,
     tabContent: @Composable (SettingsTab) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var tab by rememberSaveable { mutableStateOf(initialTab) }
+    val accent = accentOf(tab)
     Column(modifier.fillMaxSize()) {
         Row(Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp), verticalAlignment = Alignment.CenterVertically) {
             BackButton(onBack)
             Text("Settings", style = MaterialTheme.typography.headlineMedium)
         }
-        PrimaryScrollableTabRow(selectedTabIndex = tab.ordinal, edgePadding = 16.dp) {
+        PrimaryScrollableTabRow(
+            selectedTabIndex = tab.ordinal,
+            edgePadding = 16.dp,
+            indicator = {
+                TabRowDefaults.PrimaryIndicator(
+                    Modifier.tabIndicatorOffset(tab.ordinal, matchContentSize = true),
+                    width = Dp.Unspecified,
+                    color = accent,
+                )
+            },
+        ) {
             SettingsTab.entries.forEach { option ->
                 Tab(
                     selected = tab == option,
                     onClick = { tab = option },
                     text = { Text(option.label) },
+                    selectedContentColor = accentOf(option),
+                    unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.testTag("settings_tab_${option.name.lowercase()}"),
                 )
             }
         }
-        Box(Modifier.weight(1f)) {
-            if (tab == SettingsTab.GENERAL) {
-                GeneralSettings(state.theme, onThemeChange)
-            } else {
-                tabContent(tab)
+        AccentColors(accent) {
+            Box(
+                Modifier
+                    .weight(1f)
+                    .background(Brush.verticalGradient(listOf(accent.copy(alpha = 0.1f), Color.Transparent))),
+            ) {
+                if (tab == SettingsTab.GENERAL) {
+                    GeneralSettings(state.theme, onThemeChange)
+                } else {
+                    tabContent(tab)
+                }
             }
         }
     }

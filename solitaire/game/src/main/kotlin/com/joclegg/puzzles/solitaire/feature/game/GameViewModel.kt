@@ -17,6 +17,7 @@ import com.joclegg.puzzles.solitaire.engine.Card
 import com.joclegg.puzzles.solitaire.engine.GameState
 import com.joclegg.puzzles.solitaire.engine.GameTimer
 import com.joclegg.puzzles.solitaire.engine.Hint
+import com.joclegg.puzzles.solitaire.engine.LostMoveSearch
 import com.joclegg.puzzles.solitaire.engine.Pile
 import com.joclegg.puzzles.solitaire.engine.Solver
 import com.joclegg.puzzles.solitaire.engine.Verdict
@@ -46,6 +47,8 @@ data class GameUiState(
     val newBest: Boolean,
     val resultSaved: Boolean,
     val unwinnable: Boolean = false,
+    val findingLostMove: Boolean = false,
+    val lastWinnableMove: Int = 0,
     val canFinish: Boolean = false,
     val showHints: Boolean = true,
     val showTutorial: Boolean = true,
@@ -73,6 +76,7 @@ class GameViewModel(
     private var check: Job? = null
     private var lastWinnableMoves: Int? = null
     private var unwinnable = false
+    private var findingLostMove = false
     private var warningDismissed = false
     private var hintMessage: String? = null
 
@@ -238,6 +242,7 @@ class GameViewModel(
     private fun checkWinnable() {
         check?.cancel()
         unwinnable = false
+        findingLostMove = false
         val current = game ?: return
         if (!display.warnUnwinnable || current.isWon || !current.cycledStock || current.board.cardCount != Card.deck.size) {
             return
@@ -253,12 +258,45 @@ class GameViewModel(
                         }
                     }
                 when (verdict) {
-                    Verdict.WINNABLE -> lastWinnableMoves = moves
-                    Verdict.UNWINNABLE -> unwinnable = true
-                    Verdict.UNKNOWN -> Unit
+                    Verdict.WINNABLE -> {
+                        lastWinnableMoves = moves
+                    }
+
+                    Verdict.UNWINNABLE -> {
+                        unwinnable = true
+                        findingLostMove = true
+                        publish()
+                        lastWinnableMoves = findLostMove(current, LostMoveSearch(minOf(lastWinnableMoves ?: 0, moves), moves))
+                        findingLostMove = false
+                    }
+
+                    Verdict.UNKNOWN -> {
+                        Unit
+                    }
                 }
                 publish()
             }
+    }
+
+    private suspend fun findLostMove(
+        lost: GameState,
+        start: LostMoveSearch,
+    ): Int {
+        var search = start
+        var probe = search.probe
+        while (probe != null) {
+            val board = lost.copy(moves = lost.moves.take(probe)).board
+            val started = monotonicNowMs()
+            val verdict =
+                withContext(solving) {
+                    Solver.solve(board, lost.drawMode, lost.order) {
+                        monotonicNowMs() - started > CHECK_LIMIT_MS
+                    }
+                }
+            search = search.narrow(probe, verdict)
+            probe = search.probe
+        }
+        return search.winnable
     }
 
     private fun finish() {
@@ -312,6 +350,8 @@ class GameViewModel(
                 newBest = newBest,
                 resultSaved = resultSaved,
                 unwinnable = unwinnable && !warningDismissed && !current.isWon,
+                findingLostMove = findingLostMove,
+                lastWinnableMove = lastWinnableMoves ?: 0,
                 canFinish = current.canAutoFinish,
                 showHints = display.showHints,
                 showTutorial = display.showTutorial,
