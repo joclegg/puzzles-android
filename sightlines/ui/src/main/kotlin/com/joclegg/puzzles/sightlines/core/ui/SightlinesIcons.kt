@@ -9,6 +9,15 @@ import androidx.compose.ui.graphics.vector.addPathNodes
 import androidx.compose.ui.unit.dp
 
 object SightlinesIcons {
+    val Palette =
+        outline(
+            "palette",
+            "M12 22a10 10 0 1 1 10-10c0 2.5-2 3.5-4 3.5h-2a2 2 0 0 0-1.5 3.3A1.8 1.8 0 0 1 12 22z",
+            "M7.5 10.5h.01",
+            "M10.5 7h.01",
+            "M15 7.5h.01",
+            "M17 11h.01",
+        )
     val Undo = outline("undo", "M9 14L4 9l5-5", "M4 9h10.5a5.5 5.5 0 0 1 0 11H11")
     val Back = outline("back", "M15 5l-7 7 7 7")
     val More =

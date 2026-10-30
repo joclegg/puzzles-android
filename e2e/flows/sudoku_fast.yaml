@@ -22,7 +22,10 @@ name: Fast - a 6x6 board with numbers 1 to 6, in classic and killer
     id: "cell_r1c3"
 - tapOn:
     id: "digit_3"
-- assertVisible: "Great job"
+- assertVisible:
+    id: "solved_screen"
+- tapOn:
+    id: "solved_home"
 - extendedWaitUntil:
     visible:
       id: "stats"

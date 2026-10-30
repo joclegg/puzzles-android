@@ -2,11 +2,9 @@ package com.joclegg.puzzles.solitaire.feature.game
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
@@ -25,13 +23,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.joclegg.puzzles.core.ui.WinDialog
+import com.joclegg.puzzles.core.ui.WinStat
 import com.joclegg.puzzles.solitaire.core.ui.BackButton
 import com.joclegg.puzzles.solitaire.core.ui.HintButton
 import com.joclegg.puzzles.solitaire.core.ui.HowToPlayButton
+import com.joclegg.puzzles.solitaire.core.ui.LocalTableColors
 import com.joclegg.puzzles.solitaire.core.ui.SolitaireIcons
 import com.joclegg.puzzles.solitaire.core.ui.SolitaireTable
 import com.joclegg.puzzles.solitaire.core.ui.ToolButton
@@ -167,6 +167,7 @@ fun GameScreen(
             onEmptyPileClick = onEmptyPileClick,
             modifier = Modifier.tourTarget(tour, "table").weight(1f),
             onCardDrop = onCardDrop,
+            celebrate = state.finishing,
         )
         state.hintMessage?.let {
             Text(
@@ -222,34 +223,20 @@ private fun WonDialog(
     onHome: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    AlertDialog(
-        onDismissRequest = {},
+    WinDialog(
+        title = "You won!",
+        accent = LocalTableColors.current.accent,
+        newBest = state.newBest,
+        stats =
+            buildList {
+                add(WinStat("Time", formatDuration(state.elapsedMs), "won_time"))
+                add(WinStat("Moves", "${state.moveCount}"))
+            },
         modifier = modifier.dialogTestTags().testTag("won_dialog"),
-        title = { Text("You won!") },
-        text = {
-            Column {
-                if (state.newBest) {
-                    Text(
-                        "New best!",
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.testTag("new_best"),
-                    )
-                }
-                Row {
-                    Text("Time ${formatDuration(state.elapsedMs)}", modifier = Modifier.testTag("won_time"))
-                    Spacer(Modifier.width(16.dp))
-                    Text("Moves ${state.moveCount}")
-                }
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onNewDeal, modifier = Modifier.testTag("won_new_deal")) { Text("New deal") }
-        },
-        dismissButton = {
-            TextButton(onClick = onHome, modifier = Modifier.testTag("won_home")) { Text("Home") }
-        },
-    )
+    ) {
+        TextButton(onClick = onHome, modifier = Modifier.testTag("won_home")) { Text("Home") }
+        TextButton(onClick = onNewDeal, modifier = Modifier.testTag("won_new_deal")) { Text("New deal") }
+    }
 }
 
 private val RULES =

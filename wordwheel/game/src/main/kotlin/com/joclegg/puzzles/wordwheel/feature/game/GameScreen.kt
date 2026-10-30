@@ -31,9 +31,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.joclegg.puzzles.core.ui.WinDialog
+import com.joclegg.puzzles.core.ui.WinStat
 import com.joclegg.puzzles.wordwheel.core.ui.BackButton
 import com.joclegg.puzzles.wordwheel.core.ui.HowToPlayButton
 import com.joclegg.puzzles.wordwheel.core.ui.LetterWheel
+import com.joclegg.puzzles.wordwheel.core.ui.LocalWheelColors
 import com.joclegg.puzzles.wordwheel.core.ui.ToolButton
 import com.joclegg.puzzles.wordwheel.core.ui.TourStep
 import com.joclegg.puzzles.wordwheel.core.ui.WordGrid
@@ -187,27 +190,20 @@ fun GameScreen(
         )
     }
     if (state.solved && state.resultSaved && !state.revealedAll) {
-        AlertDialog(
-            onDismissRequest = {},
+        WinDialog(
+            title = "Solved!",
+            accent = LocalWheelColors.current.accent,
+            newBest = state.newBest,
+            stats =
+                buildList {
+                    add(WinStat("Time", formatDuration(state.elapsedMs)))
+                    add(WinStat("Bonus words", "${state.bonusCount}"))
+                },
             modifier = Modifier.dialogTestTags().testTag("solved_dialog"),
-            title = { Text("Solved!") },
-            text = {
-                Column {
-                    if (state.newBest) {
-                        Text(
-                            "New best!",
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.testTag("new_best"),
-                        )
-                    }
-                    Text("Time ${formatDuration(state.elapsedMs)}")
-                    Text("Bonus words ${state.bonusCount}")
-                }
-            },
-            confirmButton = { TextButton(onClick = onNewPuzzle, modifier = Modifier.testTag("solved_new_puzzle")) { Text("Next puzzle") } },
-            dismissButton = { TextButton(onClick = onHome, modifier = Modifier.testTag("solved_home")) { Text("Home") } },
-        )
+        ) {
+            TextButton(onClick = onHome, modifier = Modifier.testTag("solved_home")) { Text("Home") }
+            TextButton(onClick = onNewPuzzle, modifier = Modifier.testTag("solved_new_puzzle")) { Text("Next puzzle") }
+        }
     }
 }
 

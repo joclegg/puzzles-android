@@ -1,6 +1,5 @@
 package com.joclegg.puzzles.sudoku.feature.game
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,7 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
@@ -16,15 +14,12 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,6 +29,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.joclegg.puzzles.core.ui.WinDialog
+import com.joclegg.puzzles.core.ui.WinStat
 import com.joclegg.puzzles.sudoku.core.data.GameMode
 import com.joclegg.puzzles.sudoku.core.ui.BackButton
 import com.joclegg.puzzles.sudoku.core.ui.HintButton
@@ -48,12 +45,9 @@ import com.joclegg.puzzles.sudoku.core.ui.TourStep
 import com.joclegg.puzzles.sudoku.core.ui.dialogTestTags
 import com.joclegg.puzzles.sudoku.core.ui.formatDuration
 import com.joclegg.puzzles.sudoku.core.ui.gameTitle
-import com.joclegg.puzzles.sudoku.core.ui.label
 import com.joclegg.puzzles.sudoku.core.ui.rememberTourState
 import com.joclegg.puzzles.sudoku.core.ui.tourTarget
-import com.joclegg.puzzles.sudoku.engine.Difficulty
 import com.joclegg.puzzles.sudoku.engine.InputMode
-import kotlinx.coroutines.delay
 
 @Composable
 fun GameRoute(
@@ -63,18 +57,11 @@ fun GameRoute(
     modifier: Modifier = Modifier,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val currentOnHome by rememberUpdatedState(onHome)
     LifecycleResumeEffect(viewModel) {
         viewModel.onVisible()
         onPauseOrDispose { viewModel.onHidden() }
     }
     val solved = state?.takeIf { it.resultSaved }
-    LaunchedEffect(solved != null) {
-        if (solved != null) {
-            delay(SOLVED_SCREEN_MS)
-            currentOnHome()
-        }
-    }
     state?.let {
         GameScreen(
             state = it,
@@ -102,34 +89,23 @@ private fun SolvedScreen(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Surface(
-        modifier =
-            modifier
-                .fillMaxSize()
-                .clickable(onClick = onDismiss)
-                .testTag("solved_screen"),
-        color = MaterialTheme.colorScheme.background,
+    WinDialog(
+        title = "Solved!",
+        accent = LocalBoardColors.current.accent,
+        newBest = state.newBest,
+        stats =
+            buildList {
+                add(WinStat("Time", formatDuration(state.elapsedMs), "final_time"))
+                if (state.showMistakeCount) {
+                    add(WinStat("Mistakes", "${state.mistakes}"))
+                }
+            },
+        modifier = modifier.dialogTestTags().testTag("solved_screen"),
+        onDismissRequest = onDismiss,
     ) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Text("Solved!", style = MaterialTheme.typography.displayMedium, color = MaterialTheme.colorScheme.primary)
-            Text("Great job", style = MaterialTheme.typography.headlineSmall)
-            Text(formatDuration(state.elapsedMs), style = MaterialTheme.typography.displaySmall, modifier = Modifier.testTag("final_time"))
-            if (state.newBest) {
-                Text(
-                    "New best!",
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.testTag("new_best"),
-                )
-            }
-        }
+        TextButton(onClick = onDismiss, modifier = Modifier.testTag("solved_home")) { Text("Home") }
     }
 }
-
-private const val SOLVED_SCREEN_MS = 2_000L
 
 @Composable
 fun GameScreen(

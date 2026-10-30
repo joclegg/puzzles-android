@@ -28,11 +28,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.joclegg.puzzles.core.ui.WinDialog
 import com.joclegg.puzzles.fiveletters.core.ui.BackButton
 import com.joclegg.puzzles.fiveletters.core.ui.FiveLettersIcons
 import com.joclegg.puzzles.fiveletters.core.ui.HintButton
 import com.joclegg.puzzles.fiveletters.core.ui.HowToPlayButton
 import com.joclegg.puzzles.fiveletters.core.ui.Keyboard
+import com.joclegg.puzzles.fiveletters.core.ui.LocalLetterColors
 import com.joclegg.puzzles.fiveletters.core.ui.ToolButton
 import com.joclegg.puzzles.fiveletters.core.ui.TourStep
 import com.joclegg.puzzles.fiveletters.core.ui.WordBoard
@@ -183,37 +185,34 @@ private fun ResultDialog(
     onClose: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    AlertDialog(
-        onDismissRequest = onClose,
-        modifier = modifier.dialogTestTags().testTag("result_dialog"),
-        title = {
-            Text(
-                if (state.won) {
-                    "Got it in ${state.guessCount}!"
-                } else {
-                    "The word was ${state.answer}"
-                },
-                modifier = Modifier.testTag("result_title"),
-            )
-        },
-        text = {
-            Text(
-                if (state.isDaily) {
-                    "A new word comes tomorrow. Share your grid without giving the word away."
-                } else {
-                    "Play another practice word, or share your grid."
-                },
-            )
-        },
-        confirmButton = { TextButton(onClick = onShare, modifier = Modifier.testTag("result_share")) { Text("Share") } },
-        dismissButton = {
-            if (state.isDaily) {
-                TextButton(onClick = onClose, modifier = Modifier.testTag("result_close")) { Text("Close") }
+    WinDialog(
+        title =
+            if (state.won) {
+                "Got it in ${state.guessCount}!"
             } else {
-                TextButton(onClick = onNewPractice, modifier = Modifier.testTag("result_new_practice")) { Text("New word") }
-            }
-        },
-    )
+                "The word was ${state.answer}"
+            },
+        accent = LocalLetterColors.current.accent,
+        newBest = false,
+        stats = emptyList(),
+        modifier = modifier.dialogTestTags().testTag("result_dialog"),
+        message =
+            if (state.isDaily) {
+                "A new word comes tomorrow. Share your grid without giving the word away."
+            } else {
+                "Play another practice word, or share your grid."
+            },
+        titleTag = "result_title",
+        lost = !state.won,
+        onDismissRequest = onClose,
+    ) {
+        if (state.isDaily) {
+            TextButton(onClick = onClose, modifier = Modifier.testTag("result_close")) { Text("Close") }
+        } else {
+            TextButton(onClick = onNewPractice, modifier = Modifier.testTag("result_new_practice")) { Text("New word") }
+        }
+        TextButton(onClick = onShare, modifier = Modifier.testTag("result_share")) { Text("Share") }
+    }
 }
 
 private val RULES =

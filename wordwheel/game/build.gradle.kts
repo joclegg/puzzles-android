@@ -4,6 +4,7 @@ plugins {
 }
 
 dependencies {
+    implementation(projects.core.ui)
     implementation(projects.wordwheel.data)
     implementation(projects.wordwheel.ui)
     implementation(libs.androidx.lifecycle.viewmodel.compose)

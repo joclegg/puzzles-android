@@ -48,6 +48,7 @@ data class GameUiState(
     val resultSaved: Boolean,
     val unwinnable: Boolean = false,
     val findingLostMove: Boolean = false,
+    val finishing: Boolean = false,
     val lastWinnableMove: Int = 0,
     val canFinish: Boolean = false,
     val showHints: Boolean = true,
@@ -77,6 +78,7 @@ class GameViewModel(
     private var lastWinnableMoves: Int? = null
     private var unwinnable = false
     private var findingLostMove = false
+    private var finishing: Job? = null
     private var warningDismissed = false
     private var hintMessage: String? = null
 
@@ -122,7 +124,23 @@ class GameViewModel(
 
     fun onUndo() = move { it.undo() }
 
-    fun onFinish() = move { it.autoFinish() }
+    fun onFinish() {
+        val current = game ?: return
+        if (finishing != null) {
+            return
+        }
+        val steps = current.autoFinishMoves()
+        finishing =
+            viewModelScope.launch {
+                steps.forEach { step ->
+                    move { it.copy(moves = it.moves + step, selection = null) }
+                    delay(FINISH_STEP_MS)
+                }
+                finishing = null
+                publish()
+            }
+        publish()
+    }
 
     fun onHint() {
         val current = game ?: return
@@ -351,8 +369,9 @@ class GameViewModel(
                 resultSaved = resultSaved,
                 unwinnable = unwinnable && !warningDismissed && !current.isWon,
                 findingLostMove = findingLostMove,
+                finishing = finishing != null,
                 lastWinnableMove = lastWinnableMoves ?: 0,
-                canFinish = current.canAutoFinish,
+                canFinish = current.canAutoFinish && finishing == null,
                 showHints = display.showHints,
                 showTutorial = display.showTutorial,
                 hintMessage = hintMessage,
@@ -364,6 +383,7 @@ class GameViewModel(
         const val TICK_MS = 500L
         const val SAVE_AFTER_IDLE_MS = 400L
         const val CHECK_LIMIT_MS = 2_000L
+        const val FINISH_STEP_MS = 110L
     }
 }
 

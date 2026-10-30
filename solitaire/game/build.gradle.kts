@@ -4,6 +4,7 @@ plugins {
 }
 
 dependencies {
+    implementation(projects.core.ui)
     implementation(projects.solitaire.data)
     implementation(projects.solitaire.ui)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
