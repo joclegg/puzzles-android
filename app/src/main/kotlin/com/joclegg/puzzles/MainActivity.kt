@@ -67,6 +67,8 @@ class MainActivity : ComponentActivity() {
                     onConsumeOpenGame = { openGame.value = null },
                     account = account,
                     onSignInClick = ::signIn,
+                    onSendEmailLink = app.auth::sendEmailLink,
+                    onVerifyEmailCode = ::verifyEmailCode,
                     onSignOutClick = { app.background.launch { app.auth.signOut() } },
                 )
             }
@@ -98,6 +100,18 @@ class MainActivity : ComponentActivity() {
         lifecycleScope.launch {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(app.auth.signInUrl(provider))))
         }
+    }
+
+    private suspend fun verifyEmailCode(
+        email: String,
+        code: String,
+    ): Boolean {
+        val app = application as PuzzlesApplication
+        val verified = app.auth.verifyEmailCode(email, code)
+        if (verified) {
+            app.background.launch { app.sync.sync() }
+        }
+        return verified
     }
 
     private fun completeSignIn(intent: Intent) {

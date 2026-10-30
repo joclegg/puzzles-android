@@ -23,6 +23,25 @@ class SupabaseAuth(
         return authorizeUrl(provider, challengeOf(verifier))
     }
 
+    suspend fun sendEmailLink(email: String): Boolean {
+        val verifier = randomVerifier()
+        store.setVerifier(verifier)
+        val response = post(emailLinkUrl(), emailLinkBody(email, challengeOf(verifier)))
+        return response?.ok == true
+    }
+
+    suspend fun verifyEmailCode(
+        email: String,
+        code: String,
+    ): Boolean {
+        val response = post("${SupabaseConfig.URL}/auth/v1/verify", emailCodeBody(email, code))
+        if (response == null || !response.ok) {
+            return false
+        }
+        store.setSession(Session.fromTokenResponse(response.body, now()))
+        return true
+    }
+
     suspend fun complete(code: String): Boolean {
         val verifier = store.verifier() ?: return false
         val body =
@@ -68,17 +87,7 @@ class SupabaseAuth(
         grant: String,
         body: String,
     ): SessionResult {
-        val response =
-            withContext(Dispatchers.IO) {
-                runCatching {
-                    http.send(
-                        "POST",
-                        "${SupabaseConfig.URL}/auth/v1/token?grant_type=$grant",
-                        mapOf("apikey" to SupabaseConfig.KEY, "Content-Type" to "application/json"),
-                        body,
-                    )
-                }.getOrNull()
-            }
+        val response = post("${SupabaseConfig.URL}/auth/v1/token?grant_type=$grant", body)
         if (response != null && response.code in REJECTED_CODES) {
             return SessionResult.REJECTED
         }
@@ -89,9 +98,25 @@ class SupabaseAuth(
         return SessionResult.OK
     }
 
+    private suspend fun post(
+        url: String,
+        body: String,
+    ): HttpResponse? =
+        withContext(Dispatchers.IO) {
+            runCatching {
+                http.send(
+                    "POST",
+                    url,
+                    mapOf("apikey" to SupabaseConfig.KEY, "Content-Type" to "application/json"),
+                    body,
+                )
+            }.getOrNull()
+        }
+
     private enum class SessionResult { OK, REJECTED, UNREACHABLE }
 
     companion object {
+        const val EMAIL_CODE_LENGTH = 8
         private const val REFRESH_MARGIN_MS = 60_000L
         private val REJECTED_CODES = setOf(400, 401, 403)
 
@@ -104,6 +129,32 @@ class SupabaseAuth(
             return "${SupabaseConfig.URL}/auth/v1/authorize?provider=${provider.id}$scopes&redirect_to=$redirect" +
                 "&code_challenge=$challenge&code_challenge_method=s256"
         }
+
+        fun emailLinkUrl(): String {
+            val redirect = URLEncoder.encode(SupabaseConfig.REDIRECT, "UTF-8")
+            return "${SupabaseConfig.URL}/auth/v1/otp?redirect_to=$redirect"
+        }
+
+        fun emailLinkBody(
+            email: String,
+            challenge: String,
+        ): String =
+            JSONObject()
+                .put("email", email.trim())
+                .put("create_user", true)
+                .put("code_challenge", challenge)
+                .put("code_challenge_method", "s256")
+                .toString()
+
+        fun emailCodeBody(
+            email: String,
+            code: String,
+        ): String =
+            JSONObject()
+                .put("type", "email")
+                .put("email", email.trim())
+                .put("token", code)
+                .toString()
 
         fun challengeOf(verifier: String): String =
             Base64
