@@ -8,14 +8,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,7 +36,6 @@ import com.joclegg.puzzles.solitaire.core.ui.SolitaireGameIcon
 import com.joclegg.puzzles.solitaire.core.ui.SolitaireTheme
 import com.joclegg.puzzles.sudoku.core.ui.SudokuGameIcon
 import com.joclegg.puzzles.sudoku.core.ui.SudokuIcons
-import com.joclegg.puzzles.sudoku.core.ui.dialogTestTags
 import com.joclegg.puzzles.twotone.core.ui.TwoToneGameIcon
 import com.joclegg.puzzles.twotone.core.ui.TwoToneTheme
 import com.joclegg.puzzles.wordwheel.core.ui.WordWheelGameIcon
@@ -49,6 +46,8 @@ fun LauncherScreen(
     darkTheme: Boolean,
     account: String?,
     onSignInClick: (SignInProvider) -> Unit,
+    onSendEmailLink: suspend (String) -> Boolean,
+    onVerifyEmailCode: suspend (String, String) -> Boolean,
     onSignOutClick: () -> Unit,
     onSettingsClick: () -> Unit,
     onSudokuClick: () -> Unit,
@@ -64,10 +63,13 @@ fun LauncherScreen(
     var choosingSignIn by remember { mutableStateOf(false) }
     if (choosingSignIn) {
         SignInDialog(
+            darkTheme = darkTheme,
             onProviderClick = { provider ->
                 choosingSignIn = false
                 onSignInClick(provider)
             },
+            onSendEmailLink = onSendEmailLink,
+            onVerifyEmailCode = onVerifyEmailCode,
             onDismiss = { choosingSignIn = false },
         )
     }
@@ -117,30 +119,6 @@ fun LauncherScreen(
             WordWheelTheme(darkTheme) { WordWheelGameIcon() }
         }
     }
-}
-
-@Composable
-private fun SignInDialog(
-    onProviderClick: (SignInProvider) -> Unit,
-    onDismiss: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        modifier = modifier.dialogTestTags(),
-        title = { Text("Sign in to sync") },
-        text = { Text("Sync your games and settings with the website and other devices.") },
-        confirmButton = {
-            TextButton(onClick = { onProviderClick(SignInProvider.MICROSOFT) }, modifier = Modifier.testTag("sign_in_microsoft")) {
-                Text("Microsoft")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = { onProviderClick(SignInProvider.GOOGLE) }, modifier = Modifier.testTag("sign_in_google")) {
-                Text("Google")
-            }
-        },
-    )
 }
 
 @Composable
