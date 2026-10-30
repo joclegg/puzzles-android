@@ -8,8 +8,8 @@ permissions:
   contents: write
 
 env:
-  LEVELS: expert evil
-  BANK_SIZES: 0,0,0,0,100,30
+  LEVELS: expert
+  BANK_SIZES: 0,0,0,0,100
 
 jobs:
   generate:
