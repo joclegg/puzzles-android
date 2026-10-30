@@ -13,10 +13,13 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -49,9 +52,10 @@ data class WinStat(
 data class DailyLeft(
     val label: String,
     val accent: Color,
-    val left: Int,
     val onClick: () -> Unit,
 )
+
+private val DAILIES_MAX_HEIGHT = 136.dp
 
 val LocalDailiesLeft = staticCompositionLocalOf<suspend () -> List<DailyLeft>> { { emptyList() } }
 
@@ -91,8 +95,7 @@ fun WinDialog(
                         .fillMaxWidth()
                         .background(
                             Brush.verticalGradient(listOf(accent.copy(alpha = 0.3f), accent.copy(alpha = 0.08f), Color.Transparent)),
-                        )
-                        .padding(top = 24.dp, bottom = 12.dp),
+                        ).padding(top = 24.dp, bottom = 12.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Box(
@@ -161,7 +164,10 @@ fun WinDialog(
                         modifier = Modifier.padding(start = 20.dp, top = 16.dp, bottom = 8.dp),
                     )
                     FlowRow(
-                        Modifier.padding(horizontal = 20.dp),
+                        Modifier
+                            .padding(horizontal = 20.dp)
+                            .heightIn(max = DAILIES_MAX_HEIGHT)
+                            .verticalScroll(rememberScrollState()),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
@@ -218,17 +224,6 @@ private fun DailyChip(
         horizontalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         Text(daily.label, style = MaterialTheme.typography.labelLarge)
-        Text(
-            "${daily.left}",
-            style = MaterialTheme.typography.labelMedium,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.surface,
-            modifier =
-                Modifier
-                    .clip(CircleShape)
-                    .background(daily.accent)
-                    .padding(horizontal = 6.dp),
-        )
         Icon(MenuIcons.Chevron, contentDescription = null, tint = daily.accent, modifier = Modifier.size(16.dp))
     }
 }

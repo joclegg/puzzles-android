@@ -3,6 +3,7 @@ package com.joclegg.puzzles.kakuro
 import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
+import com.joclegg.puzzles.banks
 import com.joclegg.puzzles.core.sync.StampedPreferences
 import com.joclegg.puzzles.kakuro.core.data.GameDatabase
 import com.joclegg.puzzles.kakuro.core.data.GameRepository
@@ -27,10 +28,7 @@ class KakuroContainer(
     val sync = kakuroSyncSource(database.gameDao(), settings, settingsStore)
     val bank =
         PuzzleBank { path ->
-            context.assets
-                .open(path)
-                .bufferedReader()
-                .use { it.readText() }
+            context.banks.read(path)
         }
     val newSeed: () -> Long = { Random.nextLong() }
     val today: () -> LocalDate = LocalDate::now

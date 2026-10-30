@@ -3,6 +3,7 @@ package com.joclegg.puzzles.fiveletters
 import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
+import com.joclegg.puzzles.banks
 import com.joclegg.puzzles.core.sync.StampedPreferences
 import com.joclegg.puzzles.fiveletters.core.data.GameDatabase
 import com.joclegg.puzzles.fiveletters.core.data.GameRepository
@@ -42,9 +43,5 @@ class FiveLettersContainer(
             loaded ?: withContext(Dispatchers.IO) { Words(read("words/answers.txt"), read("words/guesses.txt")) }.also { loaded = it }
         }
 
-    private fun read(path: String): List<String> =
-        context.assets
-            .open(path)
-            .bufferedReader()
-            .use { it.readLines() }
+    private fun read(path: String): List<String> = context.banks.read(path).lines()
 }

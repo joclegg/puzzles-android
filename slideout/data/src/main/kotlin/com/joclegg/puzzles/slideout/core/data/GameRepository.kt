@@ -48,7 +48,7 @@ class GameRepository(
 }
 
 private fun List<GameEntity>.statsFor(level: Level): LevelStats {
-    val finished = filter { it.level == level.name && it.status != GameStatus.IN_PROGRESS.name }
+    val finished = filter { Level.named(it.level) == level && it.status != GameStatus.IN_PROGRESS.name }
     val solved = finished.filter { it.status == GameStatus.SOLVED.name }
     return LevelStats(
         level = level,
@@ -79,7 +79,7 @@ internal fun SavedGame.toEntity(updatedAt: Long) =
 internal fun GameEntity.toModel() =
     SavedGame(
         id = id,
-        ref = PuzzleRef(puzzleId, Level.valueOf(level), Puzzle.decode(puzzle)),
+        ref = PuzzleRef(puzzleId, Level.named(level), Puzzle.decode(puzzle)),
         moves = MoveCodec.decode(moves),
         elapsedMs = elapsedMs,
         hints = hints,
