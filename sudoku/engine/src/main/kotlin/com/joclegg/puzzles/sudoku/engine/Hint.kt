@@ -42,5 +42,5 @@ fun GameState.findHint(): Hint? {
     if (solution == null || empty == -1) {
         return null
     }
-    return Hint(empty, solution[empty], "Try this cell next.")
+    return Hint(empty, solution[empty], "No cell can be worked out yet, so here is the first empty one.")
 }
