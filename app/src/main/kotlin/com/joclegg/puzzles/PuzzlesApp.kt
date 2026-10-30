@@ -54,7 +54,7 @@ data class OpenGame(
     val id: Long?,
 )
 
-private const val LAUNCHER = "launcher"
+const val LAUNCHER = "launcher"
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
