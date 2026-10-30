@@ -19,6 +19,22 @@ class BankStore(
 
     fun read(path: String): String = File(directory, path).readText()
 
+    fun install(
+        manifest: String,
+        read: (String) -> ByteArray,
+    ) {
+        val files = JSONObject(manifest).getJSONObject("files")
+        val known = mutableMapOf<String, String>()
+        files.keys().forEach { path ->
+            val target = File(directory, path)
+            target.parentFile?.mkdirs()
+            target.writeBytes(read(path))
+            known[path] = files.getJSONObject(path).getString("sha256")
+        }
+        applied.writeText(JSONObject(known as Map<*, *>).toString())
+        complete.writeText("")
+    }
+
     suspend fun update(): Int =
         withContext(Dispatchers.IO) {
             runCatching { updateNow() }.getOrDefault(0)

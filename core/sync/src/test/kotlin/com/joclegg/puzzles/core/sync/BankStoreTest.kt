@@ -143,6 +143,22 @@ class BankStoreTest {
             assertEquals(listOf(0, true, "new\n"), listOf(downloaded, offline.isReady, offline.read("slideout/easy.txt")))
         }
 
+    @Test
+    fun `given installed banks when banks update then nothing is downloaded`() =
+        runBlocking {
+            // Arrange
+            val manifest = manifest("slideout/easy.txt" to "new\n")
+            val (store, requested) = store(mapOf("manifest.json" to manifest))
+            store.install(manifest.body) { "new\n".toByteArray() }
+
+            // Act
+            val downloaded = store.update()
+
+            // Assert
+            assertEquals(listOf(0, true, "new\n"), listOf(downloaded, store.isReady, store.read("slideout/easy.txt")))
+            assertEquals(listOf("manifest.json"), requested)
+        }
+
     private companion object {
         const val BASE = "https://example.test/data"
     }

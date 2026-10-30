@@ -71,3 +71,10 @@ class PuzzlesApplication : Application() {
 
 val Context.banks: BankStore
     get() = BankStore(File(filesDir, "puzzles-data"))
+
+// Only debug builds carry these assets, from e2e/fetch-banks.sh, so e2e flows skip the first download.
+fun Context.installSeedBanks() {
+    if (banks.isReady) return
+    val manifest = runCatching { assets.open("puzzles-data/manifest.json").use { it.readBytes() } }.getOrNull() ?: return
+    banks.install(String(manifest)) { path -> assets.open("puzzles-data/$path").use { it.readBytes() } }
+}

@@ -37,6 +37,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        installSeedBanks()
         val app = application as PuzzlesApplication
         if (savedInstanceState == null) {
             openFixture(app)

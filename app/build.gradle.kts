@@ -6,6 +6,11 @@ plugins {
 val releaseKeystore = providers.environmentVariable("PUZZLES_KEYSTORE").orNull
 
 android {
+    sourceSets {
+        getByName("debug") {
+            assets.directories.add("../e2e/banks")
+        }
+    }
     namespace = "com.joclegg.puzzles"
     defaultConfig {
         applicationId = "com.joclegg.puzzles"
