@@ -40,7 +40,7 @@ data class PuzzleRef(
         fun dailyId(
             date: LocalDate,
             level: Level,
-        ) = "$DAILY_PREFIX${date}_${level.name}"
+        ) = "$DAILY_PREFIX${date}_${level.name.lowercase()}"
 
         fun daily(
             bank: PuzzleBank,
