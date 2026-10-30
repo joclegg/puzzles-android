@@ -10,6 +10,18 @@ import androidx.compose.ui.unit.dp
 
 object MenuIcons {
     val Play = filled("play", "M7 4.5v15a1 1 0 0 0 1.5.86l12-7.5a1 1 0 0 0 0-1.72l-12-7.5A1 1 0 0 0 7 4.5z")
+    val Trophy =
+        outline(
+            "trophy",
+            "M6 9H4.5a2.5 2.5 0 0 1 0-5H6",
+            "M18 9h1.5a2.5 2.5 0 0 0 0-5H18",
+            "M4 22h16",
+            "M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22",
+            "M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22",
+            "M18 2H6v7a6 6 0 0 0 12 0V2z",
+        )
+    val Book =
+        outline("book", "M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z", "M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z")
     val Chevron = outline("chevron", "M9 18l6-6-6-6")
     val Check = outline("check", "M20 6L9 17l-5-5")
     val Today =

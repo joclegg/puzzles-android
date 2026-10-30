@@ -10,9 +10,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.joclegg.puzzles.AccentColors
 import com.joclegg.puzzles.SettingsHub
 import com.joclegg.puzzles.SettingsTab
 import com.joclegg.puzzles.kakuro.core.ui.KakuroTheme
+import com.joclegg.puzzles.kakuro.core.ui.LocalKakuroColors
 import com.joclegg.puzzles.kakuro.feature.game.GameRoute
 import com.joclegg.puzzles.kakuro.feature.game.GameViewModel
 import com.joclegg.puzzles.kakuro.feature.home.HomeRoute
@@ -81,7 +83,9 @@ object KakuroRoutes {
         darkTheme: Boolean,
     ) {
         KakuroTheme(darkTheme) {
-            SettingsRoute(viewModel { SettingsViewModel(container.settings) }, onBack = null)
+            AccentColors(LocalKakuroColors.current.accent) {
+                SettingsRoute(viewModel { SettingsViewModel(container.settings) }, onBack = null)
+            }
         }
     }
 

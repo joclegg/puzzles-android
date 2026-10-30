@@ -1,5 +1,8 @@
 package com.joclegg.puzzles.solitaire.core.ui
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -18,12 +21,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -72,6 +78,7 @@ fun SolitaireTable(
     onEmptyPileClick: (Pile) -> Unit,
     modifier: Modifier = Modifier,
     onCardDrop: (Pile, Int, Pile) -> Unit = { _, _, _ -> },
+    celebrate: Boolean = false,
 ) {
     val colors = LocalTableColors.current
     val currentOnDrop by rememberUpdatedState(onCardDrop)
@@ -105,13 +112,19 @@ fun SolitaireTable(
                             starter = Card(table.order.foundationStarter, Suit.entries[index]).rankLabel,
                         )
                         cards.lastOrNull()?.let { top ->
-                            PlayingCard(
-                                top,
-                                card,
-                                table.isSelected(pile, cards.lastIndex),
-                                modifier = drag.lifted(pile, cards.lastIndex).then(drag.source(pile, cards.lastIndex)),
-                                onClick = { onCardClick(pile, cards.lastIndex) },
-                            )
+                            key(top) {
+                                PlayingCard(
+                                    top,
+                                    card,
+                                    table.isSelected(pile, cards.lastIndex),
+                                    modifier =
+                                        Modifier
+                                            .landing(celebrate)
+                                            .then(drag.lifted(pile, cards.lastIndex))
+                                            .then(drag.source(pile, cards.lastIndex)),
+                                    onClick = { onCardClick(pile, cards.lastIndex) },
+                                )
+                            }
                         }
                     }
                     if (index < table.board.foundations.lastIndex) {
@@ -365,3 +378,37 @@ private fun CardBack(
             .border(1.dp, colors.cardBackPattern, RoundedCornerShape(3.dp)),
     )
 }
+
+@Composable
+private fun Modifier.landing(celebrate: Boolean): Modifier {
+    val pop =
+        remember {
+            Animatable(
+                if (celebrate) {
+                    0f
+                } else {
+                    1f
+                },
+            )
+        }
+    LaunchedEffect(Unit) {
+        pop.animateTo(1f, spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessMediumLow))
+    }
+    return graphicsLayer {
+        val lift = 1f - pop.value
+        scaleX = 1f + lift * LANDING_SCALE
+        scaleY = 1f + lift * LANDING_SCALE
+        rotationZ = lift * LANDING_TILT
+        translationY = -lift * size.height * LANDING_RISE
+    }.zIndex(
+        if (pop.value < 1f) {
+            2f
+        } else {
+            0f
+        },
+    )
+}
+
+private const val LANDING_SCALE = 0.5f
+private const val LANDING_TILT = -18f
+private const val LANDING_RISE = 0.6f

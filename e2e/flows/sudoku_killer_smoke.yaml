@@ -34,7 +34,10 @@ name: Killer - wrong cage entries are flagged, then the puzzle completes
     id: "cell_r1c1"
 - tapOn:
     id: "digit_5"
-- assertVisible: "Great job"
+- assertVisible:
+    id: "solved_screen"
+- tapOn:
+    id: "solved_home"
 - extendedWaitUntil:
     visible:
       id: "stats"

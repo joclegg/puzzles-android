@@ -4,6 +4,7 @@ plugins {
 }
 
 dependencies {
+    implementation(projects.core.ui)
     implementation(projects.sudoku.data)
     implementation(projects.sudoku.ui)
     implementation(libs.androidx.lifecycle.viewmodel.compose)

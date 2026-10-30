@@ -1,6 +1,5 @@
 package com.joclegg.puzzles.slideout.feature.game
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,13 +25,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.joclegg.puzzles.core.ui.WinDialog
+import com.joclegg.puzzles.core.ui.WinStat
 import com.joclegg.puzzles.slideout.core.ui.BackButton
-import com.joclegg.puzzles.slideout.core.ui.HintButton
 import com.joclegg.puzzles.slideout.core.ui.HowToPlayButton
+import com.joclegg.puzzles.slideout.core.ui.LocalSlideColors
 import com.joclegg.puzzles.slideout.core.ui.SlideBoard
 import com.joclegg.puzzles.slideout.core.ui.SlideOutIcons
 import com.joclegg.puzzles.slideout.core.ui.ToolButton
@@ -196,41 +196,33 @@ private fun SolvedDialog(
     onHome: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    AlertDialog(
-        onDismissRequest = {},
-        modifier = modifier.dialogTestTags().testTag("solved_dialog"),
-        title = { Text("Solved!") },
-        text = {
-            Column {
-                if (state.newBest) {
-                    Text(
-                        "New best!",
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.testTag("new_best"),
-                    )
-                }
-                Text("Time ${formatDuration(state.elapsedMs)}", modifier = Modifier.testTag("solved_time"))
-                Text(
-                    if (state.moveCount <= state.par) {
-                        "${state.moveCount} moves, par!"
-                    } else {
-                        "${state.moveCount} moves, par is ${state.par}"
-                    },
-                    modifier = Modifier.testTag("solved_moves"),
+    WinDialog(
+        title = "Solved!",
+        accent = LocalSlideColors.current.accent,
+        newBest = state.newBest,
+        stats =
+            buildList {
+                add(
+                    WinStat(
+                        "Moves",
+                        if (state.moveCount <= state.par) {
+                            "${state.moveCount} moves, par!"
+                        } else {
+                            "${state.moveCount} moves, par is ${state.par}"
+                        },
+                        "solved_moves",
+                    ),
                 )
+                add(WinStat("Time", formatDuration(state.elapsedMs), "solved_time"))
                 if (state.hints > 0) {
-                    Text("Hints ${state.hints}")
+                    add(WinStat("Hints", "${state.hints}"))
                 }
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onNewPuzzle, modifier = Modifier.testTag("solved_new_puzzle")) { Text("New puzzle") }
-        },
-        dismissButton = {
-            TextButton(onClick = onHome, modifier = Modifier.testTag("solved_home")) { Text("Home") }
-        },
-    )
+            },
+        modifier = modifier.dialogTestTags().testTag("solved_dialog"),
+    ) {
+        TextButton(onClick = onHome, modifier = Modifier.testTag("solved_home")) { Text("Home") }
+        TextButton(onClick = onNewPuzzle, modifier = Modifier.testTag("solved_new_puzzle")) { Text("New puzzle") }
+    }
 }
 
 private val RULES =

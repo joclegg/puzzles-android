@@ -1,6 +1,5 @@
 package com.joclegg.puzzles.kakuro.feature.game
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,16 +25,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.joclegg.puzzles.core.ui.WinDialog
+import com.joclegg.puzzles.core.ui.WinStat
 import com.joclegg.puzzles.kakuro.core.ui.BackButton
 import com.joclegg.puzzles.kakuro.core.ui.HintButton
 import com.joclegg.puzzles.kakuro.core.ui.HowToPlayButton
 import com.joclegg.puzzles.kakuro.core.ui.KakuroBoard
 import com.joclegg.puzzles.kakuro.core.ui.KakuroIcons
 import com.joclegg.puzzles.kakuro.core.ui.KeypadTool
+import com.joclegg.puzzles.kakuro.core.ui.LocalKakuroColors
 import com.joclegg.puzzles.kakuro.core.ui.NumberPad
 import com.joclegg.puzzles.kakuro.core.ui.ToolButton
 import com.joclegg.puzzles.kakuro.core.ui.TourStep
@@ -252,30 +253,19 @@ private fun SolvedDialog(
     onHome: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    AlertDialog(
-        onDismissRequest = {},
+    WinDialog(
+        title = "Solved!",
+        accent = LocalKakuroColors.current.accent,
+        newBest = state.newBest,
+        stats =
+            buildList {
+                add(WinStat("Time", formatDuration(state.elapsedMs), "solved_time"))
+            },
         modifier = modifier.dialogTestTags().testTag("solved_dialog"),
-        title = { Text("Solved!") },
-        text = {
-            Column {
-                if (state.newBest) {
-                    Text(
-                        "New best!",
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.testTag("new_best"),
-                    )
-                }
-                Text("Time ${formatDuration(state.elapsedMs)}", modifier = Modifier.testTag("solved_time"))
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onNewPuzzle, modifier = Modifier.testTag("solved_new_puzzle")) { Text("New puzzle") }
-        },
-        dismissButton = {
-            TextButton(onClick = onHome, modifier = Modifier.testTag("solved_home")) { Text("Home") }
-        },
-    )
+    ) {
+        TextButton(onClick = onHome, modifier = Modifier.testTag("solved_home")) { Text("Home") }
+        TextButton(onClick = onNewPuzzle, modifier = Modifier.testTag("solved_new_puzzle")) { Text("New puzzle") }
+    }
 }
 
 private val RULES =

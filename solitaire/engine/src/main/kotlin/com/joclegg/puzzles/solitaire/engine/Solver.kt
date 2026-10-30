@@ -45,7 +45,7 @@ object Solver {
         shouldStop: () -> Boolean,
     ): Verdict {
         val seen = HashSet<String>()
-        val stack = ArrayDeque(listOf(settle(start, order)))
+        val stack = ArrayDeque(listOf(settle(start, drawMode, order)))
         var explored = 0
         while (stack.isNotEmpty()) {
             val board = stack.removeLast()
@@ -59,7 +59,7 @@ object Solver {
             if (explored > budget || shouldStop()) {
                 return Verdict.UNKNOWN
             }
-            moves(board, drawMode, order, thorough).asReversed().forEach { next -> stack.addLast(settle(next, order)) }
+            moves(board, drawMode, order, thorough).asReversed().forEach { next -> stack.addLast(settle(next, drawMode, order)) }
         }
         return Verdict.UNWINNABLE
     }
@@ -127,20 +127,28 @@ object Solver {
 
     private fun settle(
         start: Board,
+        drawMode: DrawMode,
         order: BuildOrder,
     ): Board {
         var board = start
         while (true) {
-            val safe = safeFoundationMove(board, order) ?: return board
+            val safe = safeFoundationMove(board, drawMode, order) ?: return board
             board = safe
         }
     }
 
     private fun safeFoundationMove(
         board: Board,
+        drawMode: DrawMode,
         order: BuildOrder,
     ): Board? {
-        val tops = listOf<Pile>(Pile.Waste) + board.tableau.indices.map(Pile::Tableau)
+        val columns = board.tableau.indices.map(Pile::Tableau)
+        val tops =
+            if (drawMode == DrawMode.DRAW_ONE) {
+                listOf<Pile>(Pile.Waste) + columns
+            } else {
+                columns
+            }
         for (from in tops) {
             val card = board.cardsIn(from).lastOrNull() ?: continue
             val to = Pile.Foundation(card.suit.ordinal)

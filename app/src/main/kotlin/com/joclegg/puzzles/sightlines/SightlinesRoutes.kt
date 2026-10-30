@@ -10,8 +10,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.joclegg.puzzles.AccentColors
 import com.joclegg.puzzles.SettingsHub
 import com.joclegg.puzzles.SettingsTab
+import com.joclegg.puzzles.sightlines.core.ui.LocalTileColors
 import com.joclegg.puzzles.sightlines.core.ui.SightlinesTheme
 import com.joclegg.puzzles.sightlines.feature.game.GameRoute
 import com.joclegg.puzzles.sightlines.feature.game.GameViewModel
@@ -74,7 +76,9 @@ object SightlinesRoutes {
         darkTheme: Boolean,
     ) {
         SightlinesTheme(darkTheme) {
-            SettingsRoute(viewModel { SettingsViewModel(container.settings) }, onBack = null)
+            AccentColors(LocalTileColors.current.accent) {
+                SettingsRoute(viewModel { SettingsViewModel(container.settings) }, onBack = null)
+            }
         }
     }
 

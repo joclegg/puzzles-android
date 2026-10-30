@@ -11,9 +11,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.joclegg.puzzles.AccentColors
 import com.joclegg.puzzles.SettingsHub
 import com.joclegg.puzzles.SettingsTab
 import com.joclegg.puzzles.fiveletters.core.ui.FiveLettersTheme
+import com.joclegg.puzzles.fiveletters.core.ui.LocalLetterColors
 import com.joclegg.puzzles.fiveletters.feature.game.GameRoute
 import com.joclegg.puzzles.fiveletters.feature.game.GameViewModel
 import com.joclegg.puzzles.fiveletters.feature.home.HomeRoute
@@ -75,7 +77,9 @@ object FiveLettersRoutes {
         darkTheme: Boolean,
     ) {
         Themed(container, darkTheme) {
-            SettingsRoute(viewModel { SettingsViewModel(container.settings) }, onBack = null)
+            AccentColors(LocalLetterColors.current.accent) {
+                SettingsRoute(viewModel { SettingsViewModel(container.settings) }, onBack = null)
+            }
         }
     }
 

@@ -10,8 +10,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.joclegg.puzzles.AccentColors
 import com.joclegg.puzzles.SettingsHub
 import com.joclegg.puzzles.SettingsTab
+import com.joclegg.puzzles.solitaire.core.ui.LocalTableColors
 import com.joclegg.puzzles.solitaire.core.ui.SolitaireTheme
 import com.joclegg.puzzles.solitaire.feature.game.GameRoute
 import com.joclegg.puzzles.solitaire.feature.game.GameViewModel
@@ -90,7 +92,9 @@ object SolitaireRoutes {
         darkTheme: Boolean,
     ) {
         SolitaireTheme(darkTheme) {
-            SettingsRoute(viewModel { SettingsViewModel(container.settings) }, onBack = null)
+            AccentColors(LocalTableColors.current.accent) {
+                SettingsRoute(viewModel { SettingsViewModel(container.settings) }, onBack = null)
+            }
         }
     }
 

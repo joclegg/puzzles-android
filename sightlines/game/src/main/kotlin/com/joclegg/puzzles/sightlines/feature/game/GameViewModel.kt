@@ -103,6 +103,16 @@ class GameViewModel(
 
     fun onUndo() = move { it.undo() }
 
+    fun onInputModeToggle() {
+        val next =
+            if (display.inputMode == InputMode.PICK_COLOUR) {
+                InputMode.TAP_TO_CYCLE
+            } else {
+                InputMode.PICK_COLOUR
+            }
+        viewModelScope.launch { settings.setInputMode(next) }
+    }
+
     fun onHint() {
         val current = game ?: return
         if (current.isSolved) {

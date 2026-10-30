@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -24,22 +23,31 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.joclegg.puzzles.core.sync.SignInProvider
+import com.joclegg.puzzles.core.ui.GameCard
 import com.joclegg.puzzles.fiveletters.core.ui.FiveLettersGameIcon
 import com.joclegg.puzzles.fiveletters.core.ui.FiveLettersTheme
+import com.joclegg.puzzles.fiveletters.core.ui.LocalLetterColors
 import com.joclegg.puzzles.kakuro.core.ui.KakuroGameIcon
 import com.joclegg.puzzles.kakuro.core.ui.KakuroTheme
+import com.joclegg.puzzles.kakuro.core.ui.LocalKakuroColors
 import com.joclegg.puzzles.sightlines.core.ui.SightlinesGameIcon
 import com.joclegg.puzzles.sightlines.core.ui.SightlinesTheme
+import com.joclegg.puzzles.slideout.core.ui.LocalSlideColors
 import com.joclegg.puzzles.slideout.core.ui.SlideOutGameIcon
 import com.joclegg.puzzles.slideout.core.ui.SlideOutTheme
+import com.joclegg.puzzles.solitaire.core.ui.LocalTableColors
 import com.joclegg.puzzles.solitaire.core.ui.SolitaireGameIcon
 import com.joclegg.puzzles.solitaire.core.ui.SolitaireTheme
+import com.joclegg.puzzles.sudoku.core.ui.LocalBoardColors
 import com.joclegg.puzzles.sudoku.core.ui.SudokuGameIcon
 import com.joclegg.puzzles.sudoku.core.ui.SudokuIcons
 import com.joclegg.puzzles.twotone.core.ui.TwoToneGameIcon
 import com.joclegg.puzzles.twotone.core.ui.TwoToneTheme
+import com.joclegg.puzzles.wordwheel.core.ui.LocalWheelColors
 import com.joclegg.puzzles.wordwheel.core.ui.WordWheelGameIcon
 import com.joclegg.puzzles.wordwheel.core.ui.WordWheelTheme
+import com.joclegg.puzzles.sightlines.core.ui.LocalTileColors as SightlinesColors
+import com.joclegg.puzzles.twotone.core.ui.LocalTileColors as TwoToneColors
 
 @Composable
 fun LauncherScreen(
@@ -89,52 +97,90 @@ fun LauncherScreen(
                 Icon(SudokuIcons.Settings, contentDescription = "Settings")
             }
         }
-        GameCard("Sudoku", "Classic and killer, from 6x6 to evil", onSudokuClick, Modifier.testTag("game_sudoku")) {
+        GameCard(
+            "Sudoku",
+            "Classic and killer, from 6x6 to evil",
+            LocalBoardColors.current.accent,
+            onSudokuClick,
+            Modifier.testTag("game_sudoku"),
+        ) {
             SudokuGameIcon()
         }
-        GameCard("Solitaire", "Klondike, draw 1 or 3, or reverse", onSolitaireClick, Modifier.testTag("game_solitaire")) {
-            SolitaireTheme(darkTheme) { SolitaireGameIcon() }
+        SolitaireTheme(darkTheme) {
+            GameCard(
+                "Solitaire",
+                "Klondike, draw 1 or 3, or reverse",
+                LocalTableColors.current.accent,
+                onSolitaireClick,
+                Modifier.testTag("game_solitaire"),
+            ) {
+                SolitaireGameIcon()
+            }
         }
-        GameCard("Two Tone", "Fill the grid red and blue, three simple rules", onTwoToneClick, Modifier.testTag("game_two_tone")) {
-            TwoToneTheme(darkTheme) { TwoToneGameIcon() }
+        TwoToneTheme(darkTheme) {
+            GameCard(
+                "Two Tone",
+                "Fill the grid red and blue, three simple rules",
+                TwoToneColors.current.accent,
+                onTwoToneClick,
+                Modifier.testTag("game_two_tone"),
+            ) {
+                TwoToneGameIcon()
+            }
         }
-        GameCard("Sightlines", "Blue dots count what they can see", onSightlinesClick, Modifier.testTag("game_sightlines")) {
-            SightlinesTheme(darkTheme) { SightlinesGameIcon() }
+        SightlinesTheme(darkTheme) {
+            GameCard(
+                "Sightlines",
+                "Blue dots count what they can see",
+                SightlinesColors.current.accent,
+                onSightlinesClick,
+                Modifier.testTag("game_sightlines"),
+            ) {
+                SightlinesGameIcon()
+            }
         }
-        GameCard(
-            "Five Letters",
-            "Guess the word in six tries, a new one every day",
-            onFiveLettersClick,
-            Modifier.testTag("game_five_letters"),
-        ) {
-            FiveLettersTheme(darkTheme) { FiveLettersGameIcon() }
+        FiveLettersTheme(darkTheme) {
+            GameCard(
+                "Five Letters",
+                "Guess the word in six tries, a new one every day",
+                LocalLetterColors.current.accent,
+                onFiveLettersClick,
+                Modifier.testTag("game_five_letters"),
+            ) {
+                FiveLettersGameIcon()
+            }
         }
-        GameCard("Kakuro", "Cross sums: runs of different digits that add up", onKakuroClick, Modifier.testTag("game_kakuro")) {
-            KakuroTheme(darkTheme) { KakuroGameIcon() }
+        KakuroTheme(darkTheme) {
+            GameCard(
+                "Kakuro",
+                "Cross sums: runs of different digits that add up",
+                LocalKakuroColors.current.accent,
+                onKakuroClick,
+                Modifier.testTag("game_kakuro"),
+            ) {
+                KakuroGameIcon()
+            }
         }
-        GameCard("Slide Out", "Slide the blocks to free the red one", onSlideOutClick, Modifier.testTag("game_slide_out")) {
-            SlideOutTheme(darkTheme) { SlideOutGameIcon() }
+        SlideOutTheme(darkTheme) {
+            GameCard(
+                "Slide Out",
+                "Slide the blocks to free the red one",
+                LocalSlideColors.current.accent,
+                onSlideOutClick,
+                Modifier.testTag("game_slide_out"),
+            ) {
+                SlideOutGameIcon()
+            }
         }
-        GameCard("Word Wheel", "Swipe the letters to fill the crossword", onWordWheelClick, Modifier.testTag("game_word_wheel")) {
-            WordWheelTheme(darkTheme) { WordWheelGameIcon() }
-        }
-    }
-}
-
-@Composable
-private fun GameCard(
-    title: String,
-    detail: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    icon: @Composable () -> Unit,
-) {
-    Card(onClick = onClick, modifier = modifier.fillMaxWidth()) {
-        Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-            icon()
-            Column {
-                Text(title, style = MaterialTheme.typography.titleLarge)
-                Text(detail, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        WordWheelTheme(darkTheme) {
+            GameCard(
+                "Word Wheel",
+                "Swipe the letters to fill the crossword",
+                LocalWheelColors.current.accent,
+                onWordWheelClick,
+                Modifier.testTag("game_word_wheel"),
+            ) {
+                WordWheelGameIcon()
             }
         }
     }

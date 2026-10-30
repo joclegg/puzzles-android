@@ -8,9 +8,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.joclegg.puzzles.AccentColors
 import com.joclegg.puzzles.SettingsHub
 import com.joclegg.puzzles.SettingsTab
 import com.joclegg.puzzles.sudoku.core.data.GameMode
+import com.joclegg.puzzles.sudoku.core.ui.LocalBoardColors
 import com.joclegg.puzzles.sudoku.feature.game.EntryRoute
 import com.joclegg.puzzles.sudoku.feature.game.EntryViewModel
 import com.joclegg.puzzles.sudoku.feature.game.GameRoute
@@ -89,7 +91,9 @@ object SudokuRoutes {
         container: SudokuContainer,
         mode: GameMode,
     ) {
-        SettingsRoute(viewModel { SettingsViewModel(container.settings) }, initialMode = mode, onBack = null)
+        AccentColors(LocalBoardColors.current.accent) {
+            SettingsRoute(viewModel { SettingsViewModel(container.settings) }, initialMode = mode, onBack = null)
+        }
     }
 
     fun NavHostController.openSudokuGame(id: Long) {

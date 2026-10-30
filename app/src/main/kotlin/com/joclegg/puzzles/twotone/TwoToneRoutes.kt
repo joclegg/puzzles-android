@@ -10,8 +10,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.joclegg.puzzles.AccentColors
 import com.joclegg.puzzles.SettingsHub
 import com.joclegg.puzzles.SettingsTab
+import com.joclegg.puzzles.twotone.core.ui.LocalTileColors
 import com.joclegg.puzzles.twotone.core.ui.TwoToneTheme
 import com.joclegg.puzzles.twotone.feature.game.GameRoute
 import com.joclegg.puzzles.twotone.feature.game.GameViewModel
@@ -74,7 +76,9 @@ object TwoToneRoutes {
         darkTheme: Boolean,
     ) {
         TwoToneTheme(darkTheme) {
-            SettingsRoute(viewModel { SettingsViewModel(container.settings) }, onBack = null)
+            AccentColors(LocalTileColors.current.accent) {
+                SettingsRoute(viewModel { SettingsViewModel(container.settings) }, onBack = null)
+            }
         }
     }
 

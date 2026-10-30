@@ -11,7 +11,10 @@ name: Finishing today's daily earns a silver medal on Home and in the calendar
     id: "cell_r1c3"
 - tapOn:
     id: "digit_4"
-- assertVisible: "Great job"
+- assertVisible:
+    id: "solved_screen"
+- tapOn:
+    id: "solved_home"
 - extendedWaitUntil:
     visible:
       id: "todays_medal_silver"

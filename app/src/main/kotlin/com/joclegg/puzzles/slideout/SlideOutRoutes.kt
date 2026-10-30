@@ -10,8 +10,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.joclegg.puzzles.AccentColors
 import com.joclegg.puzzles.SettingsHub
 import com.joclegg.puzzles.SettingsTab
+import com.joclegg.puzzles.slideout.core.ui.LocalSlideColors
 import com.joclegg.puzzles.slideout.core.ui.SlideOutTheme
 import com.joclegg.puzzles.slideout.feature.game.GameRoute
 import com.joclegg.puzzles.slideout.feature.game.GameViewModel
@@ -81,7 +83,9 @@ object SlideOutRoutes {
         darkTheme: Boolean,
     ) {
         SlideOutTheme(darkTheme) {
-            SettingsRoute(viewModel { SettingsViewModel(container.settings) }, onBack = null)
+            AccentColors(LocalSlideColors.current.accent) {
+                SettingsRoute(viewModel { SettingsViewModel(container.settings) }, onBack = null)
+            }
         }
     }
 
