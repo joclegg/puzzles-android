@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Puzzles: an Android app, playable offline, with eight games: sudoku (classic and killer), Klondike solitaire, Two Tone (red/blue binary grid, like 0h h1), Sightlines (blue dots that count what they see, like 0h n0), Five Letters (a Wordle-style word game), Kakuro (cross sums), Slide Out (like Unblock Me) and Word Wheel (like Word Trip). A launcher screen picks the game.
+Puzzles: an Android app, playable offline after a first download of its puzzles, with eight games: sudoku (classic and killer), Klondike solitaire, Two Tone (red/blue binary grid, like 0h h1), Sightlines (blue dots that count what they see, like 0h n0), Five Letters (a Wordle-style word game), Kakuro (cross sums), Slide Out (like Unblock Me) and Word Wheel (like Word Trip). A launcher screen picks the game.
 
 ## Stack
 
@@ -22,7 +22,7 @@ Puzzles: an Android app, playable offline, with eight games: sudoku (classic and
 - `e2e/run.sh --fast`: only the flows tagged `fast`, for everyday checks
 - `e2e/run.sh e2e/flows/<flow>.yaml`: run one flow
 - `e2e/run.sh --part I/N`: run one slice of the flows, as each CI matrix job does
-- `./gradlew :sudoku:engine:generateBank -PbankSize=1000`: regenerate the bundled sudoku puzzles
+- `./gradlew :sudoku:engine:generateBank -PbankSize=1000`: regenerate the sudoku puzzles
 
 ## Structure
 
@@ -44,7 +44,7 @@ Each game has its own modules under `sudoku/`, `solitaire/`, `twotone/`, `sightl
 - `core/sync/`: optional sign-in (Google, Microsoft, or an emailed link with a code) and sync with the Supabase project in [joclegg/puzzles-backend](https://github.com/joclegg/puzzles-backend): `SupabaseAuth` (browser sign-in with PKCE, back through the `com.joclegg.puzzles://auth` deep link; email sign-in sends a PKCE magic link that opens the app the same way, and `verifyEmailCode` checks the 8-digit code from the same email), `SyncEngine` (pushes rows changed since the last push, then pulls rows the server stored since the last pull by `synced_at`, a page at a time, last write wins; retries twice, 30 seconds apart), `SyncStore` and `StampedPreferences` (stamps every settings edit). The `sync` DataStore holds the session, so it is left out of backups (`res/xml/backup_rules.xml`, `data_extraction_rules.xml`); a refresh token the server rejects signs the player out
 - `app/.../<game>/<Game>Sync.kt`: each game's `SyncSource`, which converts its Room rows and settings to and from the same JSON puzzles-web stores, under the same game keys (`sudoku`, `solitaire`, `twoTone`, `sightlines`, `fiveLetters`, `kakuro`, `slideOut`, `wordWheel`)
 - `app/`: `MainActivity`, `PuzzlesApp.kt` (navigation), `LauncherScreen`, and per game a container (`<Game>Container`), a routes file (`<Game>Routes`) and debug-only e2e fixtures in `src/debug/` (`<Game>Fixtures`)
-- `puzzles-data/`: a git submodule ([joclegg/puzzles-data](https://github.com/joclegg/puzzles-data)) holding every puzzle bank and word list, shared with puzzles-web and packaged as the app's assets. Clone with `--recurse-submodules`, or run `git submodule update --init`. Commit bank changes there first, then bump the submodule here.
+- [joclegg/puzzles-data](https://github.com/joclegg/puzzles-data) holds every puzzle bank and word list, shared with puzzles-web, and is not part of this repo or the APK. The generator tasks write to a gitignored `puzzles-data/` by default, or pass `-PbankDir=` pointing at a clone; commit bank changes there.
 - `puzzles-data/sudoku/`: the generated sudoku bank, one file per mode and level
 - `puzzles-data/kakuro/`: the generated Kakuro bank, one file per size (`./gradlew :kakuro:engine:generateBank`)
 - `puzzles-data/slideout/`: the generated Slide Out bank, one file per level (`./gradlew :slideout:engine:generateBank`, which saves each puzzle as it's found and resumes). Puzzles are the same when their blocks match in any order after the red one (`Board.identity`); set `BANK_SEEN` to a file of puzzles found elsewhere, such as other CI shards, and the generator skips those too
@@ -72,10 +72,10 @@ Rules marked (lint) are enforced by `spotlessCheck`, Android Lint or the build.
 
 - MUST keep every game playable offline and signed out. Sign-in is optional, with Google, Microsoft (`SignInProvider`; Microsoft is Supabase's `azure` provider and needs the `email` scope) or email (`SignInDialog`; the Google and Microsoft buttons follow each brand's button guidelines); it only syncs saves and settings through `core:sync`, when the app opens or goes to the background. The app also downloads new puzzle banks (`BankStore`, below). The only other network call is the Five Letters **NY Times daily**, a separate game next to the Puzzles daily that fetches today's Wordle answer (`NytWordSource`). It needs a connection; every other game, including the Puzzles daily, does not. MUST NOT add any other network call.
 - MUST NOT add the `ACCESS_NETWORK_STATE` permission. `INTERNET` is allowed only for the NYT word, sync and bank downloads. (lint: `verify<Variant>Permissions`)
-- MUST read every puzzle bank through `BankStore.read` (`core:sync`, made by `Context.banks` in `PuzzlesApplication.kt`): the copy downloaded to the app's files (`puzzles-data/`) if there is one, else the bundled asset, so every game plays offline. When the app starts, `BankStore.update` fetches `manifest.json` from https://joclegg.github.io/puzzles-data/ (published by puzzles-data on every merge), downloads only files whose SHA-256 changed, checks each hash, and swaps the file in. Loaded banks are cached in memory, so new puzzles appear on the next launch. New puzzles need no app release; bump the submodule now and then so fresh installs start current.
+- MUST read every puzzle bank through `BankStore.read` (`core:sync`, made by `Context.banks` in `PuzzlesApplication.kt`): the copy downloaded to the app's files (`puzzles-data/`). `MainActivity` shows `BankDownloadScreen` until the first full download finishes; after that every game plays offline. When the app starts, `BankStore.update` fetches `manifest.json` from https://joclegg.github.io/puzzles-data/ (published by puzzles-data on every merge), downloads only files whose SHA-256 changed, checks each hash, and swaps the file in. Loaded banks are cached in memory, so new puzzles appear on the next launch. New puzzles need no app release; bump the submodule now and then so fresh installs start current.
 - MUST NOT add analytics, crash reporting, ads or any network library. Use the JDK's `HttpURLConnection`.
 - MUST keep all data on the device, in Room or DataStore. Every saved game has a `uuid` and an `updatedAt` so sync can find and order it; repositories save through `GameDao.save`, which keeps the row's `uuid`.
-- MUST pick daily sudoku puzzles locally from the bundled bank, deal daily solitaire games locally, seeded by date (`DealRef.daily`), generate daily Two Tone and Sightlines puzzles locally, seeded by date (`PuzzleRef.daily`), and pick the daily Five Letters word locally from the bundled list (`Words.daily`). The NY Times daily is a separate game (`WordRef.nyt`) and never replaces it.
+- MUST pick daily sudoku puzzles locally from the downloaded bank, deal daily solitaire games locally, seeded by date (`DealRef.daily`), generate daily Two Tone and Sightlines puzzles locally, seeded by date (`PuzzleRef.daily`), and pick the daily Five Letters word locally from the bundled list (`Words.daily`). The NY Times daily is a separate game (`WordRef.nyt`) and never replaces it.
 
 ### Modules
 
@@ -150,7 +150,7 @@ Rules marked (lint) are enforced by `spotlessCheck`, Android Lint or the build.
 ### Kakuro
 
 - MUST take colours only from `LocalKakuroColors` or `MaterialTheme`.
-- MUST get puzzles from the bundled bank (`PuzzleBank`), regenerated with `generateBank`, never by hand. The daily puzzle per size is picked from the bank by date.
+- MUST get puzzles from the downloaded bank (`PuzzleBank`), regenerated with `generateBank`, never by hand. The daily puzzle per size is picked from the bank by date.
 - MUST give every puzzle exactly one solution, using as few starting digits (`givens`, shown on grey cells) as the generator can find.
 - MUST keep the sum helper (`SHOW_COMBINATIONS`) off by default.
 - MUST offer the same entry options as sudoku: Cell first or Number first (`InputMode`), and mistake checking Off, Block clashes or Show wrong (`MistakeCheck`), with a mistake counter.
@@ -159,7 +159,7 @@ Rules marked (lint) are enforced by `spotlessCheck`, Android Lint or the build.
 ### Slide Out
 
 - MUST take colours only from `LocalSlideColors` or `MaterialTheme`.
-- MUST get puzzles from the bundled bank, graded by fewest moves (`Level`), with par shown from the solver. Each slide of one block is one move, however far it goes.
+- MUST get puzzles from the downloaded bank, graded by fewest moves (`Level`), with par shown from the solver. Each slide of one block is one move, however far it goes.
 - Expert generation is slow: run it on GitHub Actions by pushing to `generate/slide-out` or `generate/slide-out-run` (set `LEVELS` and `BANK_SIZES` in `generate-slide-out.yml`). Each of 16 runners saves to `generate/slide-out-shard-<n>` every 10 minutes, resumes from it, and skips puzzles the bank or other shards already have. The last job uploads the merged banks, without repeats, as the `slide-out-banks` artifact to copy into puzzles-data.
 
 ### Word Wheel
@@ -188,7 +188,7 @@ Rules marked (lint) are enforced by `spotlessCheck`, Android Lint or the build.
 - MUST grade classic puzzles by the hardest technique the `Grader` needs.
 - MUST grade killer puzzles by the grader's score bands (`Generator.killerScoreBands`), with cage profiles per level. Killer has seven levels (`KILLER_LEVELS`), classic five (`CLASSIC_LEVELS`); Fast is 6x6 and listed first in both.
 - MUST regenerate the bank with `generateBank`. MUST NOT edit the puzzle files by hand.
-- MUST get new puzzles through `PuzzleSupply`: bundled first, then the generated stock, then one made on the spot. Top-ups run in `PuzzleTopUpWorker` only when a level's stock falls below `LOW_WATERMARK`.
+- MUST get new puzzles through `PuzzleSupply`: the downloaded bank first, then the generated stock, then one made on the spot. Top-ups run in `PuzzleTopUpWorker` only when a level's stock falls below `LOW_WATERMARK`.
 - MUST keep custom puzzles out of best times.
 - MUST NOT add any screen, dialog or option for entering past best times. Past bests from other apps go straight into the `past_bests` table on the device. They also sync as `pastBests` in the Sudoku settings JSON, which puzzles-web shows in its best times.
 

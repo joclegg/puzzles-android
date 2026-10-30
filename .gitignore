@@ -33,3 +33,6 @@ google-services.json
 
 # Android Profiling
 *.hprof
+
+# Generator output; banks live in joclegg/puzzles-data
+/puzzles-data/

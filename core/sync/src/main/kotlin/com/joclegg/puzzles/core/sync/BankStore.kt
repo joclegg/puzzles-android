@@ -8,13 +8,16 @@ import java.security.MessageDigest
 
 class BankStore(
     private val directory: File,
-    private val bundled: (String) -> ByteArray,
     private val http: Http = UrlConnectionHttp,
     private val baseUrl: String = BASE_URL,
 ) {
     private val applied = File(directory, MANIFEST)
+    private val complete = File(directory, COMPLETE)
 
-    fun read(path: String): String = File(directory, path).takeIf { it.isFile }?.readText() ?: String(bundled(path))
+    val isReady: Boolean
+        get() = complete.isFile
+
+    fun read(path: String): String = File(directory, path).readText()
 
     suspend fun update(): Int =
         withContext(Dispatchers.IO) {
@@ -31,16 +34,16 @@ class BankStore(
         var downloaded = 0
         remote.keys().forEach { path ->
             val hash = remote.getJSONObject(path).getString("sha256")
-            val current = known[path] ?: runCatching { sha256(bundled(path)) }.getOrNull()
-            if (hash == current) {
-                known[path] = hash
-            } else if (download(path, hash)) {
+            if (hash != known[path] && download(path, hash)) {
                 known[path] = hash
                 downloaded++
             }
         }
         directory.mkdirs()
         applied.writeText(JSONObject(known as Map<*, *>).toString())
+        if (remote.keys().asSequence().all { known[it] == remote.getJSONObject(it).getString("sha256") }) {
+            complete.writeText("")
+        }
         return downloaded
     }
 
@@ -71,6 +74,7 @@ class BankStore(
     companion object {
         const val BASE_URL = "https://joclegg.github.io/puzzles-data"
         private const val MANIFEST = "manifest.json"
+        private const val COMPLETE = "complete"
 
         fun sha256(bytes: ByteArray): String = MessageDigest.getInstance("SHA-256").digest(bytes).joinToString("") { "%02x".format(it) }
     }

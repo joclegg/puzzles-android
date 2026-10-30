@@ -4,7 +4,7 @@ plugins {
 
 tasks.register<JavaExec>("generateBank") {
     group = "wordwheel"
-    description = "Regenerates the Word Wheel word list and puzzles bundled in the app's assets."
+    description = "Regenerates the Word Wheel word list and puzzles bank."
     classpath = sourceSets.main.get().runtimeClasspath
     mainClass.set("com.joclegg.puzzles.wordwheel.engine.BankGeneratorKt")
     workingDir = rootDir

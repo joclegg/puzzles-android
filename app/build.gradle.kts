@@ -6,11 +6,6 @@ plugins {
 val releaseKeystore = providers.environmentVariable("PUZZLES_KEYSTORE").orNull
 
 android {
-    sourceSets {
-        getByName("main") {
-            assets.directories.add("../puzzles-data")
-        }
-    }
     namespace = "com.joclegg.puzzles"
     defaultConfig {
         applicationId = "com.joclegg.puzzles"

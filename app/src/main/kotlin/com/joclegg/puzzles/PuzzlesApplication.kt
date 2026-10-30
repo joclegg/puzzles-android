@@ -70,4 +70,4 @@ class PuzzlesApplication : Application() {
 }
 
 val Context.banks: BankStore
-    get() = BankStore(File(filesDir, "puzzles-data"), { path -> assets.open(path).use { it.readBytes() } })
+    get() = BankStore(File(filesDir, "puzzles-data"))

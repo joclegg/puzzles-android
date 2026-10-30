@@ -4,7 +4,7 @@ plugins {
 
 tasks.register<JavaExec>("generateBank") {
     group = "kakuro"
-    description = "Regenerates the Kakuro puzzles bundled in the app's assets."
+    description = "Regenerates the Kakuro puzzles bank."
     classpath = sourceSets.main.get().runtimeClasspath
     mainClass.set("com.joclegg.puzzles.kakuro.engine.BankGeneratorKt")
     workingDir = rootDir
