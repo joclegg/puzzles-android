@@ -49,7 +49,6 @@ data class WinStat(
 data class DailyLeft(
     val label: String,
     val accent: Color,
-    val left: Int,
     val onClick: () -> Unit,
 )
 
@@ -91,8 +90,7 @@ fun WinDialog(
                         .fillMaxWidth()
                         .background(
                             Brush.verticalGradient(listOf(accent.copy(alpha = 0.3f), accent.copy(alpha = 0.08f), Color.Transparent)),
-                        )
-                        .padding(top = 24.dp, bottom = 12.dp),
+                        ).padding(top = 24.dp, bottom = 12.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Box(
@@ -218,17 +216,6 @@ private fun DailyChip(
         horizontalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         Text(daily.label, style = MaterialTheme.typography.labelLarge)
-        Text(
-            "${daily.left}",
-            style = MaterialTheme.typography.labelMedium,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.surface,
-            modifier =
-                Modifier
-                    .clip(CircleShape)
-                    .background(daily.accent)
-                    .padding(horizontal = 6.dp),
-        )
         Icon(MenuIcons.Chevron, contentDescription = null, tint = daily.accent, modifier = Modifier.size(16.dp))
     }
 }
