@@ -3,7 +3,7 @@ package com.joclegg.puzzles.wordwheel
 import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
-import com.joclegg.puzzles.BankStore
+import com.joclegg.puzzles.banks
 import com.joclegg.puzzles.core.sync.StampedPreferences
 import com.joclegg.puzzles.wordwheel.core.data.GameDatabase
 import com.joclegg.puzzles.wordwheel.core.data.GameRepository
@@ -28,7 +28,7 @@ class WordWheelContainer(
     val sync = wordWheelSyncSource(database.gameDao(), settings, settingsStore)
     val bank =
         PuzzleBank { path ->
-            BankStore(context).read(path)
+            context.banks.read(path)
         }
     val newSeed: () -> Long = { Random.nextLong() }
     val today: () -> LocalDate = LocalDate::now

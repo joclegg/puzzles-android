@@ -3,7 +3,7 @@ package com.joclegg.puzzles.solitaire
 import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
-import com.joclegg.puzzles.BankStore
+import com.joclegg.puzzles.banks
 import com.joclegg.puzzles.core.sync.StampedPreferences
 import com.joclegg.puzzles.solitaire.core.data.GameDatabase
 import com.joclegg.puzzles.solitaire.core.data.GameRepository
@@ -28,7 +28,7 @@ class SolitaireContainer(
     val sync = solitaireSyncSource(database.gameDao(), settings, settingsStore)
     val winnableDeals =
         WinnableDeals { path ->
-            BankStore(context).read(path)
+            context.banks.read(path)
         }
     val newSeed: () -> Long = { Random.nextLong() }
     val today: () -> LocalDate = LocalDate::now

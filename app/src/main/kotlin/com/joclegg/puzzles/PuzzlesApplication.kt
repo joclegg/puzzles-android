@@ -3,6 +3,7 @@ package com.joclegg.puzzles
 import android.app.Application
 import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
+import com.joclegg.puzzles.core.sync.BankStore
 import com.joclegg.puzzles.core.sync.SupabaseAuth
 import com.joclegg.puzzles.core.sync.SyncEngine
 import com.joclegg.puzzles.core.sync.SyncStore
@@ -17,6 +18,7 @@ import com.joclegg.puzzles.wordwheel.WordWheelContainer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import java.io.File
 
 private val Context.syncPreferences by preferencesDataStore(name = "sync")
 
@@ -32,7 +34,6 @@ class PuzzlesApplication : Application() {
     private val syncStore by lazy { SyncStore(syncPreferences) }
     val background = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     val auth by lazy { SupabaseAuth(syncStore) }
-    val banks by lazy { BankStore(this) }
     val sync by lazy {
         SyncEngine(
             sources =
@@ -51,3 +52,6 @@ class PuzzlesApplication : Application() {
         )
     }
 }
+
+val Context.banks: BankStore
+    get() = BankStore(File(filesDir, "puzzles-data"), { path -> assets.open(path).use { it.readBytes() } })

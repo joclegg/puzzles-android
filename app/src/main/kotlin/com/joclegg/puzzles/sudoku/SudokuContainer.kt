@@ -3,7 +3,7 @@ package com.joclegg.puzzles.sudoku
 import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
-import com.joclegg.puzzles.BankStore
+import com.joclegg.puzzles.banks
 import com.joclegg.puzzles.core.sync.StampedPreferences
 import com.joclegg.puzzles.sudoku.core.data.GameDatabase
 import com.joclegg.puzzles.sudoku.core.data.GameRepository
@@ -27,7 +27,7 @@ class SudokuContainer(
     val sync = sudokuSyncSource(database.gameDao(), settings, settingsStore)
     val bank =
         PuzzleBank { path ->
-            BankStore(context).read(path)
+            context.banks.read(path)
         }
     val supply =
         PuzzleSupply(
