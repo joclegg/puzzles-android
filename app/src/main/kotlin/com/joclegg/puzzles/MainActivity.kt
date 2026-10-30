@@ -12,8 +12,10 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.joclegg.puzzles.core.sync.SignInProvider
 import com.joclegg.puzzles.fiveletters.FiveLettersFixtures
 import com.joclegg.puzzles.kakuro.KakuroFixtures
@@ -25,6 +27,7 @@ import com.joclegg.puzzles.sudoku.core.data.ThemeMode
 import com.joclegg.puzzles.sudoku.core.ui.SudokuTheme
 import com.joclegg.puzzles.twotone.TwoToneFixtures
 import com.joclegg.puzzles.wordwheel.WordWheelFixtures
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -38,6 +41,11 @@ class MainActivity : ComponentActivity() {
         if (savedInstanceState == null) {
             openFixture(app)
             completeSignIn(intent)
+        }
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                app.openGameCount.drop(1).collect { syncInBackground() }
+            }
         }
         setContent {
             val settings by app.sudoku.settings.settings

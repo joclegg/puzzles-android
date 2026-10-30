@@ -18,6 +18,10 @@ import com.joclegg.puzzles.wordwheel.WordWheelContainer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import java.io.File
 
 private val Context.syncPreferences by preferencesDataStore(name = "sync")
@@ -50,6 +54,18 @@ class PuzzlesApplication : Application() {
             auth = auth,
             store = syncStore,
         )
+    }
+    val openGameCount: Flow<Int> by lazy {
+        combine(
+            sudoku.games.inProgress.map { it.size },
+            solitaire.games.inProgress.map { it.size },
+            twoTone.games.inProgress.map { it.size },
+            sightlines.games.inProgress.map { it.size },
+            fiveLetters.games.inProgress.map { it.size },
+            kakuro.games.inProgress.map { it.size },
+            slideOut.games.inProgress.map { it.size },
+            wordWheel.games.inProgress.map { it.size },
+        ) { counts -> counts.sum() }.distinctUntilChanged()
     }
 }
 
