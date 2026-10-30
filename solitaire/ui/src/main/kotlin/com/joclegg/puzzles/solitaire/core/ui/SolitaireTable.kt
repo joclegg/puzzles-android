@@ -381,7 +381,16 @@ private fun CardBack(
 
 @Composable
 private fun Modifier.landing(celebrate: Boolean): Modifier {
-    val pop = remember { Animatable(if (celebrate) 0f else 1f) }
+    val pop =
+        remember {
+            Animatable(
+                if (celebrate) {
+                    0f
+                } else {
+                    1f
+                },
+            )
+        }
     LaunchedEffect(Unit) {
         pop.animateTo(1f, spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessMediumLow))
     }
