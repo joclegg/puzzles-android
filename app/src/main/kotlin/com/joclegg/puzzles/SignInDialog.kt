@@ -95,7 +95,15 @@ fun SignInDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         modifier = modifier.dialogTestTags(),
-        title = { Text(if (askingForCode) "Check your email" else "Sign in to sync") },
+        title = {
+            val title =
+                if (askingForCode) {
+                    "Check your email"
+                } else {
+                    "Sign in to sync"
+                }
+            Text(title)
+        },
         text = {
             if (askingForCode) {
                 CodeStep(email = email, code = code, failed = failed, onCodeChange = { code = cleanCode(it) })
@@ -158,15 +166,27 @@ private fun ChooseStep(
     onEmailChange: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val googleStyle =
+        if (darkTheme) {
+            GOOGLE_DARK
+        } else {
+            GOOGLE_LIGHT
+        }
+    val microsoftStyle =
+        if (darkTheme) {
+            MICROSOFT_DARK
+        } else {
+            MICROSOFT_LIGHT
+        }
     Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text("Sync your games and settings with the website and other devices.")
         ProviderButton(
-            style = if (darkTheme) GOOGLE_DARK else GOOGLE_LIGHT,
+            style = googleStyle,
             onClick = { onProviderClick(SignInProvider.GOOGLE) },
             modifier = Modifier.testTag("sign_in_google"),
         )
         ProviderButton(
-            style = if (darkTheme) MICROSOFT_DARK else MICROSOFT_LIGHT,
+            style = microsoftStyle,
             onClick = { onProviderClick(SignInProvider.MICROSOFT) },
             modifier = Modifier.testTag("sign_in_microsoft"),
         )
