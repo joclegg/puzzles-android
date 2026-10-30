@@ -13,10 +13,13 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -51,6 +54,8 @@ data class DailyLeft(
     val accent: Color,
     val onClick: () -> Unit,
 )
+
+private val DAILIES_MAX_HEIGHT = 136.dp
 
 val LocalDailiesLeft = staticCompositionLocalOf<suspend () -> List<DailyLeft>> { { emptyList() } }
 
@@ -159,7 +164,10 @@ fun WinDialog(
                         modifier = Modifier.padding(start = 20.dp, top = 16.dp, bottom = 8.dp),
                     )
                     FlowRow(
-                        Modifier.padding(horizontal = 20.dp),
+                        Modifier
+                            .padding(horizontal = 20.dp)
+                            .heightIn(max = DAILIES_MAX_HEIGHT)
+                            .verticalScroll(rememberScrollState()),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
