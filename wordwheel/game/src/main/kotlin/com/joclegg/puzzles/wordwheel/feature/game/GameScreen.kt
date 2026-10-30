@@ -190,20 +190,30 @@ fun GameScreen(
         )
     }
     if (state.solved && state.resultSaved && !state.revealedAll) {
-        WinDialog(
-            title = "Solved!",
-            accent = LocalWheelColors.current.accent,
-            newBest = state.newBest,
-            stats =
-                buildList {
-                    add(WinStat("Time", formatDuration(state.elapsedMs)))
-                    add(WinStat("Bonus words", "${state.bonusCount}"))
-                },
-            modifier = Modifier.dialogTestTags().testTag("solved_dialog"),
-        ) {
-            TextButton(onClick = onHome, modifier = Modifier.testTag("solved_home")) { Text("Home") }
-            TextButton(onClick = onNewPuzzle, modifier = Modifier.testTag("solved_new_puzzle")) { Text("Next puzzle") }
-        }
+        SolvedDialog(state, onNewPuzzle, onHome)
+    }
+}
+
+@Composable
+private fun SolvedDialog(
+    state: GameUiState,
+    onNewPuzzle: () -> Unit,
+    onHome: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    WinDialog(
+        title = "Solved!",
+        accent = LocalWheelColors.current.accent,
+        newBest = state.newBest,
+        stats =
+            buildList {
+                add(WinStat("Time", formatDuration(state.elapsedMs)))
+                add(WinStat("Bonus words", "${state.bonusCount}"))
+            },
+        modifier = modifier.dialogTestTags().testTag("solved_dialog"),
+    ) {
+        TextButton(onClick = onHome, modifier = Modifier.testTag("solved_home")) { Text("Home") }
+        TextButton(onClick = onNewPuzzle, modifier = Modifier.testTag("solved_new_puzzle")) { Text("Next puzzle") }
     }
 }
 
