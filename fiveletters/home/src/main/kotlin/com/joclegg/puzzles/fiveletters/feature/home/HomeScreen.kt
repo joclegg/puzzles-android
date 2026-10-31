@@ -48,7 +48,7 @@ fun HomeRoute(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
     var starting by remember { mutableStateOf(false) }
-    var nytUnavailable by remember { mutableStateOf(false) }
+    var daily2Unavailable by remember { mutableStateOf(false) }
 
     fun launchGame(start: suspend () -> Long?) {
         if (starting) {
@@ -58,7 +58,7 @@ fun HomeRoute(
         scope.launch {
             try {
                 val id = start()
-                nytUnavailable = id == null
+                daily2Unavailable = id == null
                 if (id != null) {
                     onOpenGame(id)
                 }
@@ -70,8 +70,8 @@ fun HomeRoute(
     HomeScreen(
         state = state,
         onDaily = { launchGame { viewModel.openDaily() } },
-        onNytDaily = { launchGame { viewModel.openNytDaily() } },
-        nytUnavailable = nytUnavailable,
+        onDaily2 = { launchGame { viewModel.openDaily2() } },
+        daily2Unavailable = daily2Unavailable,
         onPractice = {
             val practice = state.practice
             if (practice != null) {
@@ -92,8 +92,8 @@ fun HomeRoute(
 fun HomeScreen(
     state: HomeUiState,
     onDaily: () -> Unit,
-    onNytDaily: () -> Unit,
-    nytUnavailable: Boolean,
+    onDaily2: () -> Unit,
+    daily2Unavailable: Boolean,
     onPractice: () -> Unit,
     onNewPractice: () -> Unit,
     onStats: () -> Unit,
@@ -130,18 +130,18 @@ fun HomeScreen(
                 done = state.dailyResult == GameStatus.WON,
             )
             MenuTile(
-                label = "NY Times daily",
+                label = "Daily puzzle 2",
                 accent = accent,
-                onClick = onNytDaily,
-                modifier = Modifier.fillMaxWidth().testTag("nyt_daily"),
-                detail = state.nytResult.label(),
+                onClick = onDaily2,
+                modifier = Modifier.fillMaxWidth().testTag("daily2"),
+                detail = state.daily2Result.label(),
                 icon = MenuIcons.News,
-                active = state.nytResult == GameStatus.IN_PROGRESS,
-                done = state.nytResult == GameStatus.WON,
+                active = state.daily2Result == GameStatus.IN_PROGRESS,
+                done = state.daily2Result == GameStatus.WON,
             )
-            if (nytUnavailable) {
+            if (daily2Unavailable) {
                 Text(
-                    "Couldn't reach the New York Times. Check your connection and try again.",
+                    "Couldn't load Daily puzzle 2. Check your connection and try again.",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.padding(horizontal = 4.dp),

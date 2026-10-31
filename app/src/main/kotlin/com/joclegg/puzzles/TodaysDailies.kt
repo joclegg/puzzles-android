@@ -190,7 +190,7 @@ fun dailyResults(
         }
     }
 
-private val DAILY_ID = Regex("^(?:daily|nyt)_(\\d{4}-\\d{2}-\\d{2})(?:_.*)?$")
+private val DAILY_ID = Regex("^(?:daily2?|${WordRef.LEGACY_DAILY2_PREFIX.removeSuffix("_")})_(\\d{4}-\\d{2}-\\d{2})(?:_.*)?$")
 
 private fun result(
     id: String,
@@ -288,7 +288,6 @@ private suspend fun fiveLetters(
         app.fiveLetters.games.history
             .first()
     val daily = WordRef.dailyId(date)
-    val nyt = WordRef.nytId(date)
     val finished = history.any { it.ref.id == daily && (it.status == FiveLettersStatus.WON || it.status == FiveLettersStatus.LOST) }
     return listOf(
         GameDaily(
@@ -314,20 +313,20 @@ private suspend fun fiveLetters(
         ) { openFiveLettersGame(it) },
         GameDaily(
             "FIVE_LETTERS",
-            "NY Times",
-            "daily_play_nyt",
-            history.any { it.ref.id == nyt && it.status == FiveLettersStatus.WON },
+            "Daily puzzle 2",
+            "daily_play_daily2",
+            history.any { it.ref.daily2Date == date && it.status == FiveLettersStatus.WON },
             false,
             FiveLettersRoutes.HOME,
-            "NY Times daily",
+            "Daily puzzle 2",
             {
                 app.fiveLetters.games.history
                     .first()
-                    .find { it.ref.id == nyt && it.status != FiveLettersStatus.ABANDONED }
-                    ?.id ?: app.fiveLetters.nytWords.word(date)?.let { answer ->
+                    .find { it.ref.daily2Date == date && it.status != FiveLettersStatus.ABANDONED }
+                    ?.id ?: app.fiveLetters.daily2Words.word(date)?.let { answer ->
                     app.fiveLetters.games
                         .start(
-                            WordRef.nyt(date, answer),
+                            WordRef.daily2(date, answer),
                             app.fiveLetters.settings.settings
                                 .first()
                                 .hardMode,

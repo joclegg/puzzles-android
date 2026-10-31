@@ -6,30 +6,30 @@ import org.junit.Assert.assertNull
 import org.junit.Test
 import java.time.LocalDate
 
-class NytWordSourceTest {
+class Daily2WordSourceTest {
     @Test
-    fun `given the NYT answer when the daily word is fetched then its solution is used in capitals`() =
+    fun `given the Daily puzzle 2 word when it is fetched then it is used in capitals`() =
         runTest {
             // Arrange
             var requested = ""
             val source =
-                NytWordSource { url ->
+                Daily2WordSource { url ->
                     requested = url
-                    """{"id":921,"solution":"geeky","print_date":"2026-10-26"}"""
+                    """{"date":"2026-10-26","word":"geeky"}"""
                 }
 
             // Act
             val word = source.word(LocalDate.of(2026, 10, 26))
 
             // Assert
-            assertEquals("GEEKY" to "https://www.nytimes.com/svc/wordle/v2/2026-10-26.json", word to requested)
+            assertEquals("GEEKY" to "https://puzzles-daily.joclegg.dev/word/2026-10-26", word to requested)
         }
 
     @Test
     fun `given no connection when the daily word is fetched then there is no word`() =
         runTest {
             // Arrange
-            val source = NytWordSource { error("offline") }
+            val source = Daily2WordSource { error("offline") }
 
             // Act
             val word = source.word(LocalDate.of(2026, 10, 26))
@@ -41,9 +41,18 @@ class NytWordSourceTest {
     @Test
     fun `given an answer that is not five letters when it is read then it is ignored`() {
         // Act
-        val word = NytWordSource.solutionOf("""{"solution":"toolong"}""")
+        val word = Daily2WordSource.wordOf("""{"date":"2026-10-26","word":"toolong"}""")
 
         // Assert
         assertNull(word)
+    }
+
+    @Test
+    fun `given a game saved under the legacy prefix when it is read then it is Daily puzzle 2 for that date`() {
+        // Act
+        val ref = WordRef("${WordRef.LEGACY_DAILY2_PREFIX}2026-10-26", "GEEKY")
+
+        // Assert
+        assertEquals(LocalDate.of(2026, 10, 26) to ref.slot, ref.daily2Date to ref.id)
     }
 }

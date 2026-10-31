@@ -20,9 +20,9 @@ data class HomeUiState(
     val inProgress: List<SavedGame> = emptyList(),
     val dailyNumber: Int = 0,
     val dailyResult: GameStatus? = null,
-    val nytResult: GameStatus? = null,
+    val daily2Result: GameStatus? = null,
 ) {
-    val practice: SavedGame? get() = inProgress.find { !it.ref.isDaily && !it.ref.isNyt }
+    val practice: SavedGame? get() = inProgress.find { !it.ref.isDaily && !it.ref.isDaily2 }
 }
 
 class HomeViewModel(
@@ -31,17 +31,16 @@ class HomeViewModel(
     private val words: suspend () -> Words,
     private val newSeed: () -> Long,
     private val today: () -> LocalDate,
-    private val nytWords: DailyWordSource,
+    private val daily2Words: DailyWordSource,
 ) : ViewModel() {
     val uiState: StateFlow<HomeUiState> =
         combine(games.inProgress, games.history) { inProgress, history ->
             val dailyId = WordRef.dailyId(today())
-            val nytId = WordRef.nytId(today())
             HomeUiState(
                 inProgress = inProgress,
                 dailyNumber = Words.dayNumber(today()),
                 dailyResult = history.find { it.ref.id == dailyId && it.status != GameStatus.ABANDONED }?.status,
-                nytResult = history.find { it.ref.id == nytId && it.status != GameStatus.ABANDONED }?.status,
+                daily2Result = history.find { it.ref.daily2Date == today() && it.status != GameStatus.ABANDONED }?.status,
             )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), HomeUiState())
 
@@ -52,15 +51,14 @@ class HomeViewModel(
         return existing?.id ?: games.start(WordRef.daily(words(), date), settings.settings.first().hardMode).id
     }
 
-    suspend fun openNytDaily(): Long? {
+    suspend fun openDaily2(): Long? {
         val date = today()
-        val nytId = WordRef.nytId(date)
-        val existing = games.history.first().find { it.ref.id == nytId && it.status != GameStatus.ABANDONED }
+        val existing = games.history.first().find { it.ref.daily2Date == date && it.status != GameStatus.ABANDONED }
         if (existing != null) {
             return existing.id
         }
-        val answer = nytWords.word(date) ?: return null
-        return games.start(WordRef.nyt(date, answer), settings.settings.first().hardMode).id
+        val answer = daily2Words.word(date) ?: return null
+        return games.start(WordRef.daily2(date, answer), settings.settings.first().hardMode).id
     }
 
     suspend fun startPractice(): Long = games.start(WordRef.practice(words(), newSeed()), settings.settings.first().hardMode).id
