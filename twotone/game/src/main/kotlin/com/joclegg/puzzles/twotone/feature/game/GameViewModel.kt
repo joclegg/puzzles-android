@@ -10,6 +10,7 @@ import com.joclegg.puzzles.twotone.core.data.Settings
 import com.joclegg.puzzles.twotone.core.data.SettingsRepository
 import com.joclegg.puzzles.twotone.core.ui.BoardUi
 import com.joclegg.puzzles.twotone.core.ui.message
+import com.joclegg.puzzles.twotone.core.ui.sizeLabel
 import com.joclegg.puzzles.twotone.core.ui.title
 import com.joclegg.puzzles.twotone.core.ui.toBoardUi
 import com.joclegg.puzzles.twotone.engine.GameState
@@ -28,6 +29,7 @@ import kotlinx.coroutines.withContext
 
 data class GameUiState(
     val title: String,
+    val levelLabel: String,
     val board: BoardUi,
     val elapsedMs: Long,
     val progressPercent: Int,
@@ -255,6 +257,7 @@ class GameViewModel(
                 allowReveal = display.allowReveal,
                 revealed = revealed,
                 title = ref.title(),
+                levelLabel = sizeLabel(ref.size),
                 board = current.toBoardUi(display.markBrokenRules),
                 elapsedMs = timer.elapsedMs(monotonicNowMs()),
                 progressPercent = current.progressPercent,

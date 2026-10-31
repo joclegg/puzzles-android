@@ -10,6 +10,7 @@ import com.joclegg.puzzles.sightlines.core.data.Settings
 import com.joclegg.puzzles.sightlines.core.data.SettingsRepository
 import com.joclegg.puzzles.sightlines.core.ui.BoardUi
 import com.joclegg.puzzles.sightlines.core.ui.message
+import com.joclegg.puzzles.sightlines.core.ui.sizeLabel
 import com.joclegg.puzzles.sightlines.core.ui.title
 import com.joclegg.puzzles.sightlines.core.ui.toBoardUi
 import com.joclegg.puzzles.sightlines.engine.Dot
@@ -28,6 +29,7 @@ import kotlinx.coroutines.withContext
 
 data class GameUiState(
     val title: String,
+    val levelLabel: String,
     val board: BoardUi,
     val elapsedMs: Long,
     val progressPercent: Int,
@@ -255,6 +257,7 @@ class GameViewModel(
                 allowReveal = display.allowReveal,
                 revealed = revealed,
                 title = ref.title(),
+                levelLabel = sizeLabel(ref.size),
                 board = current.toBoardUi(display.markBrokenRules, display.showSeenCount),
                 elapsedMs = timer.elapsedMs(monotonicNowMs()),
                 progressPercent = current.progressPercent,

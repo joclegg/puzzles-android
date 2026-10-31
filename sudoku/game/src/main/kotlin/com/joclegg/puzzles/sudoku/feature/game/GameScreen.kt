@@ -45,8 +45,10 @@ import com.joclegg.puzzles.sudoku.core.ui.TourStep
 import com.joclegg.puzzles.sudoku.core.ui.dialogTestTags
 import com.joclegg.puzzles.sudoku.core.ui.formatDuration
 import com.joclegg.puzzles.sudoku.core.ui.gameTitle
+import com.joclegg.puzzles.sudoku.core.ui.label
 import com.joclegg.puzzles.sudoku.core.ui.rememberTourState
 import com.joclegg.puzzles.sudoku.core.ui.tourTarget
+import com.joclegg.puzzles.sudoku.engine.Difficulty
 import com.joclegg.puzzles.sudoku.engine.InputMode
 
 @Composable
@@ -54,6 +56,7 @@ fun GameRoute(
     viewModel: GameViewModel,
     onSettings: (GameMode) -> Unit,
     onHome: () -> Unit,
+    onNewPuzzle: (GameMode, Difficulty) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -80,18 +83,26 @@ fun GameRoute(
             modifier = modifier,
         )
     }
-    solved?.let { SolvedScreen(it, onDismiss = onHome) }
+    solved?.let { SolvedScreen(it, onDismiss = onHome, onNewPuzzle = onNewPuzzle) }
 }
 
 @Composable
 private fun SolvedScreen(
     state: GameUiState,
     onDismiss: () -> Unit,
+    onNewPuzzle: (GameMode, Difficulty) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     WinDialog(
         title = "Solved!",
         accent = LocalBoardColors.current.accent,
+        dailyGroup = "SUDOKU_${state.mode.name}",
+        newLabel = state.difficulty?.label(),
+        newTag = "solved_new_puzzle",
+        onNew =
+            state.difficulty?.takeUnless { state.custom }?.let { level ->
+                { onNewPuzzle(state.mode, level) }
+            },
         newBest = state.newBest,
         stats =
             buildList {

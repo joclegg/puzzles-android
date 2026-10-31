@@ -2,15 +2,15 @@ package com.joclegg.puzzles.sudoku.feature.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.joclegg.puzzles.sudoku.core.data.DailyIds
 import com.joclegg.puzzles.sudoku.core.data.GameMode
 import com.joclegg.puzzles.sudoku.core.data.GameRepository
-import com.joclegg.puzzles.sudoku.core.data.Medal
+import com.joclegg.puzzles.sudoku.core.data.GameStatus
 import com.joclegg.puzzles.sudoku.core.data.PuzzleBank
 import com.joclegg.puzzles.sudoku.core.data.PuzzleRef
 import com.joclegg.puzzles.sudoku.core.data.PuzzleSupply
 import com.joclegg.puzzles.sudoku.core.data.SavedGame
 import com.joclegg.puzzles.sudoku.core.data.SettingsRepository
-import com.joclegg.puzzles.sudoku.core.data.dailyDays
 import com.joclegg.puzzles.sudoku.core.data.openDaily
 import com.joclegg.puzzles.sudoku.engine.Difficulty
 import kotlinx.coroutines.Dispatchers
@@ -22,13 +22,17 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
-import java.time.ZoneId
 
 data class HomeUiState(
     val inProgress: List<SavedGame> = emptyList(),
-    val dailyLevels: Map<GameMode, Difficulty> = emptyMap(),
-    val todaysMedal: Medal = Medal.NONE,
+    val dailyDone: Set<String> = emptySet(),
+    val today: LocalDate = LocalDate.now(),
 ) {
+    fun dailyDone(
+        mode: GameMode,
+        difficulty: Difficulty,
+    ) = DailyIds.of(mode, difficulty, today) in dailyDone
+
     fun savedFor(
         mode: GameMode,
         difficulty: Difficulty,
@@ -46,8 +50,8 @@ class HomeViewModel(
         combine(games.inProgress, settings.settings, games.history) { inProgress, prefs, history ->
             HomeUiState(
                 inProgress = inProgress,
-                dailyLevels = GameMode.entries.associateWith { bank.dailyLevel(it, today()) },
-                todaysMedal = dailyDays(history, ZoneId.systemDefault())[today()]?.medal ?: Medal.NONE,
+                dailyDone = history.filter { it.status == GameStatus.COMPLETED }.map { it.ref.id }.toSet(),
+                today = today(),
             )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), HomeUiState())
 
@@ -59,7 +63,10 @@ class HomeViewModel(
         return games.start(ref, settings.settings.first().mistakeCheckFor(mode)).id
     }
 
-    suspend fun startDaily(mode: GameMode): Long = games.openDaily(bank, mode, today(), settings.settings.first().mistakeCheckFor(mode))
+    suspend fun startDaily(
+        mode: GameMode,
+        difficulty: Difficulty,
+    ): Long = games.openDaily(bank, mode, difficulty, today(), settings.settings.first().mistakeCheckFor(mode))
 
     private companion object {
         const val STOP_TIMEOUT_MS = 5_000L

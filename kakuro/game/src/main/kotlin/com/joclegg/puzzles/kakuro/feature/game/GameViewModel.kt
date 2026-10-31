@@ -15,6 +15,7 @@ import com.joclegg.puzzles.kakuro.core.data.SavedGame
 import com.joclegg.puzzles.kakuro.core.data.Settings
 import com.joclegg.puzzles.kakuro.core.data.SettingsRepository
 import com.joclegg.puzzles.kakuro.core.ui.BoardUi
+import com.joclegg.puzzles.kakuro.core.ui.sizeLabel
 import com.joclegg.puzzles.kakuro.core.ui.title
 import com.joclegg.puzzles.kakuro.core.ui.toBoardUi
 import com.joclegg.puzzles.kakuro.engine.Combinations
@@ -36,6 +37,7 @@ import kotlinx.coroutines.withContext
 
 data class GameUiState(
     val title: String,
+    val levelLabel: String,
     val board: BoardUi,
     val elapsedMs: Long,
     val showTimer: Boolean,
@@ -266,6 +268,7 @@ class GameViewModel(
                 revealed = revealed,
                 hintMessage = hintMessage,
                 title = ref.title(),
+                levelLabel = sizeLabel(ref.size),
                 board =
                     if (display.highlightRuns) {
                         board

@@ -64,27 +64,14 @@ class PuzzleBank(
         return get(mode, difficulty, unplayed.randomOrNull(random) ?: random.nextInt(count))
     }
 
-    fun dailyLevel(
-        mode: GameMode,
-        date: LocalDate,
-    ): Difficulty = dailyRandom(mode, date).nextLevel(mode)
-
     fun daily(
         mode: GameMode,
+        difficulty: Difficulty,
         date: LocalDate,
     ): PuzzleRef {
-        val random = dailyRandom(mode, date)
-        val difficulty = random.nextLevel(mode)
-        val ref = get(mode, difficulty, random.nextInt(size(mode, difficulty)))
-        return ref.copy(id = DailyIds.of(mode, date))
+        val ref = get(mode, difficulty, dailyIndex(mode, difficulty, date, size(mode, difficulty)))
+        return ref.copy(id = DailyIds.of(mode, difficulty, date))
     }
-
-    private fun dailyRandom(
-        mode: GameMode,
-        date: LocalDate,
-    ) = Random(date.toEpochDay() * DAILY_SEED_STRIDE + mode.ordinal)
-
-    private fun Random.nextLevel(mode: GameMode) = mode.levels[nextInt(mode.levels.size)]
 
     private fun fileName(
         mode: GameMode,
@@ -93,3 +80,14 @@ class PuzzleBank(
 }
 
 private const val DAILY_SEED_STRIDE = 31L
+private const val DAILY_MODE_STRIDE = 8L
+
+internal fun dailyIndex(
+    mode: GameMode,
+    difficulty: Difficulty,
+    date: LocalDate,
+    size: Int,
+): Int {
+    val seed = date.toEpochDay() * DAILY_SEED_STRIDE + mode.ordinal * DAILY_MODE_STRIDE + mode.levels.indexOf(difficulty)
+    return Random(seed).nextInt(size)
+}

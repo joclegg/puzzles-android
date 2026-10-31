@@ -30,45 +30,27 @@ class PuzzleBankTest(
     }
 
     @Test
-    fun `given a date when the daily is picked twice then it is the same puzzle, named by mode and date`() {
-        // Act
-        val first = bank.daily(mode, date)
-
-        // Assert
-        assertEquals(first to "daily_${mode.name.lowercase()}:2026-10-24", bank.daily(mode, date) to first.id)
-    }
-
-    @Test
-    fun `given a year of dates when daily levels are picked then every level of the mode comes up`() {
+    fun `given a date when a level's daily is picked twice then it is the same puzzle, named by mode, level and date`() {
         // Arrange
-        val start = LocalDate.of(2026, 1, 1)
+        val level = mode.levels.first()
 
         // Act
-        val levels = (0L until 365L).map { bank.dailyLevel(mode, start.plusDays(it)) }.toSet()
+        val first = bank.daily(mode, level, date)
 
         // Assert
-        assertEquals(mode.levels.toSet(), levels)
+        assertEquals(
+            first to "daily_${mode.name.lowercase()}_${level.name.lowercase()}:2026-10-24",
+            bank.daily(mode, level, date) to first.id,
+        )
     }
 
     @Test
-    fun `given a date when the daily is picked then its level is the day's level`() {
+    fun `given a date when every level's daily is picked then each has its own level and id`() {
         // Act
-        val daily = bank.daily(mode, date)
+        val dailies = mode.levels.map { bank.daily(mode, it, date) }
 
         // Assert
-        assertEquals(bank.dailyLevel(mode, date), daily.difficulty)
-    }
-
-    @Test
-    fun `given a date when both modes' dailies are picked then they are different games`() {
-        // Arrange
-        val other = GameMode.entries.first { it != mode }
-
-        // Act
-        val dailies = bank.daily(mode, date) to bank.daily(other, date)
-
-        // Assert
-        assertNotEquals(dailies.first.id, dailies.second.id)
+        assertEquals(mode.levels to mode.levels.size, dailies.map { it.difficulty } to dailies.map { it.id }.toSet().size)
     }
 
     companion object {

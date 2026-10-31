@@ -67,6 +67,11 @@ spotless {
             shortCode = "compose:compositionlocal-allowlist"
             path = "core/ui/src/main/kotlin/com/joclegg/puzzles/core/ui/WinDialog.kt"
         }
+        suppressLintsFor {
+            step = "ktlint"
+            shortCode = "compose:compositionlocal-allowlist"
+            path = "core/ui/src/main/kotlin/com/joclegg/puzzles/core/ui/DailyCalendar.kt"
+        }
     }
     kotlinGradle {
         target("**/*.gradle.kts")

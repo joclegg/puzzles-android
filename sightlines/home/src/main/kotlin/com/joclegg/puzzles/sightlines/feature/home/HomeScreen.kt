@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joclegg.puzzles.core.ui.ContinueCard
+import com.joclegg.puzzles.core.ui.DailyCalendarButton
 import com.joclegg.puzzles.core.ui.DailyTile
 import com.joclegg.puzzles.core.ui.GameHero
 import com.joclegg.puzzles.core.ui.LevelMeter
@@ -106,6 +107,7 @@ fun HomeScreen(
         Row(verticalAlignment = Alignment.CenterVertically) {
             BackButton(onBack)
             Text("Sightlines", style = MaterialTheme.typography.headlineLarge, modifier = Modifier.weight(1f))
+            DailyCalendarButton("SIGHTLINES")
             IconButton(onClick = onStats, modifier = Modifier.testTag("stats")) {
                 Icon(MenuIcons.Stats, contentDescription = "Stats")
             }

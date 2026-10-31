@@ -256,6 +256,10 @@ private fun SolvedDialog(
     WinDialog(
         title = "Solved!",
         accent = LocalKakuroColors.current.accent,
+        dailyGroup = "KAKURO",
+        newLabel = state.levelLabel,
+        newTag = "solved_new_puzzle",
+        onNew = onNewPuzzle,
         newBest = state.newBest,
         stats =
             buildList {
@@ -264,7 +268,6 @@ private fun SolvedDialog(
         modifier = modifier.dialogTestTags().testTag("solved_dialog"),
     ) {
         TextButton(onClick = onHome, modifier = Modifier.testTag("solved_home")) { Text("Home") }
-        TextButton(onClick = onNewPuzzle, modifier = Modifier.testTag("solved_new_puzzle")) { Text("New puzzle") }
     }
 }
 

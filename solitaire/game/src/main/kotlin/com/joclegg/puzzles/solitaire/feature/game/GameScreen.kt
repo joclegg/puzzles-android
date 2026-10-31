@@ -226,6 +226,10 @@ private fun WonDialog(
     WinDialog(
         title = "You won!",
         accent = LocalTableColors.current.accent,
+        dailyGroup = "SOLITAIRE",
+        newLabel = "Deal",
+        newTag = "won_new_deal",
+        onNew = onNewDeal,
         newBest = state.newBest,
         stats =
             buildList {
@@ -235,7 +239,6 @@ private fun WonDialog(
         modifier = modifier.dialogTestTags().testTag("won_dialog"),
     ) {
         TextButton(onClick = onHome, modifier = Modifier.testTag("won_home")) { Text("Home") }
-        TextButton(onClick = onNewDeal, modifier = Modifier.testTag("won_new_deal")) { Text("New deal") }
     }
 }
 
