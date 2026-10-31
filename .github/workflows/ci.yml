@@ -15,8 +15,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: true
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -42,8 +40,6 @@ jobs:
       API_LEVEL: 35
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: true
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -58,6 +54,7 @@ jobs:
         run: |
           curl -Ls "https://get.maestro.mobile.dev" | bash
           echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+      - run: e2e/fetch-banks.sh
       - run: ./gradlew :app:assembleDebug
       - name: Cache the emulator snapshot
         id: avd-cache

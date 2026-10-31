@@ -70,4 +70,15 @@ class PuzzlesApplication : Application() {
 }
 
 val Context.banks: BankStore
-    get() = BankStore(File(filesDir, "puzzles-data"), { path -> assets.open(path).use { it.readBytes() } })
+    get() = BankStore(File(filesDir, "puzzles-data"))
+
+fun Context.installSeedBanks() {
+    val manifest = runCatching { assets.open(SEED_MANIFEST) }.getOrNull()
+    if (manifest != null && !banks.isReady) {
+        banks.install(manifest.use { String(it.readBytes()) }) { path ->
+            assets.open("puzzles-data/$path").use { it.readBytes() }
+        }
+    }
+}
+
+private const val SEED_MANIFEST = "puzzles-data/manifest.json"

@@ -4,7 +4,7 @@ plugins {
 
 tasks.register<JavaExec>("generateBank") {
     group = "sudoku"
-    description = "Regenerates the puzzle bank bundled in the app's assets."
+    description = "Regenerates the puzzle bank."
     classpath = sourceSets.main.get().runtimeClasspath
     mainClass.set("com.joclegg.puzzles.sudoku.engine.BankGeneratorKt")
     workingDir = rootDir

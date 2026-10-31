@@ -88,6 +88,7 @@ for serial in "${DEVICES[@]}"; do
   adb -s "$serial" shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null
 done
 
+e2e/fetch-banks.sh
 ./gradlew -q :app:assembleDebug
 INSTALLS=()
 for serial in "${DEVICES[@]}"; do

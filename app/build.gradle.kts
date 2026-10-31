@@ -7,8 +7,8 @@ val releaseKeystore = providers.environmentVariable("PUZZLES_KEYSTORE").orNull
 
 android {
     sourceSets {
-        getByName("main") {
-            assets.directories.add("../puzzles-data")
+        getByName("debug") {
+            assets.directories.add("../e2e/banks")
         }
     }
     namespace = "com.joclegg.puzzles"

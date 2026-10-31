@@ -24,8 +24,10 @@ jobs:
       RESULTS_BRANCH: generate/slide-out-shard-${{ matrix.shard }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          submodules: true
+          repository: joclegg/puzzles-data
+          path: puzzles-data
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -91,8 +93,10 @@ jobs:
     if: always()
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          submodules: true
+          repository: joclegg/puzzles-data
+          path: puzzles-data
       - name: Combine the shards with the current banks
         run: |
           mkdir -p merged

@@ -4,7 +4,7 @@ plugins {
 
 tasks.register<JavaExec>("generateBank") {
     group = "slideout"
-    description = "Regenerates the Slide Out puzzles bundled in the app's assets."
+    description = "Regenerates the Slide Out puzzles bank."
     classpath = sourceSets.main.get().runtimeClasspath
     mainClass.set("com.joclegg.puzzles.slideout.engine.BankGeneratorKt")
     workingDir = rootDir
