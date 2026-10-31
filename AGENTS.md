@@ -97,6 +97,7 @@ Rules marked (lint) are enforced by `spotlessCheck`, Android Lint or the build.
 - MUST name callback parameters `on<Action>` in the present tense, e.g. `onCellClick`. (lint)
 - MUST wrap callbacks used inside effects in `rememberUpdatedState`. (lint)
 - MUST NOT pass mutable state or ViewModels into stateless `<X>Screen` composables. (lint)
+- MUST give each game a daily calendar through `DailyCalendarButton` in its Home header (`core:ui`), coloured by today's medal, and `calendarRules` in `app`. `medalFor` is the only medal rule: bronze for one daily on the day, silver for more than one, gold for all. Five Letters starts at silver (two dailies), and Solitaire has one daily, so it is gold or nothing.
 - MUST give every screen except the launcher a back arrow (`BackButton`) at the top left, including each game's Home.
 - The app theme (System / Light / Dark) lives in sudoku's Settings and applies to the whole app. Each other game's routes file wraps its screens in that game's theme (`SolitaireTheme`, `TwoToneTheme`, `SightlinesTheme`, `FiveLettersTheme`, `KakuroTheme`, `SlideOutTheme`, `WordWheelTheme`).
 
@@ -106,7 +107,6 @@ Rules marked (lint) are enforced by `spotlessCheck`, Android Lint or the build.
 - MUST show given cells with a grey background. MUST draw given and entered digits in the same text colour.
 - MUST draw every highlight in the blue palette: selected cell, same digit, peers, active digit, matching notes.
 - MUST use red only for errors (wrong digits, wrong cages and clashing entries) and the trial mark (`trialMark`), a red box the player puts on a cell with the Mark tool.
-- MUST use gold and silver (`medalGold`, `medalSilver`) only for daily medals.
 - MUST define a dark-mode value for every board colour token.
 - MUST NOT add a hint, auto-solve or cage-combination helper.
 - MUST put every player preference in Settings, per mode (`ModeSettings`, `Toggle`) unless it only makes sense shared (input mode). Default to on unless there's a reason (grey starting cells are off in killer), and apply changes live.

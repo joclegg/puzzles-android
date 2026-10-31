@@ -16,6 +16,7 @@ name: Custom entry - clashes, multiple solutions, and a real puzzle
 - scrollUntilVisible:
     element:
       id: "enter_puzzle"
+    centerElement: true
 - tapOn:
     id: "enter_puzzle"
 - waitForAnimationToEnd:
@@ -53,6 +54,7 @@ name: Custom entry - clashes, multiple solutions, and a real puzzle
 - scrollUntilVisible:
     element:
       id: "enter_puzzle"
+    centerElement: true
 - tapOn:
     id: "enter_puzzle"
 - waitForAnimationToEnd:

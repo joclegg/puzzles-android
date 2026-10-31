@@ -26,6 +26,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joclegg.puzzles.core.ui.ContinueCard
+import com.joclegg.puzzles.core.ui.DailyCalendarButton
 import com.joclegg.puzzles.core.ui.GameHero
 import com.joclegg.puzzles.core.ui.MenuIcons
 import com.joclegg.puzzles.core.ui.MenuSection
@@ -107,6 +108,7 @@ fun HomeScreen(
         Row(verticalAlignment = Alignment.CenterVertically) {
             BackButton(onBack)
             Text("Solitaire", style = MaterialTheme.typography.headlineLarge, modifier = Modifier.weight(1f))
+            DailyCalendarButton("SOLITAIRE")
             IconButton(onClick = onStats, modifier = Modifier.testTag("stats")) {
                 Icon(MenuIcons.Stats, contentDescription = "Stats")
             }

@@ -9,6 +9,7 @@ import com.joclegg.puzzles.wordwheel.core.data.SavedGame
 import com.joclegg.puzzles.wordwheel.core.data.Settings
 import com.joclegg.puzzles.wordwheel.core.data.SettingsRepository
 import com.joclegg.puzzles.wordwheel.core.ui.GridUi
+import com.joclegg.puzzles.wordwheel.core.ui.label
 import com.joclegg.puzzles.wordwheel.core.ui.message
 import com.joclegg.puzzles.wordwheel.core.ui.title
 import com.joclegg.puzzles.wordwheel.engine.GameState
@@ -25,6 +26,7 @@ import kotlin.random.Random
 
 data class GameUiState(
     val title: String,
+    val levelLabel: String,
     val grid: GridUi,
     val wheel: String,
     val chosen: List<Int>,
@@ -206,6 +208,7 @@ class GameViewModel(
                 allowReveal = display.allowReveal,
                 revealedAll = revealedAll,
                 title = ref.title(),
+                levelLabel = ref.level.label(),
                 grid = GridUi(ref.puzzle.crossword, foundCells, current.revealed - foundCells),
                 wheel = current.wheel,
                 chosen = chosen,

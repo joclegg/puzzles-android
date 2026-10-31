@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.joclegg.puzzles.core.ui.DailyCalendarButton
 import com.joclegg.puzzles.core.ui.GameHero
 import com.joclegg.puzzles.core.ui.MenuIcons
 import com.joclegg.puzzles.core.ui.MenuSection
@@ -108,6 +109,7 @@ fun HomeScreen(
         Row(verticalAlignment = Alignment.CenterVertically) {
             BackButton(onBack)
             Text("Five Letters", style = MaterialTheme.typography.headlineLarge, modifier = Modifier.weight(1f))
+            DailyCalendarButton("FIVE_LETTERS")
             IconButton(onClick = onStats, modifier = Modifier.testTag("stats")) {
                 Icon(MenuIcons.Stats, contentDescription = "Stats")
             }

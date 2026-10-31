@@ -2,12 +2,9 @@ package com.joclegg.puzzles.sudoku.feature.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -33,8 +30,9 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joclegg.puzzles.core.ui.ContinueCard
+import com.joclegg.puzzles.core.ui.DailyCalendarButton
+import com.joclegg.puzzles.core.ui.DailyTile
 import com.joclegg.puzzles.core.ui.GameHero
-import com.joclegg.puzzles.core.ui.IconTile
 import com.joclegg.puzzles.core.ui.LevelMeter
 import com.joclegg.puzzles.core.ui.MenuIcons
 import com.joclegg.puzzles.core.ui.MenuSection
@@ -42,13 +40,10 @@ import com.joclegg.puzzles.core.ui.MenuTile
 import com.joclegg.puzzles.core.ui.TileGrid
 import com.joclegg.puzzles.core.ui.todayLabel
 import com.joclegg.puzzles.sudoku.core.data.GameMode
-import com.joclegg.puzzles.sudoku.core.data.Medal
 import com.joclegg.puzzles.sudoku.core.data.SavedGame
 import com.joclegg.puzzles.sudoku.core.data.levels
 import com.joclegg.puzzles.sudoku.core.ui.BackButton
 import com.joclegg.puzzles.sudoku.core.ui.LocalBoardColors
-import com.joclegg.puzzles.sudoku.core.ui.MedalBadge
-import com.joclegg.puzzles.sudoku.core.ui.MedalColour
 import com.joclegg.puzzles.sudoku.core.ui.SudokuGameIcon
 import com.joclegg.puzzles.sudoku.core.ui.SudokuIcons
 import com.joclegg.puzzles.sudoku.core.ui.dialogTestTags
@@ -62,7 +57,6 @@ import kotlinx.coroutines.launch
 fun HomeRoute(
     viewModel: HomeViewModel,
     onOpenGame: (Long) -> Unit,
-    onDailyCalendar: () -> Unit,
     onEnterPuzzle: (GameMode) -> Unit,
     onStats: () -> Unit,
     onHistory: () -> Unit,
@@ -93,8 +87,7 @@ fun HomeRoute(
         initialMode = initialMode,
         onResume = onOpenGame,
         onStart = { mode, level -> launchGame { viewModel.start(mode, level) } },
-        onDaily = { mode -> launchGame { viewModel.startDaily(mode) } },
-        onDailyCalendar = onDailyCalendar,
+        onDaily = { mode, level -> launchGame { viewModel.startDaily(mode, level) } },
         onEnterPuzzle = onEnterPuzzle,
         onStats = onStats,
         onHistory = onHistory,
@@ -109,8 +102,7 @@ fun HomeScreen(
     state: HomeUiState,
     onResume: (Long) -> Unit,
     onStart: (GameMode, Difficulty) -> Unit,
-    onDaily: (GameMode) -> Unit,
-    onDailyCalendar: () -> Unit,
+    onDaily: (GameMode, Difficulty) -> Unit,
     onEnterPuzzle: (GameMode) -> Unit,
     onStats: () -> Unit,
     onHistory: () -> Unit,
@@ -129,6 +121,7 @@ fun HomeScreen(
         Row(verticalAlignment = Alignment.CenterVertically) {
             BackButton(onBack)
             Text("Sudoku", style = MaterialTheme.typography.headlineLarge, modifier = Modifier.weight(1f))
+            DailyCalendarButton("SUDOKU")
             IconButton(onClick = onStats, modifier = Modifier.testTag("stats")) {
                 Icon(MenuIcons.Stats, contentDescription = "Best times")
             }
@@ -167,27 +160,14 @@ fun HomeScreen(
             }
         }
         MenuSection("Today", aside = todayLabel()) {
-            Row(Modifier.fillMaxWidth().height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                MenuTile(
-                    label = state.dailyLevels[mode]?.let { "Daily puzzle · ${it.label()}" } ?: "Daily puzzle",
+            TileGrid(count = mode.levels.size, columns = 3) { index, tileModifier ->
+                val level = mode.levels[index]
+                DailyTile(
+                    label = level.label(),
+                    done = state.dailyDone(mode, level),
                     accent = accent,
-                    onClick = { onDaily(mode) },
-                    modifier = Modifier.weight(1f).fillMaxHeight().testTag("daily"),
-                    icon = MenuIcons.Today,
-                    active = state.todaysMedal != Medal.NONE,
-                    trailing =
-                        if (state.todaysMedal == Medal.NONE) {
-                            null
-                        } else {
-                            { TodaysMedal(state.todaysMedal) }
-                        },
-                )
-                IconTile(
-                    icon = MenuIcons.Calendar,
-                    contentDescription = "Daily calendar",
-                    accent = accent,
-                    onClick = onDailyCalendar,
-                    modifier = Modifier.fillMaxHeight().testTag("daily_calendar"),
+                    onClick = { onDaily(mode, level) },
+                    modifier = tileModifier.testTag("daily_${level.name.lowercase()}"),
                 )
             }
         }
@@ -245,18 +225,6 @@ fun HomeScreen(
                 ) { Text("New game") }
             },
         )
-    }
-}
-
-@Composable
-private fun TodaysMedal(
-    medal: Medal,
-    modifier: Modifier = Modifier,
-) {
-    if (medal == Medal.GOLD) {
-        MedalBadge(MedalColour.GOLD, modifier.testTag("todays_medal_gold"), size = 24.dp)
-    } else {
-        MedalBadge(MedalColour.SILVER, modifier.testTag("todays_medal_silver"), size = 24.dp)
     }
 }
 

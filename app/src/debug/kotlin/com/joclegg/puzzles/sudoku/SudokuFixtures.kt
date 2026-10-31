@@ -54,7 +54,7 @@ object SudokuFixtures {
                     name,
                     GameMode.CLASSIC,
                     solution.blank(2),
-                ).copy(id = DailyIds.of(GameMode.CLASSIC, LocalDate.now()))
+                ).copy(id = DailyIds.of(GameMode.CLASSIC, Difficulty.EASY, LocalDate.now()))
             }
 
             else -> {

@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -20,7 +21,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.joclegg.puzzles.core.sync.SignInProvider
+import com.joclegg.puzzles.core.ui.DailyCalendars
 import com.joclegg.puzzles.core.ui.LocalDailiesLeft
+import com.joclegg.puzzles.core.ui.LocalDailyCalendars
+import com.joclegg.puzzles.core.ui.Medal
+import com.joclegg.puzzles.core.ui.dailyDays
 import com.joclegg.puzzles.fiveletters.FiveLettersRoutes
 import com.joclegg.puzzles.fiveletters.FiveLettersRoutes.fiveLettersGraph
 import com.joclegg.puzzles.fiveletters.FiveLettersRoutes.openFiveLettersGame
@@ -46,6 +51,9 @@ import com.joclegg.puzzles.twotone.TwoToneRoutes.twoToneGraph
 import com.joclegg.puzzles.wordwheel.WordWheelRoutes
 import com.joclegg.puzzles.wordwheel.WordWheelRoutes.openWordWheelGame
 import com.joclegg.puzzles.wordwheel.WordWheelRoutes.wordWheelGraph
+import kotlinx.coroutines.flow.map
+import java.time.LocalDate
+import java.time.ZoneId
 
 enum class PuzzleGame { SUDOKU, SOLITAIRE, TWO_TONE, SIGHTLINES, FIVE_LETTERS, KAKURO, SLIDE_OUT, WORD_WHEEL }
 
@@ -118,7 +126,23 @@ fun PuzzlesApp(
             currentOnConsume()
         }
     }
-    CompositionLocalProvider(LocalDailiesLeft provides rememberTodaysDailies(app, darkTheme, navController)) {
+    val calendars =
+        remember(app, navController) {
+            DailyCalendars(
+                todaysMedal = { game ->
+                    val tab = SettingsTab.valueOf(game)
+                    val rules = calendarRules(tab)
+                    dailyResults(app, tab).map { results ->
+                        dailyDays(results, rules.total, rules.firstMedal, ZoneId.systemDefault())[LocalDate.now()]?.medal ?: Medal.NONE
+                    }
+                },
+                onOpen = { game -> navController.navigate(DailyCalendarRoutes.route(SettingsTab.valueOf(game))) },
+            )
+        }
+    CompositionLocalProvider(
+        LocalDailiesLeft provides rememberTodaysDailies(app, navController),
+        LocalDailyCalendars provides calendars,
+    ) {
         Scaffold(modifier.fillMaxSize().semantics { testTagsAsResourceId = true }) { padding ->
             NavHost(navController, startDestination = LAUNCHER, modifier = Modifier.padding(padding)) {
                 composable(
@@ -152,6 +176,9 @@ fun PuzzlesApp(
                             }
                         },
                     )
+                }
+                composable(DailyCalendarRoutes.ROUTE, arguments = listOf(navArgument("tab") { type = NavType.StringType })) { entry ->
+                    DailyCalendarRoute(app, SettingsTab.valueOf(entry.arguments!!.getString("tab")!!), navController)
                 }
                 composable(LAUNCHER) {
                     LauncherScreen(

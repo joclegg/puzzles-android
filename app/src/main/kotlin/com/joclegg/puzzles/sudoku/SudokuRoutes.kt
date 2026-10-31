@@ -2,6 +2,7 @@ package com.joclegg.puzzles.sudoku
 
 import android.os.SystemClock
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -12,13 +13,12 @@ import com.joclegg.puzzles.AccentColors
 import com.joclegg.puzzles.SettingsHub
 import com.joclegg.puzzles.SettingsTab
 import com.joclegg.puzzles.sudoku.core.data.GameMode
+import com.joclegg.puzzles.sudoku.core.data.openLevel
 import com.joclegg.puzzles.sudoku.core.ui.LocalBoardColors
 import com.joclegg.puzzles.sudoku.feature.game.EntryRoute
 import com.joclegg.puzzles.sudoku.feature.game.EntryViewModel
 import com.joclegg.puzzles.sudoku.feature.game.GameRoute
 import com.joclegg.puzzles.sudoku.feature.game.GameViewModel
-import com.joclegg.puzzles.sudoku.feature.home.DailyRoute
-import com.joclegg.puzzles.sudoku.feature.home.DailyViewModel
 import com.joclegg.puzzles.sudoku.feature.home.HomeRoute
 import com.joclegg.puzzles.sudoku.feature.home.HomeViewModel
 import com.joclegg.puzzles.sudoku.feature.settings.SettingsRoute
@@ -26,6 +26,8 @@ import com.joclegg.puzzles.sudoku.feature.settings.SettingsViewModel
 import com.joclegg.puzzles.sudoku.feature.stats.HistoryRoute
 import com.joclegg.puzzles.sudoku.feature.stats.StatsRoute
 import com.joclegg.puzzles.sudoku.feature.stats.StatsViewModel
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 object SudokuRoutes {
     const val HOME = "sudoku/home"
@@ -33,7 +35,6 @@ object SudokuRoutes {
     private const val ENTRY = "sudoku/entry/{mode}"
     private const val STATS = "sudoku/stats"
     private const val HISTORY = "sudoku/history"
-    private const val DAILY = "sudoku/daily"
 
     fun NavGraphBuilder.sudokuGraph(
         container: SudokuContainer,
@@ -44,7 +45,6 @@ object SudokuRoutes {
                 viewModel = viewModel { HomeViewModel(container.games, container.settings, container.bank, container.supply) },
                 onOpenGame = { navController.openSudokuGame(it) },
                 onEnterPuzzle = { mode -> navController.navigate(entry(mode)) },
-                onDailyCalendar = { navController.navigate(DAILY) },
                 onSettings = { mode -> navController.navigate(SettingsHub.route(SettingsTab.SUDOKU, mode.name)) },
                 onStats = { navController.navigate(STATS) },
                 onHistory = { navController.navigate(HISTORY) },
@@ -53,10 +53,20 @@ object SudokuRoutes {
         }
         composable(GAME, arguments = listOf(navArgument("id") { type = NavType.LongType })) { entry ->
             val id = entry.arguments!!.getLong("id")
+            val scope = rememberCoroutineScope()
             GameRoute(
                 viewModel = viewModel { GameViewModel(id, container.games, container.settings, SystemClock::elapsedRealtime) },
                 onSettings = { navController.navigate(SettingsHub.route(SettingsTab.SUDOKU, it.name)) },
                 onHome = { navController.popBackStack(HOME, inclusive = false) },
+                onNewPuzzle = { mode, level ->
+                    scope.launch {
+                        val mistakeCheck =
+                            container.settings.settings
+                                .first()
+                                .mistakeCheckFor(mode)
+                        navController.openSudokuGame(container.games.openLevel(container.supply, mode, level, mistakeCheck))
+                    }
+                },
             )
         }
         composable(ENTRY) { entry ->
@@ -64,13 +74,6 @@ object SudokuRoutes {
             EntryRoute(
                 viewModel = viewModel { EntryViewModel(mode, container.games, container.settings) },
                 onPlay = { navController.openSudokuGame(it) },
-                onBack = navController::popBackStack,
-            )
-        }
-        composable(DAILY) {
-            DailyRoute(
-                viewModel = viewModel { DailyViewModel(container.games, container.settings, container.bank) },
-                onOpenGame = { navController.openSudokuGame(it) },
                 onBack = navController::popBackStack,
             )
         }

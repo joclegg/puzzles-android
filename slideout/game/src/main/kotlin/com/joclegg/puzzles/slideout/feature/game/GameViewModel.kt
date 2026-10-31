@@ -9,6 +9,7 @@ import com.joclegg.puzzles.slideout.core.data.SavedGame
 import com.joclegg.puzzles.slideout.core.data.Settings
 import com.joclegg.puzzles.slideout.core.data.SettingsRepository
 import com.joclegg.puzzles.slideout.core.ui.BoardUi
+import com.joclegg.puzzles.slideout.core.ui.label
 import com.joclegg.puzzles.slideout.core.ui.title
 import com.joclegg.puzzles.slideout.engine.GameState
 import com.joclegg.puzzles.slideout.engine.GameTimer
@@ -24,6 +25,7 @@ import kotlinx.coroutines.withContext
 
 data class GameUiState(
     val title: String,
+    val levelLabel: String,
     val board: BoardUi,
     val elapsedMs: Long,
     val moveCount: Int,
@@ -231,6 +233,7 @@ class GameViewModel(
                 allowReveal = display.allowReveal,
                 revealed = revealed,
                 title = ref.title(),
+                levelLabel = ref.level.label(),
                 board = BoardUi(current.board, current.hint),
                 elapsedMs = timer.elapsedMs(monotonicNowMs()),
                 moveCount = current.moves.size,

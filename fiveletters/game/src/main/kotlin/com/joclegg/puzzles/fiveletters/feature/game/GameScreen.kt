@@ -193,6 +193,15 @@ private fun ResultDialog(
                 "The word was ${state.answer}"
             },
         accent = LocalLetterColors.current.accent,
+        dailyGroup = "FIVE_LETTERS",
+        newLabel = "Word",
+        newTag = "result_new_practice",
+        onNew =
+            if (state.isDaily) {
+                null
+            } else {
+                onNewPractice
+            },
         newBest = false,
         stats = emptyList(),
         modifier = modifier.dialogTestTags().testTag("result_dialog"),
@@ -206,11 +215,7 @@ private fun ResultDialog(
         lost = !state.won,
         onDismissRequest = onClose,
     ) {
-        if (state.isDaily) {
-            TextButton(onClick = onClose, modifier = Modifier.testTag("result_close")) { Text("Close") }
-        } else {
-            TextButton(onClick = onNewPractice, modifier = Modifier.testTag("result_new_practice")) { Text("New word") }
-        }
+        TextButton(onClick = onClose, modifier = Modifier.testTag("result_close")) { Text("Close") }
         TextButton(onClick = onShare, modifier = Modifier.testTag("result_share")) { Text("Share") }
     }
 }
