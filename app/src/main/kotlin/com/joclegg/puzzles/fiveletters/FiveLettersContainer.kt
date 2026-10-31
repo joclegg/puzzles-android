@@ -5,9 +5,9 @@ import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
 import com.joclegg.puzzles.banks
 import com.joclegg.puzzles.core.sync.StampedPreferences
+import com.joclegg.puzzles.fiveletters.core.data.Daily2WordSource
 import com.joclegg.puzzles.fiveletters.core.data.GameDatabase
 import com.joclegg.puzzles.fiveletters.core.data.GameRepository
-import com.joclegg.puzzles.fiveletters.core.data.Daily2WordSource
 import com.joclegg.puzzles.fiveletters.core.data.SettingsRepository
 import com.joclegg.puzzles.fiveletters.engine.Words
 import kotlinx.coroutines.Dispatchers
