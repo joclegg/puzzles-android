@@ -15,7 +15,7 @@ class BankStore(
     private val complete = File(directory, COMPLETE)
 
     val isReady: Boolean
-        get() = complete.isFile
+        get() = complete.isFile && appliedHashes().keys.all { File(directory, it).isFile }
 
     fun read(path: String): String = File(directory, path).readText()
 
@@ -50,14 +50,14 @@ class BankStore(
         var downloaded = 0
         remote.keys().forEach { path ->
             val hash = remote.getJSONObject(path).getString("sha256")
-            if (hash != known[path] && download(path, hash)) {
+            if ((hash != known[path] || !File(directory, path).isFile) && download(path, hash)) {
                 known[path] = hash
                 downloaded++
             }
         }
         directory.mkdirs()
         applied.writeText(JSONObject(known as Map<*, *>).toString())
-        if (remote.keys().asSequence().all { known[it] == remote.getJSONObject(it).getString("sha256") }) {
+        if (remote.keys().asSequence().all { known[it] == remote.getJSONObject(it).getString("sha256") && File(directory, it).isFile }) {
             complete.writeText("")
         }
         return downloaded
