@@ -162,4 +162,26 @@ class BankStoreTest {
     private companion object {
         const val BASE = "https://example.test/data"
     }
+
+    @Test
+    fun `given a bank file has gone missing when banks update then the store is not ready until it is downloaded again`() =
+        runBlocking {
+            // Arrange
+            val (store) =
+                store(
+                    mapOf(
+                        "manifest.json" to manifest("sudoku/classic_fast.txt" to "puzzle\n"),
+                        "sudoku/classic_fast.txt" to HttpResponse(200, "puzzle\n"),
+                    ),
+                )
+            store.update()
+            java.io.File(folder.root, "sudoku/classic_fast.txt").delete()
+            val readyWhileMissing = store.isReady
+
+            // Act
+            store.update()
+
+            // Assert
+            assertEquals(false to "puzzle\n", readyWhileMissing to store.read("sudoku/classic_fast.txt"))
+        }
 }
