@@ -11,23 +11,23 @@ fun interface DailyWordSource {
     suspend fun word(date: LocalDate): String?
 }
 
-class NytWordSource(
+class Daily2WordSource(
     private val fetch: (String) -> String? = ::download,
 ) : DailyWordSource {
     override suspend fun word(date: LocalDate): String? =
         withContext(Dispatchers.IO) {
-            runCatching { fetch("$BASE_URL$date.json") }
+            runCatching { fetch("$BASE_URL$date") }
                 .getOrNull()
-                ?.let(::solutionOf)
+                ?.let(::wordOf)
         }
 
     companion object {
-        private const val BASE_URL = "https://www.nytimes.com/svc/wordle/v2/"
+        private const val BASE_URL = "https://puzzles-daily.joclegg.dev/word/"
         private const val TIMEOUT_MS = 5_000
-        private val SOLUTION = Regex("\"solution\"\\s*:\\s*\"([A-Za-z]+)\"")
+        private val WORD = Regex("\"word\"\\s*:\\s*\"([A-Za-z]+)\"")
 
-        fun solutionOf(json: String): String? =
-            SOLUTION
+        fun wordOf(json: String): String? =
+            WORD
                 .find(json)
                 ?.groupValues
                 ?.get(1)

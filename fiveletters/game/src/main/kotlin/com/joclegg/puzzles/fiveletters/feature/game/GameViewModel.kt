@@ -150,7 +150,7 @@ class GameViewModel(
                 guessCount = current.guesses.size,
                 answer = current.answer,
                 shareText = current.shareText(ref.title()),
-                isDaily = ref.isDaily || ref.isNyt,
+                isDaily = ref.isDaily || ref.isDaily2,
                 showHints = display.showHints,
                 showTutorial = display.showTutorial,
                 allowReveal = display.allowReveal,

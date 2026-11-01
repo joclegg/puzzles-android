@@ -78,14 +78,14 @@ class GameRepositoryTest {
         }
 
     @Test
-    fun `given the daily and a practice game in progress when the NY Times daily starts then both are kept`() =
+    fun `given the daily and a practice game in progress when Daily puzzle 2 starts then both are kept`() =
         runTest {
             // Arrange
             repository.start(WordRef("daily_2026-10-26", "SLATE"), hardMode = false)
             repository.start(WordRef("practice_1", "CRANE"), hardMode = false)
 
             // Act
-            repository.start(WordRef.nyt(LocalDate.of(2026, 10, 26), "GEEKY"), hardMode = false)
+            repository.start(WordRef.daily2(LocalDate.of(2026, 10, 26), "GEEKY"), hardMode = false)
 
             // Assert
             assertEquals(3, repository.inProgress.first().size)

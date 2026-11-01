@@ -11,11 +11,17 @@ data class WordRef(
 ) {
     val isDaily: Boolean get() = id.startsWith(DAILY_PREFIX)
 
-    val isNyt: Boolean get() = id.startsWith(NYT_PREFIX)
+    val daily2Date: LocalDate?
+        get() =
+            listOf(DAILY2_PREFIX, LEGACY_DAILY2_PREFIX)
+                .firstOrNull { id.startsWith(it) }
+                ?.let { runCatching { LocalDate.parse(id.removePrefix(it)) }.getOrNull() }
+
+    val isDaily2: Boolean get() = daily2Date != null
 
     val slot: String
         get() =
-            if (isDaily || isNyt) {
+            if (isDaily || isDaily2) {
                 id
             } else {
                 PRACTICE_SLOT
@@ -23,7 +29,8 @@ data class WordRef(
 
     companion object {
         const val DAILY_PREFIX = "daily_"
-        const val NYT_PREFIX = "nyt_"
+        const val DAILY2_PREFIX = "daily2_"
+        const val LEGACY_DAILY2_PREFIX = "nyt_"
         private const val PRACTICE_SLOT = "practice"
 
         fun dailyId(date: LocalDate) = "$DAILY_PREFIX$date"
@@ -33,12 +40,12 @@ data class WordRef(
             date: LocalDate,
         ) = WordRef(dailyId(date), words.daily(date))
 
-        fun nytId(date: LocalDate) = "$NYT_PREFIX$date"
+        fun daily2Id(date: LocalDate) = "$DAILY2_PREFIX$date"
 
-        fun nyt(
+        fun daily2(
             date: LocalDate,
             answer: String,
-        ) = WordRef(nytId(date), answer)
+        ) = WordRef(daily2Id(date), answer)
 
         fun practice(
             words: Words,

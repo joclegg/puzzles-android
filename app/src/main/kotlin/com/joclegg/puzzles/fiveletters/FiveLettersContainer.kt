@@ -5,9 +5,9 @@ import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
 import com.joclegg.puzzles.banks
 import com.joclegg.puzzles.core.sync.StampedPreferences
+import com.joclegg.puzzles.fiveletters.core.data.Daily2WordSource
 import com.joclegg.puzzles.fiveletters.core.data.GameDatabase
 import com.joclegg.puzzles.fiveletters.core.data.GameRepository
-import com.joclegg.puzzles.fiveletters.core.data.NytWordSource
 import com.joclegg.puzzles.fiveletters.core.data.SettingsRepository
 import com.joclegg.puzzles.fiveletters.engine.Words
 import kotlinx.coroutines.Dispatchers
@@ -33,7 +33,7 @@ class FiveLettersContainer(
     val sync = fiveLettersSyncSource(database.gameDao(), settings, settingsStore)
     val newSeed: () -> Long = { Random.nextLong() }
     val today: () -> LocalDate = LocalDate::now
-    val nytWords = NytWordSource()
+    val daily2Words = Daily2WordSource()
 
     private val loading = Mutex()
     private var loaded: Words? = null
