@@ -20,9 +20,9 @@ enum class Toggle(
 data class Settings(
     val showTimer: Boolean = true,
     val showPar: Boolean = true,
-    val showHints: Boolean = true,
+    val showHints: Boolean = false,
     val showTutorial: Boolean = true,
-    val allowReveal: Boolean = true,
+    val allowReveal: Boolean = false,
 )
 
 class SettingsRepository(
@@ -33,11 +33,17 @@ class SettingsRepository(
             Settings(
                 showTimer = prefs[Toggle.SHOW_TIMER.key] ?: true,
                 showPar = prefs[Toggle.SHOW_PAR.key] ?: true,
-                showHints = prefs[Toggle.SHOW_HINTS.key] ?: true,
+                showHints = prefs[Toggle.SHOW_HINTS.key] ?: false,
                 showTutorial = prefs[Toggle.SHOW_TUTORIAL.key] ?: true,
-                allowReveal = prefs[Toggle.ALLOW_REVEAL.key] ?: true,
+                allowReveal = prefs[Toggle.ALLOW_REVEAL.key] ?: false,
             )
         }
+
+    suspend fun keepLegacyDefaults() {
+        store.edit { prefs ->
+            LEGACY_TOGGLES.filter { it.key !in prefs }.forEach { prefs[it.key] = true }
+        }
+    }
 
     suspend fun set(
         toggle: Toggle,
@@ -48,3 +54,9 @@ class SettingsRepository(
 }
 
 private val Toggle.key get() = booleanPreferencesKey(name.lowercase())
+
+private val LEGACY_TOGGLES =
+    listOf(
+        Toggle.SHOW_HINTS,
+        Toggle.ALLOW_REVEAL,
+    )

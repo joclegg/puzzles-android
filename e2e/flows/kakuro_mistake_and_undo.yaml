@@ -4,6 +4,7 @@ name: Kakuro - a wrong digit is shown, and undo takes it back
 - launchApp:
     clearState: true
     arguments:
+      helpers: "on"
       fixture: "kakuro_empty"
 - waitForAnimationToEnd:
     timeout: 1500

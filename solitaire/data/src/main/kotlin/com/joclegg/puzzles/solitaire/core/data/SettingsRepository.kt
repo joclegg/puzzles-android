@@ -19,12 +19,12 @@ enum class Toggle(
     REVERSE(Settings::reverse, default = false),
     ONE_TAP_MOVE(Settings::oneTapMove),
     WINNABLE_ONLY(Settings::winnableOnly),
-    WARN_UNWINNABLE(Settings::warnUnwinnable),
+    WARN_UNWINNABLE(Settings::warnUnwinnable, default = false),
     SHOW_TIMER(Settings::showTimer),
     SHOW_MOVE_COUNT(Settings::showMoveCount),
-    SHOW_HINTS(Settings::showHints),
+    SHOW_HINTS(Settings::showHints, default = false),
     SHOW_TUTORIAL(Settings::showTutorial),
-    ALLOW_REVEAL(Settings::allowReveal),
+    ALLOW_REVEAL(Settings::allowReveal, default = false),
 }
 
 data class Settings(
@@ -32,12 +32,12 @@ data class Settings(
     val reverse: Boolean = false,
     val oneTapMove: Boolean = true,
     val winnableOnly: Boolean = true,
-    val warnUnwinnable: Boolean = true,
+    val warnUnwinnable: Boolean = false,
     val showTimer: Boolean = true,
     val showMoveCount: Boolean = true,
-    val showHints: Boolean = true,
+    val showHints: Boolean = false,
     val showTutorial: Boolean = true,
-    val allowReveal: Boolean = true,
+    val allowReveal: Boolean = false,
     val hintStyle: HintStyle = HintStyle.POINT,
 ) {
     val order: BuildOrder
@@ -57,14 +57,14 @@ class SettingsRepository(
             Settings(
                 drawMode = prefs[DRAW_MODE]?.let { saved -> DrawMode.entries.find { it.name == saved } } ?: DrawMode.DRAW_ONE,
                 reverse = prefs[Toggle.REVERSE.key] ?: Toggle.REVERSE.default,
-                oneTapMove = prefs[Toggle.ONE_TAP_MOVE.key] ?: true,
-                winnableOnly = prefs[Toggle.WINNABLE_ONLY.key] ?: true,
-                warnUnwinnable = prefs[Toggle.WARN_UNWINNABLE.key] ?: true,
-                showTimer = prefs[Toggle.SHOW_TIMER.key] ?: true,
-                showMoveCount = prefs[Toggle.SHOW_MOVE_COUNT.key] ?: true,
-                showHints = prefs[Toggle.SHOW_HINTS.key] ?: true,
-                showTutorial = prefs[Toggle.SHOW_TUTORIAL.key] ?: true,
-                allowReveal = prefs[Toggle.ALLOW_REVEAL.key] ?: true,
+                oneTapMove = prefs[Toggle.ONE_TAP_MOVE.key] ?: Toggle.ONE_TAP_MOVE.default,
+                winnableOnly = prefs[Toggle.WINNABLE_ONLY.key] ?: Toggle.WINNABLE_ONLY.default,
+                warnUnwinnable = prefs[Toggle.WARN_UNWINNABLE.key] ?: Toggle.WARN_UNWINNABLE.default,
+                showTimer = prefs[Toggle.SHOW_TIMER.key] ?: Toggle.SHOW_TIMER.default,
+                showMoveCount = prefs[Toggle.SHOW_MOVE_COUNT.key] ?: Toggle.SHOW_MOVE_COUNT.default,
+                showHints = prefs[Toggle.SHOW_HINTS.key] ?: Toggle.SHOW_HINTS.default,
+                showTutorial = prefs[Toggle.SHOW_TUTORIAL.key] ?: Toggle.SHOW_TUTORIAL.default,
+                allowReveal = prefs[Toggle.ALLOW_REVEAL.key] ?: Toggle.ALLOW_REVEAL.default,
                 hintStyle = prefs[HINT_STYLE]?.let { saved -> HintStyle.entries.find { it.name == saved } } ?: HintStyle.POINT,
             )
         }
@@ -75,6 +75,12 @@ class SettingsRepository(
 
     suspend fun setHintStyle(style: HintStyle) {
         store.edit { it[HINT_STYLE] = style.name }
+    }
+
+    suspend fun keepLegacyDefaults() {
+        store.edit { prefs ->
+            LEGACY_TOGGLES.filter { it.key !in prefs }.forEach { prefs[it.key] = true }
+        }
     }
 
     suspend fun set(
@@ -92,3 +98,10 @@ class SettingsRepository(
 private val Toggle.key get() = booleanPreferencesKey(name.lowercase())
 
 private val HINT_STYLE = stringPreferencesKey("hint_style")
+
+private val LEGACY_TOGGLES =
+    listOf(
+        Toggle.WARN_UNWINNABLE,
+        Toggle.SHOW_HINTS,
+        Toggle.ALLOW_REVEAL,
+    )

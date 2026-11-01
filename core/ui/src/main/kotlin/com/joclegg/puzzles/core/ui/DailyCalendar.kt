@@ -54,6 +54,8 @@ import java.time.format.TextStyle
 data class DailyCalendars(
     val todaysMedal: (String) -> Flow<Medal>,
     val onOpen: (String) -> Unit,
+    val allGold: Flow<Boolean> = flowOf(false),
+    val onAllGoldShown: () -> Unit = {},
 )
 
 data class DailyChoice(

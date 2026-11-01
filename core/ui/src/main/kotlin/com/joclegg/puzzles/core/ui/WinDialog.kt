@@ -14,11 +14,11 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -29,9 +29,12 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -83,6 +86,16 @@ fun WinDialog(
 ) {
     val loadDailies = LocalDailiesLeft.current
     val dailies by produceState(emptyList<DailyLeft>()) { value = loadDailies(dailyGroup) }
+    val calendars = LocalDailyCalendars.current
+    val allGoldFlow = remember(calendars) { calendars.allGold }
+    val allGold by allGoldFlow.collectAsState(false)
+    var celebrating by remember { mutableStateOf(false) }
+    LaunchedEffect(allGold) {
+        if (allGold && !lost) {
+            celebrating = true
+            calendars.onAllGoldShown()
+        }
+    }
     val pop = remember { Animatable(0.6f) }
     LaunchedEffect(Unit) {
         pop.animateTo(1f, spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow))
@@ -150,6 +163,9 @@ fun WinDialog(
                         )
                     }
                 }
+                if (celebrating) {
+                    AllGoldBanner(Modifier.padding(horizontal = 20.dp, vertical = 8.dp))
+                }
                 if (message != null) {
                     Text(
                         message,
@@ -199,6 +215,32 @@ fun WinDialog(
                     buttons()
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun AllGoldBanner(modifier: Modifier = Modifier) {
+    val gold = medalColour(Medal.GOLD)
+    Row(
+        modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(gold.copy(alpha = 0.18f))
+            .border(1.dp, gold, RoundedCornerShape(16.dp))
+            .padding(12.dp)
+            .testTag("all_golds"),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        Icon(MenuIcons.Trophy, contentDescription = null, tint = gold, modifier = Modifier.size(32.dp))
+        Column {
+            Text("Gold in every puzzle", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+            Text(
+                "You've finished every daily in every game today.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }

@@ -4,6 +4,7 @@ name: Completing a puzzle records a best time and history entry
 - launchApp:
     clearState: true
     arguments:
+      helpers: "on"
       fixture: "classic_one_left"
 - waitForAnimationToEnd:
     timeout: 1500

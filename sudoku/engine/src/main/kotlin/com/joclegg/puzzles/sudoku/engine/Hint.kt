@@ -38,9 +38,26 @@ fun GameState.findHint(): Hint? {
             }
         }
     }
-    val empty = values.indexOfFirst { it == 0 }
-    if (solution == null || empty == -1) {
-        return null
-    }
-    return Hint(empty, solution[empty], "No cell can be worked out yet, so here is the first empty one.")
+    return fewestCandidatesHint()
 }
+
+fun GameState.fewestCandidatesHint(): Hint? {
+    val grid = puzzle.grid
+    val solution = puzzle.solution ?: return null
+    val cell =
+        values.indices
+            .filter { values[it] == 0 }
+            .minByOrNull { Integer.bitCount(candidatesOf(it)) } ?: return null
+    val digits = (1..grid.size).filter { candidatesOf(cell) and digitBit(it) != 0 }
+    return Hint(cell, solution[cell], "This cell can only be ${digits.spoken()}: everything else is in its row, column or box.")
+}
+
+private fun GameState.candidatesOf(cell: Int): Int =
+    puzzle.grid.peers[cell].fold(puzzle.grid.allDigits) { mask, peer -> mask and digitBit(values[peer]).inv() }
+
+private fun List<Int>.spoken(): String =
+    if (size <= 1) {
+        joinToString("")
+    } else {
+        dropLast(1).joinToString(", ") + " or " + last()
+    }

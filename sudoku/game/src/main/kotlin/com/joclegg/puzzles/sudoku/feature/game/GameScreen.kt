@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.joclegg.puzzles.core.ui.HelpersHint
 import com.joclegg.puzzles.core.ui.WinDialog
 import com.joclegg.puzzles.core.ui.WinStat
 import com.joclegg.puzzles.sudoku.core.data.GameMode
@@ -245,6 +246,7 @@ private fun GameHeader(
             )
             PuzzleMenu(state, onRestart, onRevealSolution, onSettings, Modifier.tourTarget(tour, "menu"))
         }
+        HelpersHint(onSettings)
         Row(Modifier.fillMaxWidth().padding(start = 12.dp), verticalAlignment = Alignment.CenterVertically) {
             if (state.checking && state.showMistakeCount) {
                 Text(

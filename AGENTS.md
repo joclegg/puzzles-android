@@ -31,7 +31,7 @@ Each game has its own modules under `sudoku/`, `solitaire/`, `twotone/`, `sightl
 - `<game>/engine/`: pure Kotlin, every game rule
   - sudoku: board model, `Solver`, `Grader`, `Generator`, `GameState` and `GameTimer`
   - solitaire: `Card`, `Board` (piles, legal moves, `BuildOrder`), `GameState` (taps, undo by replay), `BoardCodec`, `MoveCodec` and `GameTimer`
-  - twotone and sightlines: `Grid`, `Puzzle`, a logic-only `Solver` whose next step is also the hint, `Generator` (seeded, keeps removing givens while the solver still finishes), `GameState` (tap, paint, undo, hints) and `GameTimer`
+  - twotone and sightlines: `Grid`, `Puzzle`, a logic-only `Solver` whose next step is also the hint, `Generator` (seeded, keeps removing givens while the solver still finishes), `GameState` (tap, undo, hints) and `GameTimer`
   - fiveletters: `Words` (answer and guess lists, the daily word by date), `score` and `GameState` (typing, guesses, hard mode, share text)
   - kakuro: `Puzzle` (layout, runs, clues), `Combinations` (digit sets per sum), `Solver` (counts solutions), `Generator` (layout, low/high-leaning fill, fewest starting digits) and `GameState` (select, digits, notes, undo)
   - slideout: `Board` and `Block`, a packed-number `Solver` (fewest moves, and the hardest position reachable from a set of blocks), `Generator` (hill-climbs over block sets) and `GameState` (slides, undo, hints)
@@ -72,7 +72,7 @@ Rules marked (lint) are enforced by `spotlessCheck`, Android Lint or the build.
 
 - MUST keep every game playable offline and signed out. Sign-in is optional, with Google, Microsoft (`SignInProvider`; Microsoft is Supabase's `azure` provider and needs the `email` scope) or email (`SignInDialog`; the Google and Microsoft buttons follow each brand's button guidelines); it only syncs saves and settings through `core:sync`, when the app opens or goes to the background. The app also downloads new puzzle banks (`BankStore`, below). The only other network call is the Five Letters **Daily puzzle 2**, a separate game next to the Puzzles daily that fetches today's word from `https://puzzles-daily.joclegg.dev/word/<yyyy-mm-dd>` (`Daily2WordSource`; JSON `{"date":"…","word":"…"}`, 404 when unknown). Its games are saved as `daily2_<date>`; older saves under the legacy prefix (`WordRef.LEGACY_DAILY2_PREFIX`) are still read. It needs a connection; every other game, including the Puzzles daily, does not. MUST NOT add any other network call.
 - MUST NOT add the `ACCESS_NETWORK_STATE` permission. `INTERNET` is allowed only for the Daily puzzle 2 word, sync and bank downloads. (lint: `verify<Variant>Permissions`)
-- MUST read every puzzle bank through `BankStore.read` (`core:sync`, made by `Context.banks` in `PuzzlesApplication.kt`): the copy downloaded to the app's files (`puzzles-data/`). `MainActivity` shows `BankDownloadScreen` until the first full download finishes; after that every game plays offline. `e2e/fetch-banks.sh` puts the banks in debug builds only, so e2e flows skip that first download; release builds carry none. When the app starts, `BankStore.update` fetches `manifest.json` from https://joclegg.github.io/puzzles-data/ (published by puzzles-data on every merge), downloads only files whose SHA-256 changed, checks each hash, and swaps the file in. Loaded banks are cached in memory, so new puzzles appear on the next launch. New puzzles need no app release.
+- MUST read every puzzle bank through `BankStore.read` (`core:sync`, made by `Context.banks` in `PuzzlesApplication.kt`): the copy downloaded to the app's files (`puzzles-data/`). App start never waits for banks: `PuzzlesApplication.updateBanks` downloads them in the background, and only opening a game whose bank folder isn't ready yet (`BankStore.isReady(folder)`, `BankGate`) shows `BankDownloadScreen`, with Try again if it fails. Two Tone and Sightlines need no bank. `e2e/fetch-banks.sh` puts the banks in debug builds only, so e2e flows skip that first download; release builds carry none. When the app starts, `BankStore.update` fetches `manifest.json` from https://joclegg.github.io/puzzles-data/ (published by puzzles-data on every merge), downloads only files whose SHA-256 changed, checks each hash, and swaps the file in. Loaded banks are cached in memory, so new puzzles appear on the next launch. New puzzles need no app release.
 - MUST NOT add analytics, crash reporting, ads or any network library. Use the JDK's `HttpURLConnection`.
 - MUST keep all data on the device, in Room or DataStore. Every saved game has a `uuid` and an `updatedAt` so sync can find and order it; repositories save through `GameDao.save`, which keeps the row's `uuid`.
 - MUST pick daily sudoku puzzles locally from the downloaded bank, deal daily solitaire games locally, seeded by date (`DealRef.daily`), generate daily Two Tone and Sightlines puzzles locally, seeded by date (`PuzzleRef.daily`), and pick the daily Five Letters word locally from the bundled list (`Words.daily`). Daily puzzle 2 is a separate game (`WordRef.daily2`) and never replaces it.
@@ -109,11 +109,11 @@ Rules marked (lint) are enforced by `spotlessCheck`, Android Lint or the build.
 - MUST use red only for errors (wrong digits, wrong cages and clashing entries) and the trial mark (`trialMark`), a red box the player puts on a cell with the Mark tool.
 - MUST define a dark-mode value for every board colour token.
 - MUST NOT add a hint, auto-solve or cage-combination helper.
-- MUST put every player preference in Settings, per mode (`ModeSettings`, `Toggle`) unless it only makes sense shared (input mode). Default to on unless there's a reason (grey starting cells are off in killer), and apply changes live.
+- MUST put every player preference in Settings, per mode (`ModeSettings`, `Toggle`) unless it only makes sense shared (input mode). Helpers (hints, show solution, mistake checks, highlights, counts, auto-notes) default to off for new players; display and appearance choices default to on (grey starting cells are off in killer). Players who had the app before keep the old defaults (`keepLegacyDefaults`). Apply changes live.
 - MUST make tool buttons icon-only, with a tooltip on long press that says what the button does. The tooltip is also the content description.
 - MUST NOT duplicate a Settings choice as a button on the game screens. Cell first or number first lives only in Settings.
 - MUST keep Undo and Redo in the game header, next to the ⋮ menu, not on the number pad. The pad holds the digits, Erase, Notes and Mark, six keys to a row. Kakuro uses the same layout.
-- MUST put a Settings item in every game's ⋮ menu that opens that game's Settings tab.
+- MUST put a Settings item in every game's ⋮ menu that opens that game's Settings tab, and the Customise helpers link (`HelpersHint`) under each game header.
 
 ### Solitaire look
 
@@ -122,7 +122,7 @@ Rules marked (lint) are enforced by `spotlessCheck`, Android Lint or the build.
 - MUST use red only for red suits.
 - MUST define a dark-mode value for every table colour token.
 - MUST NOT add a hint or auto-solve. The one exception is Finish (`GameState.autoFinish`), offered only once the stock and waste are empty and every card is face up.
-- MUST put every player preference in Settings (`Settings`, `Toggle`). Default to on unless there's a reason, and apply changes live.
+- MUST put every player preference in Settings (`Settings`, `Toggle`). Helpers (hints, show solution, warn unwinnable) default to off, other choices to on; apply changes live.
 - MUST NOT duplicate a Settings choice as a button on the game screen.
 - MUST only report a deal as unwinnable when `Solver` has searched every move (`Verdict.UNWINNABLE`). Out of time or budget is `UNKNOWN`, and says nothing.
 - MUST only run that check once the player has drawn through the whole stock without another move (`GameState.cycledStock`).
@@ -132,7 +132,7 @@ Rules marked (lint) are enforced by `spotlessCheck`, Android Lint or the build.
 
 - MUST take colours only from `LocalTileColors` or `MaterialTheme`, with a dark-mode value for every token.
 - MUST show hints as the next logical step from `Solver.next`, or the wrong spots when the player has made a mistake. Shade what the rule looks at in `hintLine`, outline the spots to fill in `hintTarget`, and explain it in words.
-- MUST offer both input modes in Settings (`InputMode`): Tap to cycle, and Pick a colour (the `ColourPicker` under the board). Painting a spot with its own colour clears it.
+- Tapping always cycles a spot (Two Tone: empty, red, blue, empty; Sightlines: empty, blue, red, empty), and undo steps back. MUST NOT add another input mode, a colour picker or an erase choice. The `inputMode` settings field stays only so the sync JSON keeps its shape.
 - MUST generate every puzzle so `Solver.solveLogically` finishes it: no guessing, and exactly one solution.
 
 ### Two Tone and Sightlines games
@@ -152,7 +152,7 @@ Rules marked (lint) are enforced by `spotlessCheck`, Android Lint or the build.
 - MUST take colours only from `LocalKakuroColors` or `MaterialTheme`.
 - MUST get puzzles from the downloaded bank (`PuzzleBank`), regenerated with `generateBank`, never by hand. The daily puzzle per size is picked from the bank by date.
 - MUST give every puzzle exactly one solution, using as few starting digits (`givens`, shown on grey cells) as the generator can find.
-- MUST keep the sum helper (`SHOW_COMBINATIONS`) off by default.
+- MUST keep the sum helper (`SHOW_COMBINATIONS`) off by default. Its order (`CombinationOrder`, synced as `combinationOrder`) defaults to increasing; decreasing reverses the digits in each set and the order of the sets.
 - MUST offer the same entry options as sudoku: Cell first or Number first (`InputMode`), and mistake checking Off, Block clashes or Show wrong (`MistakeCheck`), with a mistake counter.
 - Kakuro's database is at version 3. Like every game's, it is rebuilt when its schema changes (`fallbackToDestructiveMigration`): signed-in players get their games back from sync.
 
@@ -208,6 +208,7 @@ Rules marked (lint) are enforced by `spotlessCheck`, Android Lint or the build.
 - MUST start each flow with `launchApp: clearState: true`, then `tapOn: game_<game>` on the launcher. Use a debug fixture instead, which opens the game directly, (`arguments: fixture: <name>`, or `draft: <name>` for custom entry) when the flow needs a known board. MUST NOT type long inputs tap by tap; add a fixture.
 - MUST keep e2e flows to wiring: screens, navigation and persistence. Rule edge cases belong in unit tests.
 - MUST tag quick, core flows `fast`.
+- Pass `helpers: "on"` in a flow's first `launchApp` arguments to start with the old helper defaults on (`HelperFixtures`, debug only).
 - MUST NOT add data backups or other slow steps to `e2e/run.sh`: emulator data is disposable and the suite must stay fast.
 - MUST add new fixtures to `app/src/debug/.../<Game>Fixtures.kt`, with names unique across all games. MUST NOT ship fixtures in release.
 - MUST assert a cell's digit with `childOf: { id: cell_rXcY }`.

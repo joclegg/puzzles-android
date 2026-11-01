@@ -26,6 +26,7 @@ import com.joclegg.puzzles.kakuro.core.data.HintStyle
 import com.joclegg.puzzles.kakuro.core.data.Settings
 import com.joclegg.puzzles.kakuro.core.data.Toggle
 import com.joclegg.puzzles.kakuro.core.ui.BackButton
+import com.joclegg.puzzles.kakuro.engine.CombinationOrder
 import com.joclegg.puzzles.kakuro.engine.InputMode
 import com.joclegg.puzzles.kakuro.engine.MistakeCheck
 
@@ -42,6 +43,7 @@ fun SettingsRoute(
         viewModel::onHintStyleChange,
         viewModel::onInputModeChange,
         viewModel::onMistakeCheckChange,
+        viewModel::onCombinationOrderChange,
         onBack,
         modifier,
     )
@@ -54,6 +56,7 @@ fun SettingsScreen(
     onHintStyleChange: (HintStyle) -> Unit,
     onInputModeChange: (InputMode) -> Unit,
     onMistakeCheckChange: (MistakeCheck) -> Unit,
+    onCombinationOrderChange: (CombinationOrder) -> Unit,
     onBack: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
@@ -124,6 +127,21 @@ fun SettingsScreen(
                     "Sum helper",
                     detail = "List the digit combinations that still fit the selected cell's runs.",
                 )
+                if (settings.showCombinations) {
+                    Text("Sum helper order")
+                    Choice(
+                        options = CombinationOrder.entries,
+                        selected = settings.combinationOrder,
+                        label = {
+                            when (it) {
+                                CombinationOrder.INCREASING -> "Increasing"
+                                CombinationOrder.DECREASING -> "Decreasing"
+                            }
+                        },
+                        tag = { "setting_combination_order_${it.name.lowercase()}" },
+                        onSelect = onCombinationOrderChange,
+                    )
+                }
                 ToggleRow(
                     settings,
                     Toggle.GREY_USED_DIGITS,

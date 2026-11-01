@@ -16,6 +16,25 @@ class HintTest {
     }
 
     @Test
+    fun `given no cell can be worked out when the fallback hint is asked for then it names the digits the cell can be`() {
+        // Arrange
+        val wording = Regex("^This cell can only be \\d(, \\d)*( or \\d)?: everything else is in its row, column or box\\.$")
+
+        // Act
+        val hint = game.fewestCandidatesHint()!!
+
+        // Assert
+        assertEquals(
+            listOf(easyPuzzle.solution!![hint.cell], true, false),
+            listOf(
+                hint.digit,
+                wording.matches(hint.message),
+                "first empty" in hint.message,
+            ),
+        )
+    }
+
+    @Test
     fun `given a wrong digit when a hint is asked for then it points at that cell first`() {
         // Arrange
         val cell = easyPuzzle.givens.indexOfFirst { it == 0 }

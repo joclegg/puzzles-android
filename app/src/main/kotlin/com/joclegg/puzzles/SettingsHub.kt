@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
+import com.joclegg.puzzles.core.ui.HELPERS_NOTE
 import com.joclegg.puzzles.sudoku.core.data.SettingsRepository
 import com.joclegg.puzzles.sudoku.core.data.ThemeMode
 import com.joclegg.puzzles.sudoku.core.ui.BackButton
@@ -168,6 +169,14 @@ fun SettingsHubScreen(
                     modifier = Modifier.testTag("settings_tab_${option.name.lowercase()}"),
                 )
             }
+        }
+        if (tab != SettingsTab.GENERAL) {
+            Text(
+                HELPERS_NOTE,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(start = 16.dp, top = 12.dp, end = 16.dp).testTag("helpers_note"),
+            )
         }
         AccentColors(accent) {
             Box(

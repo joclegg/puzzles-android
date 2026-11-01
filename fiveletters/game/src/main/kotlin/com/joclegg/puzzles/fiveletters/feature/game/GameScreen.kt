@@ -28,6 +28,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.joclegg.puzzles.core.ui.HelpersHint
 import com.joclegg.puzzles.core.ui.WinDialog
 import com.joclegg.puzzles.fiveletters.core.ui.BackButton
 import com.joclegg.puzzles.fiveletters.core.ui.FiveLettersIcons
@@ -139,6 +140,7 @@ fun GameScreen(
                 }
             }
         }
+        HelpersHint(onSettings)
         Spacer(Modifier.height(12.dp))
         WordBoard(state.board, Modifier.tourTarget(tour, "board").weight(1f, fill = false).padding(horizontal = 12.dp))
         Text(

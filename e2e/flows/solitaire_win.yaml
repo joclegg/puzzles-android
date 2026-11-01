@@ -4,6 +4,7 @@ name: Putting the last card up wins, records a best time and shows in stats and 
 - launchApp:
     clearState: true
     arguments:
+      helpers: "on"
       fixture: "one_move_to_win"
 - waitForAnimationToEnd:
     timeout: 1500

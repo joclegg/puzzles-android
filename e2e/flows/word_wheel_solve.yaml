@@ -6,6 +6,7 @@ tags:
 - launchApp:
     clearState: true
     arguments:
+      helpers: "on"
       fixture: "word_wheel_two_words"
 - waitForAnimationToEnd:
     timeout: 1500

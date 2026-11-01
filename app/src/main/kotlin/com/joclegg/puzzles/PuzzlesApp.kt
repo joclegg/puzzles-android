@@ -6,6 +6,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -51,6 +52,8 @@ import com.joclegg.puzzles.twotone.TwoToneRoutes.twoToneGraph
 import com.joclegg.puzzles.wordwheel.WordWheelRoutes
 import com.joclegg.puzzles.wordwheel.WordWheelRoutes.openWordWheelGame
 import com.joclegg.puzzles.wordwheel.WordWheelRoutes.wordWheelGraph
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import java.time.LocalDate
 import java.time.ZoneId
@@ -63,6 +66,36 @@ data class OpenGame(
 )
 
 const val LAUNCHER = "launcher"
+
+val PuzzleGame.home: String
+    get() =
+        when (this) {
+            PuzzleGame.SUDOKU -> SudokuRoutes.HOME
+            PuzzleGame.SOLITAIRE -> SolitaireRoutes.HOME
+            PuzzleGame.TWO_TONE -> TwoToneRoutes.HOME
+            PuzzleGame.SIGHTLINES -> SightlinesRoutes.HOME
+            PuzzleGame.FIVE_LETTERS -> FiveLettersRoutes.HOME
+            PuzzleGame.KAKURO -> KakuroRoutes.HOME
+            PuzzleGame.SLIDE_OUT -> SlideOutRoutes.HOME
+            PuzzleGame.WORD_WHEEL -> WordWheelRoutes.HOME
+        }
+
+fun todaysMedal(
+    app: PuzzlesApplication,
+    tab: SettingsTab,
+): Flow<Medal> {
+    val rules = calendarRules(tab)
+    return dailyResults(app, tab).map { results ->
+        dailyDays(results, rules.total, rules.firstMedal, ZoneId.systemDefault())[LocalDate.now()]?.medal ?: Medal.NONE
+    }
+}
+
+fun todaysMedals(app: PuzzlesApplication): Flow<Map<PuzzleGame, Medal>> {
+    val perGame = PuzzleGame.entries.map { game -> todaysMedal(app, SettingsTab.valueOf(game.name)).map { game to it } }
+    return combine(perGame) { it.toMap() }
+}
+
+fun holdsEveryGold(medals: Map<PuzzleGame, Medal>): Boolean = PuzzleGame.entries.all { medals[it] == Medal.GOLD }
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -126,19 +159,24 @@ fun PuzzlesApp(
             currentOnConsume()
         }
     }
+    val medals = remember(app) { todaysMedals(app) }
     val calendars =
         remember(app, navController) {
             DailyCalendars(
-                todaysMedal = { game ->
-                    val tab = SettingsTab.valueOf(game)
-                    val rules = calendarRules(tab)
-                    dailyResults(app, tab).map { results ->
-                        dailyDays(results, rules.total, rules.firstMedal, ZoneId.systemDefault())[LocalDate.now()]?.medal ?: Medal.NONE
-                    }
-                },
+                todaysMedal = { game -> todaysMedal(app, SettingsTab.valueOf(game)) },
                 onOpen = { game -> navController.navigate(DailyCalendarRoutes.route(SettingsTab.valueOf(game))) },
+                allGold = app.celebrateAllGolds(medals),
+                onAllGoldShown = app::markAllGoldsCelebrated,
             )
         }
+    val todays by medals.collectAsState(emptyMap())
+    val openHome: (PuzzleGame) -> Unit = { game ->
+        if (app.hasBanksFor(game)) {
+            navController.navigate(game.home)
+        } else {
+            navController.navigate(BankGate.route(game))
+        }
+    }
     CompositionLocalProvider(
         LocalDailiesLeft provides rememberTodaysDailies(app, navController),
         LocalDailyCalendars provides calendars,
@@ -180,6 +218,22 @@ fun PuzzlesApp(
                 composable(DailyCalendarRoutes.ROUTE, arguments = listOf(navArgument("tab") { type = NavType.StringType })) { entry ->
                     DailyCalendarRoute(app, SettingsTab.valueOf(entry.arguments!!.getString("tab")!!), navController)
                 }
+                composable(BankGate.ROUTE, arguments = listOf(navArgument("game") { type = NavType.StringType })) { entry ->
+                    val game = PuzzleGame.valueOf(entry.arguments!!.getString("game")!!)
+                    BankGateRoute(
+                        app,
+                        game,
+                        onReady = {
+                            navController.navigate(game.home) {
+                                popUpTo(BankGate.ROUTE) { inclusive = true }
+                            }
+                        },
+                        onBack = navController::popBackStack,
+                    )
+                }
+                composable(COMBINED_HISTORY) {
+                    CombinedHistoryRoute(app, onBack = navController::popBackStack)
+                }
                 composable(LAUNCHER) {
                     LauncherScreen(
                         darkTheme = darkTheme,
@@ -188,15 +242,17 @@ fun PuzzlesApp(
                         onSendEmailLink = onSendEmailLink,
                         onVerifyEmailCode = onVerifyEmailCode,
                         onSignOutClick = onSignOutClick,
+                        medals = todays,
                         onSettingsClick = { navController.navigate(SettingsHub.route(SettingsTab.GENERAL)) },
-                        onSudokuClick = { navController.navigate(SudokuRoutes.HOME) },
-                        onSolitaireClick = { navController.navigate(SolitaireRoutes.HOME) },
-                        onTwoToneClick = { navController.navigate(TwoToneRoutes.HOME) },
-                        onSightlinesClick = { navController.navigate(SightlinesRoutes.HOME) },
-                        onFiveLettersClick = { navController.navigate(FiveLettersRoutes.HOME) },
-                        onKakuroClick = { navController.navigate(KakuroRoutes.HOME) },
-                        onSlideOutClick = { navController.navigate(SlideOutRoutes.HOME) },
-                        onWordWheelClick = { navController.navigate(WordWheelRoutes.HOME) },
+                        onHistoryClick = { navController.navigate(COMBINED_HISTORY) },
+                        onSudokuClick = { openHome(PuzzleGame.SUDOKU) },
+                        onSolitaireClick = { openHome(PuzzleGame.SOLITAIRE) },
+                        onTwoToneClick = { openHome(PuzzleGame.TWO_TONE) },
+                        onSightlinesClick = { openHome(PuzzleGame.SIGHTLINES) },
+                        onFiveLettersClick = { openHome(PuzzleGame.FIVE_LETTERS) },
+                        onKakuroClick = { openHome(PuzzleGame.KAKURO) },
+                        onSlideOutClick = { openHome(PuzzleGame.SLIDE_OUT) },
+                        onWordWheelClick = { openHome(PuzzleGame.WORD_WHEEL) },
                     )
                 }
                 sudokuGraph(app.sudoku, navController)

@@ -4,6 +4,7 @@ name: Each level keeps its own game in progress
 - launchApp:
     clearState: true
     arguments:
+      helpers: "on"
       fixture: "classic_easy"
 - waitForAnimationToEnd:
     timeout: 1500

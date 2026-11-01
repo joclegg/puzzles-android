@@ -23,12 +23,12 @@ enum class Toggle(
 
 data class Settings(
     val inputMode: InputMode = InputMode.TAP_TO_CYCLE,
-    val markBrokenRules: Boolean = true,
+    val markBrokenRules: Boolean = false,
     val showTimer: Boolean = true,
-    val showProgress: Boolean = true,
-    val showHints: Boolean = true,
+    val showProgress: Boolean = false,
+    val showHints: Boolean = false,
     val showTutorial: Boolean = true,
-    val allowReveal: Boolean = true,
+    val allowReveal: Boolean = false,
 )
 
 class SettingsRepository(
@@ -38,17 +38,23 @@ class SettingsRepository(
         store.data.map { prefs ->
             Settings(
                 inputMode = prefs[INPUT_MODE]?.let { saved -> InputMode.entries.find { it.name == saved } } ?: InputMode.TAP_TO_CYCLE,
-                markBrokenRules = prefs[Toggle.MARK_BROKEN_RULES.key] ?: true,
+                markBrokenRules = prefs[Toggle.MARK_BROKEN_RULES.key] ?: false,
                 showTimer = prefs[Toggle.SHOW_TIMER.key] ?: true,
-                showProgress = prefs[Toggle.SHOW_PROGRESS.key] ?: true,
-                showHints = prefs[Toggle.SHOW_HINTS.key] ?: true,
+                showProgress = prefs[Toggle.SHOW_PROGRESS.key] ?: false,
+                showHints = prefs[Toggle.SHOW_HINTS.key] ?: false,
                 showTutorial = prefs[Toggle.SHOW_TUTORIAL.key] ?: true,
-                allowReveal = prefs[Toggle.ALLOW_REVEAL.key] ?: true,
+                allowReveal = prefs[Toggle.ALLOW_REVEAL.key] ?: false,
             )
         }
 
     suspend fun setInputMode(mode: InputMode) {
         store.edit { it[INPUT_MODE] = mode.name }
+    }
+
+    suspend fun keepLegacyDefaults() {
+        store.edit { prefs ->
+            LEGACY_TOGGLES.filter { it.key !in prefs }.forEach { prefs[it.key] = true }
+        }
     }
 
     suspend fun set(
@@ -62,3 +68,11 @@ class SettingsRepository(
 private val Toggle.key get() = booleanPreferencesKey(name.lowercase())
 
 private val INPUT_MODE = stringPreferencesKey("input_mode")
+
+private val LEGACY_TOGGLES =
+    listOf(
+        Toggle.MARK_BROKEN_RULES,
+        Toggle.SHOW_PROGRESS,
+        Toggle.SHOW_HINTS,
+        Toggle.ALLOW_REVEAL,
+    )

@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.joclegg.puzzles.kakuro.engine.CombinationOrder
 import com.joclegg.puzzles.kakuro.engine.InputMode
 import com.joclegg.puzzles.kakuro.engine.MistakeCheck
 import kotlinx.coroutines.flow.Flow
@@ -14,31 +15,32 @@ enum class HintStyle { POINT, FILL }
 
 enum class Toggle(
     val read: (Settings) -> Boolean,
-    val default: Boolean = true,
+    val default: Boolean = false,
 ) {
     SHOW_MISTAKE_COUNT(Settings::showMistakeCount),
     AUTO_REMOVE_NOTES(Settings::autoRemoveNotes),
     HIGHLIGHT_RUNS(Settings::highlightRuns),
-    SHOW_TIMER(Settings::showTimer),
-    SHOW_COMBINATIONS(Settings::showCombinations, default = false),
+    SHOW_TIMER(Settings::showTimer, default = true),
+    SHOW_COMBINATIONS(Settings::showCombinations),
     GREY_USED_DIGITS(Settings::greyUsedDigits),
     SHOW_HINTS(Settings::showHints),
-    SHOW_TUTORIAL(Settings::showTutorial),
+    SHOW_TUTORIAL(Settings::showTutorial, default = true),
     ALLOW_REVEAL(Settings::allowReveal),
 }
 
 data class Settings(
     val inputMode: InputMode = InputMode.CELL_FIRST,
-    val mistakeCheck: MistakeCheck = MistakeCheck.SHOW_WRONG,
-    val showMistakeCount: Boolean = true,
-    val autoRemoveNotes: Boolean = true,
-    val highlightRuns: Boolean = true,
+    val mistakeCheck: MistakeCheck = MistakeCheck.OFF,
+    val showMistakeCount: Boolean = false,
+    val autoRemoveNotes: Boolean = false,
+    val highlightRuns: Boolean = false,
     val showTimer: Boolean = true,
     val showCombinations: Boolean = false,
-    val greyUsedDigits: Boolean = true,
-    val showHints: Boolean = true,
+    val combinationOrder: CombinationOrder = CombinationOrder.INCREASING,
+    val greyUsedDigits: Boolean = false,
+    val showHints: Boolean = false,
     val showTutorial: Boolean = true,
-    val allowReveal: Boolean = true,
+    val allowReveal: Boolean = false,
     val hintStyle: HintStyle = HintStyle.POINT,
 )
 
@@ -51,12 +53,15 @@ class SettingsRepository(
             Settings(
                 inputMode = prefs[INPUT_MODE]?.let { saved -> InputMode.entries.find { it.name == saved } } ?: InputMode.CELL_FIRST,
                 mistakeCheck =
-                    prefs[MISTAKE_CHECK]?.let { saved -> MistakeCheck.entries.find { it.name == saved } } ?: MistakeCheck.SHOW_WRONG,
+                    prefs[MISTAKE_CHECK]?.let { saved -> MistakeCheck.entries.find { it.name == saved } } ?: MistakeCheck.OFF,
                 showMistakeCount = on(Toggle.SHOW_MISTAKE_COUNT),
                 autoRemoveNotes = on(Toggle.AUTO_REMOVE_NOTES),
                 highlightRuns = on(Toggle.HIGHLIGHT_RUNS),
                 showTimer = on(Toggle.SHOW_TIMER),
                 showCombinations = on(Toggle.SHOW_COMBINATIONS),
+                combinationOrder =
+                    prefs[COMBINATION_ORDER]?.let { saved -> CombinationOrder.entries.find { it.name == saved } }
+                        ?: CombinationOrder.INCREASING,
                 greyUsedDigits = on(Toggle.GREY_USED_DIGITS),
                 showHints = on(Toggle.SHOW_HINTS),
                 showTutorial = on(Toggle.SHOW_TUTORIAL),
@@ -73,8 +78,21 @@ class SettingsRepository(
         store.edit { it[MISTAKE_CHECK] = level.name }
     }
 
+    suspend fun setCombinationOrder(order: CombinationOrder) {
+        store.edit { it[COMBINATION_ORDER] = order.name }
+    }
+
     suspend fun setHintStyle(style: HintStyle) {
         store.edit { it[HINT_STYLE] = style.name }
+    }
+
+    suspend fun keepLegacyDefaults() {
+        store.edit { prefs ->
+            LEGACY_TOGGLES.filter { it.key !in prefs }.forEach { prefs[it.key] = true }
+            if (MISTAKE_CHECK !in prefs) {
+                prefs[MISTAKE_CHECK] = MistakeCheck.SHOW_WRONG.name
+            }
+        }
     }
 
     suspend fun set(
@@ -91,3 +109,15 @@ private val INPUT_MODE = stringPreferencesKey("input_mode")
 private val MISTAKE_CHECK = stringPreferencesKey("mistake_check")
 
 private val HINT_STYLE = stringPreferencesKey("hint_style")
+
+private val COMBINATION_ORDER = stringPreferencesKey("combination_order")
+
+private val LEGACY_TOGGLES =
+    listOf(
+        Toggle.SHOW_MISTAKE_COUNT,
+        Toggle.AUTO_REMOVE_NOTES,
+        Toggle.HIGHLIGHT_RUNS,
+        Toggle.GREY_USED_DIGITS,
+        Toggle.SHOW_HINTS,
+        Toggle.ALLOW_REVEAL,
+    )

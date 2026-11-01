@@ -1,0 +1,17 @@
+appId: com.joclegg.puzzles
+name: The History button on the launcher opens the combined history of every game
+tags:
+  - fast
+---
+- launchApp:
+    clearState: true
+- waitForAnimationToEnd:
+    timeout: 1500
+- tapOn:
+    id: "history"
+- assertVisible:
+    id: "history_empty"
+- tapOn:
+    id: "back"
+- assertVisible:
+    id: "game_sudoku"

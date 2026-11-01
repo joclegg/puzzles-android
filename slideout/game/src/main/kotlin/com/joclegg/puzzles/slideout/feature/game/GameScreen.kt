@@ -28,6 +28,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.joclegg.puzzles.core.ui.HelpersHint
 import com.joclegg.puzzles.core.ui.WinDialog
 import com.joclegg.puzzles.core.ui.WinStat
 import com.joclegg.puzzles.slideout.core.ui.BackButton
@@ -163,6 +164,7 @@ fun GameScreen(
                 }
             }
         }
+        HelpersHint(onSettings)
         Spacer(Modifier.height(24.dp))
         SlideBoard(state.board, onSlide, Modifier.tourTarget(tour, "board").fillMaxWidth().padding(horizontal = 16.dp))
     }
