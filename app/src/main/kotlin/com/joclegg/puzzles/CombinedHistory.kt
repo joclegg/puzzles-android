@@ -51,16 +51,23 @@ private fun entry(
 fun combinedHistory(app: PuzzlesApplication): Flow<List<HistoryEntry>> =
     combine(
         listOf(
-            app.sudoku.games.history.entries { entry("Sudoku", it.finishedAt, it.status.name, it.elapsedMs) },
-            app.solitaire.games.history.entries { entry("Solitaire", it.finishedAt, it.status.name, it.elapsedMs) },
-            app.twoTone.games.history.entries { entry("Two Tone", it.finishedAt, it.status.name, it.elapsedMs) },
-            app.sightlines.games.history.entries { entry("Sightlines", it.finishedAt, it.status.name, it.elapsedMs) },
+            app.sudoku.games.history
+                .entries { entry("Sudoku", it.finishedAt, it.status.name, it.elapsedMs) },
+            app.solitaire.games.history
+                .entries { entry("Solitaire", it.finishedAt, it.status.name, it.elapsedMs) },
+            app.twoTone.games.history
+                .entries { entry("Two Tone", it.finishedAt, it.status.name, it.elapsedMs) },
+            app.sightlines.games.history
+                .entries { entry("Sightlines", it.finishedAt, it.status.name, it.elapsedMs) },
             app.fiveLetters.games.history.entries {
                 entry("Five Letters", it.finishedAt, it.status.name, null)?.withGuesses(it.guesses.size)
             },
-            app.kakuro.games.history.entries { entry("Kakuro", it.finishedAt, it.status.name, it.elapsedMs) },
-            app.slideOut.games.history.entries { entry("Slide Out", it.finishedAt, it.status.name, it.elapsedMs) },
-            app.wordWheel.games.history.entries { entry("Word Wheel", it.finishedAt, it.status.name, it.elapsedMs) },
+            app.kakuro.games.history
+                .entries { entry("Kakuro", it.finishedAt, it.status.name, it.elapsedMs) },
+            app.slideOut.games.history
+                .entries { entry("Slide Out", it.finishedAt, it.status.name, it.elapsedMs) },
+            app.wordWheel.games.history
+                .entries { entry("Word Wheel", it.finishedAt, it.status.name, it.elapsedMs) },
         ),
     ) { lists -> mergeHistory(lists.toList()) }
 
