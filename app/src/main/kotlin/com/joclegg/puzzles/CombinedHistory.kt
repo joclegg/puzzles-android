@@ -51,18 +51,20 @@ private fun entry(
 fun combinedHistory(app: PuzzlesApplication): Flow<List<HistoryEntry>> =
     combine(
         listOf(
-            app.sudoku.games.history.map { games -> games.mapNotNull { entry("Sudoku", it.finishedAt, it.status.name, it.elapsedMs) } },
-            app.solitaire.games.history.map { games -> games.mapNotNull { entry("Solitaire", it.finishedAt, it.status.name, it.elapsedMs) } },
-            app.twoTone.games.history.map { games -> games.mapNotNull { entry("Two Tone", it.finishedAt, it.status.name, it.elapsedMs) } },
-            app.sightlines.games.history.map { games -> games.mapNotNull { entry("Sightlines", it.finishedAt, it.status.name, it.elapsedMs) } },
-            app.fiveLetters.games.history.map { games ->
-                games.mapNotNull { entry("Five Letters", it.finishedAt, it.status.name, null)?.withGuesses(it.guesses.size) }
+            app.sudoku.games.history.entries { entry("Sudoku", it.finishedAt, it.status.name, it.elapsedMs) },
+            app.solitaire.games.history.entries { entry("Solitaire", it.finishedAt, it.status.name, it.elapsedMs) },
+            app.twoTone.games.history.entries { entry("Two Tone", it.finishedAt, it.status.name, it.elapsedMs) },
+            app.sightlines.games.history.entries { entry("Sightlines", it.finishedAt, it.status.name, it.elapsedMs) },
+            app.fiveLetters.games.history.entries {
+                entry("Five Letters", it.finishedAt, it.status.name, null)?.withGuesses(it.guesses.size)
             },
-            app.kakuro.games.history.map { games -> games.mapNotNull { entry("Kakuro", it.finishedAt, it.status.name, it.elapsedMs) } },
-            app.slideOut.games.history.map { games -> games.mapNotNull { entry("Slide Out", it.finishedAt, it.status.name, it.elapsedMs) } },
-            app.wordWheel.games.history.map { games -> games.mapNotNull { entry("Word Wheel", it.finishedAt, it.status.name, it.elapsedMs) } },
+            app.kakuro.games.history.entries { entry("Kakuro", it.finishedAt, it.status.name, it.elapsedMs) },
+            app.slideOut.games.history.entries { entry("Slide Out", it.finishedAt, it.status.name, it.elapsedMs) },
+            app.wordWheel.games.history.entries { entry("Word Wheel", it.finishedAt, it.status.name, it.elapsedMs) },
         ),
     ) { lists -> mergeHistory(lists.toList()) }
+
+private fun <T> Flow<List<T>>.entries(read: (T) -> HistoryEntry?): Flow<List<HistoryEntry>> = map { games -> games.mapNotNull(read) }
 
 private fun HistoryEntry.withGuesses(count: Int) = copy(result = "$result in $count")
 
@@ -100,7 +102,10 @@ fun CombinedHistoryScreen(
         }
         LazyColumn(Modifier.fillMaxWidth().testTag("history_list")) {
             items(entries) { item ->
-                Row(Modifier.fillMaxWidth().padding(vertical = 8.dp).testTag("history_row"), verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    Modifier.fillMaxWidth().padding(vertical = 8.dp).testTag("history_row"),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
                     Column(Modifier.weight(1f)) {
                         Text(item.game, style = MaterialTheme.typography.titleMedium)
                         Text(

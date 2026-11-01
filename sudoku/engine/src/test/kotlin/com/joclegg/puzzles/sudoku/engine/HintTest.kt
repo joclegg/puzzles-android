@@ -17,6 +17,9 @@ class HintTest {
 
     @Test
     fun `given no cell can be worked out when the fallback hint is asked for then it names the digits the cell can be`() {
+        // Arrange
+        val wording = Regex("^This cell can only be \\d(, \\d)*( or \\d)?: everything else is in its row, column or box\\.$")
+
         // Act
         val hint = game.fewestCandidatesHint()!!
 
@@ -25,7 +28,7 @@ class HintTest {
             listOf(easyPuzzle.solution!![hint.cell], true, false),
             listOf(
                 hint.digit,
-                Regex("^This cell can only be \\d(, \\d)*( or \\d)?: everything else is in its row, column or box\\.$").matches(hint.message),
+                wording.matches(hint.message),
                 "first empty" in hint.message,
             ),
         )

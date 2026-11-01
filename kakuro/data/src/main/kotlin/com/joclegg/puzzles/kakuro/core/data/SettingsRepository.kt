@@ -88,11 +88,7 @@ class SettingsRepository(
 
     suspend fun keepLegacyDefaults() {
         store.edit { prefs ->
-            listOf(Toggle.SHOW_MISTAKE_COUNT, Toggle.AUTO_REMOVE_NOTES, Toggle.HIGHLIGHT_RUNS, Toggle.GREY_USED_DIGITS, Toggle.SHOW_HINTS, Toggle.ALLOW_REVEAL).forEach { toggle ->
-                if (toggle.key !in prefs) {
-                    prefs[toggle.key] = true
-                }
-            }
+            LEGACY_TOGGLES.filter { it.key !in prefs }.forEach { prefs[it.key] = true }
             if (MISTAKE_CHECK !in prefs) {
                 prefs[MISTAKE_CHECK] = MistakeCheck.SHOW_WRONG.name
             }
@@ -115,3 +111,13 @@ private val MISTAKE_CHECK = stringPreferencesKey("mistake_check")
 private val HINT_STYLE = stringPreferencesKey("hint_style")
 
 private val COMBINATION_ORDER = stringPreferencesKey("combination_order")
+
+private val LEGACY_TOGGLES =
+    listOf(
+        Toggle.SHOW_MISTAKE_COUNT,
+        Toggle.AUTO_REMOVE_NOTES,
+        Toggle.HIGHLIGHT_RUNS,
+        Toggle.GREY_USED_DIGITS,
+        Toggle.SHOW_HINTS,
+        Toggle.ALLOW_REVEAL,
+    )

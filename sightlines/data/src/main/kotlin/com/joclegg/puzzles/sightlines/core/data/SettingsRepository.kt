@@ -56,11 +56,7 @@ class SettingsRepository(
 
     suspend fun keepLegacyDefaults() {
         store.edit { prefs ->
-            listOf(Toggle.MARK_BROKEN_RULES, Toggle.SHOW_PROGRESS, Toggle.SHOW_SEEN_COUNT, Toggle.SHOW_HINTS, Toggle.ALLOW_REVEAL).forEach { toggle ->
-                if (toggle.key !in prefs) {
-                    prefs[toggle.key] = true
-                }
-            }
+            LEGACY_TOGGLES.filter { it.key !in prefs }.forEach { prefs[it.key] = true }
         }
     }
 
@@ -75,3 +71,12 @@ class SettingsRepository(
 private val Toggle.key get() = booleanPreferencesKey(name.lowercase())
 
 private val INPUT_MODE = stringPreferencesKey("input_mode")
+
+private val LEGACY_TOGGLES =
+    listOf(
+        Toggle.MARK_BROKEN_RULES,
+        Toggle.SHOW_PROGRESS,
+        Toggle.SHOW_SEEN_COUNT,
+        Toggle.SHOW_HINTS,
+        Toggle.ALLOW_REVEAL,
+    )

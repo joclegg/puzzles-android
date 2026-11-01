@@ -90,11 +90,12 @@ fun todaysMedal(
     }
 }
 
-fun todaysMedals(app: PuzzlesApplication): Flow<Map<PuzzleGame, Medal>> =
-    combine(PuzzleGame.entries.map { game -> todaysMedal(app, SettingsTab.valueOf(game.name)).map { game to it } }) { it.toMap() }
+fun todaysMedals(app: PuzzlesApplication): Flow<Map<PuzzleGame, Medal>> {
+    val perGame = PuzzleGame.entries.map { game -> todaysMedal(app, SettingsTab.valueOf(game.name)).map { game to it } }
+    return combine(perGame) { it.toMap() }
+}
 
-fun holdsEveryGold(medals: Map<PuzzleGame, Medal>): Boolean =
-    PuzzleGame.entries.all { medals[it] == Medal.GOLD }
+fun holdsEveryGold(medals: Map<PuzzleGame, Medal>): Boolean = PuzzleGame.entries.all { medals[it] == Medal.GOLD }
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
