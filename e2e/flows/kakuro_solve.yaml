@@ -6,6 +6,7 @@ tags:
 - launchApp:
     clearState: true
     arguments:
+      helpers: "on"
       fixture: "kakuro_one_left"
 - waitForAnimationToEnd:
     timeout: 1500

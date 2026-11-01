@@ -3,6 +3,8 @@ name: Two Tone - with Pick a colour on, picking blue and tapping fills the last 
 ---
 - launchApp:
     clearState: true
+    arguments:
+      helpers: "on"
 - waitForAnimationToEnd:
     timeout: 1500
 - scrollUntilVisible:

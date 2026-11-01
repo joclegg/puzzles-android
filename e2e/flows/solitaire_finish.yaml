@@ -4,6 +4,7 @@ name: Finish plays the last face-up cards to the foundations and wins
 - launchApp:
     clearState: true
     arguments:
+      helpers: "on"
       fixture: "one_move_to_win"
 - waitForAnimationToEnd:
     timeout: 1500

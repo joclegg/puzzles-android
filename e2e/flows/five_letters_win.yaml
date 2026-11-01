@@ -6,6 +6,7 @@ tags:
 - launchApp:
     clearState: true
     arguments:
+      helpers: "on"
       fixture: "five_letters_crane"
 - waitForAnimationToEnd:
     timeout: 1500

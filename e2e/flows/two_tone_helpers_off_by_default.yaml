@@ -1,0 +1,23 @@
+appId: com.joclegg.puzzles
+name: Two Tone - a new player starts with helpers off and Customise helpers opens Settings
+tags:
+  - fast
+---
+- launchApp:
+    clearState: true
+    arguments:
+      fixture: "two_tone_one_left"
+- waitForAnimationToEnd:
+    timeout: 1500
+- assertNotVisible:
+    id: "hint"
+- assertNotVisible:
+    id: "input_mode"
+- tapOn:
+    id: "customise_helpers"
+- waitForAnimationToEnd:
+    timeout: 1500
+- assertVisible:
+    id: "helpers_note"
+- assertVisible:
+    id: "setting_show_hints"

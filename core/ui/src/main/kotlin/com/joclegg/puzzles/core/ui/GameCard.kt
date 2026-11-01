@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -24,6 +25,9 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -33,6 +37,7 @@ fun GameCard(
     accent: Color,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    medal: Medal = Medal.NONE,
     icon: @Composable () -> Unit,
 ) {
     val shape = RoundedCornerShape(24.dp)
@@ -62,6 +67,18 @@ fun GameCard(
         Column(Modifier.weight(1f)) {
             Text(title, style = MaterialTheme.typography.titleLarge)
             Text(detail, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+        if (medal != Medal.NONE) {
+            Box(
+                Modifier
+                    .size(28.dp)
+                    .background(medalColour(medal), CircleShape)
+                    .semantics { contentDescription = "Today's ${medal.name.lowercase()} medal" }
+                    .testTag("card_medal_${medal.name.lowercase()}"),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(MenuIcons.Trophy, contentDescription = null, tint = MaterialTheme.colorScheme.surface, modifier = Modifier.size(16.dp))
+            }
         }
         Icon(MenuIcons.Chevron, contentDescription = null, tint = accent)
     }

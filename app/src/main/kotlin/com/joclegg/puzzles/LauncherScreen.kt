@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
@@ -24,6 +25,9 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.joclegg.puzzles.core.sync.SignInProvider
 import com.joclegg.puzzles.core.ui.GameCard
+import com.joclegg.puzzles.core.ui.Medal
+import com.joclegg.puzzles.core.ui.MenuIcons
+import com.joclegg.puzzles.core.ui.medalColour
 import com.joclegg.puzzles.fiveletters.core.ui.FiveLettersGameIcon
 import com.joclegg.puzzles.fiveletters.core.ui.FiveLettersTheme
 import com.joclegg.puzzles.fiveletters.core.ui.LocalLetterColors
@@ -57,7 +61,9 @@ fun LauncherScreen(
     onSendEmailLink: suspend (String) -> Boolean,
     onVerifyEmailCode: suspend (String, String) -> Boolean,
     onSignOutClick: () -> Unit,
+    medals: Map<PuzzleGame, Medal>,
     onSettingsClick: () -> Unit,
+    onHistoryClick: () -> Unit,
     onSudokuClick: () -> Unit,
     onSolitaireClick: () -> Unit,
     onTwoToneClick: () -> Unit,
@@ -82,6 +88,16 @@ fun LauncherScreen(
         )
     }
     Column(modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        if (holdsEveryGold(medals)) {
+            Row(
+                Modifier.fillMaxWidth().testTag("all_golds_trophy"),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(MenuIcons.Trophy, contentDescription = null, tint = medalColour(Medal.GOLD), modifier = Modifier.size(40.dp))
+                Text("Gold in every puzzle", style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(start = 8.dp))
+            }
+        }
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text("Puzzles", style = MaterialTheme.typography.headlineLarge, modifier = Modifier.weight(1f))
             if (account == null) {
@@ -93,6 +109,9 @@ fun LauncherScreen(
                     Text("Sign out")
                 }
             }
+            IconButton(onClick = onHistoryClick, modifier = Modifier.testTag("history")) {
+                Icon(MenuIcons.History, contentDescription = "History")
+            }
             IconButton(onClick = onSettingsClick, modifier = Modifier.testTag("settings")) {
                 Icon(SudokuIcons.Settings, contentDescription = "Settings")
             }
@@ -103,6 +122,7 @@ fun LauncherScreen(
             LocalBoardColors.current.accent,
             onSudokuClick,
             Modifier.testTag("game_sudoku"),
+            medals[PuzzleGame.SUDOKU] ?: Medal.NONE,
         ) {
             SudokuGameIcon()
         }
@@ -113,6 +133,7 @@ fun LauncherScreen(
                 LocalTableColors.current.accent,
                 onSolitaireClick,
                 Modifier.testTag("game_solitaire"),
+                medals[PuzzleGame.SOLITAIRE] ?: Medal.NONE,
             ) {
                 SolitaireGameIcon()
             }
@@ -124,6 +145,7 @@ fun LauncherScreen(
                 TwoToneColors.current.accent,
                 onTwoToneClick,
                 Modifier.testTag("game_two_tone"),
+                medals[PuzzleGame.TWO_TONE] ?: Medal.NONE,
             ) {
                 TwoToneGameIcon()
             }
@@ -135,6 +157,7 @@ fun LauncherScreen(
                 SightlinesColors.current.accent,
                 onSightlinesClick,
                 Modifier.testTag("game_sightlines"),
+                medals[PuzzleGame.SIGHTLINES] ?: Medal.NONE,
             ) {
                 SightlinesGameIcon()
             }
@@ -146,6 +169,7 @@ fun LauncherScreen(
                 LocalLetterColors.current.accent,
                 onFiveLettersClick,
                 Modifier.testTag("game_five_letters"),
+                medals[PuzzleGame.FIVE_LETTERS] ?: Medal.NONE,
             ) {
                 FiveLettersGameIcon()
             }
@@ -157,6 +181,7 @@ fun LauncherScreen(
                 LocalKakuroColors.current.accent,
                 onKakuroClick,
                 Modifier.testTag("game_kakuro"),
+                medals[PuzzleGame.KAKURO] ?: Medal.NONE,
             ) {
                 KakuroGameIcon()
             }
@@ -168,6 +193,7 @@ fun LauncherScreen(
                 LocalSlideColors.current.accent,
                 onSlideOutClick,
                 Modifier.testTag("game_slide_out"),
+                medals[PuzzleGame.SLIDE_OUT] ?: Medal.NONE,
             ) {
                 SlideOutGameIcon()
             }
@@ -179,6 +205,7 @@ fun LauncherScreen(
                 LocalWheelColors.current.accent,
                 onWordWheelClick,
                 Modifier.testTag("game_word_wheel"),
+                medals[PuzzleGame.WORD_WHEEL] ?: Medal.NONE,
             ) {
                 WordWheelGameIcon()
             }

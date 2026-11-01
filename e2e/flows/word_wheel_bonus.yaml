@@ -4,6 +4,7 @@ name: Word Wheel - a real word that isn't in the crossword counts as a bonus
 - launchApp:
     clearState: true
     arguments:
+      helpers: "on"
       fixture: "word_wheel_two_words"
 - waitForAnimationToEnd:
     timeout: 1500

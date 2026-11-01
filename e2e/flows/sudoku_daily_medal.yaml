@@ -4,6 +4,7 @@ name: Finishing today's daily earns a bronze medal on Home and in the calendar
 - launchApp:
     clearState: true
     arguments:
+      helpers: "on"
       fixture: "daily_classic_one_left"
 - waitForAnimationToEnd:
     timeout: 1500

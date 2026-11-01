@@ -8,6 +8,7 @@ import com.joclegg.puzzles.kakuro.core.data.GameEntity
 import com.joclegg.puzzles.kakuro.core.data.HintStyle
 import com.joclegg.puzzles.kakuro.core.data.SettingsRepository
 import com.joclegg.puzzles.kakuro.core.data.Toggle
+import com.joclegg.puzzles.kakuro.engine.CombinationOrder
 import com.joclegg.puzzles.kakuro.engine.InputMode
 import com.joclegg.puzzles.kakuro.engine.MistakeCheck
 import com.joclegg.puzzles.sync.EntityAccess
@@ -94,6 +95,7 @@ private suspend fun settingsJson(settings: SettingsRepository): JSONObject {
     json.put("inputMode", current.inputMode.toJsonName())
     json.put("mistakeCheck", current.mistakeCheck.toJsonName())
     json.put("hintStyle", current.hintStyle.toJsonName())
+    json.put("combinationOrder", current.combinationOrder.toJsonName())
     return json
 }
 
@@ -110,5 +112,8 @@ private suspend fun applySettingsJson(
     }
     if (json.has("hintStyle")) {
         HintStyle.entries.find { it.name == json.enumName("hintStyle") }?.let { settings.setHintStyle(it) }
+    }
+    if (json.has("combinationOrder")) {
+        CombinationOrder.entries.find { it.name == json.enumName("combinationOrder") }?.let { settings.setCombinationOrder(it) }
     }
 }

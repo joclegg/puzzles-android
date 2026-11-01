@@ -24,13 +24,13 @@ enum class Toggle(
 
 data class Settings(
     val inputMode: InputMode = InputMode.TAP_TO_CYCLE,
-    val markBrokenRules: Boolean = true,
+    val markBrokenRules: Boolean = false,
     val showTimer: Boolean = true,
-    val showProgress: Boolean = true,
-    val showSeenCount: Boolean = true,
-    val showHints: Boolean = true,
+    val showProgress: Boolean = false,
+    val showSeenCount: Boolean = false,
+    val showHints: Boolean = false,
     val showTutorial: Boolean = true,
-    val allowReveal: Boolean = true,
+    val allowReveal: Boolean = false,
 )
 
 class SettingsRepository(
@@ -40,18 +40,28 @@ class SettingsRepository(
         store.data.map { prefs ->
             Settings(
                 inputMode = prefs[INPUT_MODE]?.let { saved -> InputMode.entries.find { it.name == saved } } ?: InputMode.TAP_TO_CYCLE,
-                markBrokenRules = prefs[Toggle.MARK_BROKEN_RULES.key] ?: true,
+                markBrokenRules = prefs[Toggle.MARK_BROKEN_RULES.key] ?: false,
                 showTimer = prefs[Toggle.SHOW_TIMER.key] ?: true,
-                showProgress = prefs[Toggle.SHOW_PROGRESS.key] ?: true,
-                showSeenCount = prefs[Toggle.SHOW_SEEN_COUNT.key] ?: true,
-                showHints = prefs[Toggle.SHOW_HINTS.key] ?: true,
+                showProgress = prefs[Toggle.SHOW_PROGRESS.key] ?: false,
+                showSeenCount = prefs[Toggle.SHOW_SEEN_COUNT.key] ?: false,
+                showHints = prefs[Toggle.SHOW_HINTS.key] ?: false,
                 showTutorial = prefs[Toggle.SHOW_TUTORIAL.key] ?: true,
-                allowReveal = prefs[Toggle.ALLOW_REVEAL.key] ?: true,
+                allowReveal = prefs[Toggle.ALLOW_REVEAL.key] ?: false,
             )
         }
 
     suspend fun setInputMode(mode: InputMode) {
         store.edit { it[INPUT_MODE] = mode.name }
+    }
+
+    suspend fun keepLegacyDefaults() {
+        store.edit { prefs ->
+            listOf(Toggle.MARK_BROKEN_RULES, Toggle.SHOW_PROGRESS, Toggle.SHOW_SEEN_COUNT, Toggle.SHOW_HINTS, Toggle.ALLOW_REVEAL).forEach { toggle ->
+                if (toggle.key !in prefs) {
+                    prefs[toggle.key] = true
+                }
+            }
+        }
     }
 
     suspend fun set(

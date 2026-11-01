@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.joclegg.puzzles.core.ui.HelpersHint
 import com.joclegg.puzzles.core.ui.WinDialog
 import com.joclegg.puzzles.core.ui.WinStat
 import com.joclegg.puzzles.wordwheel.core.ui.BackButton
@@ -151,6 +152,7 @@ fun GameScreen(
                 }
             }
         }
+        HelpersHint(onSettings)
         WordGrid(state.grid, Modifier.tourTarget(tour, "grid").weight(1f).padding(horizontal = 16.dp, vertical = 8.dp))
         Text(
             state.chosen

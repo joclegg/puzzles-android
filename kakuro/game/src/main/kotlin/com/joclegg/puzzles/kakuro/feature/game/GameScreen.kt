@@ -28,6 +28,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.joclegg.puzzles.core.ui.HelpersHint
 import com.joclegg.puzzles.core.ui.WinDialog
 import com.joclegg.puzzles.core.ui.WinStat
 import com.joclegg.puzzles.kakuro.core.ui.BackButton
@@ -168,6 +169,7 @@ fun GameScreen(
                 }
             }
         }
+        HelpersHint(onSettings)
         Spacer(Modifier.height(24.dp))
         KakuroBoard(state.board, onCellClick, Modifier.tourTarget(tour, "board").fillMaxWidth().padding(horizontal = 8.dp))
         Text(

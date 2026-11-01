@@ -308,11 +308,11 @@ class GameViewModel(
                                 if (masks.isEmpty()) {
                                     append("none fit")
                                 }
-                                masks.forEachIndexed { index, mask ->
+                                Combinations.ordered(masks, display.combinationOrder).forEachIndexed { index, digits ->
                                     if (index > 0) {
                                         append("  ")
                                     }
-                                    Combinations.digitsOf(mask).forEach { digit ->
+                                    digits.forEach { digit ->
                                         if (digit in placed) {
                                             withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("$digit") }
                                         } else {

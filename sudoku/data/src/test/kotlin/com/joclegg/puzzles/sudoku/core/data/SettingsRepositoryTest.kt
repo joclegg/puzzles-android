@@ -89,8 +89,13 @@ class SettingsRepositoryTest(
         @Parameterized.Parameters(name = "{0}")
         fun cases() =
             listOf(
-                arrayOf<Any?>("nothing saved", null, null, MistakeCheck.SHOW_WRONG to MistakeCheck.SHOW_WRONG),
-                arrayOf<Any?>("classic off, killer shows wrong", MistakeCheck.OFF, null, MistakeCheck.OFF to MistakeCheck.SHOW_WRONG),
+                arrayOf<Any?>("nothing saved", null, null, MistakeCheck.OFF to MistakeCheck.OFF),
+                arrayOf<Any?>(
+                    "classic shows wrong, killer off",
+                    MistakeCheck.SHOW_WRONG,
+                    null,
+                    MistakeCheck.SHOW_WRONG to MistakeCheck.OFF,
+                ),
                 arrayOf<Any?>(
                     "classic blocks clashes, killer off",
                     MistakeCheck.BLOCK_CLASHES,

@@ -4,6 +4,7 @@ name: How to play walks through the screen one step at a time
 - launchApp:
     clearState: true
     arguments:
+      helpers: "on"
       fixture: "classic_easy"
 - waitForAnimationToEnd:
     timeout: 1500

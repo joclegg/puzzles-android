@@ -3,6 +3,8 @@ name: Daily calendar - choosing a level for today opens its game
 ---
 - launchApp:
     clearState: true
+    arguments:
+      helpers: "on"
 - waitForAnimationToEnd:
     timeout: 1500
 - scrollUntilVisible:

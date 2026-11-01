@@ -6,6 +6,7 @@ import com.joclegg.puzzles.kakuro.core.data.HintStyle
 import com.joclegg.puzzles.kakuro.core.data.Settings
 import com.joclegg.puzzles.kakuro.core.data.SettingsRepository
 import com.joclegg.puzzles.kakuro.core.data.Toggle
+import com.joclegg.puzzles.kakuro.engine.CombinationOrder
 import com.joclegg.puzzles.kakuro.engine.InputMode
 import com.joclegg.puzzles.kakuro.engine.MistakeCheck
 import kotlinx.coroutines.flow.SharingStarted
@@ -32,6 +33,10 @@ class SettingsViewModel(
 
     fun onMistakeCheckChange(level: MistakeCheck) {
         viewModelScope.launch { settings.setMistakeCheck(level) }
+    }
+
+    fun onCombinationOrderChange(order: CombinationOrder) {
+        viewModelScope.launch { settings.setCombinationOrder(order) }
     }
 
     fun onHintStyleChange(style: HintStyle) {

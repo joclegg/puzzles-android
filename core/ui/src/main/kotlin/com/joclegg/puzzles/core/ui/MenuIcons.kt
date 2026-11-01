@@ -22,6 +22,7 @@ object MenuIcons {
         )
     val Book =
         outline("book", "M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z", "M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z")
+    val Tune = outline("tune", "M4 21v-7", "M4 10V3", "M12 21v-9", "M12 8V3", "M20 21v-5", "M20 12V3", "M1 14h6", "M9 8h6", "M17 16h6")
     val Chevron = outline("chevron", "M9 18l6-6-6-6")
     val Check = outline("check", "M20 6L9 17l-5-5")
     val Today =
