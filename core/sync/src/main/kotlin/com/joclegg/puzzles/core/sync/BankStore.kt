@@ -2,6 +2,7 @@ package com.joclegg.puzzles.core.sync
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 import java.security.MessageDigest
@@ -13,9 +14,15 @@ class BankStore(
 ) {
     private val applied = File(directory, MANIFEST)
     private val complete = File(directory, COMPLETE)
+    private val wanted = File(directory, WANTED)
 
     val isReady: Boolean
         get() = complete.isFile && appliedHashes().keys.all { File(directory, it).isFile }
+
+    fun isReady(folder: String): Boolean {
+        val paths = (wantedPaths() ?: appliedHashes().keys.takeIf { complete.isFile }.orEmpty()).filter { it.startsWith("$folder/") }
+        return paths.isNotEmpty() && paths.all { File(directory, it).isFile }
+    }
 
     fun read(path: String): String = File(directory, path).readText()
 
@@ -46,6 +53,8 @@ class BankStore(
             return 0
         }
         val remote = JSONObject(response.body).getJSONObject("files")
+        directory.mkdirs()
+        wanted.writeText(JSONArray(remote.keys().asSequence().toList()).toString())
         val known = appliedHashes()
         var downloaded = 0
         remote.keys().forEach { path ->
@@ -78,6 +87,12 @@ class BankStore(
         return partial.renameTo(target)
     }
 
+    private fun wantedPaths(): List<String>? =
+        wanted.takeIf { it.isFile }?.let { file ->
+            val json = JSONArray(file.readText())
+            (0 until json.length()).map(json::getString)
+        }
+
     private fun appliedHashes(): MutableMap<String, String> {
         val json = applied.takeIf { it.isFile }?.let { JSONObject(it.readText()) } ?: JSONObject()
         return json
@@ -91,6 +106,7 @@ class BankStore(
         const val BASE_URL = "https://joclegg.github.io/puzzles-data"
         private const val MANIFEST = "manifest.json"
         private const val COMPLETE = "complete"
+        private const val WANTED = "wanted.json"
 
         fun sha256(bytes: ByteArray): String = MessageDigest.getInstance("SHA-256").digest(bytes).joinToString("") { "%02x".format(it) }
     }

@@ -67,24 +67,19 @@ class MainActivity : ComponentActivity() {
                 enableEdgeToEdge(statusBarStyle = style, navigationBarStyle = style)
                 onDispose {}
             }
-            banksReady.value = banksReady.value || app.banks.isReady
             val account by app.auth.email.collectAsStateWithLifecycle(initialValue = null)
             SudokuTheme(darkTheme = darkTheme) {
-                if (banksReady.value) {
-                    PuzzlesApp(
-                        app,
-                        darkTheme,
-                        openGame = openGame.value,
-                        onConsumeOpenGame = { openGame.value = null },
-                        account = account,
-                        onSignInClick = ::signIn,
-                        onSendEmailLink = app.auth::sendEmailLink,
-                        onVerifyEmailCode = ::verifyEmailCode,
-                        onSignOutClick = { app.background.launch { app.auth.signOut() } },
-                    )
-                } else {
-                    BankDownloadScreen(failed = banksFailed.value, onRetry = ::updateBanksInBackground)
-                }
+                PuzzlesApp(
+                    app,
+                    darkTheme,
+                    openGame = openGame.value,
+                    onConsumeOpenGame = { openGame.value = null },
+                    account = account,
+                    onSignInClick = ::signIn,
+                    onSendEmailLink = app.auth::sendEmailLink,
+                    onVerifyEmailCode = ::verifyEmailCode,
+                    onSignOutClick = { app.background.launch { app.auth.signOut() } },
+                )
             }
         }
     }
@@ -94,28 +89,15 @@ class MainActivity : ComponentActivity() {
         completeSignIn(intent)
     }
 
-    private val banksReady = mutableStateOf(false)
-    private val banksFailed = mutableStateOf(false)
-
     override fun onStart() {
         super.onStart()
         syncInBackground()
-        updateBanksInBackground()
+        (application as PuzzlesApplication).updateBanks()
     }
 
     override fun onStop() {
         super.onStop()
         syncInBackground()
-    }
-
-    private fun updateBanksInBackground() {
-        val app = application as PuzzlesApplication
-        banksFailed.value = false
-        app.background.launch {
-            app.banks.update()
-            banksReady.value = app.banks.isReady
-            banksFailed.value = !app.banks.isReady
-        }
     }
 
     private fun syncInBackground() {
@@ -167,7 +149,9 @@ class MainActivity : ComponentActivity() {
         val kakuro = KakuroFixtures.puzzle(name)
         val slideOut = SlideOutFixtures.puzzle(name)
         val wordWheel = WordWheelFixtures.puzzle(name)
+        val helpers = intent.getStringExtra(HelperFixtures.EXTRA)
         lifecycleScope.launch {
+            HelperFixtures.apply(app, helpers)
             if (draft != null) {
                 app.sudoku.settings.setCustomDraft(draft)
                 openGame.value = OpenGame(PuzzleGame.SUDOKU, id = null)

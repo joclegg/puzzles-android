@@ -184,4 +184,40 @@ class BankStoreTest {
             // Assert
             assertEquals(false to "puzzle\n", readyWhileMissing to store.read("sudoku/classic_fast.txt"))
         }
+
+    @Test
+    fun `given one bank fails to download when banks update then only the folders that downloaded are ready`() =
+        runBlocking {
+            // Arrange
+            val (store) =
+                store(
+                    mapOf(
+                        "manifest.json" to manifest("slideout/easy.txt" to "new\n", "kakuro/6.txt" to "six\n", "kakuro/8.txt" to "eight\n"),
+                        "slideout/easy.txt" to HttpResponse(200, "new\n"),
+                        "kakuro/6.txt" to HttpResponse(200, "six\n"),
+                    ),
+                )
+
+            // Act
+            store.update()
+
+            // Assert
+            assertEquals(
+                listOf(true, false, false),
+                listOf(store.isReady("slideout"), store.isReady("kakuro"), store.isReady("sudoku")),
+            )
+        }
+
+    @Test
+    fun `given installed banks when a folder is checked then it is ready`() {
+        // Arrange
+        val (store) = store(emptyMap())
+        store.install(manifest("slideout/easy.txt" to "new\n").body) { "new\n".toByteArray() }
+
+        // Act
+        val ready = store.isReady("slideout")
+
+        // Assert
+        assertEquals(true, ready)
+    }
 }
