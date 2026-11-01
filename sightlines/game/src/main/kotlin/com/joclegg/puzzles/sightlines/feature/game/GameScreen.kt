@@ -32,6 +32,7 @@ import com.joclegg.puzzles.core.ui.HelpersHint
 import com.joclegg.puzzles.core.ui.WinDialog
 import com.joclegg.puzzles.core.ui.WinStat
 import com.joclegg.puzzles.sightlines.core.ui.BackButton
+import com.joclegg.puzzles.sightlines.core.ui.ColourPicker
 import com.joclegg.puzzles.sightlines.core.ui.HowToPlayButton
 import com.joclegg.puzzles.sightlines.core.ui.LocalTileColors
 import com.joclegg.puzzles.sightlines.core.ui.SightlinesBoard
@@ -42,6 +43,7 @@ import com.joclegg.puzzles.sightlines.core.ui.dialogTestTags
 import com.joclegg.puzzles.sightlines.core.ui.formatDuration
 import com.joclegg.puzzles.sightlines.core.ui.rememberTourState
 import com.joclegg.puzzles.sightlines.core.ui.tourTarget
+import com.joclegg.puzzles.sightlines.engine.Dot
 import kotlinx.coroutines.launch
 
 @Composable
@@ -62,7 +64,9 @@ fun GameRoute(
         GameScreen(
             state = it,
             onDotClick = viewModel::onDotClick,
+            onColourClick = viewModel::onColourClick,
             onUndo = viewModel::onUndo,
+            onInputModeToggle = viewModel::onInputModeToggle,
             onHint = viewModel::onHint,
             onRestart = viewModel::onRestart,
             onRevealSolution = viewModel::onRevealSolution,
@@ -78,7 +82,9 @@ fun GameRoute(
 fun GameScreen(
     state: GameUiState,
     onDotClick: (Int) -> Unit,
+    onColourClick: (Dot) -> Unit,
     onUndo: () -> Unit,
+    onInputModeToggle: () -> Unit,
     onHint: () -> Unit,
     onRestart: () -> Unit,
     onRevealSolution: () -> Unit,
@@ -106,6 +112,16 @@ fun GameScreen(
                 }
             }
             ToolButton(SightlinesIcons.Undo, "Undo the last tap", onUndo, tag = "undo", enabled = state.canUndo)
+            ToolButton(
+                SightlinesIcons.Brush,
+                if (state.pickColour) {
+                    "Pick a colour"
+                } else {
+                    "Tap to cycle"
+                },
+                onInputModeToggle,
+                tag = "input_mode",
+            )
             if (state.showHints) {
                 ToolButton(
                     SightlinesIcons.Hint,
@@ -166,6 +182,10 @@ fun GameScreen(
         Spacer(Modifier.height(24.dp))
         SightlinesBoard(state.board, onDotClick, Modifier.tourTarget(tour, "board").fillMaxWidth().padding(horizontal = 12.dp))
         Spacer(Modifier.height(16.dp))
+        if (state.pickColour) {
+            ColourPicker(state.colour, onColourClick)
+            Spacer(Modifier.height(16.dp))
+        }
         state.hintMessage?.let {
             Text(
                 it,

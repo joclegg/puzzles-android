@@ -31,7 +31,7 @@ Each game has its own modules under `sudoku/`, `solitaire/`, `twotone/`, `sightl
 - `<game>/engine/`: pure Kotlin, every game rule
   - sudoku: board model, `Solver`, `Grader`, `Generator`, `GameState` and `GameTimer`
   - solitaire: `Card`, `Board` (piles, legal moves, `BuildOrder`), `GameState` (taps, undo by replay), `BoardCodec`, `MoveCodec` and `GameTimer`
-  - twotone and sightlines: `Grid`, `Puzzle`, a logic-only `Solver` whose next step is also the hint, `Generator` (seeded, keeps removing givens while the solver still finishes), `GameState` (tap, undo, hints) and `GameTimer`
+  - twotone and sightlines: `Grid`, `Puzzle`, a logic-only `Solver` whose next step is also the hint, `Generator` (seeded, keeps removing givens while the solver still finishes), `GameState` (tap, paint, undo, hints) and `GameTimer`
   - fiveletters: `Words` (answer and guess lists, the daily word by date), `score` and `GameState` (typing, guesses, hard mode, share text)
   - kakuro: `Puzzle` (layout, runs, clues), `Combinations` (digit sets per sum), `Solver` (counts solutions), `Generator` (layout, low/high-leaning fill, fewest starting digits) and `GameState` (select, digits, notes, undo)
   - slideout: `Board` and `Block`, a packed-number `Solver` (fewest moves, and the hardest position reachable from a set of blocks), `Generator` (hill-climbs over block sets) and `GameState` (slides, undo, hints)
@@ -132,7 +132,7 @@ Rules marked (lint) are enforced by `spotlessCheck`, Android Lint or the build.
 
 - MUST take colours only from `LocalTileColors` or `MaterialTheme`, with a dark-mode value for every token.
 - MUST show hints as the next logical step from `Solver.next`, or the wrong spots when the player has made a mistake. Shade what the rule looks at in `hintLine`, outline the spots to fill in `hintTarget`, and explain it in words.
-- Tapping always cycles a spot (Two Tone: empty, red, blue, empty; Sightlines: empty, blue, red, empty), and undo steps back. MUST NOT add another input mode, a colour picker or an erase choice. The `inputMode` settings field stays only so the sync JSON keeps its shape.
+- MUST offer both input modes (`InputMode`, synced as `inputMode`), switched by the brush button in the game header (`input_mode`) and in Settings: Tap to cycle (Two Tone: empty, red, blue, empty; Sightlines: empty, blue, red, empty), and Pick a colour (the red/blue `ColourPicker` under the board). Painting a spot with its own colour clears it. MUST NOT add an erase choice to the picker.
 - MUST generate every puzzle so `Solver.solveLogically` finishes it: no guessing, and exactly one solution.
 
 ### Two Tone and Sightlines games

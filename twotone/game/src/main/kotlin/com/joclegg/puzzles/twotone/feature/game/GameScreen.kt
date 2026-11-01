@@ -33,6 +33,7 @@ import com.joclegg.puzzles.core.ui.HelpersHint
 import com.joclegg.puzzles.core.ui.WinDialog
 import com.joclegg.puzzles.core.ui.WinStat
 import com.joclegg.puzzles.twotone.core.ui.BackButton
+import com.joclegg.puzzles.twotone.core.ui.ColourPicker
 import com.joclegg.puzzles.twotone.core.ui.HowToPlayButton
 import com.joclegg.puzzles.twotone.core.ui.LocalTileColors
 import com.joclegg.puzzles.twotone.core.ui.ToolButton
@@ -43,6 +44,7 @@ import com.joclegg.puzzles.twotone.core.ui.dialogTestTags
 import com.joclegg.puzzles.twotone.core.ui.formatDuration
 import com.joclegg.puzzles.twotone.core.ui.rememberTourState
 import com.joclegg.puzzles.twotone.core.ui.tourTarget
+import com.joclegg.puzzles.twotone.engine.Tile
 import kotlinx.coroutines.launch
 
 @Composable
@@ -63,7 +65,9 @@ fun GameRoute(
         GameScreen(
             state = it,
             onTileClick = viewModel::onTileClick,
+            onColourClick = viewModel::onColourClick,
             onUndo = viewModel::onUndo,
+            onInputModeToggle = viewModel::onInputModeToggle,
             onHint = viewModel::onHint,
             onRestart = viewModel::onRestart,
             onRevealSolution = viewModel::onRevealSolution,
@@ -79,7 +83,9 @@ fun GameRoute(
 fun GameScreen(
     state: GameUiState,
     onTileClick: (Int) -> Unit,
+    onColourClick: (Tile) -> Unit,
     onUndo: () -> Unit,
+    onInputModeToggle: () -> Unit,
     onHint: () -> Unit,
     onRestart: () -> Unit,
     onRevealSolution: () -> Unit,
@@ -117,6 +123,16 @@ fun GameScreen(
                 },
                 { showGivens = !showGivens },
                 tag = "starting_tiles",
+            )
+            ToolButton(
+                TwoToneIcons.Brush,
+                if (state.pickColour) {
+                    "Pick a colour"
+                } else {
+                    "Tap to cycle"
+                },
+                onInputModeToggle,
+                tag = "input_mode",
             )
             if (state.showHints) {
                 ToolButton(
@@ -182,6 +198,10 @@ fun GameScreen(
             Modifier.tourTarget(tour, "board").fillMaxWidth().padding(horizontal = 12.dp),
         )
         Spacer(Modifier.height(16.dp))
+        if (state.pickColour) {
+            ColourPicker(state.colour, onColourClick)
+            Spacer(Modifier.height(16.dp))
+        }
         state.hintMessage?.let {
             Text(
                 it,
