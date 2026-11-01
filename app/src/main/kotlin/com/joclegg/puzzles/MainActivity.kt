@@ -30,6 +30,7 @@ import com.joclegg.puzzles.wordwheel.WordWheelFixtures
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class MainActivity : ComponentActivity() {
     private val openGame = mutableStateOf<OpenGame?>(null)
@@ -149,9 +150,8 @@ class MainActivity : ComponentActivity() {
         val kakuro = KakuroFixtures.puzzle(name)
         val slideOut = SlideOutFixtures.puzzle(name)
         val wordWheel = WordWheelFixtures.puzzle(name)
-        val helpers = intent.getStringExtra(HelperFixtures.EXTRA)
+        runBlocking { HelperFixtures.apply(app, intent.getStringExtra(HelperFixtures.EXTRA)) }
         lifecycleScope.launch {
-            HelperFixtures.apply(app, helpers)
             if (draft != null) {
                 app.sudoku.settings.setCustomDraft(draft)
                 openGame.value = OpenGame(PuzzleGame.SUDOKU, id = null)
