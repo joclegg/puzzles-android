@@ -59,7 +59,13 @@ object TwoToneRoutes {
             )
         }
         screen(STATS, darkTheme) {
-            StatsRoute(viewModel { StatsViewModel(twoToneStatsSource(container.games)) }, onBack = navController::popBackStack, footnote = TWOTONE_STATS_FOOTNOTE) { TwoToneStatsTable(it) }
+            StatsRoute(
+                viewModel {
+                    StatsViewModel(twoToneStatsSource(container.games))
+                },
+                onBack = navController::popBackStack,
+                footnote = TWOTONE_STATS_FOOTNOTE,
+            ) { TwoToneStatsTable(it) }
         }
         screen(HISTORY, darkTheme) {
             HistoryRoute(

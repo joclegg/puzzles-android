@@ -66,7 +66,13 @@ object KakuroRoutes {
             )
         }
         screen(STATS, darkTheme) {
-            StatsRoute(viewModel { StatsViewModel(kakuroStatsSource(container.games)) }, onBack = navController::popBackStack, footnote = KAKURO_STATS_FOOTNOTE) { KakuroStatsTable(it) }
+            StatsRoute(
+                viewModel {
+                    StatsViewModel(kakuroStatsSource(container.games))
+                },
+                onBack = navController::popBackStack,
+                footnote = KAKURO_STATS_FOOTNOTE,
+            ) { KakuroStatsTable(it) }
         }
         screen(HISTORY, darkTheme) {
             HistoryRoute(

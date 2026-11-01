@@ -66,7 +66,13 @@ object WordWheelRoutes {
             )
         }
         screen(STATS, darkTheme) {
-            StatsRoute(viewModel { StatsViewModel(wordWheelStatsSource(container.games)) }, onBack = navController::popBackStack, footnote = WORD_WHEEL_STATS_FOOTNOTE) { WordWheelStatsTable(it) }
+            StatsRoute(
+                viewModel {
+                    StatsViewModel(wordWheelStatsSource(container.games))
+                },
+                onBack = navController::popBackStack,
+                footnote = WORD_WHEEL_STATS_FOOTNOTE,
+            ) { WordWheelStatsTable(it) }
         }
         screen(HISTORY, darkTheme) {
             HistoryRoute(

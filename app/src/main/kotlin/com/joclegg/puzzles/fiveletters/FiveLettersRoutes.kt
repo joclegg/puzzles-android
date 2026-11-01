@@ -68,7 +68,13 @@ object FiveLettersRoutes {
             )
         }
         screen(container, STATS, darkTheme) {
-            StatsRoute(viewModel { StatsViewModel(fiveLettersStatsSource(container.games)) }, onBack = navController::popBackStack, spacing = 16.dp) { FiveLettersStatsPanels(it) }
+            StatsRoute(
+                viewModel {
+                    StatsViewModel(fiveLettersStatsSource(container.games))
+                },
+                onBack = navController::popBackStack,
+                spacing = 16.dp,
+            ) { FiveLettersStatsPanels(it) }
         }
     }
 

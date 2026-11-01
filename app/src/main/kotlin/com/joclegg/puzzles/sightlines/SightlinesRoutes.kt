@@ -59,7 +59,13 @@ object SightlinesRoutes {
             )
         }
         screen(STATS, darkTheme) {
-            StatsRoute(viewModel { StatsViewModel(sightlinesStatsSource(container.games)) }, onBack = navController::popBackStack, footnote = SIGHTLINES_STATS_FOOTNOTE) { SightlinesStatsTable(it) }
+            StatsRoute(
+                viewModel {
+                    StatsViewModel(sightlinesStatsSource(container.games))
+                },
+                onBack = navController::popBackStack,
+                footnote = SIGHTLINES_STATS_FOOTNOTE,
+            ) { SightlinesStatsTable(it) }
         }
         screen(HISTORY, darkTheme) {
             HistoryRoute(

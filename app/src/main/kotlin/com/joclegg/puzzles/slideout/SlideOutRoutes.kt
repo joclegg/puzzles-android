@@ -66,7 +66,13 @@ object SlideOutRoutes {
             )
         }
         screen(STATS, darkTheme) {
-            StatsRoute(viewModel { StatsViewModel(slideOutStatsSource(container.games)) }, onBack = navController::popBackStack, footnote = SLIDE_OUT_STATS_FOOTNOTE) { SlideOutStatsTable(it) }
+            StatsRoute(
+                viewModel {
+                    StatsViewModel(slideOutStatsSource(container.games))
+                },
+                onBack = navController::popBackStack,
+                footnote = SLIDE_OUT_STATS_FOOTNOTE,
+            ) { SlideOutStatsTable(it) }
         }
         screen(HISTORY, darkTheme) {
             HistoryRoute(

@@ -42,7 +42,6 @@ data class OpenGame(
 
 const val LAUNCHER = "launcher"
 
-
 fun todaysMedal(
     app: PuzzlesApplication,
     tab: SettingsTab,

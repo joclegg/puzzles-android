@@ -79,7 +79,20 @@ object SudokuRoutes {
             )
         }
         composable(STATS) {
-            StatsRoute(viewModel { StatsViewModel(sudokuStatsSource(container.games, container.settings)) }, onBack = navController::popBackStack, title = "Best times", spacing = 20.dp, footnote = SUDOKU_STATS_FOOTNOTE) { stats -> GameMode.entries.forEach { SudokuBestTimes(stats, it) } }
+            StatsRoute(
+                viewModel {
+                    StatsViewModel(sudokuStatsSource(container.games, container.settings))
+                },
+                onBack = navController::popBackStack,
+                title = "Best times",
+                spacing = 20.dp,
+                footnote = SUDOKU_STATS_FOOTNOTE,
+            ) { stats ->
+                GameMode.entries
+                    .forEach {
+                        SudokuBestTimes(stats, it)
+                    }
+            }
         }
         composable(HISTORY) {
             HistoryRoute(

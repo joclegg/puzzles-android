@@ -76,7 +76,18 @@ object SolitaireRoutes {
             )
         }
         screen(STATS, darkTheme) {
-            StatsRoute(viewModel { StatsViewModel(solitaireStatsSource(container.games)) }, onBack = navController::popBackStack, spacing = 20.dp, footnote = SOLITAIRE_STATS_FOOTNOTE) { stats -> stats.forEach { SolitaireStatsPanel(it) } }
+            StatsRoute(
+                viewModel {
+                    StatsViewModel(solitaireStatsSource(container.games))
+                },
+                onBack = navController::popBackStack,
+                spacing = 20.dp,
+                footnote = SOLITAIRE_STATS_FOOTNOTE,
+            ) { stats ->
+                stats.forEach {
+                    SolitaireStatsPanel(it)
+                }
+            }
         }
         screen(HISTORY, darkTheme) {
             HistoryRoute(

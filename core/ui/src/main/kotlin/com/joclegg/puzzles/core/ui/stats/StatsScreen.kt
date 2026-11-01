@@ -102,7 +102,11 @@ private fun StatsTableRow(
     val tag = line.tag
     Row(modifier.fillMaxWidth()) {
         Text(line.label, fontWeight = weight, modifier = Modifier.weight(labelWeight))
-        Text(line.solved, fontWeight = weight, modifier = Modifier.weight(1f).then(tag?.let { Modifier.testTag("${it}_solved") } ?: Modifier))
+        Text(
+            line.solved,
+            fontWeight = weight,
+            modifier = Modifier.weight(1f).then(tag?.let { Modifier.testTag("${it}_solved") } ?: Modifier),
+        )
         Text(line.best, fontWeight = weight, modifier = Modifier.weight(1f).then(tag?.let { Modifier.testTag("${it}_best") } ?: Modifier))
         Text(line.last, fontWeight = weight, modifier = Modifier.weight(1f))
     }
