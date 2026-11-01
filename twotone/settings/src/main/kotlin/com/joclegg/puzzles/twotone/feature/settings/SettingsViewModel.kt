@@ -2,6 +2,7 @@ package com.joclegg.puzzles.twotone.feature.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.joclegg.puzzles.twotone.core.data.InputMode
 import com.joclegg.puzzles.twotone.core.data.Settings
 import com.joclegg.puzzles.twotone.core.data.SettingsRepository
 import com.joclegg.puzzles.twotone.core.data.Toggle
@@ -21,6 +22,10 @@ class SettingsViewModel(
         enabled: Boolean,
     ) {
         viewModelScope.launch { settings.set(toggle, enabled) }
+    }
+
+    fun onInputModeChange(mode: InputMode) {
+        viewModelScope.launch { settings.setInputMode(mode) }
     }
 
     private companion object {

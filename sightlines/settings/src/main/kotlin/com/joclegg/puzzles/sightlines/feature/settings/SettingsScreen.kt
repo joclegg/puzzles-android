@@ -10,6 +10,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.joclegg.puzzles.sightlines.core.data.InputMode
 import com.joclegg.puzzles.sightlines.core.data.Settings
 import com.joclegg.puzzles.sightlines.core.data.Toggle
 import com.joclegg.puzzles.sightlines.core.ui.BackButton
@@ -30,13 +34,14 @@ fun SettingsRoute(
     modifier: Modifier = Modifier,
 ) {
     val settings by viewModel.uiState.collectAsStateWithLifecycle()
-    SettingsScreen(settings, viewModel::onToggle, onBack, modifier)
+    SettingsScreen(settings, viewModel::onToggle, viewModel::onInputModeChange, onBack, modifier)
 }
 
 @Composable
 fun SettingsScreen(
     settings: Settings,
     onToggle: (Toggle, Boolean) -> Unit,
+    onInputModeChange: (InputMode) -> Unit,
     onBack: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
@@ -52,6 +57,32 @@ fun SettingsScreen(
         }
         OutlinedCard(Modifier.fillMaxWidth()) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Text("Filling in", style = MaterialTheme.typography.titleMedium)
+                SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
+                    InputMode.entries.forEachIndexed { index, mode ->
+                        SegmentedButton(
+                            selected = settings.inputMode == mode,
+                            onClick = { onInputModeChange(mode) },
+                            shape = SegmentedButtonDefaults.itemShape(index, InputMode.entries.size),
+                            modifier = Modifier.testTag("setting_${mode.name.lowercase()}"),
+                            icon = {},
+                        ) {
+                            Text(
+                                when (mode) {
+                                    InputMode.TAP_TO_CYCLE -> "Tap to cycle"
+                                    InputMode.PICK_COLOUR -> "Pick a colour"
+                                },
+                                maxLines = 1,
+                            )
+                        }
+                    }
+                }
+                Text(
+                    "Tap to cycle steps a spot through the colours. Pick a colour shows colour buttons under the board: " +
+                        "pick one, then tap spots to fill them.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
                 ToggleRow(
                     settings,
                     Toggle.MARK_BROKEN_RULES,

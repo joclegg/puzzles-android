@@ -3,6 +3,7 @@ package com.joclegg.puzzles.twotone.feature.game
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joclegg.puzzles.twotone.core.data.GameRepository
+import com.joclegg.puzzles.twotone.core.data.InputMode
 import com.joclegg.puzzles.twotone.core.data.PuzzleRef
 import com.joclegg.puzzles.twotone.core.data.SavedGame
 import com.joclegg.puzzles.twotone.core.data.Settings
@@ -14,6 +15,7 @@ import com.joclegg.puzzles.twotone.core.ui.title
 import com.joclegg.puzzles.twotone.core.ui.toBoardUi
 import com.joclegg.puzzles.twotone.engine.GameState
 import com.joclegg.puzzles.twotone.engine.GameTimer
+import com.joclegg.puzzles.twotone.engine.Tile
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
@@ -35,6 +37,8 @@ data class GameUiState(
     val hints: Int,
     val showTimer: Boolean,
     val showProgress: Boolean,
+    val pickColour: Boolean,
+    val colour: Tile,
     val canUndo: Boolean,
     val solved: Boolean,
     val newBest: Boolean,
@@ -55,6 +59,7 @@ class GameViewModel(
     private var saved: SavedGame? = null
     private var game: GameState? = null
     private var hints = 0
+    private var colour = Tile.RED
     private var timer = GameTimer()
     private var visible = false
     private var ticker: Job? = null
@@ -84,9 +89,31 @@ class GameViewModel(
         }
     }
 
-    fun onTileClick(cell: Int) = move { it.tap(cell) }
+    fun onTileClick(cell: Int) =
+        move {
+            if (display.inputMode == InputMode.PICK_COLOUR) {
+                it.paint(cell, colour)
+            } else {
+                it.tap(cell)
+            }
+        }
+
+    fun onColourClick(picked: Tile) {
+        colour = picked
+        publish()
+    }
 
     fun onUndo() = move { it.undo() }
+
+    fun onInputModeToggle() {
+        val next =
+            if (display.inputMode == InputMode.PICK_COLOUR) {
+                InputMode.TAP_TO_CYCLE
+            } else {
+                InputMode.PICK_COLOUR
+            }
+        viewModelScope.launch { settings.setInputMode(next) }
+    }
 
     fun onHint() {
         val current = game ?: return
@@ -238,6 +265,8 @@ class GameViewModel(
                 hints = hints,
                 showTimer = display.showTimer,
                 showProgress = display.showProgress,
+                pickColour = display.inputMode == InputMode.PICK_COLOUR,
+                colour = colour,
                 canUndo = current.changes.isNotEmpty() && !current.isSolved,
                 solved = current.isSolved,
                 newBest = newBest,

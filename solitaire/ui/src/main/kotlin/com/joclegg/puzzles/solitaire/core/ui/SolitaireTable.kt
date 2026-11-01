@@ -317,6 +317,7 @@ fun PlayingCard(
     selected: Boolean,
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
+    tagged: Boolean = true,
 ) {
     val colors = LocalTableColors.current
     val ink =
@@ -338,8 +339,13 @@ fun PlayingCard(
             .background(face)
             .border(1.dp, colors.cardEdge, CardShape)
             .then(onClick?.let { Modifier.clickable(onClick = it) } ?: Modifier)
-            .testTag(cardTag(card))
-            .semantics {
+            .then(
+                if (tagged) {
+                    Modifier.testTag(cardTag(card))
+                } else {
+                    Modifier
+                },
+            ).semantics {
                 cardFaceUp = true
                 cardSelected = selected
             },
