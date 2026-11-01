@@ -1,0 +1,50 @@
+appId: com.joclegg.puzzles
+name: Five Letters - hard mode and high contrast stay on, and a new game starts in hard mode
+---
+- launchApp:
+    clearState: true
+- waitForAnimationToEnd:
+    timeout: 1500
+- scrollUntilVisible:
+    element:
+      id: "game_five_letters"
+    centerElement: true
+- tapOn:
+    id: "game_five_letters"
+- extendedWaitUntil:
+    visible:
+      id: "settings"
+    timeout: 120000
+- tapOn:
+    id: "settings"
+- waitForAnimationToEnd:
+    timeout: 1500
+- assertVisible:
+    id: "setting_hard_mode"
+    checked: false
+- tapOn:
+    id: "setting_hard_mode"
+- tapOn:
+    id: "setting_high_contrast"
+- tapOn:
+    id: "back"
+- tapOn:
+    id: "settings"
+- waitForAnimationToEnd:
+    timeout: 1500
+- assertVisible:
+    id: "setting_hard_mode"
+    checked: true
+- assertVisible:
+    id: "setting_high_contrast"
+    checked: true
+- tapOn:
+    id: "back"
+- tapOn:
+    id: "practice"
+- waitForAnimationToEnd:
+    timeout: 1500
+- assertVisible:
+    id: "game_title"
+    text: "Practice"
+- assertVisible: "Hard mode"

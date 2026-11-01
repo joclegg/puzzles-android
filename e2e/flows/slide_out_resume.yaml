@@ -1,0 +1,44 @@
+appId: com.joclegg.puzzles
+name: Slide Out - a level in progress offers Resume, and Continue reopens it
+tags:
+  - fast
+---
+- launchApp:
+    clearState: true
+- waitForAnimationToEnd:
+    timeout: 1500
+- scrollUntilVisible:
+    element:
+      id: "game_slide_out"
+    centerElement: true
+- tapOn:
+    id: "game_slide_out"
+- extendedWaitUntil:
+    visible:
+      id: "level_easy"
+    timeout: 120000
+- tapOn:
+    id: "level_easy"
+- assertVisible:
+    id: "game_title"
+    text: "Easy"
+- tapOn:
+    id: "back"
+- assertVisible:
+    id: "continue"
+- tapOn:
+    id: "level_easy"
+- assertVisible:
+    id: "resume_dialog"
+- tapOn:
+    id: "resume_game"
+- assertVisible:
+    id: "game_title"
+    text: "Easy"
+- tapOn:
+    id: "back"
+- tapOn:
+    id: "continue"
+- assertVisible:
+    id: "game_title"
+    text: "Easy"

@@ -111,6 +111,7 @@ Rules marked (lint) are enforced by `spotlessCheck`, Android Lint or the build.
 - MUST NOT add a hint, auto-solve or cage-combination helper.
 - MUST put every player preference in Settings, per mode (`ModeSettings`, `Toggle`) unless it only makes sense shared (input mode). Helpers (hints, show solution, mistake checks, highlights, counts, auto-notes) default to off for new players; display and appearance choices default to on (grey starting cells are off in killer). Players who had the app before keep the old defaults (`keepLegacyDefaults`). Apply changes live.
 - MUST make tool buttons icon-only, with a tooltip on long press that says what the button does. The tooltip is also the content description.
+- MUST sync Sudoku settings per mode, inside the `classic` and `killer` objects, the assists (`showHints`, `allowReveal`, `showTutorial`) and `hintStyle` included. Also write those four at the top level with Classic's values, for older app versions; when reading, take each mode's own value and fall back to the top-level one (`SudokuSync.kt`, shared with puzzles-ios and puzzles-web).
 - MUST NOT duplicate a Settings choice as a button on the game screens. Cell first or number first lives only in Settings.
 - MUST keep Undo and Redo in the game header, next to the ⋮ menu, not on the number pad. The pad holds the digits, Erase, Notes and Mark, six keys to a row. Kakuro uses the same layout.
 - MUST put a Settings item in every game's ⋮ menu that opens that game's Settings tab, and the Customise helpers link (`HelpersHint`) under each game header.

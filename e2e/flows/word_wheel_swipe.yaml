@@ -1,0 +1,19 @@
+appId: com.joclegg.puzzles
+name: Word Wheel - swiping across the letters enters a word
+---
+- launchApp:
+    clearState: true
+    arguments:
+      fixture: "word_wheel_two_words"
+- extendedWaitUntil:
+    visible:
+      id: "wheel_letter_1"
+    timeout: 120000
+- swipe:
+    from:
+      id: "wheel_letter_4"
+    direction: RIGHT
+    duration: 800
+- assertVisible:
+    id: "current_word"
+    text: "Three letters or more"

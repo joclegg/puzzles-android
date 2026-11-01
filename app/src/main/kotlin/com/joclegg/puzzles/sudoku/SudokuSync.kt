@@ -10,6 +10,7 @@ import com.joclegg.puzzles.sudoku.core.data.GameMode
 import com.joclegg.puzzles.sudoku.core.data.HintStyle
 import com.joclegg.puzzles.sudoku.core.data.ModeSettings
 import com.joclegg.puzzles.sudoku.core.data.PastBestEntity
+import com.joclegg.puzzles.sudoku.core.data.Settings
 import com.joclegg.puzzles.sudoku.core.data.SettingsRepository
 import com.joclegg.puzzles.sudoku.core.data.Toggle
 import com.joclegg.puzzles.sudoku.engine.HighlightStyle
@@ -113,14 +114,7 @@ private suspend fun settingsJson(
     settings: SettingsRepository,
     dao: GameDao,
 ): JSONObject {
-    val current = settings.settings.first()
-    val json =
-        JSONObject()
-            .put("inputMode", current.inputMode.toJsonName())
-            .put("hintStyle", current.classic.hintStyle.toJsonName())
-            .put("classic", modeJson(current.classic))
-            .put("killer", modeJson(current.killer))
-    ASSISTS.forEach { json.put(it.name.toJsonName(), it.read(current.classic)) }
+    val json = settingsJson(settings.settings.first())
     val pastBests = JSONArray()
     dao.observePastBests().first().forEach { best ->
         pastBests.put(
@@ -133,6 +127,15 @@ private suspend fun settingsJson(
     return json.put("pastBests", pastBests)
 }
 
+internal fun settingsJson(current: Settings): JSONObject {
+    val json =
+        JSONObject()
+            .put("inputMode", current.inputMode.toJsonName())
+            .put("classic", modeJson(current.classic))
+            .put("killer", modeJson(current.killer))
+    return putAssists(json, current.classic)
+}
+
 private fun modeJson(mode: ModeSettings): JSONObject {
     val json =
         JSONObject()
@@ -141,7 +144,43 @@ private fun modeJson(mode: ModeSettings): JSONObject {
             .put("notesStyle", mode.notesStyle.toJsonName())
             .put("digitCounts", mode.digitCounts.toJsonName())
     Toggle.entries.filter { it !in ASSISTS }.forEach { json.put(it.name.toJsonName(), it.read(mode)) }
-    return json
+    return putAssists(json, mode)
+}
+
+private fun putAssists(
+    json: JSONObject,
+    mode: ModeSettings,
+): JSONObject {
+    ASSISTS.forEach { json.put(it.name.toJsonName(), it.read(mode)) }
+    return json.put("hintStyle", mode.hintStyle.toJsonName())
+}
+
+internal data class ModeAssists(
+    val toggles: Map<Toggle, Boolean>,
+    val hintStyle: HintStyle?,
+)
+
+internal fun assistsFor(
+    json: JSONObject,
+    mode: GameMode,
+): ModeAssists {
+    val modeJson = json.optJSONObject(mode.name.lowercase())
+
+    fun source(key: String) =
+        if (modeJson?.has(key) == true) {
+            modeJson
+        } else {
+            json.takeIf { it.has(key) }
+        }
+
+    val toggles =
+        ASSISTS
+            .mapNotNull { toggle ->
+                val key = toggle.name.toJsonName()
+                source(key)?.let { toggle to it.getBoolean(key) }
+            }.toMap()
+    val hintStyle = source("hintStyle")?.let { from -> HintStyle.entries.find { it.name == from.enumName("hintStyle") } }
+    return ModeAssists(toggles, hintStyle)
 }
 
 private suspend fun applySettingsJson(
@@ -153,10 +192,9 @@ private suspend fun applySettingsJson(
         InputMode.entries.find { it.name == json.enumName("inputMode") }?.let { settings.setInputMode(it) }
     }
     GameMode.entries.forEach { mode ->
-        ASSISTS.filter { json.has(it.name.toJsonName()) }.forEach { settings.set(mode, it, json.getBoolean(it.name.toJsonName())) }
-        if (json.has("hintStyle")) {
-            HintStyle.entries.find { it.name == json.enumName("hintStyle") }?.let { settings.setHintStyle(mode, it) }
-        }
+        val assists = assistsFor(json, mode)
+        assists.toggles.forEach { (toggle, on) -> settings.set(mode, toggle, on) }
+        assists.hintStyle?.let { settings.setHintStyle(mode, it) }
         json.optJSONObject(mode.name.lowercase())?.let { applyModeJson(settings, mode, it) }
     }
     val pastBests = json.optJSONArray("pastBests") ?: return
