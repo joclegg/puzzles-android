@@ -152,8 +152,14 @@ for pid in "${INSTALLS[@]}"; do wait "$pid"; done
 SHARD_ARGS=()
 [[ ${#DEVICES[@]} -gt 1 ]] && SHARD_ARGS=(--shard-split "${#DEVICES[@]}")
 FLOWS_FAILED_MARKER="${E2E_FLOWS_FAILED_MARKER:-}"
-if maestro --device "$(IFS=,; echo "${DEVICES[*]}")" test ${SHARD_ARGS[@]+"${SHARD_ARGS[@]}"} ${TAGS[@]+"${TAGS[@]}"} "${FLOWS[@]}"; then
+MAESTRO_OUTPUT="$(mktemp)"
+trap 'rm -f "$MAESTRO_OUTPUT"' EXIT
+if maestro --device "$(IFS=,; echo "${DEVICES[*]}")" test ${SHARD_ARGS[@]+"${SHARD_ARGS[@]}"} ${TAGS[@]+"${TAGS[@]}"} "${FLOWS[@]}" 2>&1 | tee "$MAESTRO_OUTPUT"; then
   exit 0
+fi
+if grep -q "MaestroDriverStartupException" "$MAESTRO_OUTPUT"; then
+  echo "The Maestro driver did not start on the emulator" >&2
+  exit 1
 fi
 for serial in "${DEVICES[@]}"; do
   if [[ "$(adb -s "$serial" get-state 2>/dev/null)" != "device" ]]; then

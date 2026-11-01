@@ -33,12 +33,12 @@ name: Kakuro - the sum helper starts increasing and can list combinations in dec
     centerElement: true
 - assertVisible:
     id: "setting_combination_order_increasing"
-    selected: true
+    checked: true
 - tapOn:
     id: "setting_combination_order_decreasing"
 - assertVisible:
     id: "setting_combination_order_decreasing"
-    selected: true
+    checked: true
 - launchApp:
     arguments:
       fixture: "kakuro_empty"
