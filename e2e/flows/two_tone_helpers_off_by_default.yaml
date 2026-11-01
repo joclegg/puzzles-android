@@ -11,7 +11,7 @@ tags:
     timeout: 1500
 - assertNotVisible:
     id: "hint"
-- assertNotVisible:
+- assertVisible:
     id: "input_mode"
 - tapOn:
     id: "customise_helpers"
