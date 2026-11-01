@@ -1,17 +1,7 @@
 package com.joclegg.puzzles.sudoku.feature.home
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
@@ -21,33 +11,29 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joclegg.puzzles.core.ui.ContinueCard
-import com.joclegg.puzzles.core.ui.DailyCalendarButton
 import com.joclegg.puzzles.core.ui.DailyTile
-import com.joclegg.puzzles.core.ui.GameHero
 import com.joclegg.puzzles.core.ui.LevelMeter
 import com.joclegg.puzzles.core.ui.MenuIcons
 import com.joclegg.puzzles.core.ui.MenuSection
 import com.joclegg.puzzles.core.ui.MenuTile
 import com.joclegg.puzzles.core.ui.TileGrid
+import com.joclegg.puzzles.core.ui.formatDuration
+import com.joclegg.puzzles.core.ui.home.GameHomeScaffold
 import com.joclegg.puzzles.core.ui.todayLabel
 import com.joclegg.puzzles.sudoku.core.data.GameMode
 import com.joclegg.puzzles.sudoku.core.data.SavedGame
 import com.joclegg.puzzles.sudoku.core.data.levels
-import com.joclegg.puzzles.core.ui.BackButton
 import com.joclegg.puzzles.sudoku.core.ui.LocalBoardColors
 import com.joclegg.puzzles.sudoku.core.ui.SudokuGameIcon
 import com.joclegg.puzzles.sudoku.core.ui.SudokuIcons
 import com.joclegg.puzzles.sudoku.core.ui.dialogTestTags
-import com.joclegg.puzzles.core.ui.formatDuration
 import com.joclegg.puzzles.sudoku.core.ui.gameTitle
 import com.joclegg.puzzles.sudoku.core.ui.label
 import com.joclegg.puzzles.sudoku.engine.Difficulty
@@ -114,25 +100,20 @@ fun HomeScreen(
     var mode by rememberSaveable { mutableStateOf(initialMode) }
     var resumeChoice by remember { mutableStateOf<Pair<Difficulty, SavedGame>?>(null) }
     val accent = LocalBoardColors.current.accent
-    Column(
-        modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp),
+    GameHomeScaffold(
+        title = "Sudoku",
+        calendarGame = "SUDOKU",
+        tagline = "Classic and killer, from 6x6 to evil",
+        accent = accent,
+        settingsIcon = SudokuIcons.Settings,
+        onStats = onStats,
+        onHistory = onHistory,
+        onSettings = { onSettings(mode) },
+        onBack = onBack,
+        gameIcon = { SudokuGameIcon() },
+        modifier = modifier,
+        statsLabel = "Best times",
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            BackButton(onBack)
-            Text("Sudoku", style = MaterialTheme.typography.headlineLarge, modifier = Modifier.weight(1f))
-            DailyCalendarButton("SUDOKU")
-            IconButton(onClick = onStats, modifier = Modifier.testTag("stats")) {
-                Icon(MenuIcons.Stats, contentDescription = "Best times")
-            }
-            IconButton(onClick = onHistory, modifier = Modifier.testTag("history")) {
-                Icon(MenuIcons.History, contentDescription = "History")
-            }
-            IconButton(onClick = { onSettings(mode) }, modifier = Modifier.testTag("settings")) {
-                Icon(SudokuIcons.Settings, contentDescription = "Settings")
-            }
-        }
-        GameHero("Classic and killer, from 6x6 to evil", accent) { SudokuGameIcon() }
         state.inProgress.firstOrNull()?.let { latest ->
             ContinueCard(
                 detail = "${continueTitle(latest)} · ${formatDuration(latest.elapsedMs)}",

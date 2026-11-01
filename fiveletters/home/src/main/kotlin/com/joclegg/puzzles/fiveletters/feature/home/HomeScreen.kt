@@ -1,36 +1,27 @@
 package com.joclegg.puzzles.fiveletters.feature.home
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.joclegg.puzzles.core.ui.DailyCalendarButton
-import com.joclegg.puzzles.core.ui.GameHero
 import com.joclegg.puzzles.core.ui.MenuIcons
 import com.joclegg.puzzles.core.ui.MenuSection
 import com.joclegg.puzzles.core.ui.MenuTile
+import com.joclegg.puzzles.core.ui.home.GameHomeScaffold
 import com.joclegg.puzzles.core.ui.todayLabel
 import com.joclegg.puzzles.fiveletters.core.data.GameStatus
-import com.joclegg.puzzles.core.ui.BackButton
 import com.joclegg.puzzles.fiveletters.core.ui.FiveLettersGameIcon
 import com.joclegg.puzzles.fiveletters.core.ui.FiveLettersIcons
 import com.joclegg.puzzles.fiveletters.core.ui.LocalLetterColors
@@ -102,22 +93,19 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
 ) {
     val accent = LocalLetterColors.current.accent
-    Column(
-        modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp),
+    GameHomeScaffold(
+        title = "Five Letters",
+        calendarGame = "FIVE_LETTERS",
+        tagline = "Guess the word in six tries, a new one every day",
+        accent = accent,
+        settingsIcon = FiveLettersIcons.Settings,
+        onStats = onStats,
+        onHistory = null,
+        onSettings = onSettings,
+        onBack = onBack,
+        gameIcon = { FiveLettersGameIcon() },
+        modifier = modifier,
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            BackButton(onBack)
-            Text("Five Letters", style = MaterialTheme.typography.headlineLarge, modifier = Modifier.weight(1f))
-            DailyCalendarButton("FIVE_LETTERS")
-            IconButton(onClick = onStats, modifier = Modifier.testTag("stats")) {
-                Icon(MenuIcons.Stats, contentDescription = "Stats")
-            }
-            IconButton(onClick = onSettings, modifier = Modifier.testTag("settings")) {
-                Icon(FiveLettersIcons.Settings, contentDescription = "Settings")
-            }
-        }
-        GameHero("Guess the word in six tries, a new one every day", accent) { FiveLettersGameIcon() }
         MenuSection("Today", aside = todayLabel()) {
             MenuTile(
                 label = "Today's word · #${state.dailyNumber}",
