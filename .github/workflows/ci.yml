@@ -57,7 +57,6 @@ jobs:
     env:
       API_LEVEL: 35
       E2E_APK: build/e2e-apk/app-debug.apk
-      E2E_ARGS: ${{ github.event_name == 'pull_request' && '--fast' || '' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
@@ -107,7 +106,7 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: e2e/run.sh $E2E_ARGS --part ${{ matrix.part }}/5
+          script: e2e/run.sh --part ${{ matrix.part }}/5
       - name: Check whether a flow failed or the emulator did
         id: emulator
         if: steps.flows.outcome == 'failure'
@@ -129,7 +128,7 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: e2e/run.sh $E2E_ARGS --part ${{ matrix.part }}/5
+          script: e2e/run.sh --part ${{ matrix.part }}/5
       - uses: actions/upload-artifact@v4
         if: failure() || steps.flows.outcome == 'failure'
         with:
