@@ -33,7 +33,7 @@ import com.joclegg.puzzles.core.ui.HelpersHint
 import com.joclegg.puzzles.core.ui.WinDialog
 import com.joclegg.puzzles.core.ui.WinStat
 import com.joclegg.puzzles.sudoku.core.data.GameMode
-import com.joclegg.puzzles.sudoku.core.ui.BackButton
+import com.joclegg.puzzles.core.ui.BackButton
 import com.joclegg.puzzles.sudoku.core.ui.HintButton
 import com.joclegg.puzzles.sudoku.core.ui.HowToPlayButton
 import com.joclegg.puzzles.sudoku.core.ui.KeypadTool
@@ -44,7 +44,7 @@ import com.joclegg.puzzles.sudoku.core.ui.SudokuIcons
 import com.joclegg.puzzles.sudoku.core.ui.TourState
 import com.joclegg.puzzles.sudoku.core.ui.TourStep
 import com.joclegg.puzzles.sudoku.core.ui.dialogTestTags
-import com.joclegg.puzzles.sudoku.core.ui.formatDuration
+import com.joclegg.puzzles.core.ui.formatDuration
 import com.joclegg.puzzles.sudoku.core.ui.gameTitle
 import com.joclegg.puzzles.sudoku.core.ui.label
 import com.joclegg.puzzles.sudoku.core.ui.rememberTourState

@@ -42,12 +42,12 @@ import com.joclegg.puzzles.core.ui.todayLabel
 import com.joclegg.puzzles.sudoku.core.data.GameMode
 import com.joclegg.puzzles.sudoku.core.data.SavedGame
 import com.joclegg.puzzles.sudoku.core.data.levels
-import com.joclegg.puzzles.sudoku.core.ui.BackButton
+import com.joclegg.puzzles.core.ui.BackButton
 import com.joclegg.puzzles.sudoku.core.ui.LocalBoardColors
 import com.joclegg.puzzles.sudoku.core.ui.SudokuGameIcon
 import com.joclegg.puzzles.sudoku.core.ui.SudokuIcons
 import com.joclegg.puzzles.sudoku.core.ui.dialogTestTags
-import com.joclegg.puzzles.sudoku.core.ui.formatDuration
+import com.joclegg.puzzles.core.ui.formatDuration
 import com.joclegg.puzzles.sudoku.core.ui.gameTitle
 import com.joclegg.puzzles.sudoku.core.ui.label
 import com.joclegg.puzzles.sudoku.engine.Difficulty

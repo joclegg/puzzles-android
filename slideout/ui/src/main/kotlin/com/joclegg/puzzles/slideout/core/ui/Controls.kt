@@ -36,12 +36,3 @@ fun ToolButton(
     }
 }
 
-@Composable
-fun BackButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    IconButton(onClick = onClick, modifier = modifier.testTag("back")) {
-        Icon(SlideOutIcons.Back, contentDescription = "Back")
-    }
-}

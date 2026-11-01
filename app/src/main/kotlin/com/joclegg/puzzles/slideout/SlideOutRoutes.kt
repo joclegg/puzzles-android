@@ -13,6 +13,9 @@ import androidx.navigation.navArgument
 import com.joclegg.puzzles.AccentColors
 import com.joclegg.puzzles.SettingsHub
 import com.joclegg.puzzles.SettingsTab
+import com.joclegg.puzzles.core.ui.stats.HistoryRoute
+import com.joclegg.puzzles.core.ui.stats.StatsRoute
+import com.joclegg.puzzles.core.ui.stats.StatsViewModel
 import com.joclegg.puzzles.slideout.core.ui.LocalSlideColors
 import com.joclegg.puzzles.slideout.core.ui.SlideOutTheme
 import com.joclegg.puzzles.slideout.feature.game.GameRoute
@@ -21,9 +24,6 @@ import com.joclegg.puzzles.slideout.feature.home.HomeRoute
 import com.joclegg.puzzles.slideout.feature.home.HomeViewModel
 import com.joclegg.puzzles.slideout.feature.settings.SettingsRoute
 import com.joclegg.puzzles.slideout.feature.settings.SettingsViewModel
-import com.joclegg.puzzles.slideout.feature.stats.HistoryRoute
-import com.joclegg.puzzles.slideout.feature.stats.StatsRoute
-import com.joclegg.puzzles.slideout.feature.stats.StatsViewModel
 
 object SlideOutRoutes {
     const val HOME = "slide_out/home"
@@ -66,11 +66,13 @@ object SlideOutRoutes {
             )
         }
         screen(STATS, darkTheme) {
-            StatsRoute(viewModel { StatsViewModel(container.games) }, onBack = navController::popBackStack)
+            StatsRoute(viewModel { StatsViewModel(slideOutStatsSource(container.games)) }, onBack = navController::popBackStack, footnote = SLIDE_OUT_STATS_FOOTNOTE) { SlideOutStatsTable(it) }
         }
         screen(HISTORY, darkTheme) {
             HistoryRoute(
-                viewModel = viewModel { StatsViewModel(container.games) },
+                viewModel = viewModel { StatsViewModel(slideOutStatsSource(container.games)) },
+                accent = LocalSlideColors.current.accent,
+                filters = slideOutHistoryFilters,
                 onOpenGame = { navController.openSlideOutGame(it) },
                 onBack = navController::popBackStack,
             )

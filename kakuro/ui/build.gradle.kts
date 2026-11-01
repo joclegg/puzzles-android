@@ -4,6 +4,7 @@ plugins {
 }
 
 dependencies {
+    api(projects.core.ui)
     api(projects.kakuro.engine)
     implementation(projects.kakuro.data)
 }

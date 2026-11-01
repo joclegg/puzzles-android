@@ -35,12 +35,12 @@ import com.joclegg.puzzles.core.ui.MenuTile
 import com.joclegg.puzzles.core.ui.TileGrid
 import com.joclegg.puzzles.core.ui.todayLabel
 import com.joclegg.puzzles.kakuro.core.data.SavedGame
-import com.joclegg.puzzles.kakuro.core.ui.BackButton
+import com.joclegg.puzzles.core.ui.BackButton
 import com.joclegg.puzzles.kakuro.core.ui.KakuroGameIcon
 import com.joclegg.puzzles.kakuro.core.ui.KakuroIcons
 import com.joclegg.puzzles.kakuro.core.ui.LocalKakuroColors
 import com.joclegg.puzzles.kakuro.core.ui.dialogTestTags
-import com.joclegg.puzzles.kakuro.core.ui.formatDuration
+import com.joclegg.puzzles.core.ui.formatDuration
 import com.joclegg.puzzles.kakuro.core.ui.sizeLabel
 import com.joclegg.puzzles.kakuro.core.ui.title
 import com.joclegg.puzzles.kakuro.engine.SIZES

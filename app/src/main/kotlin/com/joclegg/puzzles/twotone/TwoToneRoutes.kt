@@ -13,6 +13,9 @@ import androidx.navigation.navArgument
 import com.joclegg.puzzles.AccentColors
 import com.joclegg.puzzles.SettingsHub
 import com.joclegg.puzzles.SettingsTab
+import com.joclegg.puzzles.core.ui.stats.HistoryRoute
+import com.joclegg.puzzles.core.ui.stats.StatsRoute
+import com.joclegg.puzzles.core.ui.stats.StatsViewModel
 import com.joclegg.puzzles.twotone.core.ui.LocalTileColors
 import com.joclegg.puzzles.twotone.core.ui.TwoToneTheme
 import com.joclegg.puzzles.twotone.feature.game.GameRoute
@@ -21,9 +24,6 @@ import com.joclegg.puzzles.twotone.feature.home.HomeRoute
 import com.joclegg.puzzles.twotone.feature.home.HomeViewModel
 import com.joclegg.puzzles.twotone.feature.settings.SettingsRoute
 import com.joclegg.puzzles.twotone.feature.settings.SettingsViewModel
-import com.joclegg.puzzles.twotone.feature.stats.HistoryRoute
-import com.joclegg.puzzles.twotone.feature.stats.StatsRoute
-import com.joclegg.puzzles.twotone.feature.stats.StatsViewModel
 
 object TwoToneRoutes {
     const val HOME = "two_tone/home"
@@ -59,11 +59,13 @@ object TwoToneRoutes {
             )
         }
         screen(STATS, darkTheme) {
-            StatsRoute(viewModel { StatsViewModel(container.games) }, onBack = navController::popBackStack)
+            StatsRoute(viewModel { StatsViewModel(twoToneStatsSource(container.games)) }, onBack = navController::popBackStack, footnote = TWOTONE_STATS_FOOTNOTE) { TwoToneStatsTable(it) }
         }
         screen(HISTORY, darkTheme) {
             HistoryRoute(
-                viewModel = viewModel { StatsViewModel(container.games) },
+                viewModel = viewModel { StatsViewModel(twoToneStatsSource(container.games)) },
+                accent = LocalTileColors.current.accent,
+                filters = twoToneHistoryFilters,
                 onOpenGame = { navController.openTwoToneGame(it) },
                 onBack = navController::popBackStack,
             )

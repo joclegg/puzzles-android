@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joclegg.puzzles.wordwheel.core.data.Settings
 import com.joclegg.puzzles.wordwheel.core.data.Toggle
-import com.joclegg.puzzles.wordwheel.core.ui.BackButton
+import com.joclegg.puzzles.core.ui.BackButton
 
 @Composable
 fun SettingsRoute(

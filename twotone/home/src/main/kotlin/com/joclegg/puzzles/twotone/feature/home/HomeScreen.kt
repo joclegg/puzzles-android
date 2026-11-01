@@ -35,12 +35,12 @@ import com.joclegg.puzzles.core.ui.MenuTile
 import com.joclegg.puzzles.core.ui.TileGrid
 import com.joclegg.puzzles.core.ui.todayLabel
 import com.joclegg.puzzles.twotone.core.data.SavedGame
-import com.joclegg.puzzles.twotone.core.ui.BackButton
+import com.joclegg.puzzles.core.ui.BackButton
 import com.joclegg.puzzles.twotone.core.ui.LocalTileColors
 import com.joclegg.puzzles.twotone.core.ui.TwoToneGameIcon
 import com.joclegg.puzzles.twotone.core.ui.TwoToneIcons
 import com.joclegg.puzzles.twotone.core.ui.dialogTestTags
-import com.joclegg.puzzles.twotone.core.ui.formatDuration
+import com.joclegg.puzzles.core.ui.formatDuration
 import com.joclegg.puzzles.twotone.core.ui.sizeLabel
 import com.joclegg.puzzles.twotone.core.ui.title
 import com.joclegg.puzzles.twotone.engine.SIZES

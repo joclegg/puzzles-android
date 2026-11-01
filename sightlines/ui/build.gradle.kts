@@ -4,6 +4,7 @@ plugins {
 }
 
 dependencies {
+    api(projects.core.ui)
     api(projects.sightlines.engine)
     implementation(projects.sightlines.data)
 }

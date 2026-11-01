@@ -25,7 +25,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joclegg.puzzles.sightlines.core.data.InputMode
 import com.joclegg.puzzles.sightlines.core.data.Settings
 import com.joclegg.puzzles.sightlines.core.data.Toggle
-import com.joclegg.puzzles.sightlines.core.ui.BackButton
+import com.joclegg.puzzles.core.ui.BackButton
 
 @Composable
 fun SettingsRoute(

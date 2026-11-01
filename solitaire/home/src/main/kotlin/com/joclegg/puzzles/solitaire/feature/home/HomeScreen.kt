@@ -33,12 +33,12 @@ import com.joclegg.puzzles.core.ui.MenuSection
 import com.joclegg.puzzles.core.ui.MenuTile
 import com.joclegg.puzzles.core.ui.todayLabel
 import com.joclegg.puzzles.solitaire.core.data.SavedGame
-import com.joclegg.puzzles.solitaire.core.ui.BackButton
+import com.joclegg.puzzles.core.ui.BackButton
 import com.joclegg.puzzles.solitaire.core.ui.LocalTableColors
 import com.joclegg.puzzles.solitaire.core.ui.SolitaireGameIcon
 import com.joclegg.puzzles.solitaire.core.ui.SolitaireIcons
 import com.joclegg.puzzles.solitaire.core.ui.dialogTestTags
-import com.joclegg.puzzles.solitaire.core.ui.formatDuration
+import com.joclegg.puzzles.core.ui.formatDuration
 import com.joclegg.puzzles.solitaire.core.ui.title
 import kotlinx.coroutines.launch
 

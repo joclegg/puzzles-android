@@ -35,12 +35,12 @@ import com.joclegg.puzzles.core.ui.MenuTile
 import com.joclegg.puzzles.core.ui.TileGrid
 import com.joclegg.puzzles.core.ui.todayLabel
 import com.joclegg.puzzles.slideout.core.data.SavedGame
-import com.joclegg.puzzles.slideout.core.ui.BackButton
+import com.joclegg.puzzles.core.ui.BackButton
 import com.joclegg.puzzles.slideout.core.ui.LocalSlideColors
 import com.joclegg.puzzles.slideout.core.ui.SlideOutGameIcon
 import com.joclegg.puzzles.slideout.core.ui.SlideOutIcons
 import com.joclegg.puzzles.slideout.core.ui.dialogTestTags
-import com.joclegg.puzzles.slideout.core.ui.formatDuration
+import com.joclegg.puzzles.core.ui.formatDuration
 import com.joclegg.puzzles.slideout.core.ui.label
 import com.joclegg.puzzles.slideout.core.ui.title
 import com.joclegg.puzzles.slideout.engine.Level

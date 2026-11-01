@@ -13,6 +13,9 @@ import androidx.navigation.navArgument
 import com.joclegg.puzzles.AccentColors
 import com.joclegg.puzzles.SettingsHub
 import com.joclegg.puzzles.SettingsTab
+import com.joclegg.puzzles.core.ui.stats.HistoryRoute
+import com.joclegg.puzzles.core.ui.stats.StatsRoute
+import com.joclegg.puzzles.core.ui.stats.StatsViewModel
 import com.joclegg.puzzles.kakuro.core.ui.KakuroTheme
 import com.joclegg.puzzles.kakuro.core.ui.LocalKakuroColors
 import com.joclegg.puzzles.kakuro.feature.game.GameRoute
@@ -21,9 +24,6 @@ import com.joclegg.puzzles.kakuro.feature.home.HomeRoute
 import com.joclegg.puzzles.kakuro.feature.home.HomeViewModel
 import com.joclegg.puzzles.kakuro.feature.settings.SettingsRoute
 import com.joclegg.puzzles.kakuro.feature.settings.SettingsViewModel
-import com.joclegg.puzzles.kakuro.feature.stats.HistoryRoute
-import com.joclegg.puzzles.kakuro.feature.stats.StatsRoute
-import com.joclegg.puzzles.kakuro.feature.stats.StatsViewModel
 
 object KakuroRoutes {
     const val HOME = "kakuro/home"
@@ -66,11 +66,13 @@ object KakuroRoutes {
             )
         }
         screen(STATS, darkTheme) {
-            StatsRoute(viewModel { StatsViewModel(container.games) }, onBack = navController::popBackStack)
+            StatsRoute(viewModel { StatsViewModel(kakuroStatsSource(container.games)) }, onBack = navController::popBackStack, footnote = KAKURO_STATS_FOOTNOTE) { KakuroStatsTable(it) }
         }
         screen(HISTORY, darkTheme) {
             HistoryRoute(
-                viewModel = viewModel { StatsViewModel(container.games) },
+                viewModel = viewModel { StatsViewModel(kakuroStatsSource(container.games)) },
+                accent = LocalKakuroColors.current.accent,
+                filters = kakuroHistoryFilters,
                 onOpenGame = { navController.openKakuroGame(it) },
                 onBack = navController::popBackStack,
             )

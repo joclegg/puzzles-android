@@ -2,6 +2,7 @@ package com.joclegg.puzzles.solitaire
 
 import android.os.SystemClock
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavBackStackEntry
@@ -13,6 +14,9 @@ import androidx.navigation.navArgument
 import com.joclegg.puzzles.AccentColors
 import com.joclegg.puzzles.SettingsHub
 import com.joclegg.puzzles.SettingsTab
+import com.joclegg.puzzles.core.ui.stats.HistoryRoute
+import com.joclegg.puzzles.core.ui.stats.StatsRoute
+import com.joclegg.puzzles.core.ui.stats.StatsViewModel
 import com.joclegg.puzzles.solitaire.core.ui.LocalTableColors
 import com.joclegg.puzzles.solitaire.core.ui.SolitaireTheme
 import com.joclegg.puzzles.solitaire.feature.game.GameRoute
@@ -21,9 +25,6 @@ import com.joclegg.puzzles.solitaire.feature.home.HomeRoute
 import com.joclegg.puzzles.solitaire.feature.home.HomeViewModel
 import com.joclegg.puzzles.solitaire.feature.settings.SettingsRoute
 import com.joclegg.puzzles.solitaire.feature.settings.SettingsViewModel
-import com.joclegg.puzzles.solitaire.feature.stats.HistoryRoute
-import com.joclegg.puzzles.solitaire.feature.stats.StatsRoute
-import com.joclegg.puzzles.solitaire.feature.stats.StatsViewModel
 
 object SolitaireRoutes {
     const val HOME = "solitaire/home"
@@ -75,11 +76,13 @@ object SolitaireRoutes {
             )
         }
         screen(STATS, darkTheme) {
-            StatsRoute(viewModel { StatsViewModel(container.games) }, onBack = navController::popBackStack)
+            StatsRoute(viewModel { StatsViewModel(solitaireStatsSource(container.games)) }, onBack = navController::popBackStack, spacing = 20.dp, footnote = SOLITAIRE_STATS_FOOTNOTE) { stats -> stats.forEach { SolitaireStatsPanel(it) } }
         }
         screen(HISTORY, darkTheme) {
             HistoryRoute(
-                viewModel = viewModel { StatsViewModel(container.games) },
+                viewModel = viewModel { StatsViewModel(solitaireStatsSource(container.games)) },
+                accent = LocalTableColors.current.accent,
+                filters = solitaireHistoryFilters,
                 onOpenGame = { navController.openSolitaireGame(it) },
                 onBack = navController::popBackStack,
             )

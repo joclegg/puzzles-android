@@ -13,6 +13,9 @@ import androidx.navigation.navArgument
 import com.joclegg.puzzles.AccentColors
 import com.joclegg.puzzles.SettingsHub
 import com.joclegg.puzzles.SettingsTab
+import com.joclegg.puzzles.core.ui.stats.HistoryRoute
+import com.joclegg.puzzles.core.ui.stats.StatsRoute
+import com.joclegg.puzzles.core.ui.stats.StatsViewModel
 import com.joclegg.puzzles.sightlines.core.ui.LocalTileColors
 import com.joclegg.puzzles.sightlines.core.ui.SightlinesTheme
 import com.joclegg.puzzles.sightlines.feature.game.GameRoute
@@ -21,9 +24,6 @@ import com.joclegg.puzzles.sightlines.feature.home.HomeRoute
 import com.joclegg.puzzles.sightlines.feature.home.HomeViewModel
 import com.joclegg.puzzles.sightlines.feature.settings.SettingsRoute
 import com.joclegg.puzzles.sightlines.feature.settings.SettingsViewModel
-import com.joclegg.puzzles.sightlines.feature.stats.HistoryRoute
-import com.joclegg.puzzles.sightlines.feature.stats.StatsRoute
-import com.joclegg.puzzles.sightlines.feature.stats.StatsViewModel
 
 object SightlinesRoutes {
     const val HOME = "sightlines/home"
@@ -59,11 +59,13 @@ object SightlinesRoutes {
             )
         }
         screen(STATS, darkTheme) {
-            StatsRoute(viewModel { StatsViewModel(container.games) }, onBack = navController::popBackStack)
+            StatsRoute(viewModel { StatsViewModel(sightlinesStatsSource(container.games)) }, onBack = navController::popBackStack, footnote = SIGHTLINES_STATS_FOOTNOTE) { SightlinesStatsTable(it) }
         }
         screen(HISTORY, darkTheme) {
             HistoryRoute(
-                viewModel = viewModel { StatsViewModel(container.games) },
+                viewModel = viewModel { StatsViewModel(sightlinesStatsSource(container.games)) },
+                accent = LocalTileColors.current.accent,
+                filters = sightlinesHistoryFilters,
                 onOpenGame = { navController.openSightlinesGame(it) },
                 onBack = navController::popBackStack,
             )

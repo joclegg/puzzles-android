@@ -4,6 +4,7 @@ plugins {
 }
 
 dependencies {
+    api(projects.core.ui)
     api(projects.twotone.engine)
     implementation(projects.twotone.data)
 }

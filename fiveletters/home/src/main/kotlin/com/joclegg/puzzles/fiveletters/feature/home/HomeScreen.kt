@@ -30,7 +30,7 @@ import com.joclegg.puzzles.core.ui.MenuSection
 import com.joclegg.puzzles.core.ui.MenuTile
 import com.joclegg.puzzles.core.ui.todayLabel
 import com.joclegg.puzzles.fiveletters.core.data.GameStatus
-import com.joclegg.puzzles.fiveletters.core.ui.BackButton
+import com.joclegg.puzzles.core.ui.BackButton
 import com.joclegg.puzzles.fiveletters.core.ui.FiveLettersGameIcon
 import com.joclegg.puzzles.fiveletters.core.ui.FiveLettersIcons
 import com.joclegg.puzzles.fiveletters.core.ui.LocalLetterColors
