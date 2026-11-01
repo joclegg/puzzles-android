@@ -32,7 +32,7 @@ object TwoToneRoutes {
     private const val HISTORY = "two_tone/history"
 
     fun NavGraphBuilder.twoToneGraph(
-        container: TwoToneContainer,
+        container: TwoToneDefinition,
         navController: NavHostController,
         darkTheme: Boolean,
     ) {
@@ -74,7 +74,7 @@ object TwoToneRoutes {
 
     @Composable
     fun SettingsTabContent(
-        container: TwoToneContainer,
+        container: TwoToneDefinition,
         darkTheme: Boolean,
     ) {
         TwoToneTheme(darkTheme) {

@@ -32,7 +32,7 @@ object FiveLettersRoutes {
     private const val STATS = "five_letters/stats"
 
     fun NavGraphBuilder.fiveLettersGraph(
-        container: FiveLettersContainer,
+        container: FiveLettersDefinition,
         navController: NavHostController,
         darkTheme: Boolean,
     ) {
@@ -74,7 +74,7 @@ object FiveLettersRoutes {
 
     @Composable
     fun SettingsTabContent(
-        container: FiveLettersContainer,
+        container: FiveLettersDefinition,
         darkTheme: Boolean,
     ) {
         Themed(container, darkTheme) {
@@ -93,7 +93,7 @@ object FiveLettersRoutes {
 
     @Composable
     private fun Themed(
-        container: FiveLettersContainer,
+        container: FiveLettersDefinition,
         darkTheme: Boolean,
         content: @Composable () -> Unit,
     ) {
@@ -102,7 +102,7 @@ object FiveLettersRoutes {
     }
 
     private fun NavGraphBuilder.screen(
-        container: FiveLettersContainer,
+        container: FiveLettersDefinition,
         route: String,
         darkTheme: Boolean,
         arguments: List<NamedNavArgument> = emptyList(),

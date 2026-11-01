@@ -33,7 +33,7 @@ object SolitaireRoutes {
     private const val HISTORY = "solitaire/history"
 
     fun NavGraphBuilder.solitaireGraph(
-        container: SolitaireContainer,
+        container: SolitaireDefinition,
         navController: NavHostController,
         darkTheme: Boolean,
     ) {
@@ -91,7 +91,7 @@ object SolitaireRoutes {
 
     @Composable
     fun SettingsTabContent(
-        container: SolitaireContainer,
+        container: SolitaireDefinition,
         darkTheme: Boolean,
     ) {
         SolitaireTheme(darkTheme) {

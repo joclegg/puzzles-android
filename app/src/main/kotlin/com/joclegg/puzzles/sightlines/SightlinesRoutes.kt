@@ -32,7 +32,7 @@ object SightlinesRoutes {
     private const val HISTORY = "sightlines/history"
 
     fun NavGraphBuilder.sightlinesGraph(
-        container: SightlinesContainer,
+        container: SightlinesDefinition,
         navController: NavHostController,
         darkTheme: Boolean,
     ) {
@@ -74,7 +74,7 @@ object SightlinesRoutes {
 
     @Composable
     fun SettingsTabContent(
-        container: SightlinesContainer,
+        container: SightlinesDefinition,
         darkTheme: Boolean,
     ) {
         SightlinesTheme(darkTheme) {

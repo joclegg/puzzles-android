@@ -38,7 +38,7 @@ object SudokuRoutes {
     private const val HISTORY = "sudoku/history"
 
     fun NavGraphBuilder.sudokuGraph(
-        container: SudokuContainer,
+        container: SudokuDefinition,
         navController: NavHostController,
     ) {
         composable(HOME) {
@@ -94,7 +94,7 @@ object SudokuRoutes {
 
     @Composable
     fun SettingsTabContent(
-        container: SudokuContainer,
+        container: SudokuDefinition,
         mode: GameMode,
     ) {
         AccentColors(LocalBoardColors.current.accent) {

@@ -32,7 +32,7 @@ object SlideOutRoutes {
     private const val HISTORY = "slide_out/history"
 
     fun NavGraphBuilder.slideOutGraph(
-        container: SlideOutContainer,
+        container: SlideOutDefinition,
         navController: NavHostController,
         darkTheme: Boolean,
     ) {
@@ -81,7 +81,7 @@ object SlideOutRoutes {
 
     @Composable
     fun SettingsTabContent(
-        container: SlideOutContainer,
+        container: SlideOutDefinition,
         darkTheme: Boolean,
     ) {
         SlideOutTheme(darkTheme) {

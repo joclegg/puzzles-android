@@ -9,14 +9,16 @@ import com.joclegg.puzzles.core.sync.SupabaseAuth
 import com.joclegg.puzzles.core.sync.SyncEngine
 import com.joclegg.puzzles.core.sync.SyncStore
 import com.joclegg.puzzles.core.ui.Medal
-import com.joclegg.puzzles.fiveletters.FiveLettersContainer
-import com.joclegg.puzzles.kakuro.KakuroContainer
-import com.joclegg.puzzles.sightlines.SightlinesContainer
-import com.joclegg.puzzles.slideout.SlideOutContainer
-import com.joclegg.puzzles.solitaire.SolitaireContainer
-import com.joclegg.puzzles.sudoku.SudokuContainer
-import com.joclegg.puzzles.twotone.TwoToneContainer
-import com.joclegg.puzzles.wordwheel.WordWheelContainer
+import com.joclegg.puzzles.fiveletters.FiveLettersDefinition
+import com.joclegg.puzzles.kakuro.KakuroDefinition
+import com.joclegg.puzzles.sightlines.SightlinesDefinition
+import com.joclegg.puzzles.slideout.SlideOutDefinition
+import com.joclegg.puzzles.solitaire.SolitaireDefinition
+import com.joclegg.puzzles.sudoku.SudokuDefinition
+import com.joclegg.puzzles.twotone.TwoToneDefinition
+import com.joclegg.puzzles.wordwheel.WordWheelDefinition
+import java.io.File
+import java.time.LocalDate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -29,36 +31,28 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.io.File
-import java.time.LocalDate
 
 private val Context.syncPreferences by preferencesDataStore(name = "sync")
 
 class PuzzlesApplication : Application() {
-    val sudoku by lazy { SudokuContainer(this) }
-    val solitaire by lazy { SolitaireContainer(this) }
-    val twoTone by lazy { TwoToneContainer(this) }
-    val sightlines by lazy { SightlinesContainer(this) }
-    val fiveLetters by lazy { FiveLettersContainer(this) }
-    val kakuro by lazy { KakuroContainer(this) }
-    val slideOut by lazy { SlideOutContainer(this) }
-    val wordWheel by lazy { WordWheelContainer(this) }
+    val sudoku by lazy { SudokuDefinition(this) }
+    val solitaire by lazy { SolitaireDefinition(this) }
+    val twoTone by lazy { TwoToneDefinition(this) }
+    val sightlines by lazy { SightlinesDefinition(this) }
+    val fiveLetters by lazy { FiveLettersDefinition(this) }
+    val kakuro by lazy { KakuroDefinition(this) }
+    val slideOut by lazy { SlideOutDefinition(this) }
+    val wordWheel by lazy { WordWheelDefinition(this) }
+    val games: List<GameDefinition> by lazy { listOf(sudoku, solitaire, twoTone, sightlines, fiveLetters, kakuro, slideOut, wordWheel) }
+
+    fun definition(game: PuzzleGame): GameDefinition = games.first { it.game == game }
+
     private val syncStore by lazy { SyncStore(syncPreferences) }
     val background = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     val auth by lazy { SupabaseAuth(syncStore) }
     val sync by lazy {
         SyncEngine(
-            sources =
-                listOf(
-                    sudoku.sync,
-                    solitaire.sync,
-                    twoTone.sync,
-                    sightlines.sync,
-                    fiveLetters.sync,
-                    kakuro.sync,
-                    slideOut.sync,
-                    wordWheel.sync,
-                ),
+            sources = games.map { it.sync },
             auth = auth,
             store = syncStore,
         )
@@ -90,14 +84,7 @@ class PuzzlesApplication : Application() {
     }
 
     suspend fun keepLegacyHelperDefaults() {
-        sudoku.settings.keepLegacyDefaults()
-        solitaire.settings.keepLegacyDefaults()
-        twoTone.settings.keepLegacyDefaults()
-        sightlines.settings.keepLegacyDefaults()
-        fiveLetters.settings.keepLegacyDefaults()
-        kakuro.settings.keepLegacyDefaults()
-        slideOut.settings.keepLegacyDefaults()
-        wordWheel.settings.keepLegacyDefaults()
+        games.forEach { it.keepLegacyDefaults() }
     }
 
     private val celebratedOn by lazy { MutableStateFlow(getSharedPreferences(APP_META, MODE_PRIVATE).getString(CELEBRATED_ON, null)) }
@@ -114,16 +101,7 @@ class PuzzlesApplication : Application() {
     }
 
     val openGameCount: Flow<Int> by lazy {
-        combine(
-            sudoku.games.inProgress.map { it.size },
-            solitaire.games.inProgress.map { it.size },
-            twoTone.games.inProgress.map { it.size },
-            sightlines.games.inProgress.map { it.size },
-            fiveLetters.games.inProgress.map { it.size },
-            kakuro.games.inProgress.map { it.size },
-            slideOut.games.inProgress.map { it.size },
-            wordWheel.games.inProgress.map { it.size },
-        ) { counts -> counts.sum() }.distinctUntilChanged()
+        combine(games.map { it.inProgressCount }) { counts -> counts.sum() }.distinctUntilChanged()
     }
 }
 

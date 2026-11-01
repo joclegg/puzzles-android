@@ -32,7 +32,7 @@ object WordWheelRoutes {
     private const val HISTORY = "word_wheel/history"
 
     fun NavGraphBuilder.wordWheelGraph(
-        container: WordWheelContainer,
+        container: WordWheelDefinition,
         navController: NavHostController,
         darkTheme: Boolean,
     ) {
@@ -81,7 +81,7 @@ object WordWheelRoutes {
 
     @Composable
     fun SettingsTabContent(
-        container: WordWheelContainer,
+        container: WordWheelDefinition,
         darkTheme: Boolean,
     ) {
         WordWheelTheme(darkTheme) {

@@ -32,7 +32,7 @@ object KakuroRoutes {
     private const val HISTORY = "kakuro/history"
 
     fun NavGraphBuilder.kakuroGraph(
-        container: KakuroContainer,
+        container: KakuroDefinition,
         navController: NavHostController,
         darkTheme: Boolean,
     ) {
@@ -81,7 +81,7 @@ object KakuroRoutes {
 
     @Composable
     fun SettingsTabContent(
-        container: KakuroContainer,
+        container: KakuroDefinition,
         darkTheme: Boolean,
     ) {
         KakuroTheme(darkTheme) {
