@@ -3,7 +3,6 @@ package com.joclegg.puzzles.sightlines.feature.game
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joclegg.puzzles.sightlines.core.data.GameRepository
-import com.joclegg.puzzles.sightlines.core.data.InputMode
 import com.joclegg.puzzles.sightlines.core.data.PuzzleRef
 import com.joclegg.puzzles.sightlines.core.data.SavedGame
 import com.joclegg.puzzles.sightlines.core.data.Settings
@@ -13,7 +12,6 @@ import com.joclegg.puzzles.sightlines.core.ui.message
 import com.joclegg.puzzles.sightlines.core.ui.sizeLabel
 import com.joclegg.puzzles.sightlines.core.ui.title
 import com.joclegg.puzzles.sightlines.core.ui.toBoardUi
-import com.joclegg.puzzles.sightlines.engine.Dot
 import com.joclegg.puzzles.sightlines.engine.GameState
 import com.joclegg.puzzles.sightlines.engine.GameTimer
 import kotlinx.coroutines.Job
@@ -37,8 +35,6 @@ data class GameUiState(
     val hints: Int,
     val showTimer: Boolean,
     val showProgress: Boolean,
-    val pickColour: Boolean,
-    val colour: Dot,
     val canUndo: Boolean,
     val solved: Boolean,
     val newBest: Boolean,
@@ -59,7 +55,6 @@ class GameViewModel(
     private var saved: SavedGame? = null
     private var game: GameState? = null
     private var hints = 0
-    private var colour = Dot.BLUE
     private var timer = GameTimer()
     private var visible = false
     private var ticker: Job? = null
@@ -89,19 +84,7 @@ class GameViewModel(
         }
     }
 
-    fun onDotClick(cell: Int) =
-        move {
-            if (display.inputMode == InputMode.PICK_COLOUR) {
-                it.paint(cell, colour)
-            } else {
-                it.tap(cell)
-            }
-        }
-
-    fun onColourClick(picked: Dot) {
-        colour = picked
-        publish()
-    }
+    fun onDotClick(cell: Int) = move { it.tap(cell) }
 
     fun onUndo() = move { it.undo() }
 
@@ -255,8 +238,6 @@ class GameViewModel(
                 hints = hints,
                 showTimer = display.showTimer,
                 showProgress = display.showProgress,
-                pickColour = display.inputMode == InputMode.PICK_COLOUR,
-                colour = colour,
                 canUndo = current.changes.isNotEmpty() && !current.isSolved,
                 solved = current.isSolved,
                 newBest = newBest,

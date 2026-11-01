@@ -51,18 +51,6 @@ data class GameState(
 
     fun tap(cell: Int): GameState = set(cell) { it.next }
 
-    fun paint(
-        cell: Int,
-        colour: Dot,
-    ): GameState =
-        set(cell) { current ->
-            if (current == colour) {
-                Dot.EMPTY
-            } else {
-                colour
-            }
-        }
-
     private fun set(
         cell: Int,
         change: (Dot) -> Dot,

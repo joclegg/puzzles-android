@@ -2,7 +2,6 @@ package com.joclegg.puzzles.twotone.engine
 
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.EnumSource
 import org.junit.jupiter.params.provider.ValueSource
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
@@ -94,37 +93,10 @@ class GameStateTest {
         assertEquals(true to 100, after.isSolved to after.progressPercent)
     }
 
-    @ParameterizedTest
-    @EnumSource(Tile::class, names = ["RED", "BLUE"])
-    fun `given a colour picked when an empty spot is painted twice then it takes the colour and then clears`(colour: Tile) {
-        // Arrange
-        val game = GameState(puzzle)
-
-        // Act
-        val painted = game.paint(1, colour)
-        val cleared = painted.paint(1, colour)
-
-        // Assert
-        assertEquals(colour to Tile.EMPTY, painted.grid.tiles[1] to cleared.grid.tiles[1])
-    }
-
     @Test
-    fun `given a spot of one colour when it is painted the other colour then it switches in one undoable change`() {
-        // Arrange
-        val game = GameState(puzzle).paint(1, Tile.RED)
-
+    fun `given a starting spot when it is tapped then it does not change`() {
         // Act
-        val after = game.paint(1, Tile.BLUE)
-
-        // Assert
-        assertEquals(Tile.BLUE, after.grid.tiles[1])
-        assertEquals(Tile.RED, after.undo().grid.tiles[1])
-    }
-
-    @Test
-    fun `given a starting spot when it is painted then it does not change`() {
-        // Act
-        val after = GameState(puzzle).paint(0, Tile.BLUE)
+        val after = GameState(puzzle).tap(0)
 
         // Assert
         assertEquals(puzzle.givens, after.grid)
