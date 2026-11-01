@@ -39,9 +39,39 @@ fun GameState.findHint(): Hint? {
             }
         }
     }
-    val first = empty.first()
-    return Hint(first, puzzle.solution[first], "No cell can be worked out yet, so here is the first empty one.")
+    return fewestCandidatesHint()
 }
+
+fun GameState.fewestCandidatesHint(): Hint? {
+    val cell =
+        puzzle.runsOf.keys
+            .filter { values[it] == 0 }
+            .sorted()
+            .minByOrNull { Integer.bitCount(runCandidates(it)) } ?: return null
+    val digits = Combinations.digitsOf(runCandidates(cell))
+    val runs =
+        puzzle.runsOf.getValue(cell).sortedByDescending { it.isAcross }.joinToString(" and ") { run ->
+            val direction =
+                if (run.isAcross) {
+                    "across"
+                } else {
+                    "down"
+                }
+            "$direction run (${run.sum} in ${run.cells.size})"
+        }
+    val allowed =
+        if (digits.size <= 1) {
+            digits.joinToString("")
+        } else {
+            digits.dropLast(1).joinToString(", ") + " or " + digits.last()
+        }
+    return Hint(cell, puzzle.solution[cell], "This cell's $runs only allow $allowed.")
+}
+
+private fun GameState.runCandidates(cell: Int): Int =
+    puzzle.runsOf.getValue(cell).fold(ALL_DIGITS) { mask, run ->
+        mask and fittingMasks(run).fold(0) { all, fitting -> all or fitting } and placedMask(run).inv()
+    }
 
 private fun GameState.narrowedCandidates(empty: List<Int>): Map<Int, Int> {
     val candidates = empty.associateWith { ALL_DIGITS }.toMutableMap()

@@ -16,6 +16,25 @@ class HintTest {
     }
 
     @Test
+    fun `given no cell can be worked out when the fallback hint is asked for then it names the runs and the digits they allow`() {
+        // Act
+        val hint = GameState(small).fewestCandidatesHint()!!
+
+        // Assert
+        assertEquals(
+            listOf(4, 1, true, true, true, false),
+            listOf(
+                hint.cell,
+                hint.digit,
+                "across run (3 in 2)" in hint.message,
+                "down run (4 in 2)" in hint.message,
+                hint.message.endsWith("only allow 1."),
+                "first empty" in hint.message,
+            ),
+        )
+    }
+
+    @Test
     fun `given a wrong digit when a hint is asked for then it points at that cell first`() {
         // Arrange
         val game = GameState(small).copy(values = listOf(0, 0, 0, 0, 0, 0, 0, 0, 9))
