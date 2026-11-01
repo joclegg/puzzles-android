@@ -17,14 +17,14 @@ import com.joclegg.puzzles.SettingsHub
 import com.joclegg.puzzles.SettingsTab
 import com.joclegg.puzzles.core.ui.stats.StatsRoute
 import com.joclegg.puzzles.core.ui.stats.StatsViewModel
-import com.joclegg.puzzles.fiveletters.core.ui.FiveLettersTheme
-import com.joclegg.puzzles.fiveletters.core.ui.LocalLetterColors
 import com.joclegg.puzzles.fiveletters.feature.game.GameRoute
 import com.joclegg.puzzles.fiveletters.feature.game.GameViewModel
 import com.joclegg.puzzles.fiveletters.feature.home.HomeRoute
 import com.joclegg.puzzles.fiveletters.feature.home.HomeViewModel
 import com.joclegg.puzzles.fiveletters.feature.settings.SettingsRoute
 import com.joclegg.puzzles.fiveletters.feature.settings.SettingsViewModel
+import com.joclegg.puzzles.fiveletters.ui.FiveLettersTheme
+import com.joclegg.puzzles.fiveletters.ui.LocalLetterColors
 
 object FiveLettersRoutes {
     const val HOME = "five_letters/home"

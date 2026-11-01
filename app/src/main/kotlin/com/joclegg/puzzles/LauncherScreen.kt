@@ -28,30 +28,30 @@ import com.joclegg.puzzles.core.ui.GameCard
 import com.joclegg.puzzles.core.ui.Medal
 import com.joclegg.puzzles.core.ui.MenuIcons
 import com.joclegg.puzzles.core.ui.medalColour
-import com.joclegg.puzzles.fiveletters.core.ui.FiveLettersGameIcon
-import com.joclegg.puzzles.fiveletters.core.ui.FiveLettersTheme
-import com.joclegg.puzzles.fiveletters.core.ui.LocalLetterColors
-import com.joclegg.puzzles.kakuro.core.ui.KakuroGameIcon
-import com.joclegg.puzzles.kakuro.core.ui.KakuroTheme
-import com.joclegg.puzzles.kakuro.core.ui.LocalKakuroColors
-import com.joclegg.puzzles.sightlines.core.ui.SightlinesGameIcon
-import com.joclegg.puzzles.sightlines.core.ui.SightlinesTheme
-import com.joclegg.puzzles.slideout.core.ui.LocalSlideColors
-import com.joclegg.puzzles.slideout.core.ui.SlideOutGameIcon
-import com.joclegg.puzzles.slideout.core.ui.SlideOutTheme
-import com.joclegg.puzzles.solitaire.core.ui.LocalTableColors
-import com.joclegg.puzzles.solitaire.core.ui.SolitaireGameIcon
-import com.joclegg.puzzles.solitaire.core.ui.SolitaireTheme
-import com.joclegg.puzzles.sudoku.core.ui.LocalBoardColors
-import com.joclegg.puzzles.sudoku.core.ui.SudokuGameIcon
-import com.joclegg.puzzles.sudoku.core.ui.SudokuIcons
-import com.joclegg.puzzles.twotone.core.ui.TwoToneGameIcon
-import com.joclegg.puzzles.twotone.core.ui.TwoToneTheme
-import com.joclegg.puzzles.wordwheel.core.ui.LocalWheelColors
-import com.joclegg.puzzles.wordwheel.core.ui.WordWheelGameIcon
-import com.joclegg.puzzles.wordwheel.core.ui.WordWheelTheme
-import com.joclegg.puzzles.sightlines.core.ui.LocalTileColors as SightlinesColors
-import com.joclegg.puzzles.twotone.core.ui.LocalTileColors as TwoToneColors
+import com.joclegg.puzzles.fiveletters.ui.FiveLettersGameIcon
+import com.joclegg.puzzles.fiveletters.ui.FiveLettersTheme
+import com.joclegg.puzzles.fiveletters.ui.LocalLetterColors
+import com.joclegg.puzzles.kakuro.ui.KakuroGameIcon
+import com.joclegg.puzzles.kakuro.ui.KakuroTheme
+import com.joclegg.puzzles.kakuro.ui.LocalKakuroColors
+import com.joclegg.puzzles.sightlines.ui.SightlinesGameIcon
+import com.joclegg.puzzles.sightlines.ui.SightlinesTheme
+import com.joclegg.puzzles.slideout.ui.LocalSlideColors
+import com.joclegg.puzzles.slideout.ui.SlideOutGameIcon
+import com.joclegg.puzzles.slideout.ui.SlideOutTheme
+import com.joclegg.puzzles.solitaire.ui.LocalTableColors
+import com.joclegg.puzzles.solitaire.ui.SolitaireGameIcon
+import com.joclegg.puzzles.solitaire.ui.SolitaireTheme
+import com.joclegg.puzzles.sudoku.ui.LocalBoardColors
+import com.joclegg.puzzles.sudoku.ui.SudokuGameIcon
+import com.joclegg.puzzles.sudoku.ui.SudokuIcons
+import com.joclegg.puzzles.twotone.ui.TwoToneGameIcon
+import com.joclegg.puzzles.twotone.ui.TwoToneTheme
+import com.joclegg.puzzles.wordwheel.ui.LocalWheelColors
+import com.joclegg.puzzles.wordwheel.ui.WordWheelGameIcon
+import com.joclegg.puzzles.wordwheel.ui.WordWheelTheme
+import com.joclegg.puzzles.sightlines.ui.LocalTileColors as SightlinesColors
+import com.joclegg.puzzles.twotone.ui.LocalTileColors as TwoToneColors
 
 @Composable
 fun LauncherScreen(

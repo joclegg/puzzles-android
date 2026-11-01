@@ -18,7 +18,6 @@ import com.joclegg.puzzles.core.ui.stats.StatsRoute
 import com.joclegg.puzzles.core.ui.stats.StatsViewModel
 import com.joclegg.puzzles.sudoku.core.data.GameMode
 import com.joclegg.puzzles.sudoku.core.data.openLevel
-import com.joclegg.puzzles.sudoku.core.ui.LocalBoardColors
 import com.joclegg.puzzles.sudoku.feature.game.EntryRoute
 import com.joclegg.puzzles.sudoku.feature.game.EntryViewModel
 import com.joclegg.puzzles.sudoku.feature.game.GameRoute
@@ -27,6 +26,7 @@ import com.joclegg.puzzles.sudoku.feature.home.HomeRoute
 import com.joclegg.puzzles.sudoku.feature.home.HomeViewModel
 import com.joclegg.puzzles.sudoku.feature.settings.SettingsRoute
 import com.joclegg.puzzles.sudoku.feature.settings.SettingsViewModel
+import com.joclegg.puzzles.sudoku.ui.LocalBoardColors
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 

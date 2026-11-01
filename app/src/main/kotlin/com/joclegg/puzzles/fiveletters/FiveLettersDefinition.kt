@@ -15,9 +15,9 @@ import com.joclegg.puzzles.fiveletters.core.data.Daily2WordSource
 import com.joclegg.puzzles.fiveletters.core.data.GameDatabase
 import com.joclegg.puzzles.fiveletters.core.data.GameRepository
 import com.joclegg.puzzles.fiveletters.core.data.SettingsRepository
-import com.joclegg.puzzles.fiveletters.core.ui.FiveLettersTheme
-import com.joclegg.puzzles.fiveletters.core.ui.LocalLetterColors
 import com.joclegg.puzzles.fiveletters.engine.Words
+import com.joclegg.puzzles.fiveletters.ui.FiveLettersTheme
+import com.joclegg.puzzles.fiveletters.ui.LocalLetterColors
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

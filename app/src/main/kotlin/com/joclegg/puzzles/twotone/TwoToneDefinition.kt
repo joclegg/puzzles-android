@@ -13,8 +13,8 @@ import com.joclegg.puzzles.core.sync.StampedPreferences
 import com.joclegg.puzzles.twotone.core.data.GameDatabase
 import com.joclegg.puzzles.twotone.core.data.GameRepository
 import com.joclegg.puzzles.twotone.core.data.SettingsRepository
-import com.joclegg.puzzles.twotone.core.ui.LocalTileColors
-import com.joclegg.puzzles.twotone.core.ui.TwoToneTheme
+import com.joclegg.puzzles.twotone.ui.LocalTileColors
+import com.joclegg.puzzles.twotone.ui.TwoToneTheme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.time.LocalDate

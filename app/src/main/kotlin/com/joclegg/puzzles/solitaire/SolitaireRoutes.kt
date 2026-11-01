@@ -17,14 +17,14 @@ import com.joclegg.puzzles.SettingsTab
 import com.joclegg.puzzles.core.ui.stats.HistoryRoute
 import com.joclegg.puzzles.core.ui.stats.StatsRoute
 import com.joclegg.puzzles.core.ui.stats.StatsViewModel
-import com.joclegg.puzzles.solitaire.core.ui.LocalTableColors
-import com.joclegg.puzzles.solitaire.core.ui.SolitaireTheme
 import com.joclegg.puzzles.solitaire.feature.game.GameRoute
 import com.joclegg.puzzles.solitaire.feature.game.GameViewModel
 import com.joclegg.puzzles.solitaire.feature.home.HomeRoute
 import com.joclegg.puzzles.solitaire.feature.home.HomeViewModel
 import com.joclegg.puzzles.solitaire.feature.settings.SettingsRoute
 import com.joclegg.puzzles.solitaire.feature.settings.SettingsViewModel
+import com.joclegg.puzzles.solitaire.ui.LocalTableColors
+import com.joclegg.puzzles.solitaire.ui.SolitaireTheme
 
 object SolitaireRoutes {
     const val HOME = "solitaire/home"

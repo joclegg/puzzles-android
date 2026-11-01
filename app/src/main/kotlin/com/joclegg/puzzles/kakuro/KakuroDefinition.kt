@@ -15,8 +15,8 @@ import com.joclegg.puzzles.kakuro.core.data.GameDatabase
 import com.joclegg.puzzles.kakuro.core.data.GameRepository
 import com.joclegg.puzzles.kakuro.core.data.PuzzleBank
 import com.joclegg.puzzles.kakuro.core.data.SettingsRepository
-import com.joclegg.puzzles.kakuro.core.ui.KakuroTheme
-import com.joclegg.puzzles.kakuro.core.ui.LocalKakuroColors
+import com.joclegg.puzzles.kakuro.ui.KakuroTheme
+import com.joclegg.puzzles.kakuro.ui.LocalKakuroColors
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.time.LocalDate

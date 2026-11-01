@@ -3,7 +3,7 @@ package com.joclegg.puzzles
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import com.joclegg.puzzles.sudoku.core.ui.LocalBoardColors
+import com.joclegg.puzzles.sudoku.ui.LocalBoardColors
 
 @Composable
 fun settingsAccent(

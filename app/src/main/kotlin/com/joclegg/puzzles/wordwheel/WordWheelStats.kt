@@ -13,10 +13,10 @@ import com.joclegg.puzzles.wordwheel.core.data.GameRepository
 import com.joclegg.puzzles.wordwheel.core.data.GameStatus
 import com.joclegg.puzzles.wordwheel.core.data.LevelStats
 import com.joclegg.puzzles.wordwheel.core.data.SavedGame
-import com.joclegg.puzzles.wordwheel.core.ui.LocalWheelColors
-import com.joclegg.puzzles.wordwheel.core.ui.label
-import com.joclegg.puzzles.wordwheel.core.ui.title
 import com.joclegg.puzzles.wordwheel.engine.Level
+import com.joclegg.puzzles.wordwheel.ui.LocalWheelColors
+import com.joclegg.puzzles.wordwheel.ui.label
+import com.joclegg.puzzles.wordwheel.ui.title
 
 const val WORD_WHEEL_STATS_FOOTNOTE = "Solved out of played. Bonus counts every extra word you found."
 

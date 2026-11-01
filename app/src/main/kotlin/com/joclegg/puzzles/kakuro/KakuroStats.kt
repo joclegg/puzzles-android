@@ -12,10 +12,10 @@ import com.joclegg.puzzles.kakuro.core.data.GameRepository
 import com.joclegg.puzzles.kakuro.core.data.GameStatus
 import com.joclegg.puzzles.kakuro.core.data.SavedGame
 import com.joclegg.puzzles.kakuro.core.data.SizeStats
-import com.joclegg.puzzles.kakuro.core.ui.LocalKakuroColors
-import com.joclegg.puzzles.kakuro.core.ui.sizeLabel
-import com.joclegg.puzzles.kakuro.core.ui.title
 import com.joclegg.puzzles.kakuro.engine.SIZES
+import com.joclegg.puzzles.kakuro.ui.LocalKakuroColors
+import com.joclegg.puzzles.kakuro.ui.sizeLabel
+import com.joclegg.puzzles.kakuro.ui.title
 import com.joclegg.puzzles.stats.hintsSummary
 import com.joclegg.puzzles.stats.puzzleStatusLabel
 

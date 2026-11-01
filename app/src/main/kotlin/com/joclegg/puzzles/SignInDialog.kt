@@ -45,7 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.joclegg.puzzles.core.sync.SignInProvider
 import com.joclegg.puzzles.core.sync.SupabaseAuth
-import com.joclegg.puzzles.sudoku.core.ui.dialogTestTags
+import com.joclegg.puzzles.sudoku.ui.dialogTestTags
 import kotlinx.coroutines.launch
 
 @Composable

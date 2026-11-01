@@ -16,10 +16,10 @@ import com.joclegg.puzzles.sudoku.core.data.GameStatus
 import com.joclegg.puzzles.sudoku.core.data.SavedGame
 import com.joclegg.puzzles.sudoku.core.data.SettingsRepository
 import com.joclegg.puzzles.sudoku.core.data.levels
-import com.joclegg.puzzles.sudoku.core.ui.LocalBoardColors
-import com.joclegg.puzzles.sudoku.core.ui.gameTitle
-import com.joclegg.puzzles.sudoku.core.ui.label
 import com.joclegg.puzzles.sudoku.engine.MistakeCheck
+import com.joclegg.puzzles.sudoku.ui.LocalBoardColors
+import com.joclegg.puzzles.sudoku.ui.gameTitle
+import com.joclegg.puzzles.sudoku.ui.label
 import kotlinx.coroutines.flow.first
 
 enum class SudokuHistoryFilter { CLASSIC, KILLER, CUSTOM }

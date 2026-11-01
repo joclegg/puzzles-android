@@ -12,10 +12,10 @@ import com.joclegg.puzzles.sightlines.core.data.GameRepository
 import com.joclegg.puzzles.sightlines.core.data.GameStatus
 import com.joclegg.puzzles.sightlines.core.data.SavedGame
 import com.joclegg.puzzles.sightlines.core.data.SizeStats
-import com.joclegg.puzzles.sightlines.core.ui.LocalTileColors
-import com.joclegg.puzzles.sightlines.core.ui.sizeLabel
-import com.joclegg.puzzles.sightlines.core.ui.title
 import com.joclegg.puzzles.sightlines.engine.SIZES
+import com.joclegg.puzzles.sightlines.ui.LocalTileColors
+import com.joclegg.puzzles.sightlines.ui.sizeLabel
+import com.joclegg.puzzles.sightlines.ui.title
 import com.joclegg.puzzles.stats.hintsSummary
 import com.joclegg.puzzles.stats.puzzleStatusLabel
 

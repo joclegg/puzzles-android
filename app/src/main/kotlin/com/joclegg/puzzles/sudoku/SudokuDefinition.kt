@@ -17,7 +17,7 @@ import com.joclegg.puzzles.sudoku.core.data.GameRepository
 import com.joclegg.puzzles.sudoku.core.data.PuzzleBank
 import com.joclegg.puzzles.sudoku.core.data.PuzzleSupply
 import com.joclegg.puzzles.sudoku.core.data.SettingsRepository
-import com.joclegg.puzzles.sudoku.core.ui.LocalBoardColors
+import com.joclegg.puzzles.sudoku.ui.LocalBoardColors
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 

@@ -16,14 +16,14 @@ import com.joclegg.puzzles.SettingsTab
 import com.joclegg.puzzles.core.ui.stats.HistoryRoute
 import com.joclegg.puzzles.core.ui.stats.StatsRoute
 import com.joclegg.puzzles.core.ui.stats.StatsViewModel
-import com.joclegg.puzzles.sightlines.core.ui.LocalTileColors
-import com.joclegg.puzzles.sightlines.core.ui.SightlinesTheme
 import com.joclegg.puzzles.sightlines.feature.game.GameRoute
 import com.joclegg.puzzles.sightlines.feature.game.GameViewModel
 import com.joclegg.puzzles.sightlines.feature.home.HomeRoute
 import com.joclegg.puzzles.sightlines.feature.home.HomeViewModel
 import com.joclegg.puzzles.sightlines.feature.settings.SettingsRoute
 import com.joclegg.puzzles.sightlines.feature.settings.SettingsViewModel
+import com.joclegg.puzzles.sightlines.ui.LocalTileColors
+import com.joclegg.puzzles.sightlines.ui.SightlinesTheme
 
 object SightlinesRoutes {
     const val HOME = "sightlines/home"

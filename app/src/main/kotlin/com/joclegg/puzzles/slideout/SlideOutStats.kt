@@ -12,10 +12,10 @@ import com.joclegg.puzzles.slideout.core.data.GameRepository
 import com.joclegg.puzzles.slideout.core.data.GameStatus
 import com.joclegg.puzzles.slideout.core.data.LevelStats
 import com.joclegg.puzzles.slideout.core.data.SavedGame
-import com.joclegg.puzzles.slideout.core.ui.LocalSlideColors
-import com.joclegg.puzzles.slideout.core.ui.label
-import com.joclegg.puzzles.slideout.core.ui.title
 import com.joclegg.puzzles.slideout.engine.Level
+import com.joclegg.puzzles.slideout.ui.LocalSlideColors
+import com.joclegg.puzzles.slideout.ui.label
+import com.joclegg.puzzles.slideout.ui.title
 import com.joclegg.puzzles.stats.puzzleStatusLabel
 
 const val SLIDE_OUT_STATS_FOOTNOTE = "Solved out of played. At par means solved in the fewest possible moves."

@@ -13,8 +13,8 @@ import com.joclegg.puzzles.core.sync.StampedPreferences
 import com.joclegg.puzzles.sightlines.core.data.GameDatabase
 import com.joclegg.puzzles.sightlines.core.data.GameRepository
 import com.joclegg.puzzles.sightlines.core.data.SettingsRepository
-import com.joclegg.puzzles.sightlines.core.ui.LocalTileColors
-import com.joclegg.puzzles.sightlines.core.ui.SightlinesTheme
+import com.joclegg.puzzles.sightlines.ui.LocalTileColors
+import com.joclegg.puzzles.sightlines.ui.SightlinesTheme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.time.LocalDate

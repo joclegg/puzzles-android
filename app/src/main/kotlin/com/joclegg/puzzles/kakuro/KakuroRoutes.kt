@@ -16,14 +16,14 @@ import com.joclegg.puzzles.SettingsTab
 import com.joclegg.puzzles.core.ui.stats.HistoryRoute
 import com.joclegg.puzzles.core.ui.stats.StatsRoute
 import com.joclegg.puzzles.core.ui.stats.StatsViewModel
-import com.joclegg.puzzles.kakuro.core.ui.KakuroTheme
-import com.joclegg.puzzles.kakuro.core.ui.LocalKakuroColors
 import com.joclegg.puzzles.kakuro.feature.game.GameRoute
 import com.joclegg.puzzles.kakuro.feature.game.GameViewModel
 import com.joclegg.puzzles.kakuro.feature.home.HomeRoute
 import com.joclegg.puzzles.kakuro.feature.home.HomeViewModel
 import com.joclegg.puzzles.kakuro.feature.settings.SettingsRoute
 import com.joclegg.puzzles.kakuro.feature.settings.SettingsViewModel
+import com.joclegg.puzzles.kakuro.ui.KakuroTheme
+import com.joclegg.puzzles.kakuro.ui.LocalKakuroColors
 
 object KakuroRoutes {
     const val HOME = "kakuro/home"

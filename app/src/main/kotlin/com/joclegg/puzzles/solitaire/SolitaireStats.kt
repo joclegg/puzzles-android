@@ -16,10 +16,10 @@ import com.joclegg.puzzles.solitaire.core.data.DrawStats
 import com.joclegg.puzzles.solitaire.core.data.GameRepository
 import com.joclegg.puzzles.solitaire.core.data.GameStatus
 import com.joclegg.puzzles.solitaire.core.data.SavedGame
-import com.joclegg.puzzles.solitaire.core.ui.LocalTableColors
-import com.joclegg.puzzles.solitaire.core.ui.label
-import com.joclegg.puzzles.solitaire.core.ui.title
 import com.joclegg.puzzles.solitaire.engine.DrawMode
+import com.joclegg.puzzles.solitaire.ui.LocalTableColors
+import com.joclegg.puzzles.solitaire.ui.label
+import com.joclegg.puzzles.solitaire.ui.title
 import com.joclegg.puzzles.stats.puzzleStatusLabel
 
 const val SOLITAIRE_STATS_FOOTNOTE = "Abandoned deals count as played. Daily deals count under the draw mode they were played with."

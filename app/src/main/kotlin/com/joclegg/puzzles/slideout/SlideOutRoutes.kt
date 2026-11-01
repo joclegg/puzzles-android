@@ -16,14 +16,14 @@ import com.joclegg.puzzles.SettingsTab
 import com.joclegg.puzzles.core.ui.stats.HistoryRoute
 import com.joclegg.puzzles.core.ui.stats.StatsRoute
 import com.joclegg.puzzles.core.ui.stats.StatsViewModel
-import com.joclegg.puzzles.slideout.core.ui.LocalSlideColors
-import com.joclegg.puzzles.slideout.core.ui.SlideOutTheme
 import com.joclegg.puzzles.slideout.feature.game.GameRoute
 import com.joclegg.puzzles.slideout.feature.game.GameViewModel
 import com.joclegg.puzzles.slideout.feature.home.HomeRoute
 import com.joclegg.puzzles.slideout.feature.home.HomeViewModel
 import com.joclegg.puzzles.slideout.feature.settings.SettingsRoute
 import com.joclegg.puzzles.slideout.feature.settings.SettingsViewModel
+import com.joclegg.puzzles.slideout.ui.LocalSlideColors
+import com.joclegg.puzzles.slideout.ui.SlideOutTheme
 
 object SlideOutRoutes {
     const val HOME = "slide_out/home"

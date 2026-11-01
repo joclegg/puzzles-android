@@ -16,14 +16,14 @@ import com.joclegg.puzzles.SettingsTab
 import com.joclegg.puzzles.core.ui.stats.HistoryRoute
 import com.joclegg.puzzles.core.ui.stats.StatsRoute
 import com.joclegg.puzzles.core.ui.stats.StatsViewModel
-import com.joclegg.puzzles.wordwheel.core.ui.LocalWheelColors
-import com.joclegg.puzzles.wordwheel.core.ui.WordWheelTheme
 import com.joclegg.puzzles.wordwheel.feature.game.GameRoute
 import com.joclegg.puzzles.wordwheel.feature.game.GameViewModel
 import com.joclegg.puzzles.wordwheel.feature.home.HomeRoute
 import com.joclegg.puzzles.wordwheel.feature.home.HomeViewModel
 import com.joclegg.puzzles.wordwheel.feature.settings.SettingsRoute
 import com.joclegg.puzzles.wordwheel.feature.settings.SettingsViewModel
+import com.joclegg.puzzles.wordwheel.ui.LocalWheelColors
+import com.joclegg.puzzles.wordwheel.ui.WordWheelTheme
 
 object WordWheelRoutes {
     const val HOME = "word_wheel/home"

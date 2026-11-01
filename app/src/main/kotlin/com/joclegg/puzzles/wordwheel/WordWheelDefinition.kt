@@ -15,8 +15,8 @@ import com.joclegg.puzzles.wordwheel.core.data.GameDatabase
 import com.joclegg.puzzles.wordwheel.core.data.GameRepository
 import com.joclegg.puzzles.wordwheel.core.data.PuzzleBank
 import com.joclegg.puzzles.wordwheel.core.data.SettingsRepository
-import com.joclegg.puzzles.wordwheel.core.ui.LocalWheelColors
-import com.joclegg.puzzles.wordwheel.core.ui.WordWheelTheme
+import com.joclegg.puzzles.wordwheel.ui.LocalWheelColors
+import com.joclegg.puzzles.wordwheel.ui.WordWheelTheme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.time.LocalDate
