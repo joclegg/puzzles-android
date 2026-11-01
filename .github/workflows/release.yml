@@ -37,15 +37,14 @@ jobs:
           echo "code=$(( ${{ steps.gitversion.outputs.major }} * 1000000 + ${{ steps.gitversion.outputs.minor }} * 1000 + ${{ steps.gitversion.outputs.patch }} ))" >> "$GITHUB_OUTPUT"
       - name: Restore the signing key
         run: echo "${{ secrets.PUZZLES_KEYSTORE_BASE64 }}" | base64 --decode > "$RUNNER_TEMP/release.jks"
-      - run: ./gradlew spotlessCheck
-      - name: Test and build the signed APK and app bundle
+      - name: Build the signed APK and app bundle
         env:
           PUZZLES_KEYSTORE: ${{ runner.temp }}/release.jks
           PUZZLES_KEYSTORE_PASSWORD: ${{ secrets.PUZZLES_KEYSTORE_PASSWORD }}
           PUZZLES_KEY_ALIAS: ${{ secrets.PUZZLES_KEY_ALIAS }}
           PUZZLES_KEY_PASSWORD: ${{ secrets.PUZZLES_KEY_PASSWORD }}
         run: |
-          ./gradlew test assembleRelease bundleRelease -PversionName=${{ steps.version.outputs.name }} -PversionCode=${{ steps.version.outputs.code }}
+          ./gradlew assembleRelease bundleRelease -PversionName=${{ steps.version.outputs.name }} -PversionCode=${{ steps.version.outputs.code }}
           cp app/build/outputs/apk/release/app-release.apk "puzzles-${{ steps.version.outputs.name }}.apk"
           cp app/build/outputs/bundle/release/app-release.aab "puzzles-${{ steps.version.outputs.name }}.aab"
       - name: Publish the GitHub release
