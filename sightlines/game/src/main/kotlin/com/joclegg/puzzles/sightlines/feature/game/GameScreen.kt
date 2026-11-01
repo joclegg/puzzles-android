@@ -113,7 +113,7 @@ fun GameScreen(
             }
             ToolButton(SightlinesIcons.Undo, "Undo the last tap", onUndo, tag = "undo", enabled = state.canUndo)
             ToolButton(
-                SightlinesIcons.Brush,
+                SightlinesIcons.Swap,
                 if (state.pickColour) {
                     "Pick a colour"
                 } else {

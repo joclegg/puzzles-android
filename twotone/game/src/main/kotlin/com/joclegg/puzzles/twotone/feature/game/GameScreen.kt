@@ -125,7 +125,7 @@ fun GameScreen(
                 tag = "starting_tiles",
             )
             ToolButton(
-                TwoToneIcons.Brush,
+                TwoToneIcons.Swap,
                 if (state.pickColour) {
                     "Pick a colour"
                 } else {

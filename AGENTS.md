@@ -132,7 +132,7 @@ Rules marked (lint) are enforced by `spotlessCheck`, Android Lint or the build.
 
 - MUST take colours only from `LocalTileColors` or `MaterialTheme`, with a dark-mode value for every token.
 - MUST show hints as the next logical step from `Solver.next`, or the wrong spots when the player has made a mistake. Shade what the rule looks at in `hintLine`, outline the spots to fill in `hintTarget`, and explain it in words.
-- MUST offer both input modes (`InputMode`, synced as `inputMode`), switched by the brush button in the game header (`input_mode`) and in Settings: Tap to cycle (Two Tone: empty, red, blue, empty; Sightlines: empty, blue, red, empty), and Pick a colour (the red/blue `ColourPicker` under the board). Painting a spot with its own colour clears it. MUST NOT add an erase choice to the picker.
+- MUST offer both input modes (`InputMode`, synced as `inputMode`), switched by the swap-arrows button in the game header (`input_mode`) and in Settings: Tap to cycle (Two Tone: empty, red, blue, empty; Sightlines: empty, blue, red, empty), and Pick a colour (the red/blue `ColourPicker` under the board). Painting a spot with its own colour clears it. MUST NOT add an erase choice to the picker.
 - MUST generate every puzzle so `Solver.solveLogically` finishes it: no guessing, and exactly one solution.
 
 ### Two Tone and Sightlines games

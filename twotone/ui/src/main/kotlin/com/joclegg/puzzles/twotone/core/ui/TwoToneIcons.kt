@@ -9,11 +9,13 @@ import androidx.compose.ui.graphics.vector.addPathNodes
 import androidx.compose.ui.unit.dp
 
 object TwoToneIcons {
-    val Brush =
+    val Swap =
         outline(
-            "brush",
-            "M7 14c-1.66 0-3 1.34-3 3 0 1.31-1.16 2-2 2 .92 1.22 2.49 2 4 2 2.21 0 4-1.79 4-4 0-1.66-1.34-3-3-3z",
-            "M20.71 4.63l-1.34-1.34a.996.996 0 0 0-1.41 0L9 12.25 11.75 15l8.96-8.96a.996.996 0 0 0 0-1.41z",
+            "swap",
+            "M8 3L4 7l4 4",
+            "M4 7h16",
+            "M16 21l4-4-4-4",
+            "M20 17H4",
         )
     val Undo = outline("undo", "M9 14L4 9l5-5", "M4 9h10.5a5.5 5.5 0 0 1 0 11H11")
     val Back = outline("back", "M15 5l-7 7 7 7")
