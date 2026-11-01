@@ -78,6 +78,21 @@ class SupabaseAuth(
         store.setSession(null)
     }
 
+    suspend fun deleteAccount(): Boolean {
+        val token = accessToken() ?: return false
+        val response =
+            post(
+                "${SupabaseConfig.URL}/rest/v1/rpc/delete_account",
+                "{}",
+                mapOf("Authorization" to "Bearer $token"),
+            )
+        if (response == null || !response.ok) {
+            return false
+        }
+        signOut()
+        return true
+    }
+
     private suspend fun requestSession(
         grant: String,
         body: String,
@@ -101,13 +116,14 @@ class SupabaseAuth(
     private suspend fun post(
         url: String,
         body: String,
+        extraHeaders: Map<String, String> = emptyMap(),
     ): HttpResponse? =
         withContext(Dispatchers.IO) {
             runCatching {
                 http.send(
                     "POST",
                     url,
-                    mapOf("apikey" to SupabaseConfig.KEY, "Content-Type" to "application/json"),
+                    mapOf("apikey" to SupabaseConfig.KEY, "Content-Type" to "application/json") + extraHeaders,
                     body,
                 )
             }.getOrNull()
