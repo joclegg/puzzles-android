@@ -15,10 +15,10 @@ import com.joclegg.puzzles.twotone.core.data.GameRepository
 import com.joclegg.puzzles.twotone.core.data.SettingsRepository
 import com.joclegg.puzzles.twotone.core.ui.LocalTileColors
 import com.joclegg.puzzles.twotone.core.ui.TwoToneTheme
-import java.time.LocalDate
-import kotlin.random.Random
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.time.LocalDate
+import kotlin.random.Random
 
 private val Context.twotoneSettingsStore by preferencesDataStore(name = "two_tone_settings")
 

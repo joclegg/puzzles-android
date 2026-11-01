@@ -29,10 +29,11 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.joclegg.puzzles.core.ui.BackButton
 import com.joclegg.puzzles.core.ui.HelpersHint
 import com.joclegg.puzzles.core.ui.WinDialog
 import com.joclegg.puzzles.core.ui.WinStat
-import com.joclegg.puzzles.core.ui.BackButton
+import com.joclegg.puzzles.core.ui.formatDuration
 import com.joclegg.puzzles.twotone.core.ui.ColourPicker
 import com.joclegg.puzzles.twotone.core.ui.HowToPlayButton
 import com.joclegg.puzzles.twotone.core.ui.LocalTileColors
@@ -41,7 +42,6 @@ import com.joclegg.puzzles.twotone.core.ui.TourStep
 import com.joclegg.puzzles.twotone.core.ui.TwoToneBoard
 import com.joclegg.puzzles.twotone.core.ui.TwoToneIcons
 import com.joclegg.puzzles.twotone.core.ui.dialogTestTags
-import com.joclegg.puzzles.core.ui.formatDuration
 import com.joclegg.puzzles.twotone.core.ui.rememberTourState
 import com.joclegg.puzzles.twotone.core.ui.tourTarget
 import com.joclegg.puzzles.twotone.engine.Tile

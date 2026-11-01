@@ -17,10 +17,10 @@ import com.joclegg.puzzles.kakuro.core.data.PuzzleBank
 import com.joclegg.puzzles.kakuro.core.data.SettingsRepository
 import com.joclegg.puzzles.kakuro.core.ui.KakuroTheme
 import com.joclegg.puzzles.kakuro.core.ui.LocalKakuroColors
-import java.time.LocalDate
-import kotlin.random.Random
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.time.LocalDate
+import kotlin.random.Random
 
 private val Context.kakuroSettingsStore by preferencesDataStore(name = "kakuro_settings")
 

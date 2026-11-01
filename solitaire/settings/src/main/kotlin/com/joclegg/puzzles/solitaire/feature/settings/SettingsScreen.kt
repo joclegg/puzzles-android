@@ -23,10 +23,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.joclegg.puzzles.core.ui.BackButton
 import com.joclegg.puzzles.solitaire.core.data.HintStyle
 import com.joclegg.puzzles.solitaire.core.data.Settings
 import com.joclegg.puzzles.solitaire.core.data.Toggle
-import com.joclegg.puzzles.core.ui.BackButton
 import com.joclegg.puzzles.solitaire.core.ui.label
 import com.joclegg.puzzles.solitaire.engine.DrawMode
 

@@ -31,10 +31,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.joclegg.puzzles.core.ui.BackButton
 import com.joclegg.puzzles.core.ui.HelpersHint
 import com.joclegg.puzzles.core.ui.WinDialog
 import com.joclegg.puzzles.core.ui.WinStat
-import com.joclegg.puzzles.core.ui.BackButton
+import com.joclegg.puzzles.core.ui.formatDuration
 import com.joclegg.puzzles.wordwheel.core.ui.HowToPlayButton
 import com.joclegg.puzzles.wordwheel.core.ui.LetterWheel
 import com.joclegg.puzzles.wordwheel.core.ui.LocalWheelColors
@@ -43,7 +44,6 @@ import com.joclegg.puzzles.wordwheel.core.ui.TourStep
 import com.joclegg.puzzles.wordwheel.core.ui.WordGrid
 import com.joclegg.puzzles.wordwheel.core.ui.WordWheelIcons
 import com.joclegg.puzzles.wordwheel.core.ui.dialogTestTags
-import com.joclegg.puzzles.core.ui.formatDuration
 import com.joclegg.puzzles.wordwheel.core.ui.rememberTourState
 import com.joclegg.puzzles.wordwheel.core.ui.tourTarget
 import kotlinx.coroutines.launch

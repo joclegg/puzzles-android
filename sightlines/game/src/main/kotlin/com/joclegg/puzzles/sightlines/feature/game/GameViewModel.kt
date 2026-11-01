@@ -2,6 +2,7 @@ package com.joclegg.puzzles.sightlines.feature.game
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.joclegg.puzzles.core.data.GameTimer
 import com.joclegg.puzzles.sightlines.core.data.GameRepository
 import com.joclegg.puzzles.sightlines.core.data.InputMode
 import com.joclegg.puzzles.sightlines.core.data.PuzzleRef
@@ -15,7 +16,6 @@ import com.joclegg.puzzles.sightlines.core.ui.title
 import com.joclegg.puzzles.sightlines.core.ui.toBoardUi
 import com.joclegg.puzzles.sightlines.engine.Dot
 import com.joclegg.puzzles.sightlines.engine.GameState
-import com.joclegg.puzzles.sightlines.engine.GameTimer
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay

@@ -28,10 +28,11 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.joclegg.puzzles.core.ui.BackButton
 import com.joclegg.puzzles.core.ui.HelpersHint
 import com.joclegg.puzzles.core.ui.WinDialog
 import com.joclegg.puzzles.core.ui.WinStat
-import com.joclegg.puzzles.core.ui.BackButton
+import com.joclegg.puzzles.core.ui.formatDuration
 import com.joclegg.puzzles.kakuro.core.ui.HintButton
 import com.joclegg.puzzles.kakuro.core.ui.HowToPlayButton
 import com.joclegg.puzzles.kakuro.core.ui.KakuroBoard
@@ -42,7 +43,6 @@ import com.joclegg.puzzles.kakuro.core.ui.NumberPad
 import com.joclegg.puzzles.kakuro.core.ui.ToolButton
 import com.joclegg.puzzles.kakuro.core.ui.TourStep
 import com.joclegg.puzzles.kakuro.core.ui.dialogTestTags
-import com.joclegg.puzzles.core.ui.formatDuration
 import com.joclegg.puzzles.kakuro.core.ui.rememberTourState
 import com.joclegg.puzzles.kakuro.core.ui.tourTarget
 import kotlinx.coroutines.launch

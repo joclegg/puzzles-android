@@ -2,6 +2,7 @@ package com.joclegg.puzzles.solitaire.feature.game
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.joclegg.puzzles.core.data.GameTimer
 import com.joclegg.puzzles.solitaire.core.data.DealRef
 import com.joclegg.puzzles.solitaire.core.data.GameRepository
 import com.joclegg.puzzles.solitaire.core.data.HintStyle
@@ -15,7 +16,6 @@ import com.joclegg.puzzles.solitaire.core.ui.toTableUi
 import com.joclegg.puzzles.solitaire.engine.Board
 import com.joclegg.puzzles.solitaire.engine.Card
 import com.joclegg.puzzles.solitaire.engine.GameState
-import com.joclegg.puzzles.solitaire.engine.GameTimer
 import com.joclegg.puzzles.solitaire.engine.Hint
 import com.joclegg.puzzles.solitaire.engine.LostMoveSearch
 import com.joclegg.puzzles.solitaire.engine.Pile

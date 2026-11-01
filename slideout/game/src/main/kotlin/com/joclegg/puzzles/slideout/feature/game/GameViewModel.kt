@@ -2,6 +2,7 @@ package com.joclegg.puzzles.slideout.feature.game
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.joclegg.puzzles.core.data.GameTimer
 import com.joclegg.puzzles.slideout.core.data.GameRepository
 import com.joclegg.puzzles.slideout.core.data.PuzzleBank
 import com.joclegg.puzzles.slideout.core.data.PuzzleRef
@@ -12,7 +13,6 @@ import com.joclegg.puzzles.slideout.core.ui.BoardUi
 import com.joclegg.puzzles.slideout.core.ui.label
 import com.joclegg.puzzles.slideout.core.ui.title
 import com.joclegg.puzzles.slideout.engine.GameState
-import com.joclegg.puzzles.slideout.engine.GameTimer
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay

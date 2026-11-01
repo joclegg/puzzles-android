@@ -7,6 +7,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.joclegg.puzzles.core.data.GameTimer
 import com.joclegg.puzzles.kakuro.core.data.GameRepository
 import com.joclegg.puzzles.kakuro.core.data.HintStyle
 import com.joclegg.puzzles.kakuro.core.data.PuzzleBank
@@ -20,7 +21,6 @@ import com.joclegg.puzzles.kakuro.core.ui.title
 import com.joclegg.puzzles.kakuro.core.ui.toBoardUi
 import com.joclegg.puzzles.kakuro.engine.Combinations
 import com.joclegg.puzzles.kakuro.engine.GameState
-import com.joclegg.puzzles.kakuro.engine.GameTimer
 import com.joclegg.puzzles.kakuro.engine.InputMode
 import com.joclegg.puzzles.kakuro.engine.MAX_DIGIT
 import com.joclegg.puzzles.kakuro.engine.MistakeCheck

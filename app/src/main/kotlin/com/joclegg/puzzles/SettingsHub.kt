@@ -36,10 +36,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
+import com.joclegg.puzzles.core.ui.BackButton
 import com.joclegg.puzzles.core.ui.HELPERS_NOTE
 import com.joclegg.puzzles.sudoku.core.data.SettingsRepository
 import com.joclegg.puzzles.sudoku.core.data.ThemeMode
-import com.joclegg.puzzles.core.ui.BackButton
 import com.joclegg.puzzles.sudoku.core.ui.dialogTestTags
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -17,10 +17,10 @@ import com.joclegg.puzzles.slideout.core.data.PuzzleBank
 import com.joclegg.puzzles.slideout.core.data.SettingsRepository
 import com.joclegg.puzzles.slideout.core.ui.LocalSlideColors
 import com.joclegg.puzzles.slideout.core.ui.SlideOutTheme
-import java.time.LocalDate
-import kotlin.random.Random
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.time.LocalDate
+import kotlin.random.Random
 
 private val Context.slideOutSettingsStore by preferencesDataStore(name = "slide_out_settings")
 

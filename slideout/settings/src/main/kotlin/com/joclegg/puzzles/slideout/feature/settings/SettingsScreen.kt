@@ -19,9 +19,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.joclegg.puzzles.core.ui.BackButton
 import com.joclegg.puzzles.slideout.core.data.Settings
 import com.joclegg.puzzles.slideout.core.data.Toggle
-import com.joclegg.puzzles.core.ui.BackButton
 
 @Composable
 fun SettingsRoute(

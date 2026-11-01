@@ -2,6 +2,7 @@ package com.joclegg.puzzles.twotone.feature.game
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.joclegg.puzzles.core.data.GameTimer
 import com.joclegg.puzzles.twotone.core.data.GameRepository
 import com.joclegg.puzzles.twotone.core.data.InputMode
 import com.joclegg.puzzles.twotone.core.data.PuzzleRef
@@ -14,7 +15,6 @@ import com.joclegg.puzzles.twotone.core.ui.sizeLabel
 import com.joclegg.puzzles.twotone.core.ui.title
 import com.joclegg.puzzles.twotone.core.ui.toBoardUi
 import com.joclegg.puzzles.twotone.engine.GameState
-import com.joclegg.puzzles.twotone.engine.GameTimer
 import com.joclegg.puzzles.twotone.engine.Tile
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable

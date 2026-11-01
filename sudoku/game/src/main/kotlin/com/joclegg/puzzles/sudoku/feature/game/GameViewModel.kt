@@ -2,6 +2,7 @@ package com.joclegg.puzzles.sudoku.feature.game
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.joclegg.puzzles.core.data.GameTimer
 import com.joclegg.puzzles.sudoku.core.data.DigitCounts
 import com.joclegg.puzzles.sudoku.core.data.GameMode
 import com.joclegg.puzzles.sudoku.core.data.GameRepository
@@ -14,7 +15,6 @@ import com.joclegg.puzzles.sudoku.core.ui.BoardUi
 import com.joclegg.puzzles.sudoku.core.ui.toBoardUi
 import com.joclegg.puzzles.sudoku.engine.Difficulty
 import com.joclegg.puzzles.sudoku.engine.GameState
-import com.joclegg.puzzles.sudoku.engine.GameTimer
 import com.joclegg.puzzles.sudoku.engine.InputMode
 import com.joclegg.puzzles.sudoku.engine.findHint
 import kotlinx.coroutines.Job

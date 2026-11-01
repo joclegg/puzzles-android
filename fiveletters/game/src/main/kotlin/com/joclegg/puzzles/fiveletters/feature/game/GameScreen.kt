@@ -28,9 +28,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.joclegg.puzzles.core.ui.BackButton
 import com.joclegg.puzzles.core.ui.HelpersHint
 import com.joclegg.puzzles.core.ui.WinDialog
-import com.joclegg.puzzles.core.ui.BackButton
 import com.joclegg.puzzles.fiveletters.core.ui.FiveLettersIcons
 import com.joclegg.puzzles.fiveletters.core.ui.HintButton
 import com.joclegg.puzzles.fiveletters.core.ui.HowToPlayButton

@@ -8,6 +8,8 @@ import com.joclegg.puzzles.core.ui.stats.HistoryFilter
 import com.joclegg.puzzles.core.ui.stats.StatsLine
 import com.joclegg.puzzles.core.ui.stats.StatsSource
 import com.joclegg.puzzles.core.ui.stats.StatsTable
+import com.joclegg.puzzles.stats.hintsSummary
+import com.joclegg.puzzles.stats.puzzleStatusLabel
 import com.joclegg.puzzles.twotone.core.data.GameRepository
 import com.joclegg.puzzles.twotone.core.data.GameStatus
 import com.joclegg.puzzles.twotone.core.data.SavedGame
@@ -16,8 +18,6 @@ import com.joclegg.puzzles.twotone.core.ui.LocalTileColors
 import com.joclegg.puzzles.twotone.core.ui.sizeLabel
 import com.joclegg.puzzles.twotone.core.ui.title
 import com.joclegg.puzzles.twotone.engine.SIZES
-import com.joclegg.puzzles.stats.hintsSummary
-import com.joclegg.puzzles.stats.puzzleStatusLabel
 
 const val TWOTONE_STATS_FOOTNOTE = "Solved out of played. Abandoned puzzles count as played. Daily puzzles count under their size."
 

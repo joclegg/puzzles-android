@@ -15,10 +15,10 @@ import com.joclegg.puzzles.sightlines.core.data.GameRepository
 import com.joclegg.puzzles.sightlines.core.data.SettingsRepository
 import com.joclegg.puzzles.sightlines.core.ui.LocalTileColors
 import com.joclegg.puzzles.sightlines.core.ui.SightlinesTheme
-import java.time.LocalDate
-import kotlin.random.Random
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.time.LocalDate
+import kotlin.random.Random
 
 private val Context.sightlinesSettingsStore by preferencesDataStore(name = "sightlines_settings")
 

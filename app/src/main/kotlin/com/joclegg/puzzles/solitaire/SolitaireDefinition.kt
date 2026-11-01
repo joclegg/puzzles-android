@@ -17,10 +17,10 @@ import com.joclegg.puzzles.solitaire.core.data.SettingsRepository
 import com.joclegg.puzzles.solitaire.core.data.WinnableDeals
 import com.joclegg.puzzles.solitaire.core.ui.LocalTableColors
 import com.joclegg.puzzles.solitaire.core.ui.SolitaireTheme
-import java.time.LocalDate
-import kotlin.random.Random
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.time.LocalDate
+import kotlin.random.Random
 
 private val Context.solitaireSettingsStore by preferencesDataStore(name = "solitaire_settings")
 

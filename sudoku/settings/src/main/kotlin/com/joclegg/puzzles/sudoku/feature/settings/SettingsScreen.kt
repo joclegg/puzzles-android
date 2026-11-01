@@ -30,13 +30,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.joclegg.puzzles.core.ui.BackButton
 import com.joclegg.puzzles.sudoku.core.data.DigitCounts
 import com.joclegg.puzzles.sudoku.core.data.GameMode
 import com.joclegg.puzzles.sudoku.core.data.HintStyle
 import com.joclegg.puzzles.sudoku.core.data.ModeSettings
 import com.joclegg.puzzles.sudoku.core.data.Settings
 import com.joclegg.puzzles.sudoku.core.data.Toggle
-import com.joclegg.puzzles.core.ui.BackButton
 import com.joclegg.puzzles.sudoku.core.ui.SudokuIcons
 import com.joclegg.puzzles.sudoku.engine.HighlightStyle
 import com.joclegg.puzzles.sudoku.engine.InputMode
