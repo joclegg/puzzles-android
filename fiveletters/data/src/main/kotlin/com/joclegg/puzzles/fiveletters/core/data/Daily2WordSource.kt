@@ -13,8 +13,8 @@ fun interface DailyWordSource {
 }
 
 class Daily2WordSource(
-    private val fetch: (String) -> String? = ::download,
     private val io: CoroutineDispatcher = Dispatchers.IO,
+    private val fetch: (String) -> String? = ::download,
 ) : DailyWordSource {
     override suspend fun word(date: LocalDate): String? =
         withContext(io) {
