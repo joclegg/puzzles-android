@@ -158,7 +158,7 @@ fun PuzzlesApp(
                 ) { entry ->
                     val mode = entry.arguments?.getString("mode")?.let(GameMode::valueOf) ?: GameMode.CLASSIC
                     SettingsHubRoute(
-                        viewModel = viewModel { AppSettingsViewModel(app.sudoku.settings) },
+                        viewModel = viewModel { AppSettingsViewModel(app.sudoku.settings, app.auth.email, app.auth::deleteAccount) },
                         initialTab = SettingsTab.valueOf(entry.arguments!!.getString("tab")!!),
                         onBack = navController::popBackStack,
                         accentOf = { tab -> settingsAccent(tab, darkTheme) },

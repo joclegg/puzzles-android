@@ -8,7 +8,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.SegmentedButton
@@ -17,6 +20,7 @@ import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,9 +39,13 @@ import androidx.lifecycle.viewModelScope
 import com.joclegg.puzzles.sudoku.core.data.SettingsRepository
 import com.joclegg.puzzles.sudoku.core.data.ThemeMode
 import com.joclegg.puzzles.sudoku.core.ui.BackButton
+import com.joclegg.puzzles.sudoku.core.ui.dialogTestTags
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -64,20 +72,43 @@ object SettingsHub {
     ) = "settings/${tab.name}" + mode?.let { "?mode=$it" }.orEmpty()
 }
 
+enum class DeleteAccountStatus { IDLE, DELETING, FAILED }
+
 data class AppSettingsUiState(
     val theme: ThemeMode = ThemeMode.SYSTEM,
+    val signedIn: Boolean = false,
+    val deleteAccount: DeleteAccountStatus = DeleteAccountStatus.IDLE,
 )
 
 class AppSettingsViewModel(
     private val settings: SettingsRepository,
+    account: Flow<String?> = flowOf(null),
+    private val deleteAccount: suspend () -> Boolean = { false },
 ) : ViewModel() {
+    private val deleteStatus = MutableStateFlow(DeleteAccountStatus.IDLE)
+
     val uiState: StateFlow<AppSettingsUiState> =
-        settings.settings
-            .map { AppSettingsUiState(it.theme) }
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), AppSettingsUiState())
+        combine(settings.settings, account, deleteStatus) { current, email, status ->
+            AppSettingsUiState(current.theme, signedIn = email != null, deleteAccount = status)
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), AppSettingsUiState())
 
     fun onThemeChange(theme: ThemeMode) {
         viewModelScope.launch { settings.setTheme(theme) }
+    }
+
+    fun onDeleteAccount() {
+        if (deleteStatus.value == DeleteAccountStatus.DELETING) {
+            return
+        }
+        deleteStatus.value = DeleteAccountStatus.DELETING
+        viewModelScope.launch {
+            deleteStatus.value =
+                if (deleteAccount()) {
+                    DeleteAccountStatus.IDLE
+                } else {
+                    DeleteAccountStatus.FAILED
+                }
+        }
     }
 
     private companion object {
@@ -95,7 +126,7 @@ fun SettingsHubRoute(
     modifier: Modifier = Modifier,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    SettingsHubScreen(state, initialTab, viewModel::onThemeChange, onBack, accentOf, tabContent, modifier)
+    SettingsHubScreen(state, initialTab, viewModel::onThemeChange, viewModel::onDeleteAccount, onBack, accentOf, tabContent, modifier)
 }
 
 @Composable
@@ -103,6 +134,7 @@ fun SettingsHubScreen(
     state: AppSettingsUiState,
     initialTab: SettingsTab,
     onThemeChange: (ThemeMode) -> Unit,
+    onDeleteAccount: () -> Unit,
     onBack: () -> Unit,
     accentOf: @Composable (SettingsTab) -> Color,
     tabContent: @Composable (SettingsTab) -> Unit,
@@ -144,7 +176,7 @@ fun SettingsHubScreen(
                     .background(Brush.verticalGradient(listOf(accent.copy(alpha = 0.1f), Color.Transparent))),
             ) {
                 if (tab == SettingsTab.GENERAL) {
-                    GeneralSettings(state.theme, onThemeChange)
+                    GeneralSettings(state, onThemeChange, onDeleteAccount)
                 } else {
                     tabContent(tab)
                 }
@@ -155,10 +187,12 @@ fun SettingsHubScreen(
 
 @Composable
 private fun GeneralSettings(
-    theme: ThemeMode,
+    state: AppSettingsUiState,
     onThemeChange: (ThemeMode) -> Unit,
+    onDeleteAccount: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val theme = state.theme
     Column(modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         OutlinedCard(Modifier.fillMaxWidth()) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -189,5 +223,82 @@ private fun GeneralSettings(
                 )
             }
         }
+        if (state.signedIn) {
+            AccountSettings(state.deleteAccount, onDeleteAccount)
+        }
     }
+}
+
+@Composable
+private fun AccountSettings(
+    status: DeleteAccountStatus,
+    onDeleteAccount: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var confirming by rememberSaveable { mutableStateOf(false) }
+    if (confirming) {
+        DeleteAccountDialog(
+            onConfirm = {
+                confirming = false
+                onDeleteAccount()
+            },
+            onDismiss = { confirming = false },
+        )
+    }
+    OutlinedCard(modifier.fillMaxWidth()) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Text("Account", style = MaterialTheme.typography.titleMedium)
+            OutlinedButton(
+                onClick = { confirming = true },
+                enabled = status != DeleteAccountStatus.DELETING,
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error),
+                modifier = Modifier.testTag("delete_account"),
+            ) {
+                Text(
+                    if (status == DeleteAccountStatus.DELETING) {
+                        "Deleting account…"
+                    } else {
+                        "Delete account"
+                    },
+                )
+            }
+            if (status == DeleteAccountStatus.FAILED) {
+                Text(
+                    "Couldn't delete your account. Check your connection and try again.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.testTag("delete_account_error"),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun DeleteAccountDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Delete account?") },
+        text = {
+            Text(
+                "Your synced scores, history and settings are permanently deleted from the server, " +
+                    "and you are signed out. Games and settings on this phone stay.",
+            )
+        },
+        confirmButton = {
+            TextButton(onClick = onConfirm, modifier = Modifier.testTag("delete_account_confirm")) {
+                Text("Delete", color = MaterialTheme.colorScheme.error)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss, modifier = Modifier.testTag("delete_account_cancel")) {
+                Text("Cancel")
+            }
+        },
+        modifier = modifier.dialogTestTags(),
+    )
 }
