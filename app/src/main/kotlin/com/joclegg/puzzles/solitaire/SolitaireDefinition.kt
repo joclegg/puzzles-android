@@ -15,7 +15,7 @@ import com.joclegg.puzzles.solitaire.core.data.GameDatabase
 import com.joclegg.puzzles.solitaire.core.data.GameRepository
 import com.joclegg.puzzles.solitaire.core.data.SettingsRepository
 import com.joclegg.puzzles.solitaire.core.data.WinnableDeals
-import com.joclegg.puzzles.solitaire.ui.LocalTableColors
+import com.joclegg.puzzles.solitaire.ui.LocalSolitaireColors
 import com.joclegg.puzzles.solitaire.ui.SolitaireTheme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -68,7 +68,7 @@ class SolitaireDefinition(
     @Composable
     override fun accent(darkTheme: Boolean): Color {
         var accent = Color.Unspecified
-        SolitaireTheme(darkTheme) { accent = LocalTableColors.current.accent }
+        SolitaireTheme(darkTheme) { accent = LocalSolitaireColors.current.accent }
         return accent
     }
 

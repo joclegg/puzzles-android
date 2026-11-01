@@ -20,7 +20,7 @@ import com.joclegg.puzzles.core.ui.MenuPanel
 import com.joclegg.puzzles.core.ui.stats.StatsSource
 import com.joclegg.puzzles.fiveletters.core.data.GameRepository
 import com.joclegg.puzzles.fiveletters.core.data.WordStats
-import com.joclegg.puzzles.fiveletters.ui.LocalLetterColors
+import com.joclegg.puzzles.fiveletters.ui.LocalFiveLettersColors
 
 fun fiveLettersStatsSource(games: GameRepository) = StatsSource<WordStats, Unit, Unit>(stats = games.stats, initialStats = WordStats())
 
@@ -29,8 +29,8 @@ fun FiveLettersStatsPanels(
     stats: WordStats,
     modifier: Modifier = Modifier,
 ) {
-    val colors = LocalLetterColors.current
-    val accent = LocalLetterColors.current.accent
+    val colors = LocalFiveLettersColors.current
+    val accent = LocalFiveLettersColors.current.accent
     Column(modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
         MenuPanel(accent) {
             Row(Modifier.fillMaxWidth()) {

@@ -22,6 +22,7 @@ import com.joclegg.puzzles.sudoku.engine.Solver
 import com.joclegg.puzzles.sudoku.engine.conflicts
 import com.joclegg.puzzles.sudoku.ui.BoardUi
 import com.joclegg.puzzles.sudoku.ui.toBoardUi
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -53,6 +54,7 @@ class EntryViewModel(
     initialMode: GameMode,
     private val games: GameRepository,
     private val settings: SettingsRepository,
+    private val background: CoroutineDispatcher = Dispatchers.Default,
 ) : ViewModel() {
     private var mode = initialMode
     private var entry = GameState(emptyPuzzle(), mistakeCheck = MistakeCheck.OFF)
@@ -131,7 +133,7 @@ class EntryViewModel(
         val cageList = activeCages()
         checking = true
         publish()
-        val result = withContext(Dispatchers.Default) { check(givens, cageList) }
+        val result = withContext(background) { check(givens, cageList) }
         checking = false
         if (result.problem == EntryProblem.CLASH || (result.problem != null && !playUnverified)) {
             problem = result.problem

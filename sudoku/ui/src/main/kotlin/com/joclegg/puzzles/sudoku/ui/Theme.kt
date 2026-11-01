@@ -11,7 +11,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
 @Immutable
-data class BoardColors(
+data class SudokuColors(
     val background: Color,
     val givenCell: Color,
     val doneDigit: Color,
@@ -31,7 +31,7 @@ data class BoardColors(
 )
 
 private val LightBoard =
-    BoardColors(
+    SudokuColors(
         background = Color(0xFFFFFFFF),
         givenCell = Color(0xFFD5D8DD),
         doneDigit = Color(0x667A808A),
@@ -51,7 +51,7 @@ private val LightBoard =
     )
 
 private val DarkBoard =
-    BoardColors(
+    SudokuColors(
         background = Color(0xFF121418),
         givenCell = Color(0xFF353A42),
         doneDigit = Color(0x668C939F),
@@ -72,7 +72,7 @@ private val DarkBoard =
 
 private val Blue = Color(0xFF1565D8)
 
-val LocalBoardColors = staticCompositionLocalOf { LightBoard }
+val LocalSudokuColors = staticCompositionLocalOf { LightBoard }
 
 @Composable
 fun SudokuTheme(
@@ -103,7 +103,7 @@ fun SudokuTheme(
                 surface = LightBoard.background,
             )
         }
-    CompositionLocalProvider(LocalBoardColors provides if (darkTheme) {
+    CompositionLocalProvider(LocalSudokuColors provides if (darkTheme) {
 DarkBoard
 } else {
 LightBoard

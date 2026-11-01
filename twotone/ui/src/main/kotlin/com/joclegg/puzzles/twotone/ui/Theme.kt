@@ -8,7 +8,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
 @Immutable
-data class TileColors(
+data class TwoToneColors(
     val emptyTile: Color,
     val red: Color,
     val redEdge: Color,
@@ -21,7 +21,7 @@ data class TileColors(
 )
 
 private val LightTiles =
-    TileColors(
+    TwoToneColors(
         emptyTile = Color(0xFFE6E9EE),
         red = Color(0xFFE0603F),
         redEdge = Color(0xFFB54A30),
@@ -34,7 +34,7 @@ private val LightTiles =
     )
 
 private val DarkTiles =
-    TileColors(
+    TwoToneColors(
         emptyTile = Color(0xFF2A2E35),
         red = Color(0xFFD5583A),
         redEdge = Color(0xFFA6432C),
@@ -46,7 +46,7 @@ private val DarkTiles =
         accent = Color(0xFFEC7F62),
     )
 
-val LocalTileColors = staticCompositionLocalOf { LightTiles }
+val LocalTwoToneColors = staticCompositionLocalOf { LightTiles }
 
 @Composable
 fun TwoToneTheme(
@@ -59,5 +59,5 @@ fun TwoToneTheme(
         } else {
             LightTiles
         }
-    CompositionLocalProvider(LocalTileColors provides tiles, content = content)
+    CompositionLocalProvider(LocalTwoToneColors provides tiles, content = content)
 }

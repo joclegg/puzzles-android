@@ -95,7 +95,7 @@ fun SudokuBoard(
     onCellClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val colors = LocalBoardColors.current
+    val colors = LocalSudokuColors.current
     BoxWithConstraints(
         modifier
             .fillMaxWidth()
@@ -178,7 +178,7 @@ private fun CageSum(
     cellSize: Dp,
     modifier: Modifier = Modifier,
 ) {
-    val colors = LocalBoardColors.current
+    val colors = LocalSudokuColors.current
     val fontSize = cellSize.toSp(CAGE_SUM_FONT_FRACTION)
     Text(
         text = sum.toString(),
@@ -202,7 +202,7 @@ private fun CageSum(
 
 private fun cellBackground(
     cell: CellUi,
-    colors: BoardColors,
+    colors: SudokuColors,
     greyGivenCells: Boolean,
 ): Color {
     val grey = cell.given && greyGivenCells
@@ -248,7 +248,7 @@ private fun SudokuCell(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val colors = LocalBoardColors.current
+    val colors = LocalSudokuColors.current
 
     val background = cellBackground(cell, colors, greyGivenCells).takeOrElse { Color.Transparent }
     Box(
@@ -327,7 +327,7 @@ private fun NotesGrid(
     topInset: Float,
     fontFraction: Float,
 ) {
-    val colors = LocalBoardColors.current
+    val colors = LocalSudokuColors.current
     val fontSize = cellSize.toSp(fontFraction)
     val noteStyle =
         TextStyle(
@@ -395,7 +395,7 @@ private const val NOTE_COLUMNS = 3
 private fun Dp.toSp(fraction: Float): TextUnit = with(LocalDensity.current) { (this@toSp * fraction).toSp() }
 
 private fun DrawScope.drawGrid(
-    colors: BoardColors,
+    colors: SudokuColors,
     grid: Grid,
 ) {
     val step = size.width / grid.size

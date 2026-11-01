@@ -35,7 +35,7 @@ import com.joclegg.puzzles.fiveletters.ui.FiveLettersIcons
 import com.joclegg.puzzles.fiveletters.ui.HintButton
 import com.joclegg.puzzles.fiveletters.ui.HowToPlayButton
 import com.joclegg.puzzles.fiveletters.ui.Keyboard
-import com.joclegg.puzzles.fiveletters.ui.LocalLetterColors
+import com.joclegg.puzzles.fiveletters.ui.LocalFiveLettersColors
 import com.joclegg.puzzles.fiveletters.ui.ToolButton
 import com.joclegg.puzzles.fiveletters.ui.TourStep
 import com.joclegg.puzzles.fiveletters.ui.WordBoard
@@ -194,7 +194,7 @@ private fun ResultDialog(
             } else {
                 "The word was ${state.answer}"
             },
-        accent = LocalLetterColors.current.accent,
+        accent = LocalFiveLettersColors.current.accent,
         dailyGroup = "FIVE_LETTERS",
         newLabel = "Word",
         newTag = "result_new_practice",

@@ -34,7 +34,7 @@ import com.joclegg.puzzles.core.ui.WinDialog
 import com.joclegg.puzzles.core.ui.WinStat
 import com.joclegg.puzzles.core.ui.formatDuration
 import com.joclegg.puzzles.slideout.ui.HowToPlayButton
-import com.joclegg.puzzles.slideout.ui.LocalSlideColors
+import com.joclegg.puzzles.slideout.ui.LocalSlideOutColors
 import com.joclegg.puzzles.slideout.ui.SlideBoard
 import com.joclegg.puzzles.slideout.ui.SlideOutIcons
 import com.joclegg.puzzles.slideout.ui.ToolButton
@@ -200,7 +200,7 @@ private fun SolvedDialog(
 ) {
     WinDialog(
         title = "Solved!",
-        accent = LocalSlideColors.current.accent,
+        accent = LocalSlideOutColors.current.accent,
         dailyGroup = "SLIDE_OUT",
         newLabel = state.levelLabel,
         newTag = "solved_new_puzzle",

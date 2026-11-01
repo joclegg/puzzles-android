@@ -99,7 +99,7 @@ private fun DigitKey(
     fontSize: TextUnit,
     modifier: Modifier = Modifier,
 ) {
-    val colors = LocalBoardColors.current
+    val colors = LocalSudokuColors.current
     val active = digit == activeDigit
     val done = digit in doneDigits
     val count = counts.getOrNull(digit)
@@ -172,7 +172,7 @@ fun ToolButton(
     modifier: Modifier = Modifier,
     on: Boolean = false,
 ) {
-    val colors = LocalBoardColors.current
+    val colors = LocalSudokuColors.current
 
     Box(modifier) {
         TooltipBox(

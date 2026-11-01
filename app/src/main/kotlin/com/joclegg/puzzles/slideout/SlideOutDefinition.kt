@@ -15,7 +15,7 @@ import com.joclegg.puzzles.slideout.core.data.GameDatabase
 import com.joclegg.puzzles.slideout.core.data.GameRepository
 import com.joclegg.puzzles.slideout.core.data.PuzzleBank
 import com.joclegg.puzzles.slideout.core.data.SettingsRepository
-import com.joclegg.puzzles.slideout.ui.LocalSlideColors
+import com.joclegg.puzzles.slideout.ui.LocalSlideOutColors
 import com.joclegg.puzzles.slideout.ui.SlideOutTheme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -68,7 +68,7 @@ class SlideOutDefinition(
     @Composable
     override fun accent(darkTheme: Boolean): Color {
         var accent = Color.Unspecified
-        SlideOutTheme(darkTheme) { accent = LocalSlideColors.current.accent }
+        SlideOutTheme(darkTheme) { accent = LocalSlideOutColors.current.accent }
         return accent
     }
 

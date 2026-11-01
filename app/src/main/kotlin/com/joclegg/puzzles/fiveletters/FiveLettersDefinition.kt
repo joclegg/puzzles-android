@@ -17,7 +17,8 @@ import com.joclegg.puzzles.fiveletters.core.data.GameRepository
 import com.joclegg.puzzles.fiveletters.core.data.SettingsRepository
 import com.joclegg.puzzles.fiveletters.engine.Words
 import com.joclegg.puzzles.fiveletters.ui.FiveLettersTheme
-import com.joclegg.puzzles.fiveletters.ui.LocalLetterColors
+import com.joclegg.puzzles.fiveletters.ui.LocalFiveLettersColors
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -31,6 +32,7 @@ private val Context.fiveLettersSettingsStore by preferencesDataStore(name = "fiv
 
 class FiveLettersDefinition(
     private val context: Context,
+    private val io: CoroutineDispatcher = Dispatchers.IO,
 ) : GameDefinition {
     private val database =
         Room
@@ -50,7 +52,7 @@ class FiveLettersDefinition(
 
     suspend fun words(): Words =
         loading.withLock {
-            loaded ?: withContext(Dispatchers.IO) { Words(read("words/answers.txt"), read("words/guesses.txt")) }.also { loaded = it }
+            loaded ?: withContext(io) { Words(read("words/answers.txt"), read("words/guesses.txt")) }.also { loaded = it }
         }
 
     private fun read(path: String): List<String> = context.banks.read(path).lines()
@@ -80,7 +82,7 @@ class FiveLettersDefinition(
     @Composable
     override fun accent(darkTheme: Boolean): Color {
         var accent = Color.Unspecified
-        FiveLettersTheme(darkTheme) { accent = LocalLetterColors.current.accent }
+        FiveLettersTheme(darkTheme) { accent = LocalFiveLettersColors.current.accent }
         return accent
     }
 

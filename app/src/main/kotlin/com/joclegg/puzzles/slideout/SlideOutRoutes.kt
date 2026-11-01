@@ -22,7 +22,7 @@ import com.joclegg.puzzles.slideout.feature.home.HomeRoute
 import com.joclegg.puzzles.slideout.feature.home.HomeViewModel
 import com.joclegg.puzzles.slideout.feature.settings.SettingsRoute
 import com.joclegg.puzzles.slideout.feature.settings.SettingsViewModel
-import com.joclegg.puzzles.slideout.ui.LocalSlideColors
+import com.joclegg.puzzles.slideout.ui.LocalSlideOutColors
 import com.joclegg.puzzles.slideout.ui.SlideOutTheme
 
 object SlideOutRoutes {
@@ -71,7 +71,7 @@ object SlideOutRoutes {
         screen(HISTORY, darkTheme) {
             HistoryRoute(
                 viewModel = viewModel { StatsViewModel(slideOutStatsSource(container.games)) },
-                accent = LocalSlideColors.current.accent,
+                accent = LocalSlideOutColors.current.accent,
                 filters = slideOutHistoryFilters,
                 onOpenGame = { navController.openSlideOutGame(it) },
                 onBack = navController::popBackStack,
@@ -85,7 +85,7 @@ object SlideOutRoutes {
         darkTheme: Boolean,
     ) {
         SlideOutTheme(darkTheme) {
-            AccentColors(LocalSlideColors.current.accent) {
+            AccentColors(LocalSlideOutColors.current.accent) {
                 SettingsRoute(viewModel { SettingsViewModel(container.settings) }, onBack = null)
             }
         }

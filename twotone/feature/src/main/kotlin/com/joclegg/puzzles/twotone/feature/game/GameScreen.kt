@@ -37,7 +37,7 @@ import com.joclegg.puzzles.core.ui.formatDuration
 import com.joclegg.puzzles.twotone.engine.Tile
 import com.joclegg.puzzles.twotone.ui.ColourPicker
 import com.joclegg.puzzles.twotone.ui.HowToPlayButton
-import com.joclegg.puzzles.twotone.ui.LocalTileColors
+import com.joclegg.puzzles.twotone.ui.LocalTwoToneColors
 import com.joclegg.puzzles.twotone.ui.ToolButton
 import com.joclegg.puzzles.twotone.ui.TourStep
 import com.joclegg.puzzles.twotone.ui.TwoToneBoard
@@ -242,7 +242,7 @@ private fun SolvedDialog(
 ) {
     WinDialog(
         title = "Solved!",
-        accent = LocalTileColors.current.accent,
+        accent = LocalTwoToneColors.current.accent,
         dailyGroup = "TWO_TONE",
         newLabel = state.levelLabel,
         newTag = "solved_new_puzzle",

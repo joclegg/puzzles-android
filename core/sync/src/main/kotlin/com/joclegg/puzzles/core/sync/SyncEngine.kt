@@ -1,5 +1,6 @@
 package com.joclegg.puzzles.core.sync
 
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
@@ -14,12 +15,13 @@ class SyncEngine(
     private val auth: SupabaseAuth,
     private val store: SyncStore,
     private val http: Http = UrlConnectionHttp,
+    private val io: CoroutineDispatcher = Dispatchers.IO,
 ) {
     private val mutex = Mutex()
 
     suspend fun sync(): Boolean =
         mutex.withLock {
-            withContext(Dispatchers.IO) {
+            withContext(io) {
                 repeat(ATTEMPTS - 1) {
                     if (runCatching { syncAll() }.getOrDefault(false)) {
                         return@withContext true

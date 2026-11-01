@@ -8,7 +8,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
 @Immutable
-data class SlideColors(
+data class SlideOutColors(
     val board: Color,
     val slot: Color,
     val block: Color,
@@ -21,7 +21,7 @@ data class SlideColors(
 )
 
 private val Light =
-    SlideColors(
+    SlideOutColors(
         board = Color(0xFF263040),
         slot = Color(0xFF353A42),
         block = Color(0xFFD9B98A),
@@ -34,7 +34,7 @@ private val Light =
     )
 
 private val Dark =
-    SlideColors(
+    SlideOutColors(
         board = Color(0xFF15191F),
         slot = Color(0xFF22272E),
         block = Color(0xFFB59A72),
@@ -46,7 +46,7 @@ private val Dark =
         accent = Color(0xFFE3A85C),
     )
 
-val LocalSlideColors = staticCompositionLocalOf { Light }
+val LocalSlideOutColors = staticCompositionLocalOf { Light }
 
 @Composable
 fun SlideOutTheme(
@@ -59,5 +59,5 @@ fun SlideOutTheme(
         } else {
             Light
         }
-    CompositionLocalProvider(LocalSlideColors provides colors, content = content)
+    CompositionLocalProvider(LocalSlideOutColors provides colors, content = content)
 }

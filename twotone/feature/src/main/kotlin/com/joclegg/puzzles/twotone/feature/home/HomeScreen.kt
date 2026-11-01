@@ -10,7 +10,7 @@ import com.joclegg.puzzles.core.ui.home.StandardHomeSections
 import com.joclegg.puzzles.core.ui.home.rememberGameLauncher
 import com.joclegg.puzzles.twotone.core.data.SavedGame
 import com.joclegg.puzzles.twotone.engine.SIZES
-import com.joclegg.puzzles.twotone.ui.LocalTileColors
+import com.joclegg.puzzles.twotone.ui.LocalTwoToneColors
 import com.joclegg.puzzles.twotone.ui.TwoToneGameIcon
 import com.joclegg.puzzles.twotone.ui.TwoToneIcons
 import com.joclegg.puzzles.twotone.ui.sizeLabel
@@ -66,7 +66,7 @@ fun HomeScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val accent = LocalTileColors.current.accent
+    val accent = LocalTwoToneColors.current.accent
     GameHomeScaffold(
         title = "Two Tone",
         calendarGame = "TWO_TONE",

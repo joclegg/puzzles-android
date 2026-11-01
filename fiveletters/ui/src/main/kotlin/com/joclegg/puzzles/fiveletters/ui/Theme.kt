@@ -8,7 +8,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
 @Immutable
-data class LetterColors(
+data class FiveLettersColors(
     val correct: Color,
     val present: Color,
     val absent: Color,
@@ -22,7 +22,7 @@ data class LetterColors(
 )
 
 private val Light =
-    LetterColors(
+    FiveLettersColors(
         correct = Color(0xFF5FA463),
         present = Color(0xFFD7B23E),
         absent = Color(0xFF7A808A),
@@ -36,7 +36,7 @@ private val Light =
     )
 
 private val Dark =
-    LetterColors(
+    FiveLettersColors(
         correct = Color(0xFF538D4E),
         present = Color(0xFFB59F3B),
         absent = Color(0xFF3A3F47),
@@ -53,7 +53,7 @@ private val LightContrast = Light.copy(correct = Color(0xFFE5793A), present = Co
 
 private val DarkContrast = Dark.copy(correct = Color(0xFFE5793A), present = Color(0xFF6CB7E8))
 
-val LocalLetterColors = staticCompositionLocalOf { Light }
+val LocalFiveLettersColors = staticCompositionLocalOf { Light }
 
 @Composable
 fun FiveLettersTheme(
@@ -68,5 +68,5 @@ fun FiveLettersTheme(
             highContrast -> LightContrast
             else -> Light
         }
-    CompositionLocalProvider(LocalLetterColors provides colors, content = content)
+    CompositionLocalProvider(LocalFiveLettersColors provides colors, content = content)
 }

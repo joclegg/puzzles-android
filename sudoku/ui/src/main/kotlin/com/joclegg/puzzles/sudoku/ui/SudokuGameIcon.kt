@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun SudokuGameIcon(modifier: Modifier = Modifier) {
-    val colors = LocalBoardColors.current
+    val colors = LocalSudokuColors.current
     Canvas(modifier.size(56.dp)) {
         val cell = size.width / CELLS
         drawRoundRect(colors.background, cornerRadius = CornerRadius(cell / 2))

@@ -2,6 +2,7 @@ package com.joclegg.puzzles.sudoku.core.data
 
 import com.joclegg.puzzles.sudoku.engine.Difficulty
 import com.joclegg.puzzles.sudoku.engine.MistakeCheck
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
@@ -13,8 +14,9 @@ suspend fun GameRepository.openDaily(
     difficulty: Difficulty,
     date: LocalDate,
     mistakeCheck: MistakeCheck,
+    io: CoroutineDispatcher = Dispatchers.IO,
 ): Long {
-    val ref = withContext(Dispatchers.IO) { bank.daily(mode, difficulty, date) }
+    val ref = withContext(io) { bank.daily(mode, difficulty, date) }
     return inProgress.first().find { it.ref.id == ref.id }?.id ?: start(ref, mistakeCheck).id
 }
 

@@ -26,7 +26,7 @@ import com.joclegg.puzzles.sudoku.feature.home.HomeRoute
 import com.joclegg.puzzles.sudoku.feature.home.HomeViewModel
 import com.joclegg.puzzles.sudoku.feature.settings.SettingsRoute
 import com.joclegg.puzzles.sudoku.feature.settings.SettingsViewModel
-import com.joclegg.puzzles.sudoku.ui.LocalBoardColors
+import com.joclegg.puzzles.sudoku.ui.LocalSudokuColors
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -84,7 +84,7 @@ object SudokuRoutes {
         composable(HISTORY) {
             HistoryRoute(
                 viewModel = viewModel { StatsViewModel(sudokuStatsSource(container.games, container.settings)) },
-                accent = LocalBoardColors.current.accent,
+                accent = LocalSudokuColors.current.accent,
                 filters = sudokuHistoryFilters,
                 onOpenGame = { navController.openSudokuGame(it) },
                 onBack = navController::popBackStack,
@@ -97,7 +97,7 @@ object SudokuRoutes {
         container: SudokuDefinition,
         mode: GameMode,
     ) {
-        AccentColors(LocalBoardColors.current.accent) {
+        AccentColors(LocalSudokuColors.current.accent) {
             SettingsRoute(viewModel { SettingsViewModel(container.settings) }, initialMode = mode, onBack = null)
         }
     }

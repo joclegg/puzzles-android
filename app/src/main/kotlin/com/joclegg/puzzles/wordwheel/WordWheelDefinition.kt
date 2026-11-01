@@ -15,7 +15,7 @@ import com.joclegg.puzzles.wordwheel.core.data.GameDatabase
 import com.joclegg.puzzles.wordwheel.core.data.GameRepository
 import com.joclegg.puzzles.wordwheel.core.data.PuzzleBank
 import com.joclegg.puzzles.wordwheel.core.data.SettingsRepository
-import com.joclegg.puzzles.wordwheel.ui.LocalWheelColors
+import com.joclegg.puzzles.wordwheel.ui.LocalWordWheelColors
 import com.joclegg.puzzles.wordwheel.ui.WordWheelTheme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -68,7 +68,7 @@ class WordWheelDefinition(
     @Composable
     override fun accent(darkTheme: Boolean): Color {
         var accent = Color.Unspecified
-        WordWheelTheme(darkTheme) { accent = LocalWheelColors.current.accent }
+        WordWheelTheme(darkTheme) { accent = LocalWordWheelColors.current.accent }
         return accent
     }
 

@@ -34,7 +34,7 @@ import com.joclegg.puzzles.core.ui.formatDuration
 import com.joclegg.puzzles.solitaire.engine.Pile
 import com.joclegg.puzzles.solitaire.ui.HintButton
 import com.joclegg.puzzles.solitaire.ui.HowToPlayButton
-import com.joclegg.puzzles.solitaire.ui.LocalTableColors
+import com.joclegg.puzzles.solitaire.ui.LocalSolitaireColors
 import com.joclegg.puzzles.solitaire.ui.SolitaireIcons
 import com.joclegg.puzzles.solitaire.ui.SolitaireTable
 import com.joclegg.puzzles.solitaire.ui.ToolButton
@@ -227,7 +227,7 @@ private fun WonDialog(
 ) {
     WinDialog(
         title = "You won!",
-        accent = LocalTableColors.current.accent,
+        accent = LocalSolitaireColors.current.accent,
         dailyGroup = "SOLITAIRE",
         newLabel = "Deal",
         newTag = "won_new_deal",

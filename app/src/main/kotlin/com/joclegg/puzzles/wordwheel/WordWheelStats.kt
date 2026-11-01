@@ -14,7 +14,7 @@ import com.joclegg.puzzles.wordwheel.core.data.GameStatus
 import com.joclegg.puzzles.wordwheel.core.data.LevelStats
 import com.joclegg.puzzles.wordwheel.core.data.SavedGame
 import com.joclegg.puzzles.wordwheel.engine.Level
-import com.joclegg.puzzles.wordwheel.ui.LocalWheelColors
+import com.joclegg.puzzles.wordwheel.ui.LocalWordWheelColors
 import com.joclegg.puzzles.wordwheel.ui.label
 import com.joclegg.puzzles.wordwheel.ui.title
 
@@ -60,6 +60,6 @@ fun WordWheelStatsTable(
                 )
             },
         modifier = modifier,
-        accent = LocalWheelColors.current.accent,
+        accent = LocalWordWheelColors.current.accent,
     )
 }

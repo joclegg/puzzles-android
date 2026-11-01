@@ -30,28 +30,28 @@ import com.joclegg.puzzles.core.ui.MenuIcons
 import com.joclegg.puzzles.core.ui.medalColour
 import com.joclegg.puzzles.fiveletters.ui.FiveLettersGameIcon
 import com.joclegg.puzzles.fiveletters.ui.FiveLettersTheme
-import com.joclegg.puzzles.fiveletters.ui.LocalLetterColors
+import com.joclegg.puzzles.fiveletters.ui.LocalFiveLettersColors
 import com.joclegg.puzzles.kakuro.ui.KakuroGameIcon
 import com.joclegg.puzzles.kakuro.ui.KakuroTheme
 import com.joclegg.puzzles.kakuro.ui.LocalKakuroColors
+import com.joclegg.puzzles.sightlines.ui.LocalSightlinesColors
 import com.joclegg.puzzles.sightlines.ui.SightlinesGameIcon
 import com.joclegg.puzzles.sightlines.ui.SightlinesTheme
-import com.joclegg.puzzles.slideout.ui.LocalSlideColors
+import com.joclegg.puzzles.slideout.ui.LocalSlideOutColors
 import com.joclegg.puzzles.slideout.ui.SlideOutGameIcon
 import com.joclegg.puzzles.slideout.ui.SlideOutTheme
-import com.joclegg.puzzles.solitaire.ui.LocalTableColors
+import com.joclegg.puzzles.solitaire.ui.LocalSolitaireColors
 import com.joclegg.puzzles.solitaire.ui.SolitaireGameIcon
 import com.joclegg.puzzles.solitaire.ui.SolitaireTheme
-import com.joclegg.puzzles.sudoku.ui.LocalBoardColors
+import com.joclegg.puzzles.sudoku.ui.LocalSudokuColors
 import com.joclegg.puzzles.sudoku.ui.SudokuGameIcon
 import com.joclegg.puzzles.sudoku.ui.SudokuIcons
+import com.joclegg.puzzles.twotone.ui.LocalTwoToneColors
 import com.joclegg.puzzles.twotone.ui.TwoToneGameIcon
 import com.joclegg.puzzles.twotone.ui.TwoToneTheme
-import com.joclegg.puzzles.wordwheel.ui.LocalWheelColors
+import com.joclegg.puzzles.wordwheel.ui.LocalWordWheelColors
 import com.joclegg.puzzles.wordwheel.ui.WordWheelGameIcon
 import com.joclegg.puzzles.wordwheel.ui.WordWheelTheme
-import com.joclegg.puzzles.sightlines.ui.LocalTileColors as SightlinesColors
-import com.joclegg.puzzles.twotone.ui.LocalTileColors as TwoToneColors
 
 @Composable
 fun LauncherScreen(
@@ -119,7 +119,7 @@ fun LauncherScreen(
         GameCard(
             "Sudoku",
             "Classic and killer, from 6x6 to evil",
-            LocalBoardColors.current.accent,
+            LocalSudokuColors.current.accent,
             onSudokuClick,
             Modifier.testTag("game_sudoku"),
             medals[PuzzleGame.SUDOKU] ?: Medal.NONE,
@@ -130,7 +130,7 @@ fun LauncherScreen(
             GameCard(
                 "Solitaire",
                 "Klondike, draw 1 or 3, or reverse",
-                LocalTableColors.current.accent,
+                LocalSolitaireColors.current.accent,
                 onSolitaireClick,
                 Modifier.testTag("game_solitaire"),
                 medals[PuzzleGame.SOLITAIRE] ?: Medal.NONE,
@@ -142,7 +142,7 @@ fun LauncherScreen(
             GameCard(
                 "Two Tone",
                 "Fill the grid red and blue, three simple rules",
-                TwoToneColors.current.accent,
+                LocalTwoToneColors.current.accent,
                 onTwoToneClick,
                 Modifier.testTag("game_two_tone"),
                 medals[PuzzleGame.TWO_TONE] ?: Medal.NONE,
@@ -154,7 +154,7 @@ fun LauncherScreen(
             GameCard(
                 "Sightlines",
                 "Blue dots count what they can see",
-                SightlinesColors.current.accent,
+                LocalSightlinesColors.current.accent,
                 onSightlinesClick,
                 Modifier.testTag("game_sightlines"),
                 medals[PuzzleGame.SIGHTLINES] ?: Medal.NONE,
@@ -166,7 +166,7 @@ fun LauncherScreen(
             GameCard(
                 "Five Letters",
                 "Guess the word in six tries, a new one every day",
-                LocalLetterColors.current.accent,
+                LocalFiveLettersColors.current.accent,
                 onFiveLettersClick,
                 Modifier.testTag("game_five_letters"),
                 medals[PuzzleGame.FIVE_LETTERS] ?: Medal.NONE,
@@ -190,7 +190,7 @@ fun LauncherScreen(
             GameCard(
                 "Slide Out",
                 "Slide the blocks to free the red one",
-                LocalSlideColors.current.accent,
+                LocalSlideOutColors.current.accent,
                 onSlideOutClick,
                 Modifier.testTag("game_slide_out"),
                 medals[PuzzleGame.SLIDE_OUT] ?: Medal.NONE,
@@ -202,7 +202,7 @@ fun LauncherScreen(
             GameCard(
                 "Word Wheel",
                 "Swipe the letters to fill the crossword",
-                LocalWheelColors.current.accent,
+                LocalWordWheelColors.current.accent,
                 onWordWheelClick,
                 Modifier.testTag("game_word_wheel"),
                 medals[PuzzleGame.WORD_WHEEL] ?: Medal.NONE,

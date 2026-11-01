@@ -10,7 +10,7 @@ import com.joclegg.puzzles.core.ui.home.StandardHomeSections
 import com.joclegg.puzzles.core.ui.home.rememberGameLauncher
 import com.joclegg.puzzles.sightlines.core.data.SavedGame
 import com.joclegg.puzzles.sightlines.engine.SIZES
-import com.joclegg.puzzles.sightlines.ui.LocalTileColors
+import com.joclegg.puzzles.sightlines.ui.LocalSightlinesColors
 import com.joclegg.puzzles.sightlines.ui.SightlinesGameIcon
 import com.joclegg.puzzles.sightlines.ui.SightlinesIcons
 import com.joclegg.puzzles.sightlines.ui.sizeLabel
@@ -66,7 +66,7 @@ fun HomeScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val accent = LocalTileColors.current.accent
+    val accent = LocalSightlinesColors.current.accent
     GameHomeScaffold(
         title = "Sightlines",
         calendarGame = "SIGHTLINES",

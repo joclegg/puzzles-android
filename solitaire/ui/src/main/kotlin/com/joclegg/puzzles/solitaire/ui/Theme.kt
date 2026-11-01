@@ -11,7 +11,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
 @Immutable
-data class TableColors(
+data class SolitaireColors(
     val felt: Color,
     val emptyPile: Color,
     val cardFace: Color,
@@ -26,7 +26,7 @@ data class TableColors(
 )
 
 private val LightTable =
-    TableColors(
+    SolitaireColors(
         felt = Color(0xFF2E6B4A),
         emptyPile = Color(0x33FFFFFF),
         cardFace = Color(0xFFFFFFFF),
@@ -41,7 +41,7 @@ private val LightTable =
     )
 
 private val DarkTable =
-    TableColors(
+    SolitaireColors(
         felt = Color(0xFF15301F),
         emptyPile = Color(0x26FFFFFF),
         cardFace = Color(0xFFE3E6EA),
@@ -57,7 +57,7 @@ private val DarkTable =
 
 private val Blue = Color(0xFF1565D8)
 
-val LocalTableColors = staticCompositionLocalOf { LightTable }
+val LocalSolitaireColors = staticCompositionLocalOf { LightTable }
 
 @Composable
 fun SolitaireTheme(
@@ -90,7 +90,7 @@ fun SolitaireTheme(
         } else {
             LightTable
         }
-    CompositionLocalProvider(LocalTableColors provides table) {
+    CompositionLocalProvider(LocalSolitaireColors provides table) {
         MaterialTheme(colorScheme = scheme, content = content)
     }
 }

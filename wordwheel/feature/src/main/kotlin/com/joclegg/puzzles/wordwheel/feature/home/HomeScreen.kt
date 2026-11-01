@@ -10,7 +10,7 @@ import com.joclegg.puzzles.core.ui.home.StandardHomeSections
 import com.joclegg.puzzles.core.ui.home.rememberGameLauncher
 import com.joclegg.puzzles.wordwheel.core.data.SavedGame
 import com.joclegg.puzzles.wordwheel.engine.Level
-import com.joclegg.puzzles.wordwheel.ui.LocalWheelColors
+import com.joclegg.puzzles.wordwheel.ui.LocalWordWheelColors
 import com.joclegg.puzzles.wordwheel.ui.WordWheelGameIcon
 import com.joclegg.puzzles.wordwheel.ui.WordWheelIcons
 import com.joclegg.puzzles.wordwheel.ui.label
@@ -66,7 +66,7 @@ fun HomeScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val accent = LocalWheelColors.current.accent
+    val accent = LocalWordWheelColors.current.accent
     GameHomeScaffold(
         title = "Word Wheel",
         calendarGame = "WORD_WHEEL",

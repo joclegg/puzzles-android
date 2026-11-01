@@ -21,7 +21,7 @@ import com.joclegg.puzzles.core.ui.formatDuration
 import com.joclegg.puzzles.core.ui.home.GameHomeScaffold
 import com.joclegg.puzzles.core.ui.todayLabel
 import com.joclegg.puzzles.solitaire.core.data.SavedGame
-import com.joclegg.puzzles.solitaire.ui.LocalTableColors
+import com.joclegg.puzzles.solitaire.ui.LocalSolitaireColors
 import com.joclegg.puzzles.solitaire.ui.SolitaireGameIcon
 import com.joclegg.puzzles.solitaire.ui.SolitaireIcons
 import com.joclegg.puzzles.solitaire.ui.dialogTestTags
@@ -86,7 +86,7 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
 ) {
     var resumeChoice by remember { mutableStateOf<SavedGame?>(null) }
-    val accent = LocalTableColors.current.accent
+    val accent = LocalSolitaireColors.current.accent
     GameHomeScaffold(
         title = "Solitaire",
         calendarGame = "SOLITAIRE",

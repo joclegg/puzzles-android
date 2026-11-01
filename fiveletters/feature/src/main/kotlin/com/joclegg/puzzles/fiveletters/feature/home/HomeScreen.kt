@@ -24,7 +24,7 @@ import com.joclegg.puzzles.core.ui.todayLabel
 import com.joclegg.puzzles.fiveletters.core.data.GameStatus
 import com.joclegg.puzzles.fiveletters.ui.FiveLettersGameIcon
 import com.joclegg.puzzles.fiveletters.ui.FiveLettersIcons
-import com.joclegg.puzzles.fiveletters.ui.LocalLetterColors
+import com.joclegg.puzzles.fiveletters.ui.LocalFiveLettersColors
 import kotlinx.coroutines.launch
 
 @Composable
@@ -92,7 +92,7 @@ fun HomeScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val accent = LocalLetterColors.current.accent
+    val accent = LocalFiveLettersColors.current.accent
     GameHomeScaffold(
         title = "Five Letters",
         calendarGame = "FIVE_LETTERS",

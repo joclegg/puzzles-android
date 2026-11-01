@@ -27,7 +27,7 @@ fun ColourPicker(
     onColourClick: (Tile) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val colors = LocalTileColors.current
+    val colors = LocalTwoToneColors.current
     Row(modifier, horizontalArrangement = Arrangement.spacedBy(20.dp)) {
         listOf(
             Tile.RED to colors.red to "Red",

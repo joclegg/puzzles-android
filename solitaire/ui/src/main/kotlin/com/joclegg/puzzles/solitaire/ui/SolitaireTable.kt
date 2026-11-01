@@ -80,7 +80,7 @@ fun SolitaireTable(
     onCardDrop: (Pile, Int, Pile) -> Unit = { _, _, _ -> },
     celebrate: Boolean = false,
 ) {
-    val colors = LocalTableColors.current
+    val colors = LocalSolitaireColors.current
     val currentOnDrop by rememberUpdatedState(onCardDrop)
     val drag = remember { CardDrag { from, index, to -> currentOnDrop(from, index, to) } }
     BoxWithConstraints(modifier.fillMaxSize().background(colors.felt).padding(Gap)) {
@@ -168,7 +168,7 @@ private fun StockPile(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val colors = LocalTableColors.current
+    val colors = LocalSolitaireColors.current
     Box(
         modifier
             .size(card)
@@ -288,7 +288,7 @@ private fun EmptyPile(
     modifier: Modifier = Modifier,
     starter: String? = null,
 ) {
-    val colors = LocalTableColors.current
+    val colors = LocalSolitaireColors.current
     Box(
         modifier
             .size(card)
@@ -319,7 +319,7 @@ fun PlayingCard(
     onClick: (() -> Unit)? = null,
     tagged: Boolean = true,
 ) {
-    val colors = LocalTableColors.current
+    val colors = LocalSolitaireColors.current
     val ink =
         if (card.suit.isRed) {
             colors.redSuit
@@ -373,7 +373,7 @@ private fun CardBack(
     size: DpSize,
     modifier: Modifier = Modifier,
 ) {
-    val colors = LocalTableColors.current
+    val colors = LocalSolitaireColors.current
     Box(
         modifier
             .size(size)

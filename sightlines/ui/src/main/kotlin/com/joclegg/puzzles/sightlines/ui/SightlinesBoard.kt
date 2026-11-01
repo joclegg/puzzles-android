@@ -104,7 +104,7 @@ private fun DotView(
     onDotClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val colors = LocalTileColors.current
+    val colors = LocalSightlinesColors.current
     val dot = board.grid.dots[cell]
     val number = board.numbers[cell]
     val given = number != null || cell in board.walls

@@ -51,7 +51,7 @@ fun WordBoard(
     board: BoardUi,
     modifier: Modifier = Modifier,
 ) {
-    val colors = LocalLetterColors.current
+    val colors = LocalFiveLettersColors.current
     Column(modifier.aspectRatio(WORD_LENGTH.toFloat() / MAX_GUESSES), verticalArrangement = Arrangement.spacedBy(6.dp)) {
         for (row in 0 until MAX_GUESSES) {
             Row(Modifier.fillMaxWidth().weight(1f), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -108,7 +108,7 @@ fun Keyboard(
     onDeleteClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val colors = LocalLetterColors.current
+    val colors = LocalFiveLettersColors.current
     Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp), horizontalAlignment = Alignment.CenterHorizontally) {
         KeyRows.forEachIndexed { index, letters ->
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(5.dp)) {
@@ -182,7 +182,7 @@ private fun Key(
     }
 }
 
-private fun Mark.colour(colors: LetterColors) =
+private fun Mark.colour(colors: FiveLettersColors) =
     when (this) {
         Mark.CORRECT -> colors.correct
         Mark.PRESENT -> colors.present

@@ -3,7 +3,7 @@ package com.joclegg.puzzles
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import com.joclegg.puzzles.sudoku.ui.LocalBoardColors
+import com.joclegg.puzzles.sudoku.ui.LocalSudokuColors
 
 @Composable
 fun settingsAccent(
@@ -12,7 +12,7 @@ fun settingsAccent(
     darkTheme: Boolean,
 ): Color =
     if (tab == SettingsTab.GENERAL) {
-        LocalBoardColors.current.accent
+        LocalSudokuColors.current.accent
     } else {
         app.definition(PuzzleGame.valueOf(tab.name)).accent(darkTheme)
     }

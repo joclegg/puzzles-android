@@ -41,7 +41,7 @@ fun LetterWheel(
     onSwipeEnd: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val colors = LocalWheelColors.current
+    val colors = LocalWordWheelColors.current
     val currentChosen by rememberUpdatedState(chosen)
     val currentOnChange by rememberUpdatedState(onChosenChange)
     val currentOnEnd by rememberUpdatedState(onSwipeEnd)

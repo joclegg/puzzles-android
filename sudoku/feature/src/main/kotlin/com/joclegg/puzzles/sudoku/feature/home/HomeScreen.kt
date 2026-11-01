@@ -31,7 +31,7 @@ import com.joclegg.puzzles.sudoku.core.data.GameMode
 import com.joclegg.puzzles.sudoku.core.data.SavedGame
 import com.joclegg.puzzles.sudoku.core.data.levels
 import com.joclegg.puzzles.sudoku.engine.Difficulty
-import com.joclegg.puzzles.sudoku.ui.LocalBoardColors
+import com.joclegg.puzzles.sudoku.ui.LocalSudokuColors
 import com.joclegg.puzzles.sudoku.ui.SudokuGameIcon
 import com.joclegg.puzzles.sudoku.ui.SudokuIcons
 import com.joclegg.puzzles.sudoku.ui.dialogTestTags
@@ -99,7 +99,7 @@ fun HomeScreen(
 ) {
     var mode by rememberSaveable { mutableStateOf(initialMode) }
     var resumeChoice by remember { mutableStateOf<Pair<Difficulty, SavedGame>?>(null) }
-    val accent = LocalBoardColors.current.accent
+    val accent = LocalSudokuColors.current.accent
     GameHomeScaffold(
         title = "Sudoku",
         calendarGame = "SUDOKU",

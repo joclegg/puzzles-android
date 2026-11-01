@@ -10,7 +10,7 @@ import com.joclegg.puzzles.core.ui.home.StandardHomeSections
 import com.joclegg.puzzles.core.ui.home.rememberGameLauncher
 import com.joclegg.puzzles.slideout.core.data.SavedGame
 import com.joclegg.puzzles.slideout.engine.Level
-import com.joclegg.puzzles.slideout.ui.LocalSlideColors
+import com.joclegg.puzzles.slideout.ui.LocalSlideOutColors
 import com.joclegg.puzzles.slideout.ui.SlideOutGameIcon
 import com.joclegg.puzzles.slideout.ui.SlideOutIcons
 import com.joclegg.puzzles.slideout.ui.label
@@ -66,7 +66,7 @@ fun HomeScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val accent = LocalSlideColors.current.accent
+    val accent = LocalSlideOutColors.current.accent
     GameHomeScaffold(
         title = "Slide Out",
         calendarGame = "SLIDE_OUT",

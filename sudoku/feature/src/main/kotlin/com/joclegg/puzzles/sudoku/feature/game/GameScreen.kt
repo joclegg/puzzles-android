@@ -40,7 +40,7 @@ import com.joclegg.puzzles.sudoku.engine.InputMode
 import com.joclegg.puzzles.sudoku.ui.HintButton
 import com.joclegg.puzzles.sudoku.ui.HowToPlayButton
 import com.joclegg.puzzles.sudoku.ui.KeypadTool
-import com.joclegg.puzzles.sudoku.ui.LocalBoardColors
+import com.joclegg.puzzles.sudoku.ui.LocalSudokuColors
 import com.joclegg.puzzles.sudoku.ui.NumberPad
 import com.joclegg.puzzles.sudoku.ui.SudokuBoard
 import com.joclegg.puzzles.sudoku.ui.SudokuIcons
@@ -96,7 +96,7 @@ private fun SolvedScreen(
 ) {
     WinDialog(
         title = "Solved!",
-        accent = LocalBoardColors.current.accent,
+        accent = LocalSudokuColors.current.accent,
         dailyGroup = "SUDOKU_${state.mode.name}",
         newLabel = state.difficulty?.label(),
         newTag = "solved_new_puzzle",
@@ -253,7 +253,7 @@ private fun GameHeader(
                     "Mistakes: ${state.mistakes}",
                     color =
                         if (state.mistakes > 0) {
-                            LocalBoardColors.current.wrong
+                            LocalSudokuColors.current.wrong
                         } else {
                             MaterialTheme.colorScheme.onSurfaceVariant
                         },

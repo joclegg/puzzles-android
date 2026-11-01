@@ -8,7 +8,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
 @Immutable
-data class TileColors(
+data class SightlinesColors(
     val emptyTile: Color,
     val red: Color,
     val redEdge: Color,
@@ -22,7 +22,7 @@ data class TileColors(
 )
 
 private val LightTiles =
-    TileColors(
+    SightlinesColors(
         emptyTile = Color(0xFFE6E9EE),
         red = Color(0xFFE0603F),
         redEdge = Color(0xFFB54A30),
@@ -36,7 +36,7 @@ private val LightTiles =
     )
 
 private val DarkTiles =
-    TileColors(
+    SightlinesColors(
         emptyTile = Color(0xFF2A2E35),
         red = Color(0xFFD5583A),
         redEdge = Color(0xFFA6432C),
@@ -49,7 +49,7 @@ private val DarkTiles =
         accent = Color(0xFF52BDDC),
     )
 
-val LocalTileColors = staticCompositionLocalOf { LightTiles }
+val LocalSightlinesColors = staticCompositionLocalOf { LightTiles }
 
 @Composable
 fun SightlinesTheme(
@@ -62,5 +62,5 @@ fun SightlinesTheme(
         } else {
             LightTiles
         }
-    CompositionLocalProvider(LocalTileColors provides tiles, content = content)
+    CompositionLocalProvider(LocalSightlinesColors provides tiles, content = content)
 }

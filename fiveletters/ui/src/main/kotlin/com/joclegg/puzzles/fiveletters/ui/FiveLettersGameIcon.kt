@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun FiveLettersGameIcon(modifier: Modifier = Modifier) {
-    val colors = LocalLetterColors.current
+    val colors = LocalFiveLettersColors.current
     val tiles = listOf("W" to colors.correct, "O" to colors.present, "R" to colors.absent, "D" to colors.correct)
     Column(modifier.size(56.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
         tiles.chunked(2).forEach { row ->

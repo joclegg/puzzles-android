@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun SightlinesGameIcon(modifier: Modifier = Modifier) {
-    val colors = LocalTileColors.current
+    val colors = LocalSightlinesColors.current
     val squares = listOf(colors.blue to "2", colors.red to null, colors.blue to null, colors.blue to "1")
     Column(modifier.size(56.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
         squares.chunked(2).forEach { row ->
@@ -35,7 +35,7 @@ private fun Square(
     label: String?,
     modifier: Modifier = Modifier,
 ) {
-    val colors = LocalTileColors.current
+    val colors = LocalSightlinesColors.current
     Box(modifier.size(26.dp).background(colour, RoundedCornerShape(5.dp))) {
         if (label != null) {
             Text(label, color = colors.number, fontSize = 14.sp, fontWeight = FontWeight.Bold, modifier = Modifier.align(Alignment.Center))

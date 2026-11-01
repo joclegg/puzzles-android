@@ -17,7 +17,7 @@ import com.joclegg.puzzles.sudoku.core.data.GameRepository
 import com.joclegg.puzzles.sudoku.core.data.PuzzleBank
 import com.joclegg.puzzles.sudoku.core.data.PuzzleSupply
 import com.joclegg.puzzles.sudoku.core.data.SettingsRepository
-import com.joclegg.puzzles.sudoku.ui.LocalBoardColors
+import com.joclegg.puzzles.sudoku.ui.LocalSudokuColors
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -70,7 +70,7 @@ class SudokuDefinition(
     }
 
     @Composable
-    override fun accent(darkTheme: Boolean): Color = LocalBoardColors.current.accent
+    override fun accent(darkTheme: Boolean): Color = LocalSudokuColors.current.accent
 
     @Composable
     override fun SettingsContent(

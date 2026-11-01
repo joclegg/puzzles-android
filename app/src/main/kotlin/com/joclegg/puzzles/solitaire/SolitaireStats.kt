@@ -17,7 +17,7 @@ import com.joclegg.puzzles.solitaire.core.data.GameRepository
 import com.joclegg.puzzles.solitaire.core.data.GameStatus
 import com.joclegg.puzzles.solitaire.core.data.SavedGame
 import com.joclegg.puzzles.solitaire.engine.DrawMode
-import com.joclegg.puzzles.solitaire.ui.LocalTableColors
+import com.joclegg.puzzles.solitaire.ui.LocalSolitaireColors
 import com.joclegg.puzzles.solitaire.ui.label
 import com.joclegg.puzzles.solitaire.ui.title
 import com.joclegg.puzzles.stats.puzzleStatusLabel
@@ -52,7 +52,7 @@ fun SolitaireStatsPanel(
     modifier: Modifier = Modifier,
 ) {
     val tag = mode.drawMode.name.lowercase()
-    MenuPanel(LocalTableColors.current.accent, modifier) {
+    MenuPanel(LocalSolitaireColors.current.accent, modifier) {
         Text(mode.drawMode.label(), style = MaterialTheme.typography.titleLarge)
         StatRow("Played", mode.played.toString(), "${tag}_played")
         StatRow("Won", mode.won.toString(), "${tag}_won")

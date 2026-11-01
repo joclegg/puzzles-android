@@ -38,7 +38,7 @@ import com.joclegg.puzzles.core.ui.WinStat
 import com.joclegg.puzzles.core.ui.formatDuration
 import com.joclegg.puzzles.wordwheel.ui.HowToPlayButton
 import com.joclegg.puzzles.wordwheel.ui.LetterWheel
-import com.joclegg.puzzles.wordwheel.ui.LocalWheelColors
+import com.joclegg.puzzles.wordwheel.ui.LocalWordWheelColors
 import com.joclegg.puzzles.wordwheel.ui.ToolButton
 import com.joclegg.puzzles.wordwheel.ui.TourStep
 import com.joclegg.puzzles.wordwheel.ui.WordGrid
@@ -205,7 +205,7 @@ private fun SolvedDialog(
 ) {
     WinDialog(
         title = "Solved!",
-        accent = LocalWheelColors.current.accent,
+        accent = LocalWordWheelColors.current.accent,
         dailyGroup = "WORD_WHEEL",
         newLabel = state.levelLabel,
         newTag = "solved_new_puzzle",

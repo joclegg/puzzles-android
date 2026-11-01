@@ -15,7 +15,7 @@ import com.joclegg.puzzles.twotone.core.data.GameStatus
 import com.joclegg.puzzles.twotone.core.data.SavedGame
 import com.joclegg.puzzles.twotone.core.data.SizeStats
 import com.joclegg.puzzles.twotone.engine.SIZES
-import com.joclegg.puzzles.twotone.ui.LocalTileColors
+import com.joclegg.puzzles.twotone.ui.LocalTwoToneColors
 import com.joclegg.puzzles.twotone.ui.sizeLabel
 import com.joclegg.puzzles.twotone.ui.title
 
@@ -61,6 +61,6 @@ fun TwoToneStatsTable(
                 )
             },
         modifier = modifier,
-        accent = LocalTileColors.current.accent,
+        accent = LocalTwoToneColors.current.accent,
     )
 }

@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun SlideOutGameIcon(modifier: Modifier = Modifier) {
-    val colors = LocalSlideColors.current
+    val colors = LocalSlideOutColors.current
     Box(modifier.size(56.dp).background(colors.board, RoundedCornerShape(8.dp))) {
         Box(Modifier.offset(x = 4.dp, y = 22.dp).size(30.dp, 13.dp).background(colors.target, RoundedCornerShape(3.dp)))
         Box(Modifier.offset(x = 37.dp, y = 4.dp).size(14.dp, 30.dp).background(colors.block, RoundedCornerShape(3.dp)))

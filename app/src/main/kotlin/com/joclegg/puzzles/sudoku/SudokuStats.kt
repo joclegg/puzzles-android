@@ -17,7 +17,7 @@ import com.joclegg.puzzles.sudoku.core.data.SavedGame
 import com.joclegg.puzzles.sudoku.core.data.SettingsRepository
 import com.joclegg.puzzles.sudoku.core.data.levels
 import com.joclegg.puzzles.sudoku.engine.MistakeCheck
-import com.joclegg.puzzles.sudoku.ui.LocalBoardColors
+import com.joclegg.puzzles.sudoku.ui.LocalSudokuColors
 import com.joclegg.puzzles.sudoku.ui.gameTitle
 import com.joclegg.puzzles.sudoku.ui.label
 import kotlinx.coroutines.flow.first
@@ -90,7 +90,7 @@ fun SudokuBestTimes(
                     tag = "best_${mode.name.lowercase()}_${level.name.lowercase()}",
                 )
             },
-        accent = LocalBoardColors.current.accent,
+        accent = LocalSudokuColors.current.accent,
         modifier = modifier,
         heading =
             if (mode == GameMode.CLASSIC) {

@@ -22,7 +22,7 @@ import com.joclegg.puzzles.twotone.feature.home.HomeRoute
 import com.joclegg.puzzles.twotone.feature.home.HomeViewModel
 import com.joclegg.puzzles.twotone.feature.settings.SettingsRoute
 import com.joclegg.puzzles.twotone.feature.settings.SettingsViewModel
-import com.joclegg.puzzles.twotone.ui.LocalTileColors
+import com.joclegg.puzzles.twotone.ui.LocalTwoToneColors
 import com.joclegg.puzzles.twotone.ui.TwoToneTheme
 
 object TwoToneRoutes {
@@ -64,7 +64,7 @@ object TwoToneRoutes {
         screen(HISTORY, darkTheme) {
             HistoryRoute(
                 viewModel = viewModel { StatsViewModel(twoToneStatsSource(container.games)) },
-                accent = LocalTileColors.current.accent,
+                accent = LocalTwoToneColors.current.accent,
                 filters = twoToneHistoryFilters,
                 onOpenGame = { navController.openTwoToneGame(it) },
                 onBack = navController::popBackStack,
@@ -78,7 +78,7 @@ object TwoToneRoutes {
         darkTheme: Boolean,
     ) {
         TwoToneTheme(darkTheme) {
-            AccentColors(LocalTileColors.current.accent) {
+            AccentColors(LocalTwoToneColors.current.accent) {
                 SettingsRoute(viewModel { SettingsViewModel(container.settings) }, onBack = null)
             }
         }

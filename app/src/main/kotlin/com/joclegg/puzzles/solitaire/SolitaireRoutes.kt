@@ -23,7 +23,7 @@ import com.joclegg.puzzles.solitaire.feature.home.HomeRoute
 import com.joclegg.puzzles.solitaire.feature.home.HomeViewModel
 import com.joclegg.puzzles.solitaire.feature.settings.SettingsRoute
 import com.joclegg.puzzles.solitaire.feature.settings.SettingsViewModel
-import com.joclegg.puzzles.solitaire.ui.LocalTableColors
+import com.joclegg.puzzles.solitaire.ui.LocalSolitaireColors
 import com.joclegg.puzzles.solitaire.ui.SolitaireTheme
 
 object SolitaireRoutes {
@@ -81,7 +81,7 @@ object SolitaireRoutes {
         screen(HISTORY, darkTheme) {
             HistoryRoute(
                 viewModel = viewModel { StatsViewModel(solitaireStatsSource(container.games)) },
-                accent = LocalTableColors.current.accent,
+                accent = LocalSolitaireColors.current.accent,
                 filters = solitaireHistoryFilters,
                 onOpenGame = { navController.openSolitaireGame(it) },
                 onBack = navController::popBackStack,
@@ -95,7 +95,7 @@ object SolitaireRoutes {
         darkTheme: Boolean,
     ) {
         SolitaireTheme(darkTheme) {
-            AccentColors(LocalTableColors.current.accent) {
+            AccentColors(LocalSolitaireColors.current.accent) {
                 SettingsRoute(viewModel { SettingsViewModel(container.settings) }, onBack = null)
             }
         }

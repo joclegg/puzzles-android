@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun TwoToneGameIcon(modifier: Modifier = Modifier) {
-    val colors = LocalTileColors.current
+    val colors = LocalTwoToneColors.current
     val squares = listOf(colors.red to null, colors.blue to null, colors.blue to null, colors.red to null)
     Column(modifier.size(56.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
         squares.chunked(2).forEach { row ->
@@ -35,7 +35,7 @@ private fun Square(
     label: String?,
     modifier: Modifier = Modifier,
 ) {
-    val colors = LocalTileColors.current
+    val colors = LocalTwoToneColors.current
     Box(modifier.size(26.dp).background(colour, RoundedCornerShape(5.dp))) {
         if (label != null) {
             Text(

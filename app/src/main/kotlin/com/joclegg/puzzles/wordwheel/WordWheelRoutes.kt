@@ -22,7 +22,7 @@ import com.joclegg.puzzles.wordwheel.feature.home.HomeRoute
 import com.joclegg.puzzles.wordwheel.feature.home.HomeViewModel
 import com.joclegg.puzzles.wordwheel.feature.settings.SettingsRoute
 import com.joclegg.puzzles.wordwheel.feature.settings.SettingsViewModel
-import com.joclegg.puzzles.wordwheel.ui.LocalWheelColors
+import com.joclegg.puzzles.wordwheel.ui.LocalWordWheelColors
 import com.joclegg.puzzles.wordwheel.ui.WordWheelTheme
 
 object WordWheelRoutes {
@@ -71,7 +71,7 @@ object WordWheelRoutes {
         screen(HISTORY, darkTheme) {
             HistoryRoute(
                 viewModel = viewModel { StatsViewModel(wordWheelStatsSource(container.games)) },
-                accent = LocalWheelColors.current.accent,
+                accent = LocalWordWheelColors.current.accent,
                 filters = wordWheelHistoryFilters,
                 onOpenGame = { navController.openWordWheelGame(it) },
                 onBack = navController::popBackStack,
@@ -85,7 +85,7 @@ object WordWheelRoutes {
         darkTheme: Boolean,
     ) {
         WordWheelTheme(darkTheme) {
-            AccentColors(LocalWheelColors.current.accent) {
+            AccentColors(LocalWordWheelColors.current.accent) {
                 SettingsRoute(viewModel { SettingsViewModel(container.settings) }, onBack = null)
             }
         }

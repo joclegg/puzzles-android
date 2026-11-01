@@ -8,7 +8,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
 @Immutable
-data class WheelColors(
+data class WordWheelColors(
     val cell: Color,
     val cellFound: Color,
     val cellHinted: Color,
@@ -23,7 +23,7 @@ data class WheelColors(
 )
 
 private val Light =
-    WheelColors(
+    WordWheelColors(
         cell = Color(0xFFE6E9EE),
         cellFound = Color(0xFF1565D8),
         cellHinted = Color(0xFFBCD9FC),
@@ -38,7 +38,7 @@ private val Light =
     )
 
 private val Dark =
-    WheelColors(
+    WordWheelColors(
         cell = Color(0xFF2A2E35),
         cellFound = Color(0xFF2F5E99),
         cellHinted = Color(0xFF244A78),
@@ -52,7 +52,7 @@ private val Dark =
         accent = Color(0xFF939BFF),
     )
 
-val LocalWheelColors = staticCompositionLocalOf { Light }
+val LocalWordWheelColors = staticCompositionLocalOf { Light }
 
 @Composable
 fun WordWheelTheme(
@@ -65,5 +65,5 @@ fun WordWheelTheme(
         } else {
             Light
         }
-    CompositionLocalProvider(LocalWheelColors provides colors, content = content)
+    CompositionLocalProvider(LocalWordWheelColors provides colors, content = content)
 }

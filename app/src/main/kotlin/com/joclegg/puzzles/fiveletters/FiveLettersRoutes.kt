@@ -24,7 +24,7 @@ import com.joclegg.puzzles.fiveletters.feature.home.HomeViewModel
 import com.joclegg.puzzles.fiveletters.feature.settings.SettingsRoute
 import com.joclegg.puzzles.fiveletters.feature.settings.SettingsViewModel
 import com.joclegg.puzzles.fiveletters.ui.FiveLettersTheme
-import com.joclegg.puzzles.fiveletters.ui.LocalLetterColors
+import com.joclegg.puzzles.fiveletters.ui.LocalFiveLettersColors
 
 object FiveLettersRoutes {
     const val HOME = "five_letters/home"
@@ -78,7 +78,7 @@ object FiveLettersRoutes {
         darkTheme: Boolean,
     ) {
         Themed(container, darkTheme) {
-            AccentColors(LocalLetterColors.current.accent) {
+            AccentColors(LocalFiveLettersColors.current.accent) {
                 SettingsRoute(viewModel { SettingsViewModel(container.settings) }, onBack = null)
             }
         }

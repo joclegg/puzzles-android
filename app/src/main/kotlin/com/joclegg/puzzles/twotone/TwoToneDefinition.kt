@@ -13,7 +13,7 @@ import com.joclegg.puzzles.core.sync.StampedPreferences
 import com.joclegg.puzzles.twotone.core.data.GameDatabase
 import com.joclegg.puzzles.twotone.core.data.GameRepository
 import com.joclegg.puzzles.twotone.core.data.SettingsRepository
-import com.joclegg.puzzles.twotone.ui.LocalTileColors
+import com.joclegg.puzzles.twotone.ui.LocalTwoToneColors
 import com.joclegg.puzzles.twotone.ui.TwoToneTheme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -62,7 +62,7 @@ class TwoToneDefinition(
     @Composable
     override fun accent(darkTheme: Boolean): Color {
         var accent = Color.Unspecified
-        TwoToneTheme(darkTheme) { accent = LocalTileColors.current.accent }
+        TwoToneTheme(darkTheme) { accent = LocalTwoToneColors.current.accent }
         return accent
     }
 

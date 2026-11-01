@@ -50,7 +50,7 @@ fun SlideBoard(
     onSlide: (Int, Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val colors = LocalSlideColors.current
+    val colors = LocalSlideOutColors.current
     BoxWithConstraints(modifier.aspectRatio(1f).background(colors.board, RoundedCornerShape(12.dp)).padding(6.dp)) {
         val cell = maxWidth / SIZE
         Box(
@@ -88,7 +88,7 @@ private fun BlockView(
     onSlide: (Int, Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val colors = LocalSlideColors.current
+    val colors = LocalSlideOutColors.current
     val cellPx = with(LocalDensity.current) { cell.toPx() }
     var drag by remember(block) { mutableFloatStateOf(0f) }
     val currentOnSlide by rememberUpdatedState(onSlide)

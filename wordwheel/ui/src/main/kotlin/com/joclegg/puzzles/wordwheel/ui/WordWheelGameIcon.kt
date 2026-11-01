@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun WordWheelGameIcon(modifier: Modifier = Modifier) {
-    val colors = LocalWheelColors.current
+    val colors = LocalWordWheelColors.current
     Box(modifier.size(56.dp).background(colors.wheel, CircleShape)) {
         listOf("W" to (19 to 2), "O" to (35 to 19), "R" to (19 to 36), "D" to (2 to 19)).forEach { (letter, at) ->
             Box(

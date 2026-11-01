@@ -13,7 +13,7 @@ import com.joclegg.puzzles.core.sync.StampedPreferences
 import com.joclegg.puzzles.sightlines.core.data.GameDatabase
 import com.joclegg.puzzles.sightlines.core.data.GameRepository
 import com.joclegg.puzzles.sightlines.core.data.SettingsRepository
-import com.joclegg.puzzles.sightlines.ui.LocalTileColors
+import com.joclegg.puzzles.sightlines.ui.LocalSightlinesColors
 import com.joclegg.puzzles.sightlines.ui.SightlinesTheme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -62,7 +62,7 @@ class SightlinesDefinition(
     @Composable
     override fun accent(darkTheme: Boolean): Color {
         var accent = Color.Unspecified
-        SightlinesTheme(darkTheme) { accent = LocalTileColors.current.accent }
+        SightlinesTheme(darkTheme) { accent = LocalSightlinesColors.current.accent }
         return accent
     }
 

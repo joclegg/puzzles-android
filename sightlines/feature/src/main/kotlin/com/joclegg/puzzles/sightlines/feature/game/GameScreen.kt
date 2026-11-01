@@ -36,7 +36,7 @@ import com.joclegg.puzzles.core.ui.formatDuration
 import com.joclegg.puzzles.sightlines.engine.Dot
 import com.joclegg.puzzles.sightlines.ui.ColourPicker
 import com.joclegg.puzzles.sightlines.ui.HowToPlayButton
-import com.joclegg.puzzles.sightlines.ui.LocalTileColors
+import com.joclegg.puzzles.sightlines.ui.LocalSightlinesColors
 import com.joclegg.puzzles.sightlines.ui.SightlinesBoard
 import com.joclegg.puzzles.sightlines.ui.SightlinesIcons
 import com.joclegg.puzzles.sightlines.ui.ToolButton
@@ -226,7 +226,7 @@ private fun SolvedDialog(
 ) {
     WinDialog(
         title = "Solved!",
-        accent = LocalTileColors.current.accent,
+        accent = LocalSightlinesColors.current.accent,
         dailyGroup = "SIGHTLINES",
         newLabel = state.levelLabel,
         newTag = "solved_new_puzzle",

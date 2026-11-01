@@ -27,7 +27,7 @@ fun ColourPicker(
     onColourClick: (Dot) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val colors = LocalTileColors.current
+    val colors = LocalSightlinesColors.current
     Row(modifier, horizontalArrangement = Arrangement.spacedBy(20.dp)) {
         listOf(
             Dot.BLUE to colors.blue to "Blue",

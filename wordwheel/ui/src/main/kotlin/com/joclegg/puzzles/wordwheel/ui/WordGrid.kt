@@ -32,7 +32,7 @@ fun WordGrid(
     grid: GridUi,
     modifier: Modifier = Modifier,
 ) {
-    val colors = LocalWheelColors.current
+    val colors = LocalWordWheelColors.current
     val letters = grid.crossword.letters
     BoxWithConstraints(modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
         val cell = min(maxWidth / grid.crossword.cols, maxHeight / grid.crossword.rows).coerceAtMost(MAX_CELL.dp)

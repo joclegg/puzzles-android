@@ -27,7 +27,7 @@ import com.joclegg.puzzles.sudoku.core.data.GameMode
 import com.joclegg.puzzles.sudoku.engine.CageProblem
 import com.joclegg.puzzles.sudoku.engine.InputMode
 import com.joclegg.puzzles.sudoku.ui.KeypadTool
-import com.joclegg.puzzles.sudoku.ui.LocalBoardColors
+import com.joclegg.puzzles.sudoku.ui.LocalSudokuColors
 import com.joclegg.puzzles.sudoku.ui.NumberPad
 import com.joclegg.puzzles.sudoku.ui.SudokuBoard
 import com.joclegg.puzzles.sudoku.ui.SudokuIcons
@@ -201,5 +201,5 @@ private fun ProblemText(
     text: String,
     modifier: Modifier = Modifier,
 ) {
-    Text(text, color = LocalBoardColors.current.wrong, modifier = modifier.fillMaxWidth().testTag("entry_problem"))
+    Text(text, color = LocalSudokuColors.current.wrong, modifier = modifier.fillMaxWidth().testTag("entry_problem"))
 }

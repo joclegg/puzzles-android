@@ -102,7 +102,7 @@ private fun TileView(
     onTileClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val colors = LocalTileColors.current
+    val colors = LocalTwoToneColors.current
     val tile = board.grid.tiles[cell]
     val given = cell in board.givens
     val broken = cell in board.broken

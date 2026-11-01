@@ -22,7 +22,7 @@ import com.joclegg.puzzles.sightlines.feature.home.HomeRoute
 import com.joclegg.puzzles.sightlines.feature.home.HomeViewModel
 import com.joclegg.puzzles.sightlines.feature.settings.SettingsRoute
 import com.joclegg.puzzles.sightlines.feature.settings.SettingsViewModel
-import com.joclegg.puzzles.sightlines.ui.LocalTileColors
+import com.joclegg.puzzles.sightlines.ui.LocalSightlinesColors
 import com.joclegg.puzzles.sightlines.ui.SightlinesTheme
 
 object SightlinesRoutes {
@@ -64,7 +64,7 @@ object SightlinesRoutes {
         screen(HISTORY, darkTheme) {
             HistoryRoute(
                 viewModel = viewModel { StatsViewModel(sightlinesStatsSource(container.games)) },
-                accent = LocalTileColors.current.accent,
+                accent = LocalSightlinesColors.current.accent,
                 filters = sightlinesHistoryFilters,
                 onOpenGame = { navController.openSightlinesGame(it) },
                 onBack = navController::popBackStack,
@@ -78,7 +78,7 @@ object SightlinesRoutes {
         darkTheme: Boolean,
     ) {
         SightlinesTheme(darkTheme) {
-            AccentColors(LocalTileColors.current.accent) {
+            AccentColors(LocalSightlinesColors.current.accent) {
                 SettingsRoute(viewModel { SettingsViewModel(container.settings) }, onBack = null)
             }
         }

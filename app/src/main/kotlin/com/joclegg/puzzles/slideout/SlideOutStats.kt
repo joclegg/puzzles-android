@@ -13,7 +13,7 @@ import com.joclegg.puzzles.slideout.core.data.GameStatus
 import com.joclegg.puzzles.slideout.core.data.LevelStats
 import com.joclegg.puzzles.slideout.core.data.SavedGame
 import com.joclegg.puzzles.slideout.engine.Level
-import com.joclegg.puzzles.slideout.ui.LocalSlideColors
+import com.joclegg.puzzles.slideout.ui.LocalSlideOutColors
 import com.joclegg.puzzles.slideout.ui.label
 import com.joclegg.puzzles.slideout.ui.title
 import com.joclegg.puzzles.stats.puzzleStatusLabel
@@ -60,6 +60,6 @@ fun SlideOutStatsTable(
                 )
             },
         modifier = modifier,
-        accent = LocalSlideColors.current.accent,
+        accent = LocalSlideOutColors.current.accent,
     )
 }
