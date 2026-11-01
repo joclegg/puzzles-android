@@ -29,6 +29,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.joclegg.puzzles.core.ui.HelpersHint
 import com.joclegg.puzzles.core.ui.WinDialog
 import com.joclegg.puzzles.core.ui.WinStat
 import com.joclegg.puzzles.twotone.core.ui.BackButton
@@ -66,7 +67,6 @@ fun GameRoute(
             onTileClick = viewModel::onTileClick,
             onColourClick = viewModel::onColourClick,
             onUndo = viewModel::onUndo,
-            onInputModeToggle = viewModel::onInputModeToggle,
             onHint = viewModel::onHint,
             onRestart = viewModel::onRestart,
             onRevealSolution = viewModel::onRevealSolution,
@@ -84,7 +84,6 @@ fun GameScreen(
     onTileClick: (Int) -> Unit,
     onColourClick: (Tile) -> Unit,
     onUndo: () -> Unit,
-    onInputModeToggle: () -> Unit,
     onHint: () -> Unit,
     onRestart: () -> Unit,
     onRevealSolution: () -> Unit,
@@ -122,16 +121,6 @@ fun GameScreen(
                 },
                 { showGivens = !showGivens },
                 tag = "starting_tiles",
-            )
-            ToolButton(
-                TwoToneIcons.Palette,
-                if (state.pickColour) {
-                    "Switch to tap to cycle"
-                } else {
-                    "Switch to pick a colour"
-                },
-                onInputModeToggle,
-                tag = "input_mode",
             )
             if (state.showHints) {
                 ToolButton(
@@ -189,6 +178,7 @@ fun GameScreen(
                 }
             }
         }
+        HelpersHint(onSettings)
         Spacer(Modifier.height(24.dp))
         TwoToneBoard(
             state.board.copy(showGivens = showGivens),

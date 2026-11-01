@@ -8,10 +8,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
@@ -31,14 +29,12 @@ fun ColourPicker(
 ) {
     val colors = LocalTileColors.current
     Row(modifier, horizontalArrangement = Arrangement.spacedBy(20.dp)) {
-        listOf(Dot.BLUE, Dot.RED, Dot.EMPTY).forEach { option ->
+        listOf(
+            Dot.BLUE to (colors.blue to "Blue"),
+            Dot.RED to (colors.red to "Red"),
+        ).forEach { (option, look) ->
             val picked = option == colour
-            val (fill, name) =
-                when (option) {
-                    Dot.RED -> colors.red to "Red"
-                    Dot.BLUE -> colors.blue to "Blue"
-                    Dot.EMPTY -> colors.emptyTile to "Clear"
-                }
+            val (fill, name) = look
             Box(
                 Modifier
                     .size(56.dp)
@@ -56,11 +52,7 @@ fun ColourPicker(
                         selected = picked
                         contentDescription = name
                     },
-            ) {
-                if (option == Dot.EMPTY) {
-                    Icon(SightlinesIcons.Clear, contentDescription = null, modifier = Modifier.align(Alignment.Center))
-                }
-            }
+            )
         }
     }
 }

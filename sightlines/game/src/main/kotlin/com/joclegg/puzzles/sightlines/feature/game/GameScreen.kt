@@ -28,6 +28,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.joclegg.puzzles.core.ui.HelpersHint
 import com.joclegg.puzzles.core.ui.WinDialog
 import com.joclegg.puzzles.core.ui.WinStat
 import com.joclegg.puzzles.sightlines.core.ui.BackButton
@@ -65,7 +66,6 @@ fun GameRoute(
             onDotClick = viewModel::onDotClick,
             onColourClick = viewModel::onColourClick,
             onUndo = viewModel::onUndo,
-            onInputModeToggle = viewModel::onInputModeToggle,
             onHint = viewModel::onHint,
             onRestart = viewModel::onRestart,
             onRevealSolution = viewModel::onRevealSolution,
@@ -83,7 +83,6 @@ fun GameScreen(
     onDotClick: (Int) -> Unit,
     onColourClick: (Dot) -> Unit,
     onUndo: () -> Unit,
-    onInputModeToggle: () -> Unit,
     onHint: () -> Unit,
     onRestart: () -> Unit,
     onRevealSolution: () -> Unit,
@@ -111,16 +110,6 @@ fun GameScreen(
                 }
             }
             ToolButton(SightlinesIcons.Undo, "Undo the last tap", onUndo, tag = "undo", enabled = state.canUndo)
-            ToolButton(
-                SightlinesIcons.Palette,
-                if (state.pickColour) {
-                    "Switch to tap to cycle"
-                } else {
-                    "Switch to pick a colour"
-                },
-                onInputModeToggle,
-                tag = "input_mode",
-            )
             if (state.showHints) {
                 ToolButton(
                     SightlinesIcons.Hint,
@@ -177,6 +166,7 @@ fun GameScreen(
                 }
             }
         }
+        HelpersHint(onSettings)
         Spacer(Modifier.height(24.dp))
         SightlinesBoard(state.board, onDotClick, Modifier.tourTarget(tour, "board").fillMaxWidth().padding(horizontal = 12.dp))
         Spacer(Modifier.height(16.dp))
