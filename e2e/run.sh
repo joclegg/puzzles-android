@@ -5,7 +5,8 @@ usage() {
   echo "Usage: e2e/run.sh [--fast] [--shards N] [--part I/N] [flow.yaml ...]"
   echo "  --fast      only flows tagged fast"
   echo "  --shards N  run flows in parallel on N emulators (local)"
-  echo "  --part I/N  run the I-th of N slices of the flows (one CI matrix job each)"
+  echo "  --part I/N  run the I-th of N slices of the flows (one CI matrix job each), balanced by e2e/flow-times.txt"
+  echo "  E2E_APK=path installs that APK instead of building one; E2E_LIST_ONLY=1 prints the flows and exits"
 }
 
 cd "$(dirname "$0")/.."
@@ -25,17 +26,64 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+is_fast() { awk '/^---/ {exit} /^  - fast$/ {found=1} END {exit !found}' "$1"; }
+
+partition() {
+  local index="$1" total="$2"
+  shift 2
+  for flow in "$@"; do
+    echo "$(basename "$flow" .yaml) $flow"
+  done | awk -v index_="$index" -v total="$total" '
+    NR == FNR { known[$1] = $2; next }
+    { names[++n] = $1; paths[n] = $2 }
+    END {
+      count = 0
+      for (name in known) { sorted[++count] = known[name] }
+      for (i = 2; i <= count; i++) {
+        value = sorted[i]
+        for (j = i - 1; j >= 1 && sorted[j] > value; j--) { sorted[j + 1] = sorted[j] }
+        sorted[j + 1] = value
+      }
+      median = count ? sorted[int((count + 1) / 2)] : 1
+      for (i = 1; i <= n; i++) { cost[i] = (names[i] in known) ? known[names[i]] : median }
+      for (i = 2; i <= n; i++) {
+        c = cost[i]; nm = names[i]; pt = paths[i]
+        for (j = i - 1; j >= 1 && (cost[j] < c || (cost[j] == c && names[j] > nm)); j--) {
+          cost[j + 1] = cost[j]; names[j + 1] = names[j]; paths[j + 1] = paths[j]
+        }
+        cost[j + 1] = c; names[j + 1] = nm; paths[j + 1] = pt
+      }
+      for (part = 1; part <= total; part++) { load[part] = 0 }
+      for (i = 1; i <= n; i++) {
+        best = 1
+        for (part = 2; part <= total; part++) { if (load[part] < load[best]) { best = part } }
+        load[best] += cost[i]
+        if (best == index_) { print paths[i] }
+      }
+    }' e2e/flow-times.txt -
+}
+
 if [[ ${#FLOWS[@]} -eq 0 ]]; then
-  ALL=($(ls e2e/flows/*.yaml | sort))
   if [[ -n "$PART" ]]; then
-    INDEX="${PART%/*}"
-    TOTAL="${PART#*/}"
-    for i in "${!ALL[@]}"; do
-      [[ $((i % TOTAL)) -eq $((INDEX - 1)) ]] && FLOWS+=("${ALL[$i]}")
+    ALL=()
+    for flow in $(ls e2e/flows/*.yaml | sort); do
+      if [[ ${#TAGS[@]} -eq 0 ]] || is_fast "$flow"; then
+        ALL+=("$flow")
+      fi
     done
+    FLOWS=($(partition "${PART%/*}" "${PART#*/}" "${ALL[@]}"))
+    if [[ ${#FLOWS[@]} -eq 0 ]]; then
+      echo "No flows in part $PART"
+      exit 0
+    fi
   else
     FLOWS=(e2e/flows)
   fi
+fi
+
+if [[ -n "${E2E_LIST_ONLY:-}" ]]; then
+  printf '%s\n' "${FLOWS[@]}"
+  exit 0
 fi
 
 export JAVA_HOME="${JAVA_HOME:-/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home}"
@@ -88,11 +136,15 @@ for serial in "${DEVICES[@]}"; do
   adb -s "$serial" shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null
 done
 
-e2e/fetch-banks.sh
-./gradlew -q :app:assembleDebug
+APK="${E2E_APK:-}"
+if [[ -z "$APK" ]]; then
+  e2e/fetch-banks.sh
+  ./gradlew -q :app:assembleDebug
+  APK=app/build/outputs/apk/debug/app-debug.apk
+fi
 INSTALLS=()
 for serial in "${DEVICES[@]}"; do
-  adb -s "$serial" install -r app/build/outputs/apk/debug/app-debug.apk >/dev/null &
+  adb -s "$serial" install -r "$APK" >/dev/null &
   INSTALLS+=($!)
 done
 for pid in "${INSTALLS[@]}"; do wait "$pid"; done

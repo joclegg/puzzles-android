@@ -21,7 +21,7 @@ Puzzles: an Android app, playable offline after a first download of its puzzles,
 - `e2e/run.sh --shards 3`: run every Maestro flow in parallel on three emulators (boots any that aren't running)
 - `e2e/run.sh --fast`: only the flows tagged `fast`, for everyday checks
 - `e2e/run.sh e2e/flows/<flow>.yaml`: run one flow
-- `e2e/run.sh --part I/N`: run one slice of the flows, as each CI matrix job does
+- `e2e/run.sh --part I/N`: run one slice of the flows, as each CI matrix job does. Slices are balanced by `e2e/flow-times.txt` (flow name and seconds; flows not listed count as the median), longest first onto the least-loaded slice. `E2E_LIST_ONLY=1` prints a slice's flows without running them; `E2E_APK=<path>` installs that APK instead of building one
 - `./gradlew :sudoku:engine:generateBank -PbankSize=1000`: regenerate the sudoku puzzles
 
 ## Structure
@@ -211,6 +211,7 @@ Rules marked (lint) are enforced by `spotlessCheck`, Android Lint or the build.
 - MUST tag quick, core flows `fast`.
 - Pass `helpers: "on"` in a flow's first `launchApp` arguments to start with the old helper defaults on (`HelperFixtures`, debug only).
 - MUST NOT add data backups or other slow steps to `e2e/run.sh`: emulator data is disposable and the suite must stay fast.
+- CI (`.github/workflows/ci.yml`): `build-app` fetches the banks and builds the debug APK once; five `e2e` shards download it and run `e2e/run.sh --part I/5` alongside `check` (lint, unit tests). Pull requests run only the `fast` flows; pushes to `main` run them all. Add a line to `e2e/flow-times.txt` when a new flow is much slower than the median, and refresh the times from a main run's logs when shards drift apart.
 - MUST add new fixtures to `app/src/debug/.../<Game>Fixtures.kt`, with names unique across all games. MUST NOT ship fixtures in release.
 - MUST assert a cell's digit with `childOf: { id: cell_rXcY }`.
 - MUST run e2e flows on the emulator only, never a physical device.
