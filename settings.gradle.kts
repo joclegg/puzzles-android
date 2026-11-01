@@ -21,6 +21,7 @@ rootProject.name = "puzzles"
 
 include(
     ":app",
+    ":core:data",
     ":core:sync",
     ":core:ui",
     ":core:testing",
