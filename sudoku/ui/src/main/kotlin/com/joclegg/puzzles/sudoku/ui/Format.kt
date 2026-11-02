@@ -1,5 +1,6 @@
 package com.joclegg.puzzles.sudoku.ui
 
+import androidx.compose.ui.res.stringResource
 import com.joclegg.puzzles.sudoku.engine.Difficulty
 
 fun Difficulty?.label(): String =

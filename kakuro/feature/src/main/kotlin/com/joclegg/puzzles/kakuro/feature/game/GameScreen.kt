@@ -25,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -33,6 +34,7 @@ import com.joclegg.puzzles.core.ui.HelpersHint
 import com.joclegg.puzzles.core.ui.WinDialog
 import com.joclegg.puzzles.core.ui.WinStat
 import com.joclegg.puzzles.core.ui.formatDuration
+import com.joclegg.puzzles.kakuro.feature.R
 import com.joclegg.puzzles.kakuro.ui.HintButton
 import com.joclegg.puzzles.kakuro.ui.HowToPlayButton
 import com.joclegg.puzzles.kakuro.ui.KakuroBoard
@@ -118,8 +120,8 @@ fun GameScreen(
                     }
                 }
             }
-            ToolButton(KakuroIcons.Undo, "Undo the last tap", onUndo, tag = "undo", enabled = state.canUndo)
-            ToolButton(KakuroIcons.Redo, "Redo the tap you undid", onRedo, tag = "redo", enabled = state.canRedo)
+            ToolButton(KakuroIcons.Undo, stringResource(R.string.undo_the_last_tap), onUndo, tag = "undo", enabled = state.canUndo)
+            ToolButton(KakuroIcons.Redo, stringResource(R.string.redo_the_tap_you_undid), onRedo, tag = "redo", enabled = state.canRedo)
             if (state.showHints) {
                 HintButton(onHint, enabled = !state.solved, modifier = Modifier.tourTarget(tour, "hint"))
             }
@@ -128,11 +130,11 @@ fun GameScreen(
             }
             Column {
                 IconButton(onClick = { menuOpen = true }, modifier = Modifier.testTag("game_menu").tourTarget(tour, "menu")) {
-                    Icon(KakuroIcons.More, contentDescription = "More")
+                    Icon(KakuroIcons.More, contentDescription = stringResource(R.string.more))
                 }
                 DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }, modifier = Modifier.dialogTestTags()) {
                     DropdownMenuItem(
-                        text = { Text("Restart this puzzle") },
+                        text = { Text(stringResource(R.string.restart_this_puzzle)) },
                         enabled = !state.solved,
                         onClick = {
                             menuOpen = false
@@ -141,7 +143,7 @@ fun GameScreen(
                         modifier = Modifier.testTag("restart"),
                     )
                     DropdownMenuItem(
-                        text = { Text("New puzzle") },
+                        text = { Text(stringResource(R.string.new_puzzle)) },
                         onClick = {
                             menuOpen = false
                             onNewPuzzle()
@@ -150,7 +152,7 @@ fun GameScreen(
                     )
                     if (state.allowReveal && !state.solved) {
                         DropdownMenuItem(
-                            text = { Text("Show solution") },
+                            text = { Text(stringResource(R.string.show_solution)) },
                             onClick = {
                                 menuOpen = false
                                 revealing = true
@@ -159,7 +161,7 @@ fun GameScreen(
                         )
                     }
                     DropdownMenuItem(
-                        text = { Text("Settings") },
+                        text = { Text(stringResource(R.string.settings)) },
                         onClick = {
                             menuOpen = false
                             onSettings()
@@ -192,9 +194,9 @@ fun GameScreen(
                     KeypadTool(
                         KakuroIcons.Eraser,
                         when {
-                            !state.digitFirst -> "Clear the selected cell"
-                            state.eraserActive -> "Erase is on: tap cells to clear them"
-                            else -> "Turn on erase, then tap cells to clear them"
+                            !state.digitFirst -> stringResource(R.string.clear_the_selected_cell)
+                            state.eraserActive -> stringResource(R.string.erase_is_on_tap_cells_to_clear_them)
+                            else -> stringResource(R.string.turn_on_erase_then_tap_cells_to_clear)
                         },
                         onErase,
                         tag = "erase",
@@ -203,9 +205,9 @@ fun GameScreen(
                     KeypadTool(
                         KakuroIcons.Pencil,
                         if (state.notesMode) {
-                            "Notes are on: digits go in as notes"
+                            stringResource(R.string.notes_are_on_digits_go_in_as_notes)
                         } else {
-                            "Notes are off: digits go in as answers"
+                            stringResource(R.string.notes_are_off_digits_go_in_as_answers)
                         },
                         onToggleNotes,
                         tag = "notes",
@@ -214,9 +216,9 @@ fun GameScreen(
                     KeypadTool(
                         KakuroIcons.Mark,
                         if (state.digitFirst) {
-                            "Mark: tap cells to box them in red, tap again to stop"
+                            stringResource(R.string.mark_tap_cells_to_box_them_in_red_tap)
                         } else {
-                            "Box the selected cell in red, to remember where a trial started"
+                            stringResource(R.string.box_the_selected_cell_in_red_to)
                         },
                         onMark,
                         tag = "mark",
@@ -229,8 +231,8 @@ fun GameScreen(
         AlertDialog(
             onDismissRequest = { revealing = false },
             modifier = Modifier.dialogTestTags(),
-            title = { Text("Show the solution?") },
-            text = { Text("This ends the puzzle. It won't count towards best times.") },
+            title = { Text(stringResource(R.string.show_the_solution)) },
+            text = { Text(stringResource(R.string.this_ends_the_puzzle_it_won_t_count)) },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -238,9 +240,9 @@ fun GameScreen(
                         onRevealSolution()
                     },
                     modifier = Modifier.testTag("confirm_reveal"),
-                ) { Text("Show solution") }
+                ) { Text(stringResource(R.string.show_solution)) }
             },
-            dismissButton = { TextButton(onClick = { revealing = false }) { Text("Cancel") } },
+            dismissButton = { TextButton(onClick = { revealing = false }) { Text(stringResource(R.string.cancel)) } },
         )
     }
     if (state.solved && state.resultSaved) {
@@ -256,7 +258,7 @@ private fun SolvedDialog(
     modifier: Modifier = Modifier,
 ) {
     WinDialog(
-        title = "Solved!",
+        title = stringResource(R.string.solved),
         accent = LocalKakuroColors.current.accent,
         dailyGroup = "KAKURO",
         newLabel = state.levelLabel,
@@ -265,11 +267,11 @@ private fun SolvedDialog(
         newBest = state.newBest,
         stats =
             buildList {
-                add(WinStat("Time", formatDuration(state.elapsedMs), "solved_time"))
+                add(WinStat(stringResource(R.string.time), formatDuration(state.elapsedMs), "solved_time"))
             },
         modifier = modifier.dialogTestTags().testTag("solved_dialog"),
     ) {
-        TextButton(onClick = onHome, modifier = Modifier.testTag("solved_home")) { Text("Home") }
+        TextButton(onClick = onHome, modifier = Modifier.testTag("solved_home")) { Text(stringResource(R.string.home)) }
     }
 }
 

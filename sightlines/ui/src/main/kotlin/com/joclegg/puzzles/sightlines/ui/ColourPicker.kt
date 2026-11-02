@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
@@ -30,8 +31,8 @@ fun ColourPicker(
     val colors = LocalSightlinesColors.current
     Row(modifier, horizontalArrangement = Arrangement.spacedBy(20.dp)) {
         listOf(
-            Dot.BLUE to colors.blue to "Blue",
-            Dot.RED to colors.red to "Red",
+            Dot.BLUE to colors.blue to stringResource(R.string.blue),
+            Dot.RED to colors.red to stringResource(R.string.red),
         ).forEach { (choice, name) ->
             val (option, fill) = choice
             val picked = option == colour

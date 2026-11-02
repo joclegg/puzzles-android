@@ -26,11 +26,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joclegg.puzzles.core.ui.BackButton
 import com.joclegg.puzzles.core.ui.HelpersHint
 import com.joclegg.puzzles.core.ui.WinDialog
+import com.joclegg.puzzles.fiveletters.feature.R
 import com.joclegg.puzzles.fiveletters.ui.FiveLettersIcons
 import com.joclegg.puzzles.fiveletters.ui.HintButton
 import com.joclegg.puzzles.fiveletters.ui.HowToPlayButton
@@ -102,11 +104,11 @@ fun GameScreen(
             Column(Modifier.weight(1f)) {
                 Text(state.title, style = MaterialTheme.typography.titleMedium, modifier = Modifier.testTag("game_title"))
                 if (state.hardMode) {
-                    Text("Hard mode", style = MaterialTheme.typography.labelMedium)
+                    Text(stringResource(R.string.hard_mode), style = MaterialTheme.typography.labelMedium)
                 }
             }
             if (state.won || state.lost) {
-                ToolButton(FiveLettersIcons.Share, "Share your result", onShare, tag = "share")
+                ToolButton(FiveLettersIcons.Share, stringResource(R.string.share_your_result), onShare, tag = "share")
             }
             if (state.showHints) {
                 HintButton(onHint, enabled = !state.won && !state.lost, modifier = Modifier.tourTarget(tour, "hint"))
@@ -116,12 +118,12 @@ fun GameScreen(
             }
             Column {
                 IconButton(onClick = { menuOpen = true }, modifier = Modifier.testTag("game_menu").tourTarget(tour, "menu")) {
-                    Icon(FiveLettersIcons.More, contentDescription = "More")
+                    Icon(FiveLettersIcons.More, contentDescription = stringResource(R.string.more))
                 }
                 DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }, modifier = Modifier.dialogTestTags()) {
                     if (state.allowReveal && !state.won && !state.lost) {
                         DropdownMenuItem(
-                            text = { Text("Show the word") },
+                            text = { Text(stringResource(R.string.show_the_word)) },
                             onClick = {
                                 menuOpen = false
                                 revealing = true
@@ -130,7 +132,7 @@ fun GameScreen(
                         )
                     }
                     DropdownMenuItem(
-                        text = { Text("Settings") },
+                        text = { Text(stringResource(R.string.settings)) },
                         onClick = {
                             menuOpen = false
                             onSettings()
@@ -160,8 +162,8 @@ fun GameScreen(
         AlertDialog(
             onDismissRequest = { revealing = false },
             modifier = Modifier.dialogTestTags(),
-            title = { Text("Show the word?") },
-            text = { Text("This ends the game and counts as a loss.") },
+            title = { Text(stringResource(R.string.show_the_word_2)) },
+            text = { Text(stringResource(R.string.this_ends_the_game_and_counts_as_a)) },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -169,9 +171,9 @@ fun GameScreen(
                         onRevealWord()
                     },
                     modifier = Modifier.testTag("confirm_reveal"),
-                ) { Text("Show the word") }
+                ) { Text(stringResource(R.string.show_the_word)) }
             },
-            dismissButton = { TextButton(onClick = { revealing = false }) { Text("Cancel") } },
+            dismissButton = { TextButton(onClick = { revealing = false }) { Text(stringResource(R.string.cancel)) } },
         )
     }
     if ((state.won || state.lost) && !resultClosed) {
@@ -196,7 +198,7 @@ private fun ResultDialog(
             },
         accent = LocalFiveLettersColors.current.accent,
         dailyGroup = "FIVE_LETTERS",
-        newLabel = "Word",
+        newLabel = stringResource(R.string.word),
         newTag = "result_new_practice",
         onNew =
             if (state.isDaily) {
@@ -209,16 +211,16 @@ private fun ResultDialog(
         modifier = modifier.dialogTestTags().testTag("result_dialog"),
         message =
             if (state.isDaily) {
-                "A new word comes tomorrow. Share your grid without giving the word away."
+                stringResource(R.string.a_new_word_comes_tomorrow_share_your)
             } else {
-                "Play another practice word, or share your grid."
+                stringResource(R.string.play_another_practice_word_or_share)
             },
         titleTag = "result_title",
         lost = !state.won,
         onDismissRequest = onClose,
     ) {
-        TextButton(onClick = onClose, modifier = Modifier.testTag("result_close")) { Text("Close") }
-        TextButton(onClick = onShare, modifier = Modifier.testTag("result_share")) { Text("Share") }
+        TextButton(onClick = onClose, modifier = Modifier.testTag("result_close")) { Text(stringResource(R.string.close)) }
+        TextButton(onClick = onShare, modifier = Modifier.testTag("result_share")) { Text(stringResource(R.string.share)) }
     }
 }
 

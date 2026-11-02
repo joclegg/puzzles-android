@@ -16,6 +16,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joclegg.puzzles.core.ui.ContinueCard
 import com.joclegg.puzzles.core.ui.DailyTile
@@ -31,6 +32,7 @@ import com.joclegg.puzzles.sudoku.core.data.GameMode
 import com.joclegg.puzzles.sudoku.core.data.SavedGame
 import com.joclegg.puzzles.sudoku.core.data.levels
 import com.joclegg.puzzles.sudoku.engine.Difficulty
+import com.joclegg.puzzles.sudoku.feature.R
 import com.joclegg.puzzles.sudoku.ui.LocalSudokuColors
 import com.joclegg.puzzles.sudoku.ui.SudokuGameIcon
 import com.joclegg.puzzles.sudoku.ui.SudokuIcons
@@ -101,9 +103,9 @@ fun HomeScreen(
     var resumeChoice by remember { mutableStateOf<Pair<Difficulty, SavedGame>?>(null) }
     val accent = LocalSudokuColors.current.accent
     GameHomeScaffold(
-        title = "Sudoku",
+        title = stringResource(R.string.sudoku),
         calendarGame = "SUDOKU",
-        tagline = "Classic and killer, from 6x6 to evil",
+        tagline = stringResource(R.string.classic_and_killer_from_6x6_to_evil),
         accent = accent,
         settingsIcon = SudokuIcons.Settings,
         onStats = onStats,
@@ -112,7 +114,7 @@ fun HomeScreen(
         onBack = onBack,
         gameIcon = { SudokuGameIcon() },
         modifier = modifier,
-        statsLabel = "Best times",
+        statsLabel = stringResource(R.string.best_times),
     ) {
         state.inProgress.firstOrNull()?.let { latest ->
             ContinueCard(
@@ -132,15 +134,15 @@ fun HomeScreen(
                 ) {
                     Text(
                         if (option == GameMode.CLASSIC) {
-                            "Classic"
+                            stringResource(R.string.classic)
                         } else {
-                            "Killer"
+                            stringResource(R.string.killer)
                         },
                     )
                 }
             }
         }
-        MenuSection("Today", aside = todayLabel()) {
+        MenuSection(stringResource(R.string.today), aside = todayLabel()) {
             TileGrid(count = mode.levels.size, columns = 3) { index, tileModifier ->
                 val level = mode.levels[index]
                 DailyTile(
@@ -152,7 +154,7 @@ fun HomeScreen(
                 )
             }
         }
-        MenuSection("New game") {
+        MenuSection(stringResource(R.string.new_game)) {
             TileGrid(count = mode.levels.size, columns = 2) { index, tileModifier ->
                 val level = mode.levels[index]
                 val saved = state.savedFor(mode, level)
@@ -173,7 +175,7 @@ fun HomeScreen(
                 )
             }
             MenuTile(
-                label = "Enter puzzle",
+                label = stringResource(R.string.enter_puzzle),
                 accent = accent,
                 onClick = { onEnterPuzzle(mode) },
                 modifier = Modifier.fillMaxWidth().testTag("enter_puzzle"),
@@ -185,7 +187,17 @@ fun HomeScreen(
         AlertDialog(
             onDismissRequest = { resumeChoice = null },
             modifier = Modifier.dialogTestTags().testTag("resume_dialog"),
-            title = { Text("${if (mode == GameMode.KILLER) "Killer" else "Classic"} · ${level.label()}") },
+            title = {
+                Text(
+                    "${if (mode == GameMode.KILLER) {
+                        stringResource(
+                            R.string.killer,
+                        )
+                    } else {
+                        stringResource(R.string.classic)
+                    }} · ${level.label()}",
+                )
+            },
             text = { Text("You have a game in progress (${formatDuration(saved.elapsedMs)}).") },
             confirmButton = {
                 TextButton(
@@ -194,7 +206,7 @@ fun HomeScreen(
                         onResume(saved.id)
                     },
                     modifier = Modifier.testTag("resume_game"),
-                ) { Text("Resume") }
+                ) { Text(stringResource(R.string.resume)) }
             },
             dismissButton = {
                 TextButton(
@@ -203,7 +215,7 @@ fun HomeScreen(
                         onStart(mode, level)
                     },
                     modifier = Modifier.testTag("new_game"),
-                ) { Text("New game") }
+                ) { Text(stringResource(R.string.new_game)) }
             },
         )
     }

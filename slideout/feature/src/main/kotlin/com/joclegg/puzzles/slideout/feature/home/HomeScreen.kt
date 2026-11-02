@@ -3,6 +3,7 @@ package com.joclegg.puzzles.slideout.feature.home
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joclegg.puzzles.core.ui.home.GameHomeScaffold
 import com.joclegg.puzzles.core.ui.home.HomeOptions
@@ -10,6 +11,7 @@ import com.joclegg.puzzles.core.ui.home.StandardHomeSections
 import com.joclegg.puzzles.core.ui.home.rememberGameLauncher
 import com.joclegg.puzzles.slideout.core.data.SavedGame
 import com.joclegg.puzzles.slideout.engine.Level
+import com.joclegg.puzzles.slideout.feature.R
 import com.joclegg.puzzles.slideout.ui.LocalSlideOutColors
 import com.joclegg.puzzles.slideout.ui.SlideOutGameIcon
 import com.joclegg.puzzles.slideout.ui.SlideOutIcons
@@ -68,9 +70,9 @@ fun HomeScreen(
 ) {
     val accent = LocalSlideOutColors.current.accent
     GameHomeScaffold(
-        title = "Slide Out",
+        title = stringResource(R.string.slide_out),
         calendarGame = "SLIDE_OUT",
-        tagline = "Slide the blocks to free the red one",
+        tagline = stringResource(R.string.slide_the_blocks_to_free_the_red_one),
         accent = accent,
         settingsIcon = SlideOutIcons.Settings,
         onStats = onStats,

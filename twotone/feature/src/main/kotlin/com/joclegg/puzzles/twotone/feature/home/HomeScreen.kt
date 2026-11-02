@@ -3,6 +3,7 @@ package com.joclegg.puzzles.twotone.feature.home
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joclegg.puzzles.core.ui.home.GameHomeScaffold
 import com.joclegg.puzzles.core.ui.home.HomeOptions
@@ -10,6 +11,7 @@ import com.joclegg.puzzles.core.ui.home.StandardHomeSections
 import com.joclegg.puzzles.core.ui.home.rememberGameLauncher
 import com.joclegg.puzzles.twotone.core.data.SavedGame
 import com.joclegg.puzzles.twotone.engine.SIZES
+import com.joclegg.puzzles.twotone.feature.R
 import com.joclegg.puzzles.twotone.ui.LocalTwoToneColors
 import com.joclegg.puzzles.twotone.ui.TwoToneGameIcon
 import com.joclegg.puzzles.twotone.ui.TwoToneIcons
@@ -68,9 +70,9 @@ fun HomeScreen(
 ) {
     val accent = LocalTwoToneColors.current.accent
     GameHomeScaffold(
-        title = "Two Tone",
+        title = stringResource(R.string.two_tone),
         calendarGame = "TWO_TONE",
-        tagline = "Fill the grid red and blue, three simple rules",
+        tagline = stringResource(R.string.fill_the_grid_red_and_blue_three),
         accent = accent,
         settingsIcon = TwoToneIcons.Settings,
         onStats = onStats,

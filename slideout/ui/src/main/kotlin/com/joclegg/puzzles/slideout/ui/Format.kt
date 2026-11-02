@@ -1,5 +1,6 @@
 package com.joclegg.puzzles.slideout.ui
 
+import androidx.compose.ui.res.stringResource
 import com.joclegg.puzzles.slideout.core.data.PuzzleRef
 import com.joclegg.puzzles.slideout.engine.Level
 import java.time.LocalDate

@@ -1,0 +1,25 @@
+<resources>
+    <string name="bonus_words">Bonus words</string>
+    <string name="cancel">Cancel</string>
+    <string name="clear_the_word">Clear the word</string>
+    <string name="enter_the_word">Enter the word</string>
+    <string name="hints">Hints</string>
+    <string name="home">Home</string>
+    <string name="how_to_play">How to play</string>
+    <string name="more">More</string>
+    <string name="offer_show_solution_in_the_game_menu">Offer Show solution in the game menu.</string>
+    <string name="settings">Settings</string>
+    <string name="show_a_letter">Show a letter</string>
+    <string name="show_solution">Show solution</string>
+    <string name="show_the_bonus_word_count">Show the bonus word count</string>
+    <string name="show_the_button_with_the_rules_and_a">Show the ? button with the rules and a walkthrough.</string>
+    <string name="show_the_hint_button">Show the hint button.</string>
+    <string name="show_the_solution">Show the solution?</string>
+    <string name="show_the_timer">Show the timer</string>
+    <string name="shuffle_the_letters">Shuffle the letters</string>
+    <string name="solved">Solved!</string>
+    <string name="swipe_the_letters_to_fill_the">Swipe the letters to fill the crossword</string>
+    <string name="this_ends_the_puzzle_it_won_t_count">This ends the puzzle. It won\'t count towards best times.</string>
+    <string name="time">Time</string>
+    <string name="word_wheel">Word Wheel</string>
+</resources>

@@ -3,6 +3,7 @@ package com.joclegg.puzzles.sightlines.feature.home
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joclegg.puzzles.core.ui.home.GameHomeScaffold
 import com.joclegg.puzzles.core.ui.home.HomeOptions
@@ -10,6 +11,7 @@ import com.joclegg.puzzles.core.ui.home.StandardHomeSections
 import com.joclegg.puzzles.core.ui.home.rememberGameLauncher
 import com.joclegg.puzzles.sightlines.core.data.SavedGame
 import com.joclegg.puzzles.sightlines.engine.SIZES
+import com.joclegg.puzzles.sightlines.feature.R
 import com.joclegg.puzzles.sightlines.ui.LocalSightlinesColors
 import com.joclegg.puzzles.sightlines.ui.SightlinesGameIcon
 import com.joclegg.puzzles.sightlines.ui.SightlinesIcons
@@ -68,9 +70,9 @@ fun HomeScreen(
 ) {
     val accent = LocalSightlinesColors.current.accent
     GameHomeScaffold(
-        title = "Sightlines",
+        title = stringResource(R.string.sightlines),
         calendarGame = "SIGHTLINES",
-        tagline = "Blue dots count what they can see",
+        tagline = stringResource(R.string.blue_dots_count_what_they_can_see),
         accent = accent,
         settingsIcon = SightlinesIcons.Settings,
         onStats = onStats,

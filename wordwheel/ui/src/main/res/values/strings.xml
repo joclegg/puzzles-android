@@ -1,0 +1,11 @@
+<resources>
+    <string name="back">Back</string>
+    <string name="close">Close</string>
+    <string name="got_it">Got it</string>
+    <string name="how_to_play">How to play</string>
+    <string name="next">Next</string>
+    <string name="show_a_hint">Show a hint</string>
+    <string name="show_the_rules">Show the rules</string>
+    <string name="skip">Skip</string>
+    <string name="walk_me_through_it">Walk me through it</string>
+</resources>

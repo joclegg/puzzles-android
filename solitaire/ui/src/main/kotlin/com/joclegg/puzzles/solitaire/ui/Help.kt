@@ -39,6 +39,7 @@ import androidx.compose.ui.graphics.vector.addPathNodes
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
@@ -73,7 +74,7 @@ fun HintButton(
     enabled: Boolean = true,
 ) {
     IconButton(onClick = onClick, enabled = enabled, modifier = modifier.testTag("hint")) {
-        Icon(HelpIcons.Hint, contentDescription = "Show a hint")
+        Icon(HelpIcons.Hint, contentDescription = stringResource(R.string.show_a_hint))
     }
 }
 
@@ -87,20 +88,20 @@ fun HowToPlayButton(
     var open by remember { mutableStateOf(false) }
     var walking by remember { mutableStateOf(false) }
     IconButton(onClick = { open = true }, modifier = modifier.testTag("rules")) {
-        Icon(HelpIcons.Rules, contentDescription = "Show the rules")
+        Icon(HelpIcons.Rules, contentDescription = stringResource(R.string.show_the_rules))
     }
     if (open) {
         AlertDialog(
             onDismissRequest = { open = false },
             modifier = Modifier.dialogTestTags(),
-            title = { Text("How to play") },
+            title = { Text(stringResource(R.string.how_to_play)) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     rules.forEach { Text(it) }
                 }
             },
             confirmButton = {
-                TextButton(onClick = { open = false }, modifier = Modifier.testTag("rules_close")) { Text("Got it") }
+                TextButton(onClick = { open = false }, modifier = Modifier.testTag("rules_close")) { Text(stringResource(R.string.got_it)) }
             },
             dismissButton = {
                 TextButton(
@@ -109,7 +110,7 @@ fun HowToPlayButton(
                         walking = true
                     },
                     modifier = Modifier.testTag("walkthrough_start"),
-                ) { Text("Walk me through it") }
+                ) { Text(stringResource(R.string.walk_me_through_it)) }
             },
         )
     }
@@ -156,17 +157,23 @@ private fun Walkthrough(
                         TextButton(onClick = onClose, modifier = Modifier.testTag("walkthrough_close")) {
                             Text(
                                 if (last) {
-                                    "Close"
+                                    stringResource(R.string.close)
                                 } else {
-                                    "Skip"
+                                    stringResource(R.string.skip)
                                 },
                             )
                         }
                         if (index > 0) {
-                            TextButton(onClick = { index-- }, modifier = Modifier.testTag("walkthrough_back")) { Text("Back") }
+                            TextButton(
+                                onClick = { index-- },
+                                modifier = Modifier.testTag("walkthrough_back"),
+                            ) { Text(stringResource(R.string.back)) }
                         }
                         if (!last) {
-                            TextButton(onClick = { index++ }, modifier = Modifier.testTag("walkthrough_next")) { Text("Next") }
+                            TextButton(
+                                onClick = { index++ },
+                                modifier = Modifier.testTag("walkthrough_next"),
+                            ) { Text(stringResource(R.string.next)) }
                         }
                     }
                 }

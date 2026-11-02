@@ -7,6 +7,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
+import com.joclegg.puzzles.R
 import com.joclegg.puzzles.core.ui.MenuPanel
 import com.joclegg.puzzles.core.ui.formatDuration
 import com.joclegg.puzzles.core.ui.stats.HistoryEntry
@@ -54,12 +56,12 @@ fun SolitaireStatsPanel(
     val tag = mode.drawMode.name.lowercase()
     MenuPanel(LocalSolitaireColors.current.accent, modifier) {
         Text(mode.drawMode.label(), style = MaterialTheme.typography.titleLarge)
-        StatRow("Played", mode.played.toString(), "${tag}_played")
-        StatRow("Won", mode.won.toString(), "${tag}_won")
-        StatRow("Win rate", mode.winRate(), "${tag}_win_rate")
-        StatRow("Best time", mode.bestMs?.let(::formatDuration) ?: "–", "${tag}_best")
-        StatRow("Average time", mode.averageMs?.let(::formatDuration) ?: "–", "${tag}_average")
-        StatRow("Fewest moves", mode.fewestMoves?.toString() ?: "–", "${tag}_fewest_moves")
+        StatRow(stringResource(R.string.played), mode.played.toString(), "${tag}_played")
+        StatRow(stringResource(R.string.won), mode.won.toString(), "${tag}_won")
+        StatRow(stringResource(R.string.win_rate), mode.winRate(), "${tag}_win_rate")
+        StatRow(stringResource(R.string.best_time), mode.bestMs?.let(::formatDuration) ?: "–", "${tag}_best")
+        StatRow(stringResource(R.string.average_time), mode.averageMs?.let(::formatDuration) ?: "–", "${tag}_average")
+        StatRow(stringResource(R.string.fewest_moves), mode.fewestMoves?.toString() ?: "–", "${tag}_fewest_moves")
     }
 }
 

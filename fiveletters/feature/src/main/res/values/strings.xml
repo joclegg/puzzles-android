@@ -1,0 +1,33 @@
+<resources>
+    <string name="a_new_word_comes_tomorrow_share_your">A new word comes tomorrow. Share your grid without giving the word away.</string>
+    <string name="cancel">Cancel</string>
+    <string name="close">Close</string>
+    <string name="continue_practice">Continue practice</string>
+    <string name="couldn_t_load_daily_puzzle_2_check">Couldn\'t load Daily puzzle 2. Check your connection and try again.</string>
+    <string name="daily_puzzle_2">Daily puzzle 2</string>
+    <string name="every_green_and_yellow_letter_you_find">Every green and yellow letter you find must be used in later guesses. Applies to new games.</string>
+    <string name="everyone_with_puzzles_gets_the_same">Everyone with Puzzles gets the same word each day, so you can compare grids.</string>
+    <string name="five_letters">Five Letters</string>
+    <string name="guess_the_word_in_six_tries_a_new_one">Guess the word in six tries, a new one every day</string>
+    <string name="hard_mode">Hard mode</string>
+    <string name="high_contrast_colours">High contrast colours</string>
+    <string name="hints">Hints</string>
+    <string name="how_to_play">How to play</string>
+    <string name="more">More</string>
+    <string name="new_word">New word</string>
+    <string name="offer_show_solution_in_the_game_menu">Offer Show solution in the game menu.</string>
+    <string name="orange_and_blue_instead_of_green_and">Orange and blue instead of green and yellow.</string>
+    <string name="play_another_practice_word_or_share">Play another practice word, or share your grid.</string>
+    <string name="practice">Practice</string>
+    <string name="settings">Settings</string>
+    <string name="share">Share</string>
+    <string name="share_your_result">Share your result</string>
+    <string name="show_solution">Show solution</string>
+    <string name="show_the_button_with_the_rules_and_a">Show the ? button with the rules and a walkthrough.</string>
+    <string name="show_the_hint_button">Show the hint button.</string>
+    <string name="show_the_word">Show the word</string>
+    <string name="show_the_word_2">Show the word?</string>
+    <string name="this_ends_the_game_and_counts_as_a">This ends the game and counts as a loss.</string>
+    <string name="today">Today</string>
+    <string name="word">Word</string>
+</resources>

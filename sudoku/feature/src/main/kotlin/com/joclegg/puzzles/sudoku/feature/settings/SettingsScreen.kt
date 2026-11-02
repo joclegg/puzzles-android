@@ -28,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joclegg.puzzles.core.ui.BackButton
@@ -40,6 +41,7 @@ import com.joclegg.puzzles.sudoku.core.data.Toggle
 import com.joclegg.puzzles.sudoku.engine.HighlightStyle
 import com.joclegg.puzzles.sudoku.engine.InputMode
 import com.joclegg.puzzles.sudoku.engine.MistakeCheck
+import com.joclegg.puzzles.sudoku.feature.R
 import com.joclegg.puzzles.sudoku.ui.SudokuIcons
 
 @Composable
@@ -89,11 +91,11 @@ fun SettingsScreen(
         if (onBack != null) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 BackButton(onBack)
-                Text("Settings", style = MaterialTheme.typography.headlineMedium)
+                Text(stringResource(R.string.settings), style = MaterialTheme.typography.headlineMedium)
             }
         }
-        SettingsCard(title = "General") {
-            Section("Entering numbers")
+        SettingsCard(title = stringResource(R.string.general)) {
+            Section(stringResource(R.string.entering_numbers))
             InputModeChoice(settings.inputMode, onInputModeChange)
         }
         OutlinedCard(Modifier.fillMaxWidth()) {
@@ -108,7 +110,7 @@ fun SettingsScreen(
                 }
             }
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                Section("Mistakes")
+                Section(stringResource(R.string.mistakes))
                 Choice(
                     options = MistakeCheck.entries,
                     selected = current.mistakeCheck,
@@ -117,37 +119,64 @@ fun SettingsScreen(
                     onSelect = { onMistakeLevelChange(mode, it) },
                 )
                 Hint(
-                    "Block clashes refuses a number already in the row, column, box or cage. " +
-                        "Show wrong turns any wrong number red. Applies to new games.",
+                    stringResource(R.string.block_clashes_refuses_a_number_already),
                 )
-                ToggleRow(current, Toggle.SHOW_MISTAKE_COUNT, toggle, "Show mistake counter")
-                Section("Highlighting")
-                ToggleRow(current, Toggle.HIGHLIGHT_HOUSES, toggle, "Row, column and box", detail = "Around the selected cell")
+                ToggleRow(current, Toggle.SHOW_MISTAKE_COUNT, toggle, stringResource(R.string.show_mistake_counter))
+                Section(stringResource(R.string.highlighting))
+                ToggleRow(
+                    current,
+                    Toggle.HIGHLIGHT_HOUSES,
+                    toggle,
+                    stringResource(R.string.row_column_and_box),
+                    detail = stringResource(R.string.around_the_selected_cell),
+                )
                 if (mode == GameMode.KILLER) {
-                    ToggleRow(current, Toggle.HIGHLIGHT_CAGE, toggle, "Cage", detail = "The selected cell's cage")
+                    ToggleRow(
+                        current,
+                        Toggle.HIGHLIGHT_CAGE,
+                        toggle,
+                        stringResource(R.string.cage),
+                        detail = stringResource(R.string.the_selected_cell_s_cage),
+                    )
                 }
-                StyleChoice("Same number", current.sameNumberStyle, "same_number", onSelect = { onSameNumberStyleChange(mode, it) })
-                StyleChoice("Matching pencil marks", current.notesStyle, "notes", onSelect = { onNotesStyleChange(mode, it) })
-                Hint("Cell shades the whole cell; number colours just the digit.")
+                StyleChoice(
+                    stringResource(R.string.same_number),
+                    current.sameNumberStyle,
+                    "same_number",
+                    onSelect = { onSameNumberStyleChange(mode, it) },
+                )
+                StyleChoice(
+                    stringResource(R.string.matching_pencil_marks),
+                    current.notesStyle,
+                    "notes",
+                    onSelect = { onNotesStyleChange(mode, it) },
+                )
+                Hint(stringResource(R.string.cell_shades_the_whole_cell_number))
                 ToggleRow(
                     current,
                     Toggle.HIGHLIGHT_LAST_PLACED,
                     toggle,
-                    "Highlight the cell you just filled",
-                    detail = "Keep it and its row, column and box highlighted",
+                    stringResource(R.string.highlight_the_cell_you_just_filled),
+                    detail = stringResource(R.string.keep_it_and_its_row_column_and_box),
                 )
-                Section("Look")
-                ToggleRow(current, Toggle.GREY_GIVEN_CELLS, toggle, "Grey starting cells")
+                Section(stringResource(R.string.look))
+                ToggleRow(current, Toggle.GREY_GIVEN_CELLS, toggle, stringResource(R.string.grey_starting_cells))
                 ToggleRow(
                     current,
                     Toggle.BOLD_PLACED_DIGITS,
                     toggle,
-                    "Bold numbers you place",
-                    detail = "Heavier than the starting numbers",
+                    stringResource(R.string.bold_numbers_you_place),
+                    detail = stringResource(R.string.heavier_than_the_starting_numbers),
                 )
-                Section("Playing")
-                ToggleRow(current, Toggle.AUTO_REMOVE_NOTES, toggle, "Clear pencil marks automatically", detail = "When you place a number")
-                Text("Number counts")
+                Section(stringResource(R.string.playing))
+                ToggleRow(
+                    current,
+                    Toggle.AUTO_REMOVE_NOTES,
+                    toggle,
+                    stringResource(R.string.clear_pencil_marks_automatically),
+                    detail = stringResource(R.string.when_you_place_a_number),
+                )
+                Text(stringResource(R.string.number_counts))
                 Choice(
                     options = DigitCounts.entries,
                     selected = current.digitCounts,
@@ -161,11 +190,29 @@ fun SettingsScreen(
                     tag = { "setting_counts_${it.name.lowercase()}" },
                     onSelect = { onDigitCountsChange(mode, it) },
                 )
-                Hint("Count up shows how many of each number are placed; count down shows how many are left.")
-                ToggleRow(current, Toggle.DISABLE_COMPLETED_DIGITS, toggle, "Disable finished numbers", detail = "Once all are placed")
-                ToggleRow(current, Toggle.SHOW_TIMER, toggle, "Show timer", detail = "Best times are still recorded")
-                Section("Help")
-                ToggleRow(current, Toggle.SHOW_HINTS, toggle, "Hints", detail = "Show the hint button.")
+                Hint(stringResource(R.string.count_up_shows_how_many_of_each_number))
+                ToggleRow(
+                    current,
+                    Toggle.DISABLE_COMPLETED_DIGITS,
+                    toggle,
+                    stringResource(R.string.disable_finished_numbers),
+                    detail = stringResource(R.string.once_all_are_placed),
+                )
+                ToggleRow(
+                    current,
+                    Toggle.SHOW_TIMER,
+                    toggle,
+                    stringResource(R.string.show_timer),
+                    detail = stringResource(R.string.best_times_are_still_recorded),
+                )
+                Section(stringResource(R.string.help))
+                ToggleRow(
+                    current,
+                    Toggle.SHOW_HINTS,
+                    toggle,
+                    stringResource(R.string.hints),
+                    detail = stringResource(R.string.show_the_hint_button),
+                )
                 if (current.showHints) {
                     HintStyleRow(current.hintStyle, { onHintStyleChange(mode, it) })
                 }
@@ -173,10 +220,16 @@ fun SettingsScreen(
                     current,
                     Toggle.SHOW_TUTORIAL,
                     toggle,
-                    "How to play",
-                    detail = "Show the ? button with the rules and a walkthrough.",
+                    stringResource(R.string.how_to_play),
+                    detail = stringResource(R.string.show_the_button_with_the_rules_and_a),
                 )
-                ToggleRow(current, Toggle.ALLOW_REVEAL, toggle, "Show solution", detail = "Offer Show solution in the game menu.")
+                ToggleRow(
+                    current,
+                    Toggle.ALLOW_REVEAL,
+                    toggle,
+                    stringResource(R.string.show_solution),
+                    detail = stringResource(R.string.offer_show_solution_in_the_game_menu),
+                )
             }
         }
     }
@@ -210,9 +263,9 @@ private fun InputModeChoice(
                 ) {
                     Text(
                         if (option == InputMode.CELL_FIRST) {
-                            "Cell first"
+                            stringResource(R.string.cell_first)
                         } else {
-                            "Number first"
+                            stringResource(R.string.number_first)
                         },
                     )
                 }
@@ -220,9 +273,9 @@ private fun InputModeChoice(
         }
         Hint(
             if (inputMode == InputMode.CELL_FIRST) {
-                "Tap a cell, then pick its number. Try number first: it's faster once you're used to it. Applies to both modes."
+                stringResource(R.string.tap_a_cell_then_pick_its_number_try)
             } else {
-                "Pick a number, then tap every cell it goes in. Applies to both modes."
+                stringResource(R.string.pick_a_number_then_tap_every_cell_it)
             },
         )
     }
@@ -356,9 +409,9 @@ private fun HintStyleRow(
 ) {
     Row(modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         Column(Modifier.weight(1f)) {
-            Text("Hints fill the answer in")
+            Text(stringResource(R.string.hints_fill_the_answer_in))
             Text(
-                "Off: a hint points at the next step and says why.",
+                stringResource(R.string.off_a_hint_points_at_the_next_step_and),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

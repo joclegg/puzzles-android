@@ -2,6 +2,8 @@ package com.joclegg.puzzles.sudoku
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.joclegg.puzzles.R
 import com.joclegg.puzzles.core.ui.formatDuration
 import com.joclegg.puzzles.core.ui.stats.HistoryEntry
 import com.joclegg.puzzles.core.ui.stats.HistoryFilter
@@ -78,7 +80,13 @@ fun SudokuBestTimes(
     modifier: Modifier = Modifier,
 ) {
     StatsTable(
-        header = StatsLine("Level", "Solved", "Best", "Average"),
+        header =
+            StatsLine(
+                stringResource(R.string.level),
+                stringResource(R.string.solved),
+                stringResource(R.string.best),
+                stringResource(R.string.average),
+            ),
         lines =
             mode.levels.map { level ->
                 val stats = bestTimes.find { it.mode == mode && it.difficulty == level }
@@ -94,9 +102,9 @@ fun SudokuBestTimes(
         modifier = modifier,
         heading =
             if (mode == GameMode.CLASSIC) {
-                "Classic"
+                stringResource(R.string.classic)
             } else {
-                "Killer"
+                stringResource(R.string.killer)
             },
         labelWeight = 1.3f,
     )

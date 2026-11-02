@@ -2,6 +2,8 @@ package com.joclegg.puzzles.wordwheel
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.joclegg.puzzles.R
 import com.joclegg.puzzles.core.ui.formatDuration
 import com.joclegg.puzzles.core.ui.stats.HistoryEntry
 import com.joclegg.puzzles.core.ui.stats.HistoryFilter
@@ -48,7 +50,13 @@ fun WordWheelStatsTable(
     modifier: Modifier = Modifier,
 ) {
     StatsTable(
-        header = StatsLine("Letters", "Solved", "Bonus", "Best"),
+        header =
+            StatsLine(
+                stringResource(R.string.letters),
+                stringResource(R.string.solved),
+                stringResource(R.string.bonus),
+                stringResource(R.string.best),
+            ),
         lines =
             stats.map { level ->
                 StatsLine(

@@ -26,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -36,6 +37,7 @@ import com.joclegg.puzzles.core.ui.HelpersHint
 import com.joclegg.puzzles.core.ui.WinDialog
 import com.joclegg.puzzles.core.ui.WinStat
 import com.joclegg.puzzles.core.ui.formatDuration
+import com.joclegg.puzzles.wordwheel.feature.R
 import com.joclegg.puzzles.wordwheel.ui.HowToPlayButton
 import com.joclegg.puzzles.wordwheel.ui.LetterWheel
 import com.joclegg.puzzles.wordwheel.ui.LocalWordWheelColors
@@ -116,7 +118,7 @@ fun GameScreen(
             if (state.showHints) {
                 ToolButton(
                     WordWheelIcons.Hint,
-                    "Show a letter",
+                    stringResource(R.string.show_a_letter),
                     onHint,
                     tag = "hint",
                     modifier = Modifier.tourTarget(tour, "hint"),
@@ -128,12 +130,12 @@ fun GameScreen(
             }
             Column {
                 IconButton(onClick = { menuOpen = true }, modifier = Modifier.testTag("game_menu").tourTarget(tour, "menu")) {
-                    Icon(WordWheelIcons.More, contentDescription = "More")
+                    Icon(WordWheelIcons.More, contentDescription = stringResource(R.string.more))
                 }
                 DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }, modifier = Modifier.dialogTestTags()) {
                     if (state.allowReveal && !state.solved) {
                         DropdownMenuItem(
-                            text = { Text("Show solution") },
+                            text = { Text(stringResource(R.string.show_solution)) },
                             onClick = {
                                 menuOpen = false
                                 revealing = true
@@ -142,7 +144,7 @@ fun GameScreen(
                         )
                     }
                     DropdownMenuItem(
-                        text = { Text("Settings") },
+                        text = { Text(stringResource(R.string.settings)) },
                         onClick = {
                             menuOpen = false
                             onSettings()
@@ -164,11 +166,11 @@ fun GameScreen(
             modifier = Modifier.height(40.dp).testTag("current_word"),
         )
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            ToolButton(WordWheelIcons.Shuffle, "Shuffle the letters", onShuffle, tag = "shuffle")
+            ToolButton(WordWheelIcons.Shuffle, stringResource(R.string.shuffle_the_letters), onShuffle, tag = "shuffle")
             LetterWheel(state.wheel, state.chosen, onChosenChange, onSubmit, Modifier.tourTarget(tour, "wheel").width(260.dp).padding(8.dp))
             Column {
-                ToolButton(WordWheelIcons.Check, "Enter the word", onSubmit, tag = "submit_word")
-                ToolButton(WordWheelIcons.Clear, "Clear the word", onClear, tag = "clear_word")
+                ToolButton(WordWheelIcons.Check, stringResource(R.string.enter_the_word), onSubmit, tag = "submit_word")
+                ToolButton(WordWheelIcons.Clear, stringResource(R.string.clear_the_word), onClear, tag = "clear_word")
             }
         }
         Spacer(Modifier.height(16.dp))
@@ -177,8 +179,8 @@ fun GameScreen(
         AlertDialog(
             onDismissRequest = { revealing = false },
             modifier = Modifier.dialogTestTags(),
-            title = { Text("Show the solution?") },
-            text = { Text("This ends the puzzle. It won't count towards best times.") },
+            title = { Text(stringResource(R.string.show_the_solution)) },
+            text = { Text(stringResource(R.string.this_ends_the_puzzle_it_won_t_count)) },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -186,9 +188,9 @@ fun GameScreen(
                         onRevealSolution()
                     },
                     modifier = Modifier.testTag("confirm_reveal"),
-                ) { Text("Show solution") }
+                ) { Text(stringResource(R.string.show_solution)) }
             },
-            dismissButton = { TextButton(onClick = { revealing = false }) { Text("Cancel") } },
+            dismissButton = { TextButton(onClick = { revealing = false }) { Text(stringResource(R.string.cancel)) } },
         )
     }
     if (state.solved && state.resultSaved && !state.revealedAll) {
@@ -204,7 +206,7 @@ private fun SolvedDialog(
     modifier: Modifier = Modifier,
 ) {
     WinDialog(
-        title = "Solved!",
+        title = stringResource(R.string.solved),
         accent = LocalWordWheelColors.current.accent,
         dailyGroup = "WORD_WHEEL",
         newLabel = state.levelLabel,
@@ -213,12 +215,12 @@ private fun SolvedDialog(
         newBest = state.newBest,
         stats =
             buildList {
-                add(WinStat("Time", formatDuration(state.elapsedMs)))
-                add(WinStat("Bonus words", "${state.bonusCount}"))
+                add(WinStat(stringResource(R.string.time), formatDuration(state.elapsedMs)))
+                add(WinStat(stringResource(R.string.bonus_words), "${state.bonusCount}"))
             },
         modifier = modifier.dialogTestTags().testTag("solved_dialog"),
     ) {
-        TextButton(onClick = onHome, modifier = Modifier.testTag("solved_home")) { Text("Home") }
+        TextButton(onClick = onHome, modifier = Modifier.testTag("solved_home")) { Text(stringResource(R.string.home)) }
     }
 }
 

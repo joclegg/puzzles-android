@@ -36,6 +36,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -98,9 +99,9 @@ fun SignInDialog(
         title = {
             val title =
                 if (askingForCode) {
-                    "Check your email"
+                    stringResource(R.string.check_your_email)
                 } else {
-                    "Sign in to sync"
+                    stringResource(R.string.sign_in_to_sync)
                 }
             Text(title)
         },
@@ -124,7 +125,7 @@ fun SignInDialog(
                     enabled = !busy && code.length == SupabaseAuth.EMAIL_CODE_LENGTH,
                     modifier = Modifier.testTag("sign_in_code_submit"),
                 ) {
-                    Text("Sign in")
+                    Text(stringResource(R.string.sign_in))
                 }
             } else {
                 TextButton(
@@ -132,7 +133,7 @@ fun SignInDialog(
                     enabled = !busy && Patterns.EMAIL_ADDRESS.matcher(email.trim()).matches(),
                     modifier = Modifier.testTag("sign_in_email_send"),
                 ) {
-                    Text("Email me a link")
+                    Text(stringResource(R.string.email_me_a_link))
                 }
             }
         },
@@ -146,11 +147,11 @@ fun SignInDialog(
                     },
                     modifier = Modifier.testTag("sign_in_code_back"),
                 ) {
-                    Text("Use a different email")
+                    Text(stringResource(R.string.use_a_different_email))
                 }
             } else {
                 TextButton(onClick = onDismiss, modifier = Modifier.testTag("sign_in_cancel")) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
             }
         },
@@ -179,7 +180,7 @@ private fun ChooseStep(
             MICROSOFT_LIGHT
         }
     Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Text("Sync your games and settings with the website and other devices.")
+        Text(stringResource(R.string.sync_your_games_and_settings_with_the))
         ProviderButton(
             style = googleStyle,
             onClick = { onProviderClick(SignInProvider.GOOGLE) },
@@ -198,13 +199,13 @@ private fun ChooseStep(
         OutlinedTextField(
             value = email,
             onValueChange = onEmailChange,
-            label = { Text("Email") },
+            label = { Text(stringResource(R.string.email)) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             modifier = Modifier.fillMaxWidth().testTag("sign_in_email"),
         )
         if (failed) {
-            Text("We couldn't send the email. Try again in a minute.", color = MaterialTheme.colorScheme.error)
+            Text(stringResource(R.string.we_couldn_t_send_the_email_try_again), color = MaterialTheme.colorScheme.error)
         }
     }
 }
@@ -222,13 +223,13 @@ private fun CodeStep(
         OutlinedTextField(
             value = code,
             onValueChange = onCodeChange,
-            label = { Text("Code") },
+            label = { Text(stringResource(R.string.code)) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
             modifier = Modifier.fillMaxWidth().testTag("sign_in_code"),
         )
         if (failed) {
-            Text("That code didn't work. Check it, or send a new one.", color = MaterialTheme.colorScheme.error)
+            Text(stringResource(R.string.that_code_didn_t_work_check_it_or_send), color = MaterialTheme.colorScheme.error)
         }
     }
 }

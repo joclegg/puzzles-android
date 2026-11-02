@@ -1,5 +1,6 @@
 package com.joclegg.puzzles.fiveletters.ui
 
+import androidx.compose.ui.res.stringResource
 import com.joclegg.puzzles.fiveletters.core.data.WordRef
 import com.joclegg.puzzles.fiveletters.engine.Rejection
 import com.joclegg.puzzles.fiveletters.engine.Words

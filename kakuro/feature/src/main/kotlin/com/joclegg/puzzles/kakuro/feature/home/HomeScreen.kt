@@ -3,6 +3,7 @@ package com.joclegg.puzzles.kakuro.feature.home
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joclegg.puzzles.core.ui.home.GameHomeScaffold
 import com.joclegg.puzzles.core.ui.home.HomeOptions
@@ -10,6 +11,7 @@ import com.joclegg.puzzles.core.ui.home.StandardHomeSections
 import com.joclegg.puzzles.core.ui.home.rememberGameLauncher
 import com.joclegg.puzzles.kakuro.core.data.SavedGame
 import com.joclegg.puzzles.kakuro.engine.SIZES
+import com.joclegg.puzzles.kakuro.feature.R
 import com.joclegg.puzzles.kakuro.ui.KakuroGameIcon
 import com.joclegg.puzzles.kakuro.ui.KakuroIcons
 import com.joclegg.puzzles.kakuro.ui.LocalKakuroColors
@@ -68,9 +70,9 @@ fun HomeScreen(
 ) {
     val accent = LocalKakuroColors.current.accent
     GameHomeScaffold(
-        title = "Kakuro",
+        title = stringResource(R.string.kakuro),
         calendarGame = "KAKURO",
-        tagline = "Cross sums: runs of different digits that add up",
+        tagline = stringResource(R.string.cross_sums_runs_of_different_digits),
         accent = accent,
         settingsIcon = KakuroIcons.Settings,
         onStats = onStats,

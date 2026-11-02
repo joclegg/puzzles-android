@@ -23,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -32,6 +33,7 @@ import com.joclegg.puzzles.core.ui.WinDialog
 import com.joclegg.puzzles.core.ui.WinStat
 import com.joclegg.puzzles.core.ui.formatDuration
 import com.joclegg.puzzles.solitaire.engine.Pile
+import com.joclegg.puzzles.solitaire.feature.R
 import com.joclegg.puzzles.solitaire.ui.HintButton
 import com.joclegg.puzzles.solitaire.ui.HowToPlayButton
 import com.joclegg.puzzles.solitaire.ui.LocalSolitaireColors
@@ -121,7 +123,7 @@ fun GameScreen(
                     }
                 }
             }
-            ToolButton(SolitaireIcons.Undo, "Undo the last move", onUndo, tag = "undo", enabled = state.canUndo)
+            ToolButton(SolitaireIcons.Undo, stringResource(R.string.undo_the_last_move), onUndo, tag = "undo", enabled = state.canUndo)
             if (state.showHints) {
                 HintButton(onHint, enabled = !state.won, modifier = Modifier.tourTarget(tour, "hint"))
             }
@@ -130,11 +132,11 @@ fun GameScreen(
             }
             Column {
                 IconButton(onClick = { menuOpen = true }, modifier = Modifier.testTag("game_menu").tourTarget(tour, "menu")) {
-                    Icon(SolitaireIcons.More, contentDescription = "More")
+                    Icon(SolitaireIcons.More, contentDescription = stringResource(R.string.more))
                 }
                 DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }, modifier = Modifier.dialogTestTags()) {
                     DropdownMenuItem(
-                        text = { Text("Restart this deal") },
+                        text = { Text(stringResource(R.string.restart_this_deal)) },
                         enabled = !state.won,
                         onClick = {
                             menuOpen = false
@@ -143,7 +145,7 @@ fun GameScreen(
                         modifier = Modifier.testTag("restart"),
                     )
                     DropdownMenuItem(
-                        text = { Text("New deal") },
+                        text = { Text(stringResource(R.string.new_deal)) },
                         onClick = {
                             menuOpen = false
                             onNewDeal()
@@ -151,7 +153,7 @@ fun GameScreen(
                         modifier = Modifier.testTag("new_deal"),
                     )
                     DropdownMenuItem(
-                        text = { Text("Settings") },
+                        text = { Text(stringResource(R.string.settings)) },
                         onClick = {
                             menuOpen = false
                             onSettings()
@@ -183,7 +185,7 @@ fun GameScreen(
                 onClick = onFinish,
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp).testTag("finish"),
             ) {
-                Text("Finish")
+                Text(stringResource(R.string.finish))
             }
         }
     }
@@ -191,7 +193,7 @@ fun GameScreen(
         AlertDialog(
             onDismissRequest = onDismissUnwinnable,
             modifier = Modifier.dialogTestTags().testTag("unwinnable_dialog"),
-            title = { Text("This deal can't be won now") },
+            title = { Text(stringResource(R.string.this_deal_can_t_be_won_now)) },
             text = {
                 Text(unwinnableText(state))
             },
@@ -206,9 +208,18 @@ fun GameScreen(
             },
             dismissButton = {
                 Row {
-                    TextButton(onClick = onGiveUp, modifier = Modifier.testTag("unwinnable_leave")) { Text("Leave as lost") }
-                    TextButton(onClick = onDismissUnwinnable, modifier = Modifier.testTag("keep_playing")) { Text("Keep playing") }
-                    TextButton(onClick = onNewDeal, modifier = Modifier.testTag("unwinnable_new_deal")) { Text("New deal") }
+                    TextButton(
+                        onClick = onGiveUp,
+                        modifier = Modifier.testTag("unwinnable_leave"),
+                    ) { Text(stringResource(R.string.leave_as_lost)) }
+                    TextButton(
+                        onClick = onDismissUnwinnable,
+                        modifier = Modifier.testTag("keep_playing"),
+                    ) { Text(stringResource(R.string.keep_playing)) }
+                    TextButton(
+                        onClick = onNewDeal,
+                        modifier = Modifier.testTag("unwinnable_new_deal"),
+                    ) { Text(stringResource(R.string.new_deal)) }
                 }
             },
         )
@@ -226,21 +237,21 @@ private fun WonDialog(
     modifier: Modifier = Modifier,
 ) {
     WinDialog(
-        title = "You won!",
+        title = stringResource(R.string.you_won),
         accent = LocalSolitaireColors.current.accent,
         dailyGroup = "SOLITAIRE",
-        newLabel = "Deal",
+        newLabel = stringResource(R.string.deal),
         newTag = "won_new_deal",
         onNew = onNewDeal,
         newBest = state.newBest,
         stats =
             buildList {
-                add(WinStat("Time", formatDuration(state.elapsedMs), "won_time"))
-                add(WinStat("Moves", "${state.moveCount}"))
+                add(WinStat(stringResource(R.string.time), formatDuration(state.elapsedMs), "won_time"))
+                add(WinStat(stringResource(R.string.moves), "${state.moveCount}"))
             },
         modifier = modifier.dialogTestTags().testTag("won_dialog"),
     ) {
-        TextButton(onClick = onHome, modifier = Modifier.testTag("won_home")) { Text("Home") }
+        TextButton(onClick = onHome, modifier = Modifier.testTag("won_home")) { Text(stringResource(R.string.home)) }
     }
 }
 
@@ -264,8 +275,7 @@ private val TUTORIAL =
 
 private fun unwinnableText(state: GameUiState): String {
     val checked =
-        "You've been through the whole stock with nothing new to play, " +
-            "so the solver checked every line from here: none of them wins."
+        "You've been through the whole stock with nothing new to play, so the solver checked every line from here: none of them wins."
     return if (state.findingLostMove || state.lastWinnableMove == 0) {
         checked
     } else {

@@ -1,5 +1,6 @@
 package com.joclegg.puzzles.wordwheel.ui
 
+import androidx.compose.ui.res.stringResource
 import com.joclegg.puzzles.wordwheel.core.data.PuzzleRef
 import com.joclegg.puzzles.wordwheel.engine.Guess
 import com.joclegg.puzzles.wordwheel.engine.Level

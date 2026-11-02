@@ -3,6 +3,7 @@ package com.joclegg.puzzles.sudoku
 import android.os.SystemClock
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
@@ -11,6 +12,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.joclegg.puzzles.AccentColors
+import com.joclegg.puzzles.R
 import com.joclegg.puzzles.SettingsHub
 import com.joclegg.puzzles.SettingsTab
 import com.joclegg.puzzles.core.ui.stats.HistoryRoute
@@ -84,7 +86,7 @@ object SudokuRoutes {
                     StatsViewModel(sudokuStatsSource(container.games, container.settings))
                 },
                 onBack = navController::popBackStack,
-                title = "Best times",
+                title = stringResource(R.string.best_times),
                 spacing = 20.dp,
                 footnote = SUDOKU_STATS_FOOTNOTE,
             ) { stats ->

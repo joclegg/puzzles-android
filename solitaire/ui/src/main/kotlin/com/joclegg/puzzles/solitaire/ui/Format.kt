@@ -1,5 +1,6 @@
 package com.joclegg.puzzles.solitaire.ui
 
+import androidx.compose.ui.res.stringResource
 import com.joclegg.puzzles.solitaire.core.data.DealRef
 import com.joclegg.puzzles.solitaire.engine.BuildOrder
 import com.joclegg.puzzles.solitaire.engine.DrawMode

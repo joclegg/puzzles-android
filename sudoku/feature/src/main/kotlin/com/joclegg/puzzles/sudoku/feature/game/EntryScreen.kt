@@ -20,12 +20,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joclegg.puzzles.core.ui.BackButton
 import com.joclegg.puzzles.sudoku.core.data.GameMode
 import com.joclegg.puzzles.sudoku.engine.CageProblem
 import com.joclegg.puzzles.sudoku.engine.InputMode
+import com.joclegg.puzzles.sudoku.feature.R
 import com.joclegg.puzzles.sudoku.ui.KeypadTool
 import com.joclegg.puzzles.sudoku.ui.LocalSudokuColors
 import com.joclegg.puzzles.sudoku.ui.NumberPad
@@ -81,7 +83,7 @@ fun EntryScreen(
     ) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             BackButton(onBack)
-            Text("Enter puzzle", style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
+            Text(stringResource(R.string.enter_puzzle), style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
             Text(
                 if (state.cageTool) {
                     "Cage sum: ${state.cageSumInput.ifEmpty { "–" }}"
@@ -102,9 +104,9 @@ fun EntryScreen(
                 ) {
                     Text(
                         if (option == GameMode.CLASSIC) {
-                            "Classic"
+                            stringResource(R.string.classic)
                         } else {
-                            "Killer"
+                            stringResource(R.string.killer)
                         },
                     )
                 }
@@ -123,10 +125,23 @@ fun EntryScreen(
             tools = entryTools(state, killer, onToggleCageTool, onConfirmCage, onErase, onClear),
         )
         when {
-            state.problem == EntryProblem.CLASH -> ProblemText("Some numbers clash. Fix the red cells.")
-            state.cageProblem == CageProblem.NOT_CONNECTED -> ProblemText("A cage's cells must touch each other.")
-            state.cageProblem == CageProblem.IMPOSSIBLE_SUM -> ProblemText("No set of different numbers makes that sum.")
-            state.cageProblem == CageProblem.EMPTY -> ProblemText("Pick the cage's cells and type its sum first.")
+            state.problem == EntryProblem.CLASH -> {
+                ProblemText(stringResource(R.string.some_numbers_clash_fix_the_red_cells))
+            }
+
+            state.cageProblem == CageProblem.NOT_CONNECTED -> {
+                ProblemText(stringResource(R.string.a_cage_s_cells_must_touch_each_other))
+            }
+
+            state.cageProblem == CageProblem.IMPOSSIBLE_SUM -> {
+                ProblemText(
+                    stringResource(R.string.no_set_of_different_numbers_makes_that),
+                )
+            }
+
+            state.cageProblem == CageProblem.EMPTY -> {
+                ProblemText(stringResource(R.string.pick_the_cage_s_cells_and_type_its_sum))
+            }
         }
         Button(
             onClick = { onFix(false) },
@@ -135,9 +150,9 @@ fun EntryScreen(
         ) {
             Text(
                 if (state.checking) {
-                    "Checking…"
+                    stringResource(R.string.checking)
                 } else {
-                    "Fix puzzle"
+                    stringResource(R.string.fix_puzzle)
                 },
             )
         }
@@ -146,10 +161,15 @@ fun EntryScreen(
         AlertDialog(
             onDismissRequest = onDismissProblem,
             modifier = Modifier.dialogTestTags().testTag("unverified_dialog"),
-            title = { Text("Can't confirm one answer") },
+            title = { Text(stringResource(R.string.can_t_confirm_one_answer)) },
             text = { Text("$message You can still play it. Wrong numbers can't be shown, but clashes can still be blocked.") },
-            confirmButton = { TextButton(onClick = { onFix(true) }, modifier = Modifier.testTag("play_anyway")) { Text("Play anyway") } },
-            dismissButton = { TextButton(onClick = onDismissProblem) { Text("Keep editing") } },
+            confirmButton = {
+                TextButton(
+                    onClick = { onFix(true) },
+                    modifier = Modifier.testTag("play_anyway"),
+                ) { Text(stringResource(R.string.play_anyway)) }
+            },
+            dismissButton = { TextButton(onClick = onDismissProblem) { Text(stringResource(R.string.keep_editing)) } },
         )
     }
 }

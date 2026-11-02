@@ -14,6 +14,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joclegg.puzzles.core.ui.MenuIcons
@@ -22,6 +23,7 @@ import com.joclegg.puzzles.core.ui.MenuTile
 import com.joclegg.puzzles.core.ui.home.GameHomeScaffold
 import com.joclegg.puzzles.core.ui.todayLabel
 import com.joclegg.puzzles.fiveletters.core.data.GameStatus
+import com.joclegg.puzzles.fiveletters.feature.R
 import com.joclegg.puzzles.fiveletters.ui.FiveLettersGameIcon
 import com.joclegg.puzzles.fiveletters.ui.FiveLettersIcons
 import com.joclegg.puzzles.fiveletters.ui.LocalFiveLettersColors
@@ -94,9 +96,9 @@ fun HomeScreen(
 ) {
     val accent = LocalFiveLettersColors.current.accent
     GameHomeScaffold(
-        title = "Five Letters",
+        title = stringResource(R.string.five_letters),
         calendarGame = "FIVE_LETTERS",
-        tagline = "Guess the word in six tries, a new one every day",
+        tagline = stringResource(R.string.guess_the_word_in_six_tries_a_new_one),
         accent = accent,
         settingsIcon = FiveLettersIcons.Settings,
         onStats = onStats,
@@ -106,7 +108,7 @@ fun HomeScreen(
         gameIcon = { FiveLettersGameIcon() },
         modifier = modifier,
     ) {
-        MenuSection("Today", aside = todayLabel()) {
+        MenuSection(stringResource(R.string.today), aside = todayLabel()) {
             MenuTile(
                 label = "Today's word · #${state.dailyNumber}",
                 accent = accent,
@@ -118,7 +120,7 @@ fun HomeScreen(
                 done = state.dailyResult == GameStatus.WON,
             )
             MenuTile(
-                label = "Daily puzzle 2",
+                label = stringResource(R.string.daily_puzzle_2),
                 accent = accent,
                 onClick = onDaily2,
                 modifier = Modifier.fillMaxWidth().testTag("daily2"),
@@ -129,21 +131,21 @@ fun HomeScreen(
             )
             if (daily2Unavailable) {
                 Text(
-                    "Couldn't load Daily puzzle 2. Check your connection and try again.",
+                    stringResource(R.string.couldn_t_load_daily_puzzle_2_check),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.padding(horizontal = 4.dp),
                 )
             }
         }
-        MenuSection("Practice") {
+        MenuSection(stringResource(R.string.practice)) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 MenuTile(
                     label =
                         if (state.practice != null) {
-                            "Continue practice"
+                            stringResource(R.string.continue_practice)
                         } else {
-                            "Practice"
+                            stringResource(R.string.practice)
                         },
                     accent = accent,
                     onClick = onPractice,
@@ -153,7 +155,7 @@ fun HomeScreen(
                 )
                 if (state.practice != null) {
                     MenuTile(
-                        label = "New word",
+                        label = stringResource(R.string.new_word),
                         accent = accent,
                         onClick = onNewPractice,
                         modifier = Modifier.weight(1f).testTag("new_practice"),
@@ -163,7 +165,7 @@ fun HomeScreen(
             }
         }
         Text(
-            "Everyone with Puzzles gets the same word each day, so you can compare grids.",
+            stringResource(R.string.everyone_with_puzzles_gets_the_same),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(horizontal = 4.dp),

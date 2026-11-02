@@ -17,12 +17,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joclegg.puzzles.core.ui.BackButton
 import com.joclegg.puzzles.core.ui.MenuPanel
+import com.joclegg.puzzles.core.ui.R
 
 data class StatsLine(
     val label: String,
@@ -37,7 +39,7 @@ fun <S> StatsRoute(
     viewModel: StatsViewModel<S, *, *>,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
-    title: String = "Stats",
+    title: String = stringResource(R.string.stats),
     spacing: Dp = 8.dp,
     footnote: String? = null,
     content: @Composable ColumnScope.(S) -> Unit,

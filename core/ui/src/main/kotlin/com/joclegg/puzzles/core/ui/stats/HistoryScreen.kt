@@ -21,12 +21,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joclegg.puzzles.core.ui.BackButton
 import com.joclegg.puzzles.core.ui.MenuEmptyState
 import com.joclegg.puzzles.core.ui.MenuFilterChip
 import com.joclegg.puzzles.core.ui.MenuPanel
+import com.joclegg.puzzles.core.ui.R
 import com.joclegg.puzzles.core.ui.formatDuration
 import kotlinx.coroutines.launch
 import java.time.Instant
@@ -82,10 +84,10 @@ fun <F> HistoryScreen(
     Column(modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             BackButton(onBack)
-            Text("History", style = MaterialTheme.typography.headlineMedium)
+            Text(stringResource(R.string.history), style = MaterialTheme.typography.headlineMedium)
         }
         Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            MenuFilterChip("All", selected = filter == null, accent = accent, onClick = { onFilter(null) })
+            MenuFilterChip(stringResource(R.string.all), selected = filter == null, accent = accent, onClick = { onFilter(null) })
             filters.forEach { option ->
                 MenuFilterChip(
                     label = option.label,
@@ -97,7 +99,7 @@ fun <F> HistoryScreen(
             }
         }
         if (history.isEmpty()) {
-            MenuEmptyState("No games yet.", accent)
+            MenuEmptyState(stringResource(R.string.no_games_yet), accent)
         } else {
             MenuPanel(accent, Modifier.weight(1f, fill = false)) {
                 LazyColumn {
