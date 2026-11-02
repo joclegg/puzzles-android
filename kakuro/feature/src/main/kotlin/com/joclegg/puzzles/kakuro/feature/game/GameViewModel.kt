@@ -7,7 +7,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.joclegg.puzzles.core.data.GameTimer
+import com.joclegg.puzzles.core.data.GameSession
 import com.joclegg.puzzles.kakuro.core.data.GameRepository
 import com.joclegg.puzzles.kakuro.core.data.HintStyle
 import com.joclegg.puzzles.kakuro.core.data.PuzzleBank
@@ -72,10 +72,14 @@ class GameViewModel(
 ) : ViewModel() {
     private var saved: SavedGame? = null
     private var game: GameState? = null
-    private var timer = GameTimer()
-    private var visible = false
-    private var ticker: Job? = null
-    private var pendingSave: Job? = null
+    private val session =
+        GameSession(
+            scope = viewModelScope,
+            monotonicNowMs = monotonicNowMs,
+            canRun = { game?.isSolved == false },
+            onTick = ::publish,
+            onSave = ::persistNow,
+        )
     private var newBest = false
     private var resultSaved = false
     private var display = Settings()
@@ -90,10 +94,7 @@ class GameViewModel(
             val loaded = games.get(gameId) ?: return@launch
             saved = loaded
             game = GameState.replay(loaded.ref.puzzle, loaded.changes).copy(mistakes = loaded.mistakes)
-            timer = GameTimer(accumulatedMs = loaded.elapsedMs)
-            if (visible) {
-                resumeTimer()
-            }
+            session.restore(loaded.elapsedMs)
             settings.settings.collect {
                 display = it
                 game =
@@ -144,9 +145,7 @@ class GameViewModel(
         if (current.isSolved || revealed) {
             return
         }
-        timer = timer.pause(monotonicNowMs())
-        ticker?.cancel()
-        pendingSave?.cancel()
+        session.stop()
         game = current.revealSolution()
         revealed = true
         val snapshot = snapshot() ?: return
@@ -160,10 +159,7 @@ class GameViewModel(
             return
         }
         game = current.restart()
-        timer = GameTimer()
-        if (visible) {
-            resumeTimer()
-        }
+        session.restart()
         persistNow()
         publish()
     }
@@ -175,31 +171,12 @@ class GameViewModel(
     }
 
     fun onVisible() {
-        visible = true
-        resumeTimer()
+        session.onVisible()
     }
 
     fun onHidden() {
-        visible = false
-        timer = timer.pause(monotonicNowMs())
-        ticker?.cancel()
+        session.onHidden()
         persistNow()
-    }
-
-    private fun resumeTimer() {
-        val current = game ?: return
-        if (current.isSolved) {
-            return
-        }
-        timer = timer.start(monotonicNowMs())
-        ticker?.cancel()
-        ticker =
-            viewModelScope.launch {
-                while (isActive) {
-                    publish()
-                    delay(TICK_MS)
-                }
-            }
     }
 
     private fun move(change: (GameState) -> GameState) {
@@ -216,15 +193,13 @@ class GameViewModel(
         if (!before.isSolved && after.isSolved) {
             finish()
         } else if (after.changes != before.changes || after.mistakes != before.mistakes) {
-            persistSoon()
+            session.saveSoon()
         }
         publish()
     }
 
     private fun finish() {
-        timer = timer.pause(monotonicNowMs())
-        ticker?.cancel()
-        pendingSave?.cancel()
+        session.stop()
         val finished = snapshot() ?: return
         viewModelScope.launch {
             newBest = withContext(NonCancellable) { games.solve(finished) }
@@ -233,17 +208,8 @@ class GameViewModel(
         }
     }
 
-    private fun persistSoon() {
-        pendingSave?.cancel()
-        pendingSave =
-            viewModelScope.launch {
-                delay(SAVE_AFTER_IDLE_MS)
-                persistNow()
-            }
-    }
-
     private fun persistNow() {
-        pendingSave?.cancel()
+        session.cancelPendingSave()
         val snapshot = snapshot() ?: return
         if (game?.isSolved == true) {
             return
@@ -253,7 +219,7 @@ class GameViewModel(
 
     private fun snapshot(): SavedGame? {
         val current = game ?: return null
-        return saved?.copy(changes = current.changes, mistakes = current.mistakes, elapsedMs = timer.elapsedMs(monotonicNowMs()))
+        return saved?.copy(changes = current.changes, mistakes = current.mistakes, elapsedMs = session.elapsedMs())
     }
 
     private fun publish() {
@@ -275,7 +241,7 @@ class GameViewModel(
                     } else {
                         board.copy(runCells = emptySet())
                     },
-                elapsedMs = timer.elapsedMs(monotonicNowMs()),
+                elapsedMs = session.elapsedMs(),
                 showTimer = display.showTimer,
                 notesMode = current.notesMode,
                 digitFirst = current.inputMode == InputMode.DIGIT_FIRST,
@@ -332,10 +298,5 @@ class GameViewModel(
                 newBest = newBest,
                 resultSaved = resultSaved,
             )
-    }
-
-    private companion object {
-        const val TICK_MS = 500L
-        const val SAVE_AFTER_IDLE_MS = 400L
     }
 }
