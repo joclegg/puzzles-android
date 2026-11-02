@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
@@ -67,6 +68,7 @@ enum class SettingsTab(
 
 object SettingsHub {
     const val ROUTE = "settings/{tab}?mode={mode}"
+    const val PRIVACY_POLICY_URL = "https://joclegg.github.io/puzzles-web/#/privacy"
 
     fun route(
         tab: SettingsTab,
@@ -236,6 +238,18 @@ private fun GeneralSettings(
         if (state.signedIn) {
             AccountSettings(state.deleteAccount, onDeleteAccount)
         }
+        PrivacyPolicyLink()
+    }
+}
+
+@Composable
+private fun PrivacyPolicyLink(modifier: Modifier = Modifier) {
+    val uriHandler = LocalUriHandler.current
+    TextButton(
+        onClick = { uriHandler.openUri(SettingsHub.PRIVACY_POLICY_URL) },
+        modifier = modifier.testTag("privacy_policy"),
+    ) {
+        Text(stringResource(R.string.privacy_policy))
     }
 }
 
