@@ -48,7 +48,7 @@ data class PuzzleRef(
             size: Int,
         ): PuzzleRef {
             val puzzles = bank.puzzles(size)
-            val order = puzzles.indices.shuffled(Random(size.toLong()))
+            val order = bank.shuffledOrder(size, size.toLong())
             val day = (date.toEpochDay() - FIRST_DAY.toEpochDay()).toInt()
             return PuzzleRef(dailyId(date, size), puzzles[order[day.mod(puzzles.size)]])
         }
