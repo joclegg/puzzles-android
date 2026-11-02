@@ -73,7 +73,7 @@ class GameViewModel(
             scope = viewModelScope,
             monotonicNowMs = monotonicNowMs,
             canRun = { game?.isComplete == false },
-            onTick = ::publish,
+            onTick = ::publishElapsed,
             onSave = ::persistNow,
         )
     private var newBest = false
@@ -229,6 +229,10 @@ class GameViewModel(
             elapsedMs = session.elapsedMs(),
             moves = current.undoStack,
         )
+    }
+
+    private fun publishElapsed() {
+        _uiState.update { it?.copy(elapsedMs = session.elapsedMs()) }
     }
 
     private fun publish() {

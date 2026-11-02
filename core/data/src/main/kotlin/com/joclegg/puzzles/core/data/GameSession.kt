@@ -51,7 +51,7 @@ class GameSession(
             scope.launch {
                 while (isActive) {
                     onTick()
-                    delay(tickMs)
+                    delay(tickMs - elapsedMs() % tickMs)
                 }
             }
     }
@@ -80,7 +80,7 @@ class GameSession(
     }
 
     private companion object {
-        const val TICK_MS = 500L
+        const val TICK_MS = 1_000L
         const val SAVE_AFTER_IDLE_MS = 400L
     }
 }

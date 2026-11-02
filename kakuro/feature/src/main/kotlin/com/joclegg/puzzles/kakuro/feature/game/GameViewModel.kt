@@ -31,6 +31,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -77,7 +78,7 @@ class GameViewModel(
             scope = viewModelScope,
             monotonicNowMs = monotonicNowMs,
             canRun = { game?.isSolved == false },
-            onTick = ::publish,
+            onTick = ::publishElapsed,
             onSave = ::persistNow,
         )
     private var newBest = false
@@ -220,6 +221,10 @@ class GameViewModel(
     private fun snapshot(): SavedGame? {
         val current = game ?: return null
         return saved?.copy(changes = current.changes, mistakes = current.mistakes, elapsedMs = session.elapsedMs())
+    }
+
+    private fun publishElapsed() {
+        _uiState.update { it?.copy(elapsedMs = session.elapsedMs()) }
     }
 
     private fun publish() {
