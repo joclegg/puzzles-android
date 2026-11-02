@@ -17,6 +17,7 @@ android {
 
 dependencies {
     api(projects.kakuro.engine)
+    api(projects.core.data)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)

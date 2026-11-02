@@ -9,6 +9,7 @@ ksp {
 
 dependencies {
     api(projects.slideout.engine)
+    api(projects.core.data)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)

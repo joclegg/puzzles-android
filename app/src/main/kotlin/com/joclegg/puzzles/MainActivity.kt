@@ -24,7 +24,7 @@ import com.joclegg.puzzles.slideout.SlideOutFixtures
 import com.joclegg.puzzles.solitaire.SolitaireFixtures
 import com.joclegg.puzzles.sudoku.SudokuFixtures
 import com.joclegg.puzzles.sudoku.core.data.ThemeMode
-import com.joclegg.puzzles.sudoku.core.ui.SudokuTheme
+import com.joclegg.puzzles.sudoku.ui.SudokuTheme
 import com.joclegg.puzzles.twotone.TwoToneFixtures
 import com.joclegg.puzzles.wordwheel.WordWheelFixtures
 import kotlinx.coroutines.flow.drop

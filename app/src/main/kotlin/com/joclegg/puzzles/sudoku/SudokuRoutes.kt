@@ -3,6 +3,7 @@ package com.joclegg.puzzles.sudoku
 import android.os.SystemClock
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -12,9 +13,11 @@ import androidx.navigation.navArgument
 import com.joclegg.puzzles.AccentColors
 import com.joclegg.puzzles.SettingsHub
 import com.joclegg.puzzles.SettingsTab
+import com.joclegg.puzzles.core.ui.stats.HistoryRoute
+import com.joclegg.puzzles.core.ui.stats.StatsRoute
+import com.joclegg.puzzles.core.ui.stats.StatsViewModel
 import com.joclegg.puzzles.sudoku.core.data.GameMode
 import com.joclegg.puzzles.sudoku.core.data.openLevel
-import com.joclegg.puzzles.sudoku.core.ui.LocalBoardColors
 import com.joclegg.puzzles.sudoku.feature.game.EntryRoute
 import com.joclegg.puzzles.sudoku.feature.game.EntryViewModel
 import com.joclegg.puzzles.sudoku.feature.game.GameRoute
@@ -23,9 +26,7 @@ import com.joclegg.puzzles.sudoku.feature.home.HomeRoute
 import com.joclegg.puzzles.sudoku.feature.home.HomeViewModel
 import com.joclegg.puzzles.sudoku.feature.settings.SettingsRoute
 import com.joclegg.puzzles.sudoku.feature.settings.SettingsViewModel
-import com.joclegg.puzzles.sudoku.feature.stats.HistoryRoute
-import com.joclegg.puzzles.sudoku.feature.stats.StatsRoute
-import com.joclegg.puzzles.sudoku.feature.stats.StatsViewModel
+import com.joclegg.puzzles.sudoku.ui.LocalSudokuColors
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -37,7 +38,7 @@ object SudokuRoutes {
     private const val HISTORY = "sudoku/history"
 
     fun NavGraphBuilder.sudokuGraph(
-        container: SudokuContainer,
+        container: SudokuDefinition,
         navController: NavHostController,
     ) {
         composable(HOME) {
@@ -78,11 +79,26 @@ object SudokuRoutes {
             )
         }
         composable(STATS) {
-            StatsRoute(viewModel { StatsViewModel(container.games, container.settings) }, onBack = navController::popBackStack)
+            StatsRoute(
+                viewModel {
+                    StatsViewModel(sudokuStatsSource(container.games, container.settings))
+                },
+                onBack = navController::popBackStack,
+                title = "Best times",
+                spacing = 20.dp,
+                footnote = SUDOKU_STATS_FOOTNOTE,
+            ) { stats ->
+                GameMode.entries
+                    .forEach {
+                        SudokuBestTimes(stats, it)
+                    }
+            }
         }
         composable(HISTORY) {
             HistoryRoute(
-                viewModel = viewModel { StatsViewModel(container.games, container.settings) },
+                viewModel = viewModel { StatsViewModel(sudokuStatsSource(container.games, container.settings)) },
+                accent = LocalSudokuColors.current.accent,
+                filters = sudokuHistoryFilters,
                 onOpenGame = { navController.openSudokuGame(it) },
                 onBack = navController::popBackStack,
             )
@@ -91,10 +107,10 @@ object SudokuRoutes {
 
     @Composable
     fun SettingsTabContent(
-        container: SudokuContainer,
+        container: SudokuDefinition,
         mode: GameMode,
     ) {
-        AccentColors(LocalBoardColors.current.accent) {
+        AccentColors(LocalSudokuColors.current.accent) {
             SettingsRoute(viewModel { SettingsViewModel(container.settings) }, initialMode = mode, onBack = null)
         }
     }

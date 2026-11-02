@@ -17,3 +17,7 @@ tasks.register<JavaExec>("generateBank") {
             .toTypedArray(),
     )
 }
+
+dependencies {
+    api(projects.core.data)
+}

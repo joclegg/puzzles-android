@@ -4,6 +4,7 @@ import com.joclegg.puzzles.sudoku.engine.Difficulty
 import com.joclegg.puzzles.sudoku.engine.Generator
 import com.joclegg.puzzles.sudoku.engine.Puzzle
 import com.joclegg.puzzles.sudoku.engine.PuzzleCodec
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlin.random.Random
@@ -15,6 +16,8 @@ class PuzzleSupply(
     private val onRunningLow: () -> Unit = {},
     private val now: () -> Long = System::currentTimeMillis,
     private val generate: (GameMode, Difficulty) -> Puzzle = ::generatePuzzle,
+    private val io: CoroutineDispatcher = Dispatchers.IO,
+    private val background: CoroutineDispatcher = Dispatchers.Default,
 ) {
     suspend fun next(
         mode: GameMode,
@@ -32,12 +35,12 @@ class PuzzleSupply(
         difficulty: Difficulty,
     ): PuzzleRef {
         val played = games.playedPuzzleIds(mode)
-        withContext(Dispatchers.IO) { bank.nextUnplayed(mode, difficulty, played) }?.let { return it }
+        withContext(io) { bank.nextUnplayed(mode, difficulty, played) }?.let { return it }
         val stocked = generated.takeUnused(mode.name, difficulty.name)
         if (stocked != null) {
             return stocked.toRef()
         }
-        val fresh = withContext(Dispatchers.Default) { generate(mode, difficulty) }
+        val fresh = withContext(background) { generate(mode, difficulty) }
         val id = generated.insert(entity(mode, difficulty, fresh, used = true))
         return PuzzleRef(generatedId(mode, difficulty, id), mode, difficulty, fresh)
     }
@@ -47,7 +50,7 @@ class PuzzleSupply(
         difficulty: Difficulty,
     ): Int {
         val played = games.playedPuzzleIds(mode)
-        val bundled = withContext(Dispatchers.IO) { bank.unplayedCount(mode, difficulty, played) }
+        val bundled = withContext(io) { bank.unplayedCount(mode, difficulty, played) }
         return bundled + generated.unusedCount(mode.name, difficulty.name)
     }
 
@@ -59,7 +62,7 @@ class PuzzleSupply(
             for (difficulty in mode.levels) {
                 var missing = target - stock(mode, difficulty)
                 while (missing > 0 && !shouldStop()) {
-                    val fresh = withContext(Dispatchers.Default) { generate(mode, difficulty) }
+                    val fresh = withContext(background) { generate(mode, difficulty) }
                     generated.insert(entity(mode, difficulty, fresh, used = false))
                     missing--
                 }

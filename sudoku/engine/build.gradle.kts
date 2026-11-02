@@ -13,3 +13,7 @@ tasks.register<JavaExec>("generateBank") {
         providers.gradleProperty("bankSize").getOrElse("300"),
     )
 }
+
+dependencies {
+    api(projects.core.data)
+}

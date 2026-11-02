@@ -4,6 +4,7 @@ plugins {
 }
 
 dependencies {
+    api(projects.core.ui)
     api(projects.slideout.engine)
     implementation(projects.slideout.data)
 }

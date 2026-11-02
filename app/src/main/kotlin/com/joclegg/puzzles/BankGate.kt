@@ -14,19 +14,7 @@ object BankGate {
     fun route(game: PuzzleGame) = "banks/${game.name}"
 }
 
-val PuzzleGame.bankFolder: String?
-    get() =
-        when (this) {
-            PuzzleGame.SUDOKU -> "sudoku"
-            PuzzleGame.SOLITAIRE -> "solitaire"
-            PuzzleGame.FIVE_LETTERS -> "words"
-            PuzzleGame.KAKURO -> "kakuro"
-            PuzzleGame.SLIDE_OUT -> "slideout"
-            PuzzleGame.WORD_WHEEL -> "wordwheel"
-            PuzzleGame.TWO_TONE, PuzzleGame.SIGHTLINES -> null
-        }
-
-fun PuzzlesApplication.hasBanksFor(game: PuzzleGame): Boolean = game.bankFolder?.let(banks::isReady) ?: true
+fun PuzzlesApplication.hasBanksFor(game: PuzzleGame): Boolean = definition(game).bankFolder?.let(banks::isReady) ?: true
 
 @Composable
 fun BankGateRoute(

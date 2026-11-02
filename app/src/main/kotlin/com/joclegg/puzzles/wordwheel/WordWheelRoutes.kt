@@ -13,17 +13,17 @@ import androidx.navigation.navArgument
 import com.joclegg.puzzles.AccentColors
 import com.joclegg.puzzles.SettingsHub
 import com.joclegg.puzzles.SettingsTab
-import com.joclegg.puzzles.wordwheel.core.ui.LocalWheelColors
-import com.joclegg.puzzles.wordwheel.core.ui.WordWheelTheme
+import com.joclegg.puzzles.core.ui.stats.HistoryRoute
+import com.joclegg.puzzles.core.ui.stats.StatsRoute
+import com.joclegg.puzzles.core.ui.stats.StatsViewModel
 import com.joclegg.puzzles.wordwheel.feature.game.GameRoute
 import com.joclegg.puzzles.wordwheel.feature.game.GameViewModel
 import com.joclegg.puzzles.wordwheel.feature.home.HomeRoute
 import com.joclegg.puzzles.wordwheel.feature.home.HomeViewModel
 import com.joclegg.puzzles.wordwheel.feature.settings.SettingsRoute
 import com.joclegg.puzzles.wordwheel.feature.settings.SettingsViewModel
-import com.joclegg.puzzles.wordwheel.feature.stats.HistoryRoute
-import com.joclegg.puzzles.wordwheel.feature.stats.StatsRoute
-import com.joclegg.puzzles.wordwheel.feature.stats.StatsViewModel
+import com.joclegg.puzzles.wordwheel.ui.LocalWordWheelColors
+import com.joclegg.puzzles.wordwheel.ui.WordWheelTheme
 
 object WordWheelRoutes {
     const val HOME = "word_wheel/home"
@@ -32,7 +32,7 @@ object WordWheelRoutes {
     private const val HISTORY = "word_wheel/history"
 
     fun NavGraphBuilder.wordWheelGraph(
-        container: WordWheelContainer,
+        container: WordWheelDefinition,
         navController: NavHostController,
         darkTheme: Boolean,
     ) {
@@ -66,11 +66,19 @@ object WordWheelRoutes {
             )
         }
         screen(STATS, darkTheme) {
-            StatsRoute(viewModel { StatsViewModel(container.games) }, onBack = navController::popBackStack)
+            StatsRoute(
+                viewModel {
+                    StatsViewModel(wordWheelStatsSource(container.games))
+                },
+                onBack = navController::popBackStack,
+                footnote = WORD_WHEEL_STATS_FOOTNOTE,
+            ) { WordWheelStatsTable(it) }
         }
         screen(HISTORY, darkTheme) {
             HistoryRoute(
-                viewModel = viewModel { StatsViewModel(container.games) },
+                viewModel = viewModel { StatsViewModel(wordWheelStatsSource(container.games)) },
+                accent = LocalWordWheelColors.current.accent,
+                filters = wordWheelHistoryFilters,
                 onOpenGame = { navController.openWordWheelGame(it) },
                 onBack = navController::popBackStack,
             )
@@ -79,11 +87,11 @@ object WordWheelRoutes {
 
     @Composable
     fun SettingsTabContent(
-        container: WordWheelContainer,
+        container: WordWheelDefinition,
         darkTheme: Boolean,
     ) {
         WordWheelTheme(darkTheme) {
-            AccentColors(LocalWheelColors.current.accent) {
+            AccentColors(LocalWordWheelColors.current.accent) {
                 SettingsRoute(viewModel { SettingsViewModel(container.settings) }, onBack = null)
             }
         }

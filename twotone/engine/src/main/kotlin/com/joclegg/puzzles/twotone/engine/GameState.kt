@@ -111,19 +111,3 @@ data class GameState(
         ): GameState = GameState(puzzle, changes.fold(puzzle.givens) { grid, change -> grid.with(change.cell, change.to) }, changes)
     }
 }
-
-data class GameTimer(
-    val accumulatedMs: Long = 0,
-    val runningSinceMs: Long? = null,
-) {
-    fun start(nowMs: Long) =
-        if (runningSinceMs != null) {
-            this
-        } else {
-            copy(runningSinceMs = nowMs)
-        }
-
-    fun pause(nowMs: Long) = runningSinceMs?.let { GameTimer(accumulatedMs + (nowMs - it), null) } ?: this
-
-    fun elapsedMs(nowMs: Long) = accumulatedMs + (runningSinceMs?.let { nowMs - it } ?: 0)
-}

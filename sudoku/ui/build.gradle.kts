@@ -4,5 +4,6 @@ plugins {
 }
 
 dependencies {
+    api(projects.core.ui)
     api(projects.sudoku.engine)
 }

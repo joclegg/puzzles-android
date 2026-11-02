@@ -25,42 +25,7 @@ spotless {
         suppressLintsFor {
             step = "ktlint"
             shortCode = "compose:compositionlocal-allowlist"
-            path = "sudoku/ui/src/main/kotlin/com/joclegg/puzzles/sudoku/core/ui/Theme.kt"
-        }
-        suppressLintsFor {
-            step = "ktlint"
-            shortCode = "compose:compositionlocal-allowlist"
-            path = "solitaire/ui/src/main/kotlin/com/joclegg/puzzles/solitaire/core/ui/Theme.kt"
-        }
-        suppressLintsFor {
-            step = "ktlint"
-            shortCode = "compose:compositionlocal-allowlist"
-            path = "twotone/ui/src/main/kotlin/com/joclegg/puzzles/twotone/core/ui/Theme.kt"
-        }
-        suppressLintsFor {
-            step = "ktlint"
-            shortCode = "compose:compositionlocal-allowlist"
-            path = "sightlines/ui/src/main/kotlin/com/joclegg/puzzles/sightlines/core/ui/Theme.kt"
-        }
-        suppressLintsFor {
-            step = "ktlint"
-            shortCode = "compose:compositionlocal-allowlist"
-            path = "fiveletters/ui/src/main/kotlin/com/joclegg/puzzles/fiveletters/core/ui/Theme.kt"
-        }
-        suppressLintsFor {
-            step = "ktlint"
-            shortCode = "compose:compositionlocal-allowlist"
-            path = "kakuro/ui/src/main/kotlin/com/joclegg/puzzles/kakuro/core/ui/Theme.kt"
-        }
-        suppressLintsFor {
-            step = "ktlint"
-            shortCode = "compose:compositionlocal-allowlist"
-            path = "slideout/ui/src/main/kotlin/com/joclegg/puzzles/slideout/core/ui/Theme.kt"
-        }
-        suppressLintsFor {
-            step = "ktlint"
-            shortCode = "compose:compositionlocal-allowlist"
-            path = "wordwheel/ui/src/main/kotlin/com/joclegg/puzzles/wordwheel/core/ui/Theme.kt"
+            path = "core/ui/src/main/kotlin/com/joclegg/puzzles/core/ui/DailyCalendar.kt"
         }
         suppressLintsFor {
             step = "ktlint"
@@ -70,7 +35,47 @@ spotless {
         suppressLintsFor {
             step = "ktlint"
             shortCode = "compose:compositionlocal-allowlist"
-            path = "core/ui/src/main/kotlin/com/joclegg/puzzles/core/ui/DailyCalendar.kt"
+            path = "fiveletters/ui/src/main/kotlin/com/joclegg/puzzles/fiveletters/ui/Theme.kt"
+        }
+        suppressLintsFor {
+            step = "ktlint"
+            shortCode = "compose:compositionlocal-allowlist"
+            path = "kakuro/ui/src/main/kotlin/com/joclegg/puzzles/kakuro/ui/Theme.kt"
+        }
+        suppressLintsFor {
+            step = "ktlint"
+            shortCode = "compose:compositionlocal-allowlist"
+            path = "sightlines/ui/src/main/kotlin/com/joclegg/puzzles/sightlines/ui/Theme.kt"
+        }
+        suppressLintsFor {
+            step = "ktlint"
+            shortCode = "compose:compositionlocal-allowlist"
+            path = "slideout/ui/src/main/kotlin/com/joclegg/puzzles/slideout/ui/Theme.kt"
+        }
+        suppressLintsFor {
+            step = "ktlint"
+            shortCode = "compose:compositionlocal-allowlist"
+            path = "solitaire/ui/src/main/kotlin/com/joclegg/puzzles/solitaire/ui/Theme.kt"
+        }
+        suppressLintsFor {
+            step = "ktlint"
+            shortCode = "compose:compositionlocal-allowlist"
+            path = "sudoku/ui/src/main/kotlin/com/joclegg/puzzles/sudoku/ui/Theme.kt"
+        }
+        suppressLintsFor {
+            step = "ktlint"
+            shortCode = "compose:compositionlocal-allowlist"
+            path = "twotone/ui/src/main/kotlin/com/joclegg/puzzles/twotone/ui/Theme.kt"
+        }
+        suppressLintsFor {
+            step = "ktlint"
+            shortCode = "compose:compositionlocal-allowlist"
+            path = "wordwheel/ui/src/main/kotlin/com/joclegg/puzzles/wordwheel/ui/Theme.kt"
+        }
+        suppressLintsFor {
+            step = "ktlint"
+            shortCode = "compose:modifier-missing-check"
+            path = "core/ui/src/main/kotlin/com/joclegg/puzzles/core/ui/home/GameHomeScreen.kt"
         }
     }
     kotlinGradle {

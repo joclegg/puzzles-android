@@ -27,31 +27,6 @@ import com.joclegg.puzzles.core.ui.LocalDailiesLeft
 import com.joclegg.puzzles.core.ui.LocalDailyCalendars
 import com.joclegg.puzzles.core.ui.Medal
 import com.joclegg.puzzles.core.ui.dailyDays
-import com.joclegg.puzzles.fiveletters.FiveLettersRoutes
-import com.joclegg.puzzles.fiveletters.FiveLettersRoutes.fiveLettersGraph
-import com.joclegg.puzzles.fiveletters.FiveLettersRoutes.openFiveLettersGame
-import com.joclegg.puzzles.kakuro.KakuroRoutes
-import com.joclegg.puzzles.kakuro.KakuroRoutes.kakuroGraph
-import com.joclegg.puzzles.kakuro.KakuroRoutes.openKakuroGame
-import com.joclegg.puzzles.sightlines.SightlinesRoutes
-import com.joclegg.puzzles.sightlines.SightlinesRoutes.openSightlinesGame
-import com.joclegg.puzzles.sightlines.SightlinesRoutes.sightlinesGraph
-import com.joclegg.puzzles.slideout.SlideOutRoutes
-import com.joclegg.puzzles.slideout.SlideOutRoutes.openSlideOutGame
-import com.joclegg.puzzles.slideout.SlideOutRoutes.slideOutGraph
-import com.joclegg.puzzles.solitaire.SolitaireRoutes
-import com.joclegg.puzzles.solitaire.SolitaireRoutes.openSolitaireGame
-import com.joclegg.puzzles.solitaire.SolitaireRoutes.solitaireGraph
-import com.joclegg.puzzles.sudoku.SudokuRoutes
-import com.joclegg.puzzles.sudoku.SudokuRoutes.openSudokuGame
-import com.joclegg.puzzles.sudoku.SudokuRoutes.sudokuGraph
-import com.joclegg.puzzles.sudoku.core.data.GameMode
-import com.joclegg.puzzles.twotone.TwoToneRoutes
-import com.joclegg.puzzles.twotone.TwoToneRoutes.openTwoToneGame
-import com.joclegg.puzzles.twotone.TwoToneRoutes.twoToneGraph
-import com.joclegg.puzzles.wordwheel.WordWheelRoutes
-import com.joclegg.puzzles.wordwheel.WordWheelRoutes.openWordWheelGame
-import com.joclegg.puzzles.wordwheel.WordWheelRoutes.wordWheelGraph
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
@@ -66,19 +41,6 @@ data class OpenGame(
 )
 
 const val LAUNCHER = "launcher"
-
-val PuzzleGame.home: String
-    get() =
-        when (this) {
-            PuzzleGame.SUDOKU -> SudokuRoutes.HOME
-            PuzzleGame.SOLITAIRE -> SolitaireRoutes.HOME
-            PuzzleGame.TWO_TONE -> TwoToneRoutes.HOME
-            PuzzleGame.SIGHTLINES -> SightlinesRoutes.HOME
-            PuzzleGame.FIVE_LETTERS -> FiveLettersRoutes.HOME
-            PuzzleGame.KAKURO -> KakuroRoutes.HOME
-            PuzzleGame.SLIDE_OUT -> SlideOutRoutes.HOME
-            PuzzleGame.WORD_WHEEL -> WordWheelRoutes.HOME
-        }
 
 fun todaysMedal(
     app: PuzzlesApplication,
@@ -115,47 +77,9 @@ fun PuzzlesApp(
     val currentOnConsume by rememberUpdatedState(onConsumeOpenGame)
     LaunchedEffect(openGame) {
         if (openGame != null) {
-            when (openGame.game) {
-                PuzzleGame.SUDOKU -> {
-                    navController.navigate(SudokuRoutes.HOME)
-                    openGame.id?.let { navController.openSudokuGame(it) }
-                }
-
-                PuzzleGame.SOLITAIRE -> {
-                    navController.navigate(SolitaireRoutes.HOME)
-                    openGame.id?.let { navController.openSolitaireGame(it) }
-                }
-
-                PuzzleGame.TWO_TONE -> {
-                    navController.navigate(TwoToneRoutes.HOME)
-                    openGame.id?.let { navController.openTwoToneGame(it) }
-                }
-
-                PuzzleGame.SIGHTLINES -> {
-                    navController.navigate(SightlinesRoutes.HOME)
-                    openGame.id?.let { navController.openSightlinesGame(it) }
-                }
-
-                PuzzleGame.FIVE_LETTERS -> {
-                    navController.navigate(FiveLettersRoutes.HOME)
-                    openGame.id?.let { navController.openFiveLettersGame(it) }
-                }
-
-                PuzzleGame.KAKURO -> {
-                    navController.navigate(KakuroRoutes.HOME)
-                    openGame.id?.let { navController.openKakuroGame(it) }
-                }
-
-                PuzzleGame.SLIDE_OUT -> {
-                    navController.navigate(SlideOutRoutes.HOME)
-                    openGame.id?.let { navController.openSlideOutGame(it) }
-                }
-
-                PuzzleGame.WORD_WHEEL -> {
-                    navController.navigate(WordWheelRoutes.HOME)
-                    openGame.id?.let { navController.openWordWheelGame(it) }
-                }
-            }
+            val definition = app.definition(openGame.game)
+            navController.navigate(definition.homeRoute)
+            openGame.id?.let { definition.openGame(navController, it) }
             currentOnConsume()
         }
     }
@@ -172,7 +96,7 @@ fun PuzzlesApp(
     val todays by medals.collectAsState(emptyMap())
     val openHome: (PuzzleGame) -> Unit = { game ->
         if (app.hasBanksFor(game)) {
-            navController.navigate(game.home)
+            navController.navigate(app.definition(game).homeRoute)
         } else {
             navController.navigate(BankGate.route(game))
         }
@@ -194,23 +118,15 @@ fun PuzzlesApp(
                             },
                         ),
                 ) { entry ->
-                    val mode = entry.arguments?.getString("mode")?.let(GameMode::valueOf) ?: GameMode.CLASSIC
+                    val argument = entry.arguments?.getString("mode")
                     SettingsHubRoute(
                         viewModel = viewModel { AppSettingsViewModel(app.sudoku.settings, app.auth.email, app.auth::deleteAccount) },
                         initialTab = SettingsTab.valueOf(entry.arguments!!.getString("tab")!!),
                         onBack = navController::popBackStack,
-                        accentOf = { tab -> settingsAccent(tab, darkTheme) },
+                        accentOf = { tab -> settingsAccent(app, tab, darkTheme) },
                         tabContent = { tab ->
-                            when (tab) {
-                                SettingsTab.GENERAL -> Unit
-                                SettingsTab.SUDOKU -> SudokuRoutes.SettingsTabContent(app.sudoku, mode)
-                                SettingsTab.SOLITAIRE -> SolitaireRoutes.SettingsTabContent(app.solitaire, darkTheme)
-                                SettingsTab.TWO_TONE -> TwoToneRoutes.SettingsTabContent(app.twoTone, darkTheme)
-                                SettingsTab.SIGHTLINES -> SightlinesRoutes.SettingsTabContent(app.sightlines, darkTheme)
-                                SettingsTab.FIVE_LETTERS -> FiveLettersRoutes.SettingsTabContent(app.fiveLetters, darkTheme)
-                                SettingsTab.KAKURO -> KakuroRoutes.SettingsTabContent(app.kakuro, darkTheme)
-                                SettingsTab.SLIDE_OUT -> SlideOutRoutes.SettingsTabContent(app.slideOut, darkTheme)
-                                SettingsTab.WORD_WHEEL -> WordWheelRoutes.SettingsTabContent(app.wordWheel, darkTheme)
+                            if (tab != SettingsTab.GENERAL) {
+                                app.definition(PuzzleGame.valueOf(tab.name)).SettingsContent(darkTheme, argument)
                             }
                         },
                     )
@@ -224,7 +140,7 @@ fun PuzzlesApp(
                         app,
                         game,
                         onReady = {
-                            navController.navigate(game.home) {
+                            navController.navigate(app.definition(game).homeRoute) {
                                 popUpTo(BankGate.ROUTE) { inclusive = true }
                             }
                         },
@@ -255,14 +171,7 @@ fun PuzzlesApp(
                         onWordWheelClick = { openHome(PuzzleGame.WORD_WHEEL) },
                     )
                 }
-                sudokuGraph(app.sudoku, navController)
-                solitaireGraph(app.solitaire, navController, darkTheme)
-                twoToneGraph(app.twoTone, navController, darkTheme)
-                sightlinesGraph(app.sightlines, navController, darkTheme)
-                fiveLettersGraph(app.fiveLetters, navController, darkTheme)
-                kakuroGraph(app.kakuro, navController, darkTheme)
-                slideOutGraph(app.slideOut, navController, darkTheme)
-                wordWheelGraph(app.wordWheel, navController, darkTheme)
+                app.games.forEach { it.registerGraph(this, navController, darkTheme) }
             }
         }
     }

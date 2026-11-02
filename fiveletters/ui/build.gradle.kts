@@ -4,6 +4,7 @@ plugins {
 }
 
 dependencies {
+    api(projects.core.ui)
     api(projects.fiveletters.engine)
     implementation(projects.fiveletters.data)
 }

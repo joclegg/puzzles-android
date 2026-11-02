@@ -38,27 +38,27 @@ import java.time.LocalDate
 import com.joclegg.puzzles.fiveletters.core.data.GameStatus as FiveLettersStatus
 import com.joclegg.puzzles.kakuro.core.data.GameStatus as KakuroStatus
 import com.joclegg.puzzles.kakuro.core.data.PuzzleRef as KakuroRef
-import com.joclegg.puzzles.kakuro.core.ui.sizeLabel as kakuroSizeLabel
 import com.joclegg.puzzles.kakuro.engine.SIZES as KAKURO_SIZES
+import com.joclegg.puzzles.kakuro.ui.sizeLabel as kakuroSizeLabel
 import com.joclegg.puzzles.sightlines.core.data.GameStatus as SightlinesStatus
 import com.joclegg.puzzles.sightlines.core.data.PuzzleRef as SightlinesRef
-import com.joclegg.puzzles.sightlines.core.ui.sizeLabel as sightlinesSizeLabel
 import com.joclegg.puzzles.sightlines.engine.SIZES as SIGHTLINES_SIZES
+import com.joclegg.puzzles.sightlines.ui.sizeLabel as sightlinesSizeLabel
 import com.joclegg.puzzles.slideout.core.data.GameStatus as SlideOutStatus
 import com.joclegg.puzzles.slideout.core.data.PuzzleRef as SlideOutRef
-import com.joclegg.puzzles.slideout.core.ui.label as slideOutLabel
 import com.joclegg.puzzles.slideout.engine.Level as SlideOutLevel
+import com.joclegg.puzzles.slideout.ui.label as slideOutLabel
 import com.joclegg.puzzles.solitaire.core.data.GameStatus as SolitaireStatus
 import com.joclegg.puzzles.sudoku.core.data.GameStatus as SudokuStatus
-import com.joclegg.puzzles.sudoku.core.ui.label as sudokuLabel
+import com.joclegg.puzzles.sudoku.ui.label as sudokuLabel
 import com.joclegg.puzzles.twotone.core.data.GameStatus as TwoToneStatus
 import com.joclegg.puzzles.twotone.core.data.PuzzleRef as TwoToneRef
-import com.joclegg.puzzles.twotone.core.ui.sizeLabel as twotoneSizeLabel
 import com.joclegg.puzzles.twotone.engine.SIZES as TWO_TONE_SIZES
+import com.joclegg.puzzles.twotone.ui.sizeLabel as twotoneSizeLabel
 import com.joclegg.puzzles.wordwheel.core.data.GameStatus as WordWheelStatus
 import com.joclegg.puzzles.wordwheel.core.data.PuzzleRef as WordWheelRef
-import com.joclegg.puzzles.wordwheel.core.ui.label as wordWheelLabel
 import com.joclegg.puzzles.wordwheel.engine.Level as WordWheelLevel
+import com.joclegg.puzzles.wordwheel.ui.label as wordWheelLabel
 
 @Composable
 fun rememberTodaysDailies(

@@ -13,17 +13,17 @@ import androidx.navigation.navArgument
 import com.joclegg.puzzles.AccentColors
 import com.joclegg.puzzles.SettingsHub
 import com.joclegg.puzzles.SettingsTab
-import com.joclegg.puzzles.slideout.core.ui.LocalSlideColors
-import com.joclegg.puzzles.slideout.core.ui.SlideOutTheme
+import com.joclegg.puzzles.core.ui.stats.HistoryRoute
+import com.joclegg.puzzles.core.ui.stats.StatsRoute
+import com.joclegg.puzzles.core.ui.stats.StatsViewModel
 import com.joclegg.puzzles.slideout.feature.game.GameRoute
 import com.joclegg.puzzles.slideout.feature.game.GameViewModel
 import com.joclegg.puzzles.slideout.feature.home.HomeRoute
 import com.joclegg.puzzles.slideout.feature.home.HomeViewModel
 import com.joclegg.puzzles.slideout.feature.settings.SettingsRoute
 import com.joclegg.puzzles.slideout.feature.settings.SettingsViewModel
-import com.joclegg.puzzles.slideout.feature.stats.HistoryRoute
-import com.joclegg.puzzles.slideout.feature.stats.StatsRoute
-import com.joclegg.puzzles.slideout.feature.stats.StatsViewModel
+import com.joclegg.puzzles.slideout.ui.LocalSlideOutColors
+import com.joclegg.puzzles.slideout.ui.SlideOutTheme
 
 object SlideOutRoutes {
     const val HOME = "slide_out/home"
@@ -32,7 +32,7 @@ object SlideOutRoutes {
     private const val HISTORY = "slide_out/history"
 
     fun NavGraphBuilder.slideOutGraph(
-        container: SlideOutContainer,
+        container: SlideOutDefinition,
         navController: NavHostController,
         darkTheme: Boolean,
     ) {
@@ -66,11 +66,19 @@ object SlideOutRoutes {
             )
         }
         screen(STATS, darkTheme) {
-            StatsRoute(viewModel { StatsViewModel(container.games) }, onBack = navController::popBackStack)
+            StatsRoute(
+                viewModel {
+                    StatsViewModel(slideOutStatsSource(container.games))
+                },
+                onBack = navController::popBackStack,
+                footnote = SLIDE_OUT_STATS_FOOTNOTE,
+            ) { SlideOutStatsTable(it) }
         }
         screen(HISTORY, darkTheme) {
             HistoryRoute(
-                viewModel = viewModel { StatsViewModel(container.games) },
+                viewModel = viewModel { StatsViewModel(slideOutStatsSource(container.games)) },
+                accent = LocalSlideOutColors.current.accent,
+                filters = slideOutHistoryFilters,
                 onOpenGame = { navController.openSlideOutGame(it) },
                 onBack = navController::popBackStack,
             )
@@ -79,11 +87,11 @@ object SlideOutRoutes {
 
     @Composable
     fun SettingsTabContent(
-        container: SlideOutContainer,
+        container: SlideOutDefinition,
         darkTheme: Boolean,
     ) {
         SlideOutTheme(darkTheme) {
-            AccentColors(LocalSlideColors.current.accent) {
+            AccentColors(LocalSlideOutColors.current.accent) {
                 SettingsRoute(viewModel { SettingsViewModel(container.settings) }, onBack = null)
             }
         }

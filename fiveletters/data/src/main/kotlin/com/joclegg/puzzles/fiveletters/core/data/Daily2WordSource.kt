@@ -1,6 +1,7 @@
 package com.joclegg.puzzles.fiveletters.core.data
 
 import com.joclegg.puzzles.fiveletters.engine.WORD_LENGTH
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.net.HttpURLConnection
@@ -12,10 +13,11 @@ fun interface DailyWordSource {
 }
 
 class Daily2WordSource(
+    private val io: CoroutineDispatcher = Dispatchers.IO,
     private val fetch: (String) -> String? = ::download,
 ) : DailyWordSource {
     override suspend fun word(date: LocalDate): String? =
-        withContext(Dispatchers.IO) {
+        withContext(io) {
             runCatching { fetch("$BASE_URL$date") }
                 .getOrNull()
                 ?.let(::wordOf)

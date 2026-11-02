@@ -2,6 +2,7 @@ package com.joclegg.puzzles.fiveletters
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NamedNavArgument
@@ -14,16 +15,16 @@ import androidx.navigation.navArgument
 import com.joclegg.puzzles.AccentColors
 import com.joclegg.puzzles.SettingsHub
 import com.joclegg.puzzles.SettingsTab
-import com.joclegg.puzzles.fiveletters.core.ui.FiveLettersTheme
-import com.joclegg.puzzles.fiveletters.core.ui.LocalLetterColors
+import com.joclegg.puzzles.core.ui.stats.StatsRoute
+import com.joclegg.puzzles.core.ui.stats.StatsViewModel
 import com.joclegg.puzzles.fiveletters.feature.game.GameRoute
 import com.joclegg.puzzles.fiveletters.feature.game.GameViewModel
 import com.joclegg.puzzles.fiveletters.feature.home.HomeRoute
 import com.joclegg.puzzles.fiveletters.feature.home.HomeViewModel
 import com.joclegg.puzzles.fiveletters.feature.settings.SettingsRoute
 import com.joclegg.puzzles.fiveletters.feature.settings.SettingsViewModel
-import com.joclegg.puzzles.fiveletters.feature.stats.StatsRoute
-import com.joclegg.puzzles.fiveletters.feature.stats.StatsViewModel
+import com.joclegg.puzzles.fiveletters.ui.FiveLettersTheme
+import com.joclegg.puzzles.fiveletters.ui.LocalFiveLettersColors
 
 object FiveLettersRoutes {
     const val HOME = "five_letters/home"
@@ -31,7 +32,7 @@ object FiveLettersRoutes {
     private const val STATS = "five_letters/stats"
 
     fun NavGraphBuilder.fiveLettersGraph(
-        container: FiveLettersContainer,
+        container: FiveLettersDefinition,
         navController: NavHostController,
         darkTheme: Boolean,
     ) {
@@ -67,17 +68,23 @@ object FiveLettersRoutes {
             )
         }
         screen(container, STATS, darkTheme) {
-            StatsRoute(viewModel { StatsViewModel(container.games) }, onBack = navController::popBackStack)
+            StatsRoute(
+                viewModel {
+                    StatsViewModel(fiveLettersStatsSource(container.games))
+                },
+                onBack = navController::popBackStack,
+                spacing = 16.dp,
+            ) { FiveLettersStatsPanels(it) }
         }
     }
 
     @Composable
     fun SettingsTabContent(
-        container: FiveLettersContainer,
+        container: FiveLettersDefinition,
         darkTheme: Boolean,
     ) {
         Themed(container, darkTheme) {
-            AccentColors(LocalLetterColors.current.accent) {
+            AccentColors(LocalFiveLettersColors.current.accent) {
                 SettingsRoute(viewModel { SettingsViewModel(container.settings) }, onBack = null)
             }
         }
@@ -92,7 +99,7 @@ object FiveLettersRoutes {
 
     @Composable
     private fun Themed(
-        container: FiveLettersContainer,
+        container: FiveLettersDefinition,
         darkTheme: Boolean,
         content: @Composable () -> Unit,
     ) {
@@ -101,7 +108,7 @@ object FiveLettersRoutes {
     }
 
     private fun NavGraphBuilder.screen(
-        container: FiveLettersContainer,
+        container: FiveLettersDefinition,
         route: String,
         darkTheme: Boolean,
         arguments: List<NamedNavArgument> = emptyList(),

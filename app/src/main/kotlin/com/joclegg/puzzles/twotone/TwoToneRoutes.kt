@@ -13,17 +13,17 @@ import androidx.navigation.navArgument
 import com.joclegg.puzzles.AccentColors
 import com.joclegg.puzzles.SettingsHub
 import com.joclegg.puzzles.SettingsTab
-import com.joclegg.puzzles.twotone.core.ui.LocalTileColors
-import com.joclegg.puzzles.twotone.core.ui.TwoToneTheme
+import com.joclegg.puzzles.core.ui.stats.HistoryRoute
+import com.joclegg.puzzles.core.ui.stats.StatsRoute
+import com.joclegg.puzzles.core.ui.stats.StatsViewModel
 import com.joclegg.puzzles.twotone.feature.game.GameRoute
 import com.joclegg.puzzles.twotone.feature.game.GameViewModel
 import com.joclegg.puzzles.twotone.feature.home.HomeRoute
 import com.joclegg.puzzles.twotone.feature.home.HomeViewModel
 import com.joclegg.puzzles.twotone.feature.settings.SettingsRoute
 import com.joclegg.puzzles.twotone.feature.settings.SettingsViewModel
-import com.joclegg.puzzles.twotone.feature.stats.HistoryRoute
-import com.joclegg.puzzles.twotone.feature.stats.StatsRoute
-import com.joclegg.puzzles.twotone.feature.stats.StatsViewModel
+import com.joclegg.puzzles.twotone.ui.LocalTwoToneColors
+import com.joclegg.puzzles.twotone.ui.TwoToneTheme
 
 object TwoToneRoutes {
     const val HOME = "two_tone/home"
@@ -32,7 +32,7 @@ object TwoToneRoutes {
     private const val HISTORY = "two_tone/history"
 
     fun NavGraphBuilder.twoToneGraph(
-        container: TwoToneContainer,
+        container: TwoToneDefinition,
         navController: NavHostController,
         darkTheme: Boolean,
     ) {
@@ -59,11 +59,19 @@ object TwoToneRoutes {
             )
         }
         screen(STATS, darkTheme) {
-            StatsRoute(viewModel { StatsViewModel(container.games) }, onBack = navController::popBackStack)
+            StatsRoute(
+                viewModel {
+                    StatsViewModel(twoToneStatsSource(container.games))
+                },
+                onBack = navController::popBackStack,
+                footnote = TWOTONE_STATS_FOOTNOTE,
+            ) { TwoToneStatsTable(it) }
         }
         screen(HISTORY, darkTheme) {
             HistoryRoute(
-                viewModel = viewModel { StatsViewModel(container.games) },
+                viewModel = viewModel { StatsViewModel(twoToneStatsSource(container.games)) },
+                accent = LocalTwoToneColors.current.accent,
+                filters = twoToneHistoryFilters,
                 onOpenGame = { navController.openTwoToneGame(it) },
                 onBack = navController::popBackStack,
             )
@@ -72,11 +80,11 @@ object TwoToneRoutes {
 
     @Composable
     fun SettingsTabContent(
-        container: TwoToneContainer,
+        container: TwoToneDefinition,
         darkTheme: Boolean,
     ) {
         TwoToneTheme(darkTheme) {
-            AccentColors(LocalTileColors.current.accent) {
+            AccentColors(LocalTwoToneColors.current.accent) {
                 SettingsRoute(viewModel { SettingsViewModel(container.settings) }, onBack = null)
             }
         }

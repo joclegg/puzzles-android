@@ -4,6 +4,7 @@ plugins {
 }
 
 dependencies {
+    api(projects.core.ui)
     api(projects.wordwheel.engine)
     implementation(projects.wordwheel.data)
 }
