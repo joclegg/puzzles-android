@@ -34,9 +34,9 @@ class HomeViewModel(
     private val background: CoroutineDispatcher = Dispatchers.Default,
 ) : ViewModel() {
     val uiState: StateFlow<HomeUiState> =
-        combine(games.inProgress, games.history) { inProgress, history ->
+        combine(games.inProgress, games.dailies) { inProgress, dailies ->
             val daily = DealRef.dailyId(today())
-            HomeUiState(inProgress, dailyWon = history.any { it.deal.id == daily && it.status == GameStatus.WON })
+            HomeUiState(inProgress, dailyWon = dailies.any { it.puzzleId == daily && it.status == GameStatus.WON.name })
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), HomeUiState())
 
     suspend fun start(): Long {

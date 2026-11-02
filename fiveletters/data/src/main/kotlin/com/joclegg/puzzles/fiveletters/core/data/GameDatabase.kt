@@ -10,6 +10,7 @@ import androidx.room.Query
 import androidx.room.RoomDatabase
 import androidx.room.Transaction
 import androidx.room.Update
+import com.joclegg.puzzles.core.data.DailyRecord
 import kotlinx.coroutines.flow.Flow
 
 @Entity(tableName = "games", indices = [Index("uuid", unique = true), Index("updatedAt"), Index("status")])
@@ -72,6 +73,11 @@ interface GameDao {
 
     @Query("SELECT * FROM games ORDER BY startedAt DESC, id DESC")
     fun observeHistory(): Flow<List<GameEntity>>
+
+    @Query(
+        "SELECT id, wordId AS puzzleId, status, finishedAt FROM games WHERE wordId LIKE 'daily%' OR wordId LIKE 'nyt%' ORDER BY startedAt DESC, id DESC",
+    )
+    fun observeDailies(): Flow<List<DailyRecord>>
 }
 
 @Database(entities = [GameEntity::class], version = 2, exportSchema = true)

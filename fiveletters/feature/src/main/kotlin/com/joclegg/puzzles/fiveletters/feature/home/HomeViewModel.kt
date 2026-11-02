@@ -34,26 +34,32 @@ class HomeViewModel(
     private val daily2Words: DailyWordSource,
 ) : ViewModel() {
     val uiState: StateFlow<HomeUiState> =
-        combine(games.inProgress, games.history) { inProgress, history ->
+        combine(games.inProgress, games.dailies) { inProgress, dailies ->
             val dailyId = WordRef.dailyId(today())
             HomeUiState(
                 inProgress = inProgress,
                 dailyNumber = Words.dayNumber(today()),
-                dailyResult = history.find { it.ref.id == dailyId && it.status != GameStatus.ABANDONED }?.status,
-                daily2Result = history.find { it.ref.daily2Date == today() && it.status != GameStatus.ABANDONED }?.status,
+                dailyResult =
+                    dailies
+                        .find { it.puzzleId == dailyId && it.status != GameStatus.ABANDONED.name }
+                        ?.let { GameStatus.valueOf(it.status) },
+                daily2Result =
+                    dailies
+                        .find { WordRef.daily2DateOf(it.puzzleId) == today() && it.status != GameStatus.ABANDONED.name }
+                        ?.let { GameStatus.valueOf(it.status) },
             )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), HomeUiState())
 
     suspend fun openDaily(): Long {
         val date = today()
         val dailyId = WordRef.dailyId(date)
-        val existing = games.history.first().find { it.ref.id == dailyId && it.status != GameStatus.ABANDONED }
+        val existing = games.dailies.first().find { it.puzzleId == dailyId && it.status != GameStatus.ABANDONED.name }
         return existing?.id ?: games.start(WordRef.daily(words(), date), settings.settings.first().hardMode).id
     }
 
     suspend fun openDaily2(): Long? {
         val date = today()
-        val existing = games.history.first().find { it.ref.daily2Date == date && it.status != GameStatus.ABANDONED }
+        val existing = games.dailies.first().find { WordRef.daily2DateOf(it.puzzleId) == date && it.status != GameStatus.ABANDONED.name }
         if (existing != null) {
             return existing.id
         }

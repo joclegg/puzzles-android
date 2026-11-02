@@ -1,5 +1,6 @@
 package com.joclegg.puzzles.sudoku.core.data
 
+import com.joclegg.puzzles.core.data.DailyRecord
 import com.joclegg.puzzles.sudoku.engine.Difficulty
 import com.joclegg.puzzles.sudoku.engine.MistakeCheck
 import com.joclegg.puzzles.sudoku.engine.MoveCodec
@@ -8,6 +9,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.util.UUID
@@ -20,6 +22,8 @@ class GameRepository(
     val inProgress: Flow<List<SavedGame>> = dao.observeInProgress().map { rows -> rows.map { it.toModel() } }
 
     val history: Flow<List<SavedGame>> = dao.observeHistory().map { rows -> rows.map { it.toModel() } }
+
+    val dailies: Flow<List<DailyRecord>> = dao.observeDailies().distinctUntilChanged()
 
     val bestTimes: Flow<List<BestTime>> =
         combine(dao.observeBestTimes(), dao.observePastBests()) { rows, pastBests ->

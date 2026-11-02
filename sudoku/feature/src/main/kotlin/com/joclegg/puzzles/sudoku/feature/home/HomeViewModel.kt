@@ -44,10 +44,10 @@ class HomeViewModel(
     private val today: () -> LocalDate = LocalDate::now,
 ) : ViewModel() {
     val uiState: StateFlow<HomeUiState> =
-        combine(games.inProgress, settings.settings, games.history) { inProgress, prefs, history ->
+        combine(games.inProgress, settings.settings, games.dailies) { inProgress, prefs, dailies ->
             HomeUiState(
                 inProgress = inProgress,
-                dailyDone = history.filter { it.status == GameStatus.COMPLETED }.map { it.ref.id }.toSet(),
+                dailyDone = dailies.filter { it.status == GameStatus.COMPLETED.name }.map { it.puzzleId }.toSet(),
                 today = today(),
             )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), HomeUiState())

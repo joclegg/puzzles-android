@@ -11,11 +11,7 @@ data class WordRef(
 ) {
     val isDaily: Boolean get() = id.startsWith(DAILY_PREFIX)
 
-    val daily2Date: LocalDate?
-        get() =
-            listOf(DAILY2_PREFIX, LEGACY_DAILY2_PREFIX)
-                .firstOrNull { id.startsWith(it) }
-                ?.let { runCatching { LocalDate.parse(id.removePrefix(it)) }.getOrNull() }
+    val daily2Date: LocalDate? get() = daily2DateOf(id)
 
     val isDaily2: Boolean get() = daily2Date != null
 
@@ -34,6 +30,11 @@ data class WordRef(
         private const val PRACTICE_SLOT = "practice"
 
         fun dailyId(date: LocalDate) = "$DAILY_PREFIX$date"
+
+        fun daily2DateOf(id: String): LocalDate? =
+            listOf(DAILY2_PREFIX, LEGACY_DAILY2_PREFIX)
+                .firstOrNull { id.startsWith(it) }
+                ?.let { runCatching { LocalDate.parse(id.removePrefix(it)) }.getOrNull() }
 
         fun daily(
             words: Words,
