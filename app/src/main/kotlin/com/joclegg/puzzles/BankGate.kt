@@ -14,7 +14,7 @@ object BankGate {
     fun route(game: PuzzleGame) = "banks/${game.name}"
 }
 
-fun PuzzlesApplication.hasBanksFor(game: PuzzleGame): Boolean = definition(game).bankFolder?.let(banks::isReady) ?: true
+fun PuzzlesApplication.hasBanksFor(game: PuzzleGame): Boolean = definition(game).bankFolder?.let(bankStore::isReady) ?: true
 
 @Composable
 fun BankGateRoute(
@@ -25,7 +25,8 @@ fun BankGateRoute(
     modifier: Modifier = Modifier,
 ) {
     val status by app.bankStatus.collectAsStateWithLifecycle()
-    val ready = remember(status) { app.hasBanksFor(game) }
+    val readyFolders by app.bankStore.readyFolders.collectAsStateWithLifecycle()
+    val ready = remember(status, readyFolders) { app.hasBanksFor(game) }
     val currentOnReady by rememberUpdatedState(onReady)
     LaunchedEffect(ready) {
         if (ready) {
