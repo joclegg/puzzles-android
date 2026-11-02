@@ -21,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joclegg.puzzles.core.ui.BackButton
@@ -28,6 +29,7 @@ import com.joclegg.puzzles.solitaire.core.data.HintStyle
 import com.joclegg.puzzles.solitaire.core.data.Settings
 import com.joclegg.puzzles.solitaire.core.data.Toggle
 import com.joclegg.puzzles.solitaire.engine.DrawMode
+import com.joclegg.puzzles.solitaire.feature.R
 import com.joclegg.puzzles.solitaire.ui.label
 
 @Composable
@@ -63,10 +65,10 @@ fun SettingsScreen(
         if (onBack != null) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 BackButton(onBack)
-                Text("Settings", style = MaterialTheme.typography.headlineMedium)
+                Text(stringResource(R.string.settings), style = MaterialTheme.typography.headlineMedium)
             }
         }
-        SettingsCard(title = "Play") {
+        SettingsCard(title = stringResource(R.string.play)) {
             Choice(
                 options = DrawMode.entries,
                 selected = settings.drawMode,
@@ -74,44 +76,50 @@ fun SettingsScreen(
                 tag = { "setting_${it.name.lowercase()}" },
                 onSelect = onDrawModeChange,
             )
-            Hint("Draw 3 is harder. Applies to new games.")
+            Hint(stringResource(R.string.draw_3_is_harder_applies_to_new_games))
             ToggleRow(
                 settings,
                 Toggle.REVERSE,
                 onToggle,
-                "Reverse",
-                detail = "Foundations start with kings, columns build up from aces. Applies to new games.",
+                stringResource(R.string.reverse),
+                detail = stringResource(R.string.foundations_start_with_kings_columns),
             )
             ToggleRow(
                 settings,
                 Toggle.ONE_TAP_MOVE,
                 onToggle,
-                "One tap to move",
-                detail = "Tapping a card sends it to the best place. Off: tap a card, then where it should go.",
+                stringResource(R.string.one_tap_to_move),
+                detail = stringResource(R.string.tapping_a_card_sends_it_to_the_best),
             )
             ToggleRow(
                 settings,
                 Toggle.WINNABLE_ONLY,
                 onToggle,
-                "Winnable deals only",
-                detail = "Every new deal can be won. Applies to new deals.",
+                stringResource(R.string.winnable_deals_only),
+                detail = stringResource(R.string.every_new_deal_can_be_won_applies_to),
             )
             ToggleRow(
                 settings,
                 Toggle.WARN_UNWINNABLE,
                 onToggle,
-                "Tell me when a deal can't be won",
-                detail = "Checks after a full pass through the stock with no move, and offers to undo to the last winnable position.",
+                stringResource(R.string.tell_me_when_a_deal_can_t_be_won),
+                detail = stringResource(R.string.checks_after_a_full_pass_through_the),
             )
-            ToggleRow(settings, Toggle.SHOW_TIMER, onToggle, "Show the timer")
-            ToggleRow(settings, Toggle.SHOW_MOVE_COUNT, onToggle, "Show the move counter")
-            ToggleRow(settings, Toggle.SHOW_HINTS, onToggle, "Hints", detail = "Show the hint button.")
+            ToggleRow(settings, Toggle.SHOW_TIMER, onToggle, stringResource(R.string.show_the_timer))
+            ToggleRow(settings, Toggle.SHOW_MOVE_COUNT, onToggle, stringResource(R.string.show_the_move_counter))
+            ToggleRow(
+                settings,
+                Toggle.SHOW_HINTS,
+                onToggle,
+                stringResource(R.string.hints),
+                detail = stringResource(R.string.show_the_hint_button),
+            )
             ToggleRow(
                 settings,
                 Toggle.SHOW_TUTORIAL,
                 onToggle,
-                "How to play",
-                detail = "Show the ? button with the rules and a walkthrough.",
+                stringResource(R.string.how_to_play),
+                detail = stringResource(R.string.show_the_button_with_the_rules_and_a),
             )
             if (settings.showHints) {
                 HintStyleRow(settings.hintStyle, onHintStyleChange)
@@ -196,9 +204,9 @@ private fun HintStyleRow(
 ) {
     Row(modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         Column(Modifier.weight(1f)) {
-            Text("Hints fill the answer in")
+            Text(stringResource(R.string.hints_fill_the_answer_in))
             Text(
-                "Off: a hint points at the next step and says why.",
+                stringResource(R.string.off_a_hint_points_at_the_next_step_and),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

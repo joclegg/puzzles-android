@@ -1,5 +1,7 @@
 package com.joclegg.puzzles.core.ui.home
 
+import androidx.compose.ui.res.stringResource
+import com.joclegg.puzzles.core.ui.R
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -87,7 +89,7 @@ fun GameHomeScaffold(
     onBack: () -> Unit,
     gameIcon: @Composable () -> Unit,
     modifier: Modifier = Modifier,
-    statsLabel: String = "Stats",
+    statsLabel: String = stringResource(R.string.stats),
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Column(
@@ -103,11 +105,11 @@ fun GameHomeScaffold(
             }
             if (onHistory != null) {
                 IconButton(onClick = onHistory, modifier = Modifier.testTag("history")) {
-                    Icon(MenuIcons.History, contentDescription = "History")
+                    Icon(MenuIcons.History, contentDescription = stringResource(R.string.history))
                 }
             }
             IconButton(onClick = onSettings, modifier = Modifier.testTag("settings")) {
-                Icon(settingsIcon, contentDescription = "Settings")
+                Icon(settingsIcon, contentDescription = stringResource(R.string.settings))
             }
         }
         GameHero(tagline, accent) { gameIcon() }
@@ -149,7 +151,7 @@ fun <O, G : Any> ColumnScope.StandardHomeSections(
             modifier = Modifier.testTag("continue"),
         )
     }
-    MenuSection("Today", aside = todayLabel()) {
+    MenuSection(stringResource(R.string.today), aside = todayLabel()) {
         TileGrid(count = options.size, columns = config.dailyColumns) { index, tileModifier ->
             val option = options[index]
             DailyTile(
@@ -161,7 +163,7 @@ fun <O, G : Any> ColumnScope.StandardHomeSections(
             )
         }
     }
-    MenuSection("New puzzle") {
+    MenuSection(stringResource(R.string.new_puzzle)) {
         TileGrid(count = options.size, columns = 2) { index, tileModifier ->
             val option = options[index]
             val saved = savedFor(option)
@@ -195,7 +197,7 @@ fun <O, G : Any> ColumnScope.StandardHomeSections(
                         onResume(config.gameId(saved))
                     },
                     modifier = Modifier.testTag("resume_game"),
-                ) { Text("Resume") }
+                ) { Text(stringResource(R.string.resume)) }
             },
             dismissButton = {
                 TextButton(
@@ -204,7 +206,7 @@ fun <O, G : Any> ColumnScope.StandardHomeSections(
                         onStart(config.gameOption(saved))
                     },
                     modifier = Modifier.testTag("new_game"),
-                ) { Text("New puzzle") }
+                ) { Text(stringResource(R.string.new_puzzle)) }
             },
         )
     }

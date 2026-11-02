@@ -2,7 +2,7 @@ package com.joclegg.puzzles.sudoku.feature.game
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.joclegg.puzzles.core.data.GameTimer
+import com.joclegg.puzzles.core.data.GameSession
 import com.joclegg.puzzles.sudoku.core.data.DigitCounts
 import com.joclegg.puzzles.sudoku.core.data.GameMode
 import com.joclegg.puzzles.sudoku.core.data.GameRepository
@@ -68,10 +68,14 @@ class GameViewModel(
 ) : ViewModel() {
     private var saved: SavedGame? = null
     private var game: GameState? = null
-    private var timer = GameTimer()
-    private var visible = false
-    private var ticker: Job? = null
-    private var pendingSave: Job? = null
+    private val session =
+        GameSession(
+            scope = viewModelScope,
+            monotonicNowMs = monotonicNowMs,
+            canRun = { game?.isComplete == false },
+            onTick = ::publish,
+            onSave = ::persistNow,
+        )
     private var newBest = false
     private var resultSaved = false
     private var revealed = false
@@ -97,10 +101,7 @@ class GameViewModel(
                     undoStack = loaded.moves,
                     options = prefs.forMode(loaded.ref.mode).playOptions,
                 )
-            timer = GameTimer(accumulatedMs = loaded.elapsedMs)
-            if (visible) {
-                resumeTimer()
-            }
+            session.restore(loaded.elapsedMs)
             settings.settings.collect(::applySettings)
         }
     }
@@ -140,10 +141,7 @@ class GameViewModel(
             return
         }
         game = current.restart()
-        timer = GameTimer()
-        if (visible) {
-            resumeTimer()
-        }
+        session.restart()
         persistNow()
         publish()
     }
@@ -168,9 +166,7 @@ class GameViewModel(
         if (current.isComplete || current.puzzle.solution == null) {
             return
         }
-        timer = timer.pause(monotonicNowMs())
-        ticker?.cancel()
-        pendingSave?.cancel()
+        session.stop()
         game = current.revealSolution()
         revealed = true
         val snapshot = snapshot() ?: return
@@ -179,31 +175,12 @@ class GameViewModel(
     }
 
     fun onVisible() {
-        visible = true
-        resumeTimer()
+        session.onVisible()
     }
 
     fun onHidden() {
-        visible = false
-        timer = timer.pause(monotonicNowMs())
-        ticker?.cancel()
+        session.onHidden()
         persistNow()
-    }
-
-    private fun resumeTimer() {
-        val current = game ?: return
-        if (current.isComplete) {
-            return
-        }
-        timer = timer.start(monotonicNowMs())
-        ticker?.cancel()
-        ticker =
-            viewModelScope.launch {
-                while (isActive) {
-                    publish()
-                    delay(TICK_MS)
-                }
-            }
     }
 
     private fun move(change: (GameState) -> GameState) {
@@ -219,14 +196,13 @@ class GameViewModel(
         ) {
             finish()
         } else if (after.values != before.values || after.notes != before.notes) {
-            persistSoon()
+            session.saveSoon()
         }
         publish()
     }
 
     private fun finish() {
-        timer = timer.pause(monotonicNowMs())
-        ticker?.cancel()
+        session.pause()
         val finished = snapshot() ?: return
         viewModelScope.launch {
             newBest = games.complete(finished)
@@ -235,17 +211,8 @@ class GameViewModel(
         }
     }
 
-    private fun persistSoon() {
-        pendingSave?.cancel()
-        pendingSave =
-            viewModelScope.launch {
-                delay(SAVE_AFTER_IDLE_MS)
-                persistNow()
-            }
-    }
-
     private fun persistNow() {
-        pendingSave?.cancel()
+        session.cancelPendingSave()
         val snapshot = snapshot() ?: return
         if (game?.isComplete == true) {
             return
@@ -259,7 +226,7 @@ class GameViewModel(
             values = current.values,
             notes = current.notes,
             mistakes = current.mistakes,
-            elapsedMs = timer.elapsedMs(monotonicNowMs()),
+            elapsedMs = session.elapsedMs(),
             moves = current.undoStack,
         )
     }
@@ -280,7 +247,7 @@ class GameViewModel(
                             greyGivenCells = display.greyGivenCells,
                         )
                     },
-                elapsedMs = timer.elapsedMs(monotonicNowMs()),
+                elapsedMs = session.elapsedMs(),
                 mistakes = current.mistakes,
                 checking = current.countsMistakes,
                 showMistakeCount = display.showMistakeCount,
@@ -320,10 +287,5 @@ class GameViewModel(
                 revealed = revealed,
             )
         }
-    }
-
-    private companion object {
-        const val TICK_MS = 500L
-        const val SAVE_AFTER_IDLE_MS = 400L
     }
 }

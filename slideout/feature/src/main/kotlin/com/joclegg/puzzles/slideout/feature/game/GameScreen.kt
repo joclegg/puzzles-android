@@ -25,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -33,6 +34,7 @@ import com.joclegg.puzzles.core.ui.HelpersHint
 import com.joclegg.puzzles.core.ui.WinDialog
 import com.joclegg.puzzles.core.ui.WinStat
 import com.joclegg.puzzles.core.ui.formatDuration
+import com.joclegg.puzzles.slideout.feature.R
 import com.joclegg.puzzles.slideout.ui.HowToPlayButton
 import com.joclegg.puzzles.slideout.ui.LocalSlideOutColors
 import com.joclegg.puzzles.slideout.ui.SlideBoard
@@ -107,11 +109,11 @@ fun GameScreen(
                     }
                 }
             }
-            ToolButton(SlideOutIcons.Undo, "Undo the last move", onUndo, tag = "undo", enabled = state.canUndo)
+            ToolButton(SlideOutIcons.Undo, stringResource(R.string.undo_the_last_move), onUndo, tag = "undo", enabled = state.canUndo)
             if (state.showHints) {
                 ToolButton(
                     SlideOutIcons.Hint,
-                    "Show a hint",
+                    stringResource(R.string.show_a_hint),
                     onHint,
                     tag = "hint",
                     modifier = Modifier.tourTarget(tour, "hint"),
@@ -123,11 +125,11 @@ fun GameScreen(
             }
             Column {
                 IconButton(onClick = { menuOpen = true }, modifier = Modifier.testTag("game_menu").tourTarget(tour, "menu")) {
-                    Icon(SlideOutIcons.More, contentDescription = "More")
+                    Icon(SlideOutIcons.More, contentDescription = stringResource(R.string.more))
                 }
                 DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }, modifier = Modifier.dialogTestTags()) {
                     DropdownMenuItem(
-                        text = { Text("Restart this puzzle") },
+                        text = { Text(stringResource(R.string.restart_this_puzzle)) },
                         enabled = !state.solved,
                         onClick = {
                             menuOpen = false
@@ -136,7 +138,7 @@ fun GameScreen(
                         modifier = Modifier.testTag("restart"),
                     )
                     DropdownMenuItem(
-                        text = { Text("New puzzle") },
+                        text = { Text(stringResource(R.string.new_puzzle)) },
                         onClick = {
                             menuOpen = false
                             onNewPuzzle()
@@ -145,7 +147,7 @@ fun GameScreen(
                     )
                     if (state.allowReveal && !state.solved) {
                         DropdownMenuItem(
-                            text = { Text("Show solution") },
+                            text = { Text(stringResource(R.string.show_solution)) },
                             onClick = {
                                 menuOpen = false
                                 revealing = true
@@ -154,7 +156,7 @@ fun GameScreen(
                         )
                     }
                     DropdownMenuItem(
-                        text = { Text("Settings") },
+                        text = { Text(stringResource(R.string.settings)) },
                         onClick = {
                             menuOpen = false
                             onSettings()
@@ -172,8 +174,8 @@ fun GameScreen(
         AlertDialog(
             onDismissRequest = { revealing = false },
             modifier = Modifier.dialogTestTags(),
-            title = { Text("Show the solution?") },
-            text = { Text("This ends the puzzle. It won't count towards best times.") },
+            title = { Text(stringResource(R.string.show_the_solution)) },
+            text = { Text(stringResource(R.string.this_ends_the_puzzle_it_won_t_count)) },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -181,9 +183,9 @@ fun GameScreen(
                         onRevealSolution()
                     },
                     modifier = Modifier.testTag("confirm_reveal"),
-                ) { Text("Show solution") }
+                ) { Text(stringResource(R.string.show_solution)) }
             },
-            dismissButton = { TextButton(onClick = { revealing = false }) { Text("Cancel") } },
+            dismissButton = { TextButton(onClick = { revealing = false }) { Text(stringResource(R.string.cancel)) } },
         )
     }
     if (state.solved && state.resultSaved) {
@@ -199,7 +201,7 @@ private fun SolvedDialog(
     modifier: Modifier = Modifier,
 ) {
     WinDialog(
-        title = "Solved!",
+        title = stringResource(R.string.solved),
         accent = LocalSlideOutColors.current.accent,
         dailyGroup = "SLIDE_OUT",
         newLabel = state.levelLabel,
@@ -210,7 +212,7 @@ private fun SolvedDialog(
             buildList {
                 add(
                     WinStat(
-                        "Moves",
+                        stringResource(R.string.moves),
                         if (state.moveCount <= state.par) {
                             "${state.moveCount} moves, par!"
                         } else {
@@ -219,14 +221,14 @@ private fun SolvedDialog(
                         "solved_moves",
                     ),
                 )
-                add(WinStat("Time", formatDuration(state.elapsedMs), "solved_time"))
+                add(WinStat(stringResource(R.string.time), formatDuration(state.elapsedMs), "solved_time"))
                 if (state.hints > 0) {
-                    add(WinStat("Hints", "${state.hints}"))
+                    add(WinStat(stringResource(R.string.hints), "${state.hints}"))
                 }
             },
         modifier = modifier.dialogTestTags().testTag("solved_dialog"),
     ) {
-        TextButton(onClick = onHome, modifier = Modifier.testTag("solved_home")) { Text("Home") }
+        TextButton(onClick = onHome, modifier = Modifier.testTag("solved_home")) { Text(stringResource(R.string.home)) }
     }
 }
 

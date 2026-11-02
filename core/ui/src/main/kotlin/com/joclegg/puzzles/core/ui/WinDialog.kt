@@ -1,5 +1,6 @@
 package com.joclegg.puzzles.core.ui
 
+import androidx.compose.ui.res.stringResource
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
@@ -149,7 +150,7 @@ fun WinDialog(
                     )
                     if (newBest) {
                         Text(
-                            "NEW BEST",
+                            stringResource(R.string.new_best),
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.surface,
@@ -182,7 +183,7 @@ fun WinDialog(
                 }
                 if (dailies.isNotEmpty() || onNew != null) {
                     Text(
-                        "PLAY NEXT",
+                        stringResource(R.string.play_next),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(start = 20.dp, top = 16.dp, bottom = 8.dp),
@@ -198,10 +199,10 @@ fun WinDialog(
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         dailies.forEach { daily ->
-                            WinTile("Daily", daily.label, accent, daily.onClick, Modifier.weight(1f).widthIn(max = TILE_MAX_WIDTH))
+                            WinTile(stringResource(R.string.daily), daily.label, accent, daily.onClick, Modifier.weight(1f).widthIn(max = TILE_MAX_WIDTH))
                         }
                         if (onNew != null) {
-                            WinTile("New", newLabel.orEmpty(), accent, onNew, Modifier.weight(1f).widthIn(max = TILE_MAX_WIDTH).testTag(newTag))
+                            WinTile(stringResource(R.string.new_label), newLabel.orEmpty(), accent, onNew, Modifier.weight(1f).widthIn(max = TILE_MAX_WIDTH).testTag(newTag))
                         }
                         repeat((TILES_PER_ROW - (dailies.size + listOfNotNull(onNew).size) % TILES_PER_ROW) % TILES_PER_ROW) {
                             Spacer(Modifier.weight(1f))
@@ -235,9 +236,9 @@ private fun AllGoldBanner(modifier: Modifier = Modifier) {
     ) {
         Icon(MenuIcons.Trophy, contentDescription = null, tint = gold, modifier = Modifier.size(32.dp))
         Column {
-            Text("Gold in every puzzle", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+            Text(stringResource(R.string.gold_in_every_puzzle), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
             Text(
-                "You've finished every daily in every game today.",
+                stringResource(R.string.you_ve_finished_every_daily_in_every),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

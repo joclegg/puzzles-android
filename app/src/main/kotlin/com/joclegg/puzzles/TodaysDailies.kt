@@ -2,6 +2,7 @@ package com.joclegg.puzzles
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.joclegg.puzzles.core.ui.DailyChoice
 import com.joclegg.puzzles.core.ui.DailyLeft

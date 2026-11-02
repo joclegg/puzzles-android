@@ -24,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -37,6 +38,7 @@ import com.joclegg.puzzles.core.ui.formatDuration
 import com.joclegg.puzzles.sudoku.core.data.GameMode
 import com.joclegg.puzzles.sudoku.engine.Difficulty
 import com.joclegg.puzzles.sudoku.engine.InputMode
+import com.joclegg.puzzles.sudoku.feature.R
 import com.joclegg.puzzles.sudoku.ui.HintButton
 import com.joclegg.puzzles.sudoku.ui.HowToPlayButton
 import com.joclegg.puzzles.sudoku.ui.KeypadTool
@@ -95,7 +97,7 @@ private fun SolvedScreen(
     modifier: Modifier = Modifier,
 ) {
     WinDialog(
-        title = "Solved!",
+        title = stringResource(R.string.solved),
         accent = LocalSudokuColors.current.accent,
         dailyGroup = "SUDOKU_${state.mode.name}",
         newLabel = state.difficulty?.label(),
@@ -107,15 +109,15 @@ private fun SolvedScreen(
         newBest = state.newBest,
         stats =
             buildList {
-                add(WinStat("Time", formatDuration(state.elapsedMs), "final_time"))
+                add(WinStat(stringResource(R.string.time), formatDuration(state.elapsedMs), "final_time"))
                 if (state.showMistakeCount) {
-                    add(WinStat("Mistakes", "${state.mistakes}"))
+                    add(WinStat(stringResource(R.string.mistakes), "${state.mistakes}"))
                 }
             },
         modifier = modifier.dialogTestTags().testTag("solved_screen"),
         onDismissRequest = onDismiss,
     ) {
-        TextButton(onClick = onDismiss, modifier = Modifier.testTag("solved_home")) { Text("Home") }
+        TextButton(onClick = onDismiss, modifier = Modifier.testTag("solved_home")) { Text(stringResource(R.string.home)) }
     }
 }
 
@@ -176,9 +178,9 @@ fun GameScreen(
                         icon = SudokuIcons.Eraser,
                         description =
                             if (state.inputMode == InputMode.DIGIT_FIRST) {
-                                "Eraser: tap cells to clear them, tap again to stop"
+                                stringResource(R.string.eraser_tap_cells_to_clear_them_tap)
                             } else {
-                                "Erase the selected cell"
+                                stringResource(R.string.erase_the_selected_cell)
                             },
                         onClick = onErase,
                         tag = "erase",
@@ -188,9 +190,9 @@ fun GameScreen(
                         icon = SudokuIcons.Pencil,
                         description =
                             if (state.notesMode) {
-                                "Notes on: numbers go in as pencil marks"
+                                stringResource(R.string.notes_on_numbers_go_in_as_pencil)
                             } else {
-                                "Notes off: tap to add pencil marks"
+                                stringResource(R.string.notes_off_tap_to_add_pencil_marks)
                             },
                         onClick = onToggleNotes,
                         tag = "notes",
@@ -200,9 +202,9 @@ fun GameScreen(
                         icon = SudokuIcons.Mark,
                         description =
                             if (state.inputMode == InputMode.DIGIT_FIRST) {
-                                "Mark: tap cells to box them in red, tap again to stop"
+                                stringResource(R.string.mark_tap_cells_to_box_them_in_red_tap)
                             } else {
-                                "Box the selected cell in red, to remember where a trial started"
+                                stringResource(R.string.box_the_selected_cell_in_red_to)
                             },
                         onClick = onMark,
                         tag = "mark",
@@ -262,7 +264,7 @@ private fun GameHeader(
             }
             if (state.revealed) {
                 Text(
-                    "Solution shown",
+                    stringResource(R.string.solution_shown),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.testTag("solution_shown"),
                 )
@@ -276,10 +278,10 @@ private fun GameHeader(
             }
             Spacer(Modifier.weight(1f))
             IconButton(onClick = onUndo, enabled = state.canUndo, modifier = Modifier.testTag("undo")) {
-                Icon(SudokuIcons.Undo, contentDescription = "Undo the last move")
+                Icon(SudokuIcons.Undo, contentDescription = stringResource(R.string.undo_the_last_move))
             }
             IconButton(onClick = onRedo, enabled = state.canRedo, modifier = Modifier.testTag("redo")) {
-                Icon(SudokuIcons.Redo, contentDescription = "Redo the move you undid")
+                Icon(SudokuIcons.Redo, contentDescription = stringResource(R.string.redo_the_move_you_undid))
             }
             if (state.showHints) {
                 HintButton(onHint, enabled = !state.completed && !state.revealed, modifier = Modifier.tourTarget(tour, "hint"))
@@ -320,11 +322,11 @@ private fun PuzzleMenu(
     val playing = !state.completed
     Box(modifier) {
         IconButton(onClick = { open = true }, modifier = Modifier.testTag("puzzle_menu")) {
-            Icon(SudokuIcons.More, contentDescription = "Puzzle options")
+            Icon(SudokuIcons.More, contentDescription = stringResource(R.string.puzzle_options))
         }
         DropdownMenu(expanded = open, onDismissRequest = { open = false }, modifier = Modifier.dialogTestTags()) {
             DropdownMenuItem(
-                text = { Text("Restart puzzle") },
+                text = { Text(stringResource(R.string.restart_puzzle)) },
                 enabled = playing,
                 onClick = {
                     open = false
@@ -334,7 +336,7 @@ private fun PuzzleMenu(
             )
             if (state.allowReveal) {
                 DropdownMenuItem(
-                    text = { Text("Show solution") },
+                    text = { Text(stringResource(R.string.show_solution)) },
                     enabled = playing && state.answerKnown,
                     onClick = {
                         open = false
@@ -344,7 +346,7 @@ private fun PuzzleMenu(
                 )
             }
             DropdownMenuItem(
-                text = { Text("Settings") },
+                text = { Text(stringResource(R.string.settings)) },
                 onClick = {
                     open = false
                     onSettings()
@@ -360,16 +362,16 @@ private fun PuzzleMenu(
             title = {
                 Text(
                     when (action) {
-                        PuzzleAction.RESTART -> "Restart this puzzle?"
-                        PuzzleAction.REVEAL -> "Show the solution?"
+                        PuzzleAction.RESTART -> stringResource(R.string.restart_this_puzzle)
+                        PuzzleAction.REVEAL -> stringResource(R.string.show_the_solution)
                     },
                 )
             },
             text = {
                 Text(
                     when (action) {
-                        PuzzleAction.RESTART -> "Your numbers, pencil marks, mistakes and time will be cleared."
-                        PuzzleAction.REVEAL -> "This ends the game. It won't count towards best times or medals."
+                        PuzzleAction.RESTART -> stringResource(R.string.your_numbers_pencil_marks_mistakes_and)
+                        PuzzleAction.REVEAL -> stringResource(R.string.this_ends_the_game_it_won_t_count)
                     },
                 )
             },
@@ -386,13 +388,13 @@ private fun PuzzleMenu(
                 ) {
                     Text(
                         when (action) {
-                            PuzzleAction.RESTART -> "Restart"
-                            PuzzleAction.REVEAL -> "Show solution"
+                            PuzzleAction.RESTART -> stringResource(R.string.restart)
+                            PuzzleAction.REVEAL -> stringResource(R.string.show_solution)
                         },
                     )
                 }
             },
-            dismissButton = { TextButton(onClick = { confirming = null }) { Text("Cancel") } },
+            dismissButton = { TextButton(onClick = { confirming = null }) { Text(stringResource(R.string.cancel)) } },
         )
     }
 }

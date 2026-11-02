@@ -1,5 +1,6 @@
 package com.joclegg.puzzles.sightlines.ui
 
+import androidx.compose.ui.res.stringResource
 import com.joclegg.puzzles.sightlines.core.data.PuzzleRef
 import com.joclegg.puzzles.sightlines.engine.Hint
 import com.joclegg.puzzles.sightlines.engine.Reason

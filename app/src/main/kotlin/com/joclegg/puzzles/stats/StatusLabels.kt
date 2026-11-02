@@ -1,5 +1,8 @@
 package com.joclegg.puzzles.stats
 
+import androidx.compose.ui.res.stringResource
+import com.joclegg.puzzles.R
+
 fun puzzleStatusLabel(name: String): String =
     when (name) {
         "SOLVED", "COMPLETED" -> "Solved"

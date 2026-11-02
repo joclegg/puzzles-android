@@ -9,6 +9,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -19,7 +20,7 @@ fun HelpersHint(
     TextButton(onClick = onClick, modifier = modifier.testTag("customise_helpers")) {
         Icon(MenuIcons.Tune, contentDescription = null, modifier = Modifier.size(16.dp))
         Text(
-            "Customise helpers",
+            stringResource(R.string.customise_helpers),
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(start = 6.dp),

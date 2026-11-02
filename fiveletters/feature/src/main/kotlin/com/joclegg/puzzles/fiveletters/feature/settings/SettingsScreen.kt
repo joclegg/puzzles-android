@@ -17,11 +17,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joclegg.puzzles.core.ui.BackButton
 import com.joclegg.puzzles.fiveletters.core.data.Settings
 import com.joclegg.puzzles.fiveletters.core.data.Toggle
+import com.joclegg.puzzles.fiveletters.feature.R
 
 @Composable
 fun SettingsRoute(
@@ -47,7 +49,7 @@ fun SettingsScreen(
         if (onBack != null) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 BackButton(onBack)
-                Text("Settings", style = MaterialTheme.typography.headlineMedium)
+                Text(stringResource(R.string.settings), style = MaterialTheme.typography.headlineMedium)
             }
         }
         OutlinedCard(Modifier.fillMaxWidth()) {
@@ -56,25 +58,37 @@ fun SettingsScreen(
                     settings,
                     Toggle.HARD_MODE,
                     onToggle,
-                    "Hard mode",
-                    detail = "Every green and yellow letter you find must be used in later guesses. Applies to new games.",
+                    stringResource(R.string.hard_mode),
+                    detail = stringResource(R.string.every_green_and_yellow_letter_you_find),
                 )
                 ToggleRow(
                     settings,
                     Toggle.HIGH_CONTRAST,
                     onToggle,
-                    "High contrast colours",
-                    detail = "Orange and blue instead of green and yellow.",
+                    stringResource(R.string.high_contrast_colours),
+                    detail = stringResource(R.string.orange_and_blue_instead_of_green_and),
                 )
-                ToggleRow(settings, Toggle.SHOW_HINTS, onToggle, "Hints", detail = "Show the hint button.")
+                ToggleRow(
+                    settings,
+                    Toggle.SHOW_HINTS,
+                    onToggle,
+                    stringResource(R.string.hints),
+                    detail = stringResource(R.string.show_the_hint_button),
+                )
                 ToggleRow(
                     settings,
                     Toggle.SHOW_TUTORIAL,
                     onToggle,
-                    "How to play",
-                    detail = "Show the ? button with the rules and a walkthrough.",
+                    stringResource(R.string.how_to_play),
+                    detail = stringResource(R.string.show_the_button_with_the_rules_and_a),
                 )
-                ToggleRow(settings, Toggle.ALLOW_REVEAL, onToggle, "Show solution", detail = "Offer Show solution in the game menu.")
+                ToggleRow(
+                    settings,
+                    Toggle.ALLOW_REVEAL,
+                    onToggle,
+                    stringResource(R.string.show_solution),
+                    detail = stringResource(R.string.offer_show_solution_in_the_game_menu),
+                )
             }
         }
     }

@@ -15,7 +15,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.joclegg.puzzles.R
 import com.joclegg.puzzles.core.ui.MenuPanel
 import com.joclegg.puzzles.core.ui.stats.StatsSource
 import com.joclegg.puzzles.fiveletters.core.data.GameRepository
@@ -34,7 +36,7 @@ fun FiveLettersStatsPanels(
     Column(modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
         MenuPanel(accent) {
             Row(Modifier.fillMaxWidth()) {
-                Figure(stats.played.toString(), "Played", "played", Modifier.weight(1f))
+                Figure(stats.played.toString(), stringResource(R.string.played), "played", Modifier.weight(1f))
                 Figure(
                     if (stats.played == 0) {
                         "0"
@@ -45,11 +47,11 @@ fun FiveLettersStatsPanels(
                     "win_percent",
                     Modifier.weight(1f),
                 )
-                Figure(stats.currentStreak.toString(), "Streak", "streak", Modifier.weight(1f))
-                Figure(stats.maxStreak.toString(), "Best streak", "max_streak", Modifier.weight(1f))
+                Figure(stats.currentStreak.toString(), stringResource(R.string.streak), "streak", Modifier.weight(1f))
+                Figure(stats.maxStreak.toString(), stringResource(R.string.best_streak), "max_streak", Modifier.weight(1f))
             }
         }
-        MenuPanel(accent, title = "Guesses") {
+        MenuPanel(accent, title = stringResource(R.string.guesses)) {
             val most = (stats.guessCounts.maxOrNull() ?: 0).coerceAtLeast(1)
             stats.guessCounts.forEachIndexed { index, count ->
                 Row(verticalAlignment = Alignment.CenterVertically) {

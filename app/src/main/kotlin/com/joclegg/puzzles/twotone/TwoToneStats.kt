@@ -2,6 +2,8 @@ package com.joclegg.puzzles.twotone
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.joclegg.puzzles.R
 import com.joclegg.puzzles.core.ui.formatDuration
 import com.joclegg.puzzles.core.ui.stats.HistoryEntry
 import com.joclegg.puzzles.core.ui.stats.HistoryFilter
@@ -49,7 +51,13 @@ fun TwoToneStatsTable(
     modifier: Modifier = Modifier,
 ) {
     StatsTable(
-        header = StatsLine("Size", "Solved", "Best", "Average"),
+        header =
+            StatsLine(
+                stringResource(R.string.size),
+                stringResource(R.string.solved),
+                stringResource(R.string.best),
+                stringResource(R.string.average),
+            ),
         lines =
             stats.map { size ->
                 StatsLine(

@@ -1,5 +1,6 @@
 package com.joclegg.puzzles.core.ui
 
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -112,7 +113,7 @@ fun DailyCalendarButton(
     IconButton(onClick = { calendars.onOpen(game) }, modifier = modifier.testTag("daily_calendar")) {
         Icon(
             MenuIcons.Calendar,
-            contentDescription = "Daily calendar",
+            contentDescription = stringResource(R.string.daily_calendar),
             tint = medalColour(medal),
             modifier = Modifier.testTag("calendar_medal_${medal.name.lowercase()}"),
         )
@@ -134,7 +135,7 @@ fun DailyCalendarScreen(
     Column(modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             backButton()
-            Text("Daily calendar", style = MaterialTheme.typography.headlineMedium)
+            Text(stringResource(R.string.daily_calendar), style = MaterialTheme.typography.headlineMedium)
         }
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             TextButton(onClick = { month = month.minusMonths(1) }, modifier = Modifier.testTag("month_previous")) { Text("‹") }
@@ -210,8 +211,8 @@ private fun DayCell(
     val description =
         when {
             medal != Medal.NONE -> "${medal.name.lowercase()} medal"
-            day?.doneLate == true -> "done later"
-            else -> "not done"
+            day?.doneLate == true -> stringResource(R.string.done_later)
+            else -> stringResource(R.string.not_done)
         }
     Box(
         modifier
@@ -290,7 +291,7 @@ private fun ChoicesDialog(
                 }
             }
         },
-        confirmButton = { TextButton(onClick = onDismiss) { Text("Close") } },
+        confirmButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.close)) } },
     )
 }
 

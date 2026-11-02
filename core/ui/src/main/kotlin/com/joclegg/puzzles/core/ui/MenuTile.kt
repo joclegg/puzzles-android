@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
@@ -139,7 +140,11 @@ fun DailyTile(
             if (done) {
                 DoneBadge(accent, size = 18)
             } else {
-                Text("Play", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(
+                    stringResource(R.string.play),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
             }
         }
     }
@@ -219,7 +224,7 @@ private fun DoneBadge(
     Box(modifier.size(size.dp).background(accent, CircleShape), contentAlignment = Alignment.Center) {
         Icon(
             MenuIcons.Check,
-            contentDescription = "Done",
+            contentDescription = stringResource(R.string.done),
             tint = MaterialTheme.colorScheme.surface,
             modifier = Modifier.size((size * 2 / 3).dp),
         )

@@ -22,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.joclegg.puzzles.core.sync.SignInProvider
 import com.joclegg.puzzles.core.ui.GameCard
@@ -95,30 +96,34 @@ fun LauncherScreen(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Icon(MenuIcons.Trophy, contentDescription = null, tint = medalColour(Medal.GOLD), modifier = Modifier.size(40.dp))
-                Text("Gold in every puzzle", style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(start = 8.dp))
+                Text(
+                    stringResource(R.string.gold_in_every_puzzle),
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(start = 8.dp),
+                )
             }
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("Puzzles", style = MaterialTheme.typography.headlineLarge, modifier = Modifier.weight(1f))
+            Text(stringResource(R.string.puzzles), style = MaterialTheme.typography.headlineLarge, modifier = Modifier.weight(1f))
             if (account == null) {
                 OutlinedButton(onClick = { choosingSignIn = true }, modifier = Modifier.testTag("sign_in")) {
-                    Text("Sign in to sync")
+                    Text(stringResource(R.string.sign_in_to_sync))
                 }
             } else {
                 OutlinedButton(onClick = onSignOutClick, modifier = Modifier.testTag("sign_out")) {
-                    Text("Sign out")
+                    Text(stringResource(R.string.sign_out))
                 }
             }
             IconButton(onClick = onHistoryClick, modifier = Modifier.testTag("history")) {
-                Icon(MenuIcons.History, contentDescription = "History")
+                Icon(MenuIcons.History, contentDescription = stringResource(R.string.history))
             }
             IconButton(onClick = onSettingsClick, modifier = Modifier.testTag("settings")) {
-                Icon(SudokuIcons.Settings, contentDescription = "Settings")
+                Icon(SudokuIcons.Settings, contentDescription = stringResource(R.string.settings))
             }
         }
         GameCard(
-            "Sudoku",
-            "Classic and killer, from 6x6 to evil",
+            stringResource(R.string.sudoku),
+            stringResource(R.string.classic_and_killer_from_6x6_to_evil),
             LocalSudokuColors.current.accent,
             onSudokuClick,
             Modifier.testTag("game_sudoku"),
@@ -128,8 +133,8 @@ fun LauncherScreen(
         }
         SolitaireTheme(darkTheme) {
             GameCard(
-                "Solitaire",
-                "Klondike, draw 1 or 3, or reverse",
+                stringResource(R.string.solitaire),
+                stringResource(R.string.klondike_draw_1_or_3_or_reverse),
                 LocalSolitaireColors.current.accent,
                 onSolitaireClick,
                 Modifier.testTag("game_solitaire"),
@@ -140,8 +145,8 @@ fun LauncherScreen(
         }
         TwoToneTheme(darkTheme) {
             GameCard(
-                "Two Tone",
-                "Fill the grid red and blue, three simple rules",
+                stringResource(R.string.two_tone),
+                stringResource(R.string.fill_the_grid_red_and_blue_three),
                 LocalTwoToneColors.current.accent,
                 onTwoToneClick,
                 Modifier.testTag("game_two_tone"),
@@ -152,8 +157,8 @@ fun LauncherScreen(
         }
         SightlinesTheme(darkTheme) {
             GameCard(
-                "Sightlines",
-                "Blue dots count what they can see",
+                stringResource(R.string.sightlines),
+                stringResource(R.string.blue_dots_count_what_they_can_see),
                 LocalSightlinesColors.current.accent,
                 onSightlinesClick,
                 Modifier.testTag("game_sightlines"),
@@ -164,8 +169,8 @@ fun LauncherScreen(
         }
         FiveLettersTheme(darkTheme) {
             GameCard(
-                "Five Letters",
-                "Guess the word in six tries, a new one every day",
+                stringResource(R.string.five_letters),
+                stringResource(R.string.guess_the_word_in_six_tries_a_new_one),
                 LocalFiveLettersColors.current.accent,
                 onFiveLettersClick,
                 Modifier.testTag("game_five_letters"),
@@ -176,8 +181,8 @@ fun LauncherScreen(
         }
         KakuroTheme(darkTheme) {
             GameCard(
-                "Kakuro",
-                "Cross sums: runs of different digits that add up",
+                stringResource(R.string.kakuro),
+                stringResource(R.string.cross_sums_runs_of_different_digits),
                 LocalKakuroColors.current.accent,
                 onKakuroClick,
                 Modifier.testTag("game_kakuro"),
@@ -188,8 +193,8 @@ fun LauncherScreen(
         }
         SlideOutTheme(darkTheme) {
             GameCard(
-                "Slide Out",
-                "Slide the blocks to free the red one",
+                stringResource(R.string.slide_out),
+                stringResource(R.string.slide_the_blocks_to_free_the_red_one),
                 LocalSlideOutColors.current.accent,
                 onSlideOutClick,
                 Modifier.testTag("game_slide_out"),
@@ -200,8 +205,8 @@ fun LauncherScreen(
         }
         WordWheelTheme(darkTheme) {
             GameCard(
-                "Word Wheel",
-                "Swipe the letters to fill the crossword",
+                stringResource(R.string.word_wheel),
+                stringResource(R.string.swipe_the_letters_to_fill_the),
                 LocalWordWheelColors.current.accent,
                 onWordWheelClick,
                 Modifier.testTag("game_word_wheel"),

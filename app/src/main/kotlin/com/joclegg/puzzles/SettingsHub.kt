@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
@@ -146,7 +147,7 @@ fun SettingsHubScreen(
     Column(modifier.fillMaxSize()) {
         Row(Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp), verticalAlignment = Alignment.CenterVertically) {
             BackButton(onBack)
-            Text("Settings", style = MaterialTheme.typography.headlineMedium)
+            Text(stringResource(R.string.settings), style = MaterialTheme.typography.headlineMedium)
         }
         PrimaryScrollableTabRow(
             selectedTabIndex = tab.ordinal,
@@ -205,7 +206,7 @@ private fun GeneralSettings(
     Column(modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         OutlinedCard(Modifier.fillMaxWidth()) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                Text("Appearance", style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(R.string.appearance), style = MaterialTheme.typography.titleMedium)
                 SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
                     ThemeMode.entries.forEachIndexed { index, option ->
                         SegmentedButton(
@@ -217,16 +218,16 @@ private fun GeneralSettings(
                         ) {
                             Text(
                                 when (option) {
-                                    ThemeMode.SYSTEM -> "System"
-                                    ThemeMode.LIGHT -> "Light"
-                                    ThemeMode.DARK -> "Dark"
+                                    ThemeMode.SYSTEM -> stringResource(R.string.system)
+                                    ThemeMode.LIGHT -> stringResource(R.string.light)
+                                    ThemeMode.DARK -> stringResource(R.string.dark)
                                 },
                             )
                         }
                     }
                 }
                 Text(
-                    "Applies to every game.",
+                    stringResource(R.string.applies_to_every_game),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -256,7 +257,7 @@ private fun AccountSettings(
     }
     OutlinedCard(modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Text("Account", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.account), style = MaterialTheme.typography.titleMedium)
             OutlinedButton(
                 onClick = { confirming = true },
                 enabled = status != DeleteAccountStatus.DELETING,
@@ -265,15 +266,15 @@ private fun AccountSettings(
             ) {
                 Text(
                     if (status == DeleteAccountStatus.DELETING) {
-                        "Deleting account…"
+                        stringResource(R.string.deleting_account)
                     } else {
-                        "Delete account"
+                        stringResource(R.string.delete_account)
                     },
                 )
             }
             if (status == DeleteAccountStatus.FAILED) {
                 Text(
-                    "Couldn't delete your account. Check your connection and try again.",
+                    stringResource(R.string.couldn_t_delete_your_account_check),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.testTag("delete_account_error"),
@@ -291,21 +292,20 @@ private fun DeleteAccountDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Delete account?") },
+        title = { Text(stringResource(R.string.delete_account_2)) },
         text = {
             Text(
-                "Your synced scores, history and settings are permanently deleted from the server, " +
-                    "and you are signed out. Games and settings on this phone stay.",
+                stringResource(R.string.your_synced_scores_history_and),
             )
         },
         confirmButton = {
             TextButton(onClick = onConfirm, modifier = Modifier.testTag("delete_account_confirm")) {
-                Text("Delete", color = MaterialTheme.colorScheme.error)
+                Text(stringResource(R.string.delete), color = MaterialTheme.colorScheme.error)
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss, modifier = Modifier.testTag("delete_account_cancel")) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         },
         modifier = modifier.dialogTestTags(),

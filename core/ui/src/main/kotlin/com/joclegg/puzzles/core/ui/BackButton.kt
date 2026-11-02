@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.addPathNodes
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -19,7 +20,7 @@ fun BackButton(
     modifier: Modifier = Modifier,
 ) {
     IconButton(onClick = onClick, modifier = modifier.testTag("back")) {
-        Icon(BackIcon, contentDescription = "Back")
+        Icon(BackIcon, contentDescription = stringResource(R.string.back))
     }
 }
 

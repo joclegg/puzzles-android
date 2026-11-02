@@ -17,11 +17,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joclegg.puzzles.core.ui.BackButton
 import com.joclegg.puzzles.wordwheel.core.data.Settings
 import com.joclegg.puzzles.wordwheel.core.data.Toggle
+import com.joclegg.puzzles.wordwheel.feature.R
 
 @Composable
 fun SettingsRoute(
@@ -47,22 +49,34 @@ fun SettingsScreen(
         if (onBack != null) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 BackButton(onBack)
-                Text("Settings", style = MaterialTheme.typography.headlineMedium)
+                Text(stringResource(R.string.settings), style = MaterialTheme.typography.headlineMedium)
             }
         }
         OutlinedCard(Modifier.fillMaxWidth()) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                ToggleRow(settings, Toggle.SHOW_TIMER, onToggle, "Show the timer")
-                ToggleRow(settings, Toggle.SHOW_BONUS_COUNT, onToggle, "Show the bonus word count")
-                ToggleRow(settings, Toggle.SHOW_HINTS, onToggle, "Hints", detail = "Show the hint button.")
+                ToggleRow(settings, Toggle.SHOW_TIMER, onToggle, stringResource(R.string.show_the_timer))
+                ToggleRow(settings, Toggle.SHOW_BONUS_COUNT, onToggle, stringResource(R.string.show_the_bonus_word_count))
+                ToggleRow(
+                    settings,
+                    Toggle.SHOW_HINTS,
+                    onToggle,
+                    stringResource(R.string.hints),
+                    detail = stringResource(R.string.show_the_hint_button),
+                )
                 ToggleRow(
                     settings,
                     Toggle.SHOW_TUTORIAL,
                     onToggle,
-                    "How to play",
-                    detail = "Show the ? button with the rules and a walkthrough.",
+                    stringResource(R.string.how_to_play),
+                    detail = stringResource(R.string.show_the_button_with_the_rules_and_a),
                 )
-                ToggleRow(settings, Toggle.ALLOW_REVEAL, onToggle, "Show solution", detail = "Offer Show solution in the game menu.")
+                ToggleRow(
+                    settings,
+                    Toggle.ALLOW_REVEAL,
+                    onToggle,
+                    stringResource(R.string.show_solution),
+                    detail = stringResource(R.string.offer_show_solution_in_the_game_menu),
+                )
             }
         }
     }

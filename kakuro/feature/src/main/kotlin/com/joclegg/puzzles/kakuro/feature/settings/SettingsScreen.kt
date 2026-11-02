@@ -20,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joclegg.puzzles.core.ui.BackButton
@@ -29,6 +30,7 @@ import com.joclegg.puzzles.kakuro.core.data.Toggle
 import com.joclegg.puzzles.kakuro.engine.CombinationOrder
 import com.joclegg.puzzles.kakuro.engine.InputMode
 import com.joclegg.puzzles.kakuro.engine.MistakeCheck
+import com.joclegg.puzzles.kakuro.feature.R
 
 @Composable
 fun SettingsRoute(
@@ -67,12 +69,12 @@ fun SettingsScreen(
         if (onBack != null) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 BackButton(onBack)
-                Text("Settings", style = MaterialTheme.typography.headlineMedium)
+                Text(stringResource(R.string.settings), style = MaterialTheme.typography.headlineMedium)
             }
         }
         OutlinedCard(Modifier.fillMaxWidth()) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                Text("Entering numbers", style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(R.string.entering_numbers), style = MaterialTheme.typography.titleMedium)
                 Choice(
                     options = InputMode.entries,
                     selected = settings.inputMode,
@@ -85,8 +87,8 @@ fun SettingsScreen(
                     tag = { "setting_${it.name.lowercase()}" },
                     onSelect = onInputModeChange,
                 )
-                Hint("Cell first: tap a cell, then a number. Number first: pick a number, then tap cells to fill them.")
-                Text("Mistakes", style = MaterialTheme.typography.titleMedium)
+                Hint(stringResource(R.string.cell_first_tap_a_cell_then_a_number))
+                Text(stringResource(R.string.mistakes), style = MaterialTheme.typography.titleMedium)
                 Choice(
                     options = MistakeCheck.entries,
                     selected = settings.mistakeCheck,
@@ -101,34 +103,33 @@ fun SettingsScreen(
                     onSelect = onMistakeCheckChange,
                 )
                 Hint(
-                    "Block clashes refuses a number already in the run. Show wrong turns any wrong number red. " +
-                        "Both turn runs that can no longer add up red, and count mistakes.",
+                    stringResource(R.string.block_clashes_refuses_a_number_already),
                 )
-                ToggleRow(settings, Toggle.SHOW_MISTAKE_COUNT, onToggle, "Show the mistake counter")
+                ToggleRow(settings, Toggle.SHOW_MISTAKE_COUNT, onToggle, stringResource(R.string.show_the_mistake_counter))
                 ToggleRow(
                     settings,
                     Toggle.AUTO_REMOVE_NOTES,
                     onToggle,
-                    "Remove pencil marks automatically",
-                    detail = "Placing a number clears that number's pencil marks from its across and down runs.",
+                    stringResource(R.string.remove_pencil_marks_automatically),
+                    detail = stringResource(R.string.placing_a_number_clears_that_number_s),
                 )
                 ToggleRow(
                     settings,
                     Toggle.HIGHLIGHT_RUNS,
                     onToggle,
-                    "Highlight runs",
-                    detail = "Shade the across and down runs of the selected cell.",
+                    stringResource(R.string.highlight_runs),
+                    detail = stringResource(R.string.shade_the_across_and_down_runs_of_the),
                 )
-                ToggleRow(settings, Toggle.SHOW_TIMER, onToggle, "Show the timer")
+                ToggleRow(settings, Toggle.SHOW_TIMER, onToggle, stringResource(R.string.show_the_timer))
                 ToggleRow(
                     settings,
                     Toggle.SHOW_COMBINATIONS,
                     onToggle,
-                    "Sum helper",
-                    detail = "List the digit combinations that still fit the selected cell's runs.",
+                    stringResource(R.string.sum_helper),
+                    detail = stringResource(R.string.list_the_digit_combinations_that_still),
                 )
                 if (settings.showCombinations) {
-                    Text("Sum helper order")
+                    Text(stringResource(R.string.sum_helper_order))
                     Choice(
                         options = CombinationOrder.entries,
                         selected = settings.combinationOrder,
@@ -146,18 +147,30 @@ fun SettingsScreen(
                     settings,
                     Toggle.GREY_USED_DIGITS,
                     onToggle,
-                    "Grey out used-up numbers",
-                    detail = "Dim a number on the pad once every cell that needs it has it.",
+                    stringResource(R.string.grey_out_used_up_numbers),
+                    detail = stringResource(R.string.dim_a_number_on_the_pad_once_every),
                 )
-                ToggleRow(settings, Toggle.SHOW_HINTS, onToggle, "Hints", detail = "Show the hint button.")
+                ToggleRow(
+                    settings,
+                    Toggle.SHOW_HINTS,
+                    onToggle,
+                    stringResource(R.string.hints),
+                    detail = stringResource(R.string.show_the_hint_button),
+                )
                 ToggleRow(
                     settings,
                     Toggle.SHOW_TUTORIAL,
                     onToggle,
-                    "How to play",
-                    detail = "Show the ? button with the rules and a walkthrough.",
+                    stringResource(R.string.how_to_play),
+                    detail = stringResource(R.string.show_the_button_with_the_rules_and_a),
                 )
-                ToggleRow(settings, Toggle.ALLOW_REVEAL, onToggle, "Show solution", detail = "Offer Show solution in the game menu.")
+                ToggleRow(
+                    settings,
+                    Toggle.ALLOW_REVEAL,
+                    onToggle,
+                    stringResource(R.string.show_solution),
+                    detail = stringResource(R.string.offer_show_solution_in_the_game_menu),
+                )
                 if (settings.showHints) {
                     HintStyleRow(settings.hintStyle, onHintStyleChange)
                 }
@@ -228,9 +241,9 @@ private fun HintStyleRow(
 ) {
     Row(modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         Column(Modifier.weight(1f)) {
-            Text("Hints fill the answer in")
+            Text(stringResource(R.string.hints_fill_the_answer_in))
             Text(
-                "Off: a hint points at the next step and says why.",
+                stringResource(R.string.off_a_hint_points_at_the_next_step_and),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

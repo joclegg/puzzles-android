@@ -20,12 +20,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joclegg.puzzles.core.ui.BackButton
 import com.joclegg.puzzles.twotone.core.data.InputMode
 import com.joclegg.puzzles.twotone.core.data.Settings
 import com.joclegg.puzzles.twotone.core.data.Toggle
+import com.joclegg.puzzles.twotone.feature.R
 
 @Composable
 fun SettingsRoute(
@@ -52,12 +54,12 @@ fun SettingsScreen(
         if (onBack != null) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 BackButton(onBack)
-                Text("Settings", style = MaterialTheme.typography.headlineMedium)
+                Text(stringResource(R.string.settings), style = MaterialTheme.typography.headlineMedium)
             }
         }
         OutlinedCard(Modifier.fillMaxWidth()) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                Text("Filling in", style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(R.string.filling_in), style = MaterialTheme.typography.titleMedium)
                 SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
                     InputMode.entries.forEachIndexed { index, mode ->
                         SegmentedButton(
@@ -69,8 +71,8 @@ fun SettingsScreen(
                         ) {
                             Text(
                                 when (mode) {
-                                    InputMode.TAP_TO_CYCLE -> "Tap to cycle"
-                                    InputMode.PICK_COLOUR -> "Pick a colour"
+                                    InputMode.TAP_TO_CYCLE -> stringResource(R.string.tap_to_cycle)
+                                    InputMode.PICK_COLOUR -> stringResource(R.string.pick_a_colour)
                                 },
                                 maxLines = 1,
                             )
@@ -78,8 +80,7 @@ fun SettingsScreen(
                     }
                 }
                 Text(
-                    "Tap to cycle steps a spot through the colours. Pick a colour shows colour buttons under the board: " +
-                        "pick one, then tap spots to fill them.",
+                    stringResource(R.string.tap_to_cycle_steps_a_spot_through_the),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -87,20 +88,32 @@ fun SettingsScreen(
                     settings,
                     Toggle.MARK_BROKEN_RULES,
                     onToggle,
-                    "Mark broken rules",
-                    detail = "Outline tiles that make three in a row, overfill a line or copy another line.",
+                    stringResource(R.string.mark_broken_rules),
+                    detail = stringResource(R.string.outline_tiles_that_make_three_in_a_row),
                 )
-                ToggleRow(settings, Toggle.SHOW_TIMER, onToggle, "Show the timer")
-                ToggleRow(settings, Toggle.SHOW_PROGRESS, onToggle, "Show how much is filled in")
-                ToggleRow(settings, Toggle.SHOW_HINTS, onToggle, "Hints", detail = "Show the hint button.")
+                ToggleRow(settings, Toggle.SHOW_TIMER, onToggle, stringResource(R.string.show_the_timer))
+                ToggleRow(settings, Toggle.SHOW_PROGRESS, onToggle, stringResource(R.string.show_how_much_is_filled_in))
+                ToggleRow(
+                    settings,
+                    Toggle.SHOW_HINTS,
+                    onToggle,
+                    stringResource(R.string.hints),
+                    detail = stringResource(R.string.show_the_hint_button),
+                )
                 ToggleRow(
                     settings,
                     Toggle.SHOW_TUTORIAL,
                     onToggle,
-                    "How to play",
-                    detail = "Show the ? button with the rules and a walkthrough.",
+                    stringResource(R.string.how_to_play),
+                    detail = stringResource(R.string.show_the_button_with_the_rules_and_a),
                 )
-                ToggleRow(settings, Toggle.ALLOW_REVEAL, onToggle, "Show solution", detail = "Offer Show solution in the game menu.")
+                ToggleRow(
+                    settings,
+                    Toggle.ALLOW_REVEAL,
+                    onToggle,
+                    stringResource(R.string.show_solution),
+                    detail = stringResource(R.string.offer_show_solution_in_the_game_menu),
+                )
             }
         }
     }

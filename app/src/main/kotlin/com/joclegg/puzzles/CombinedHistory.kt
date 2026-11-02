@@ -19,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -102,10 +103,10 @@ fun CombinedHistoryScreen(
     Column(modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             IconButton(onClick = onBack, modifier = Modifier.testTag("back")) { Text("←") }
-            Text("History", style = MaterialTheme.typography.headlineMedium)
+            Text(stringResource(R.string.history), style = MaterialTheme.typography.headlineMedium)
         }
         if (entries.isEmpty()) {
-            Text("Finished puzzles from every game show up here.", modifier = Modifier.testTag("history_empty"))
+            Text(stringResource(R.string.finished_puzzles_from_every_game_show), modifier = Modifier.testTag("history_empty"))
         }
         LazyColumn(Modifier.fillMaxWidth().testTag("history_list")) {
             items(entries) { item ->

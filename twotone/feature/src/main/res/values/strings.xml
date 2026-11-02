@@ -1,0 +1,32 @@
+<resources>
+    <string name="cancel">Cancel</string>
+    <string name="fill_the_grid_red_and_blue_three">Fill the grid red and blue, three simple rules</string>
+    <string name="filling_in">Filling in</string>
+    <string name="hide_the_starting_tiles">Hide the starting tiles</string>
+    <string name="hints">Hints</string>
+    <string name="home">Home</string>
+    <string name="how_to_play">How to play</string>
+    <string name="mark_broken_rules">Mark broken rules</string>
+    <string name="more">More</string>
+    <string name="new_puzzle">New puzzle</string>
+    <string name="offer_show_solution_in_the_game_menu">Offer Show solution in the game menu.</string>
+    <string name="outline_tiles_that_make_three_in_a_row">Outline tiles that make three in a row, overfill a line or copy another line.</string>
+    <string name="pick_a_colour">Pick a colour</string>
+    <string name="restart_this_puzzle">Restart this puzzle</string>
+    <string name="settings">Settings</string>
+    <string name="show_a_hint">Show a hint</string>
+    <string name="show_how_much_is_filled_in">Show how much is filled in</string>
+    <string name="show_solution">Show solution</string>
+    <string name="show_the_button_with_the_rules_and_a">Show the ? button with the rules and a walkthrough.</string>
+    <string name="show_the_hint_button">Show the hint button.</string>
+    <string name="show_the_solution">Show the solution?</string>
+    <string name="show_the_starting_tiles">Show the starting tiles</string>
+    <string name="show_the_timer">Show the timer</string>
+    <string name="solved">Solved!</string>
+    <string name="tap_to_cycle">Tap to cycle</string>
+    <string name="tap_to_cycle_steps_a_spot_through_the">Tap to cycle steps a spot through the colours. Pick a colour shows colour buttons under the board: pick one, then tap spots to fill them.</string>
+    <string name="this_ends_the_puzzle_it_won_t_count">This ends the puzzle. It won\'t count towards best times.</string>
+    <string name="time">Time</string>
+    <string name="two_tone">Two Tone</string>
+    <string name="undo_the_last_tap">Undo the last tap</string>
+</resources>

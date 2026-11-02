@@ -12,6 +12,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joclegg.puzzles.core.ui.ContinueCard
 import com.joclegg.puzzles.core.ui.MenuIcons
@@ -21,6 +22,7 @@ import com.joclegg.puzzles.core.ui.formatDuration
 import com.joclegg.puzzles.core.ui.home.GameHomeScaffold
 import com.joclegg.puzzles.core.ui.todayLabel
 import com.joclegg.puzzles.solitaire.core.data.SavedGame
+import com.joclegg.puzzles.solitaire.feature.R
 import com.joclegg.puzzles.solitaire.ui.LocalSolitaireColors
 import com.joclegg.puzzles.solitaire.ui.SolitaireGameIcon
 import com.joclegg.puzzles.solitaire.ui.SolitaireIcons
@@ -88,9 +90,9 @@ fun HomeScreen(
     var resumeChoice by remember { mutableStateOf<SavedGame?>(null) }
     val accent = LocalSolitaireColors.current.accent
     GameHomeScaffold(
-        title = "Solitaire",
+        title = stringResource(R.string.solitaire),
         calendarGame = "SOLITAIRE",
-        tagline = "Klondike, draw 1 or 3, or reverse",
+        tagline = stringResource(R.string.klondike_draw_1_or_3_or_reverse),
         accent = accent,
         settingsIcon = SolitaireIcons.Settings,
         onStats = onStats,
@@ -108,20 +110,20 @@ fun HomeScreen(
                 modifier = Modifier.testTag("continue"),
             )
         }
-        MenuSection("Today", aside = todayLabel()) {
+        MenuSection(stringResource(R.string.today), aside = todayLabel()) {
             MenuTile(
                 label =
                     if (dealing == DealKind.DAILY) {
-                        "Dealing…"
+                        stringResource(R.string.dealing)
                     } else {
-                        "Daily deal"
+                        stringResource(R.string.daily_deal)
                     },
                 accent = accent,
                 onClick = onDaily,
                 modifier = Modifier.fillMaxWidth().testTag("daily"),
                 detail =
                     if (state.dailyWon) {
-                        "Won"
+                        stringResource(R.string.won)
                     } else {
                         null
                     },
@@ -130,14 +132,14 @@ fun HomeScreen(
                 enabled = dealing == null,
             )
         }
-        MenuSection("New game") {
+        MenuSection(stringResource(R.string.new_game)) {
             val saved = state.savedDeal
             MenuTile(
                 label =
                     if (dealing == DealKind.NEW) {
-                        "Dealing…"
+                        stringResource(R.string.dealing)
                     } else {
-                        "New game"
+                        stringResource(R.string.new_game)
                     },
                 accent = accent,
                 onClick = {
@@ -168,7 +170,7 @@ fun HomeScreen(
                         onResume(saved.id)
                     },
                     modifier = Modifier.testTag("resume_game"),
-                ) { Text("Resume") }
+                ) { Text(stringResource(R.string.resume)) }
             },
             dismissButton = {
                 TextButton(
@@ -177,7 +179,7 @@ fun HomeScreen(
                         onStart()
                     },
                     modifier = Modifier.testTag("new_game"),
-                ) { Text("New deal") }
+                ) { Text(stringResource(R.string.new_deal)) }
             },
         )
     }
