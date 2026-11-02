@@ -30,6 +30,20 @@ class PuzzleBankTest(
     }
 
     @Test
+    fun `given puzzles played from this and other levels when unplayed puzzles are counted then only this level's count`() {
+        // Arrange
+        val mine = "${mode.name.lowercase()}_easy"
+        val other = "${mode.name.lowercase()}_hard"
+        val played = setOf("$mine:1", "$other:0", "$other:2", DailyIds.of(mode, Difficulty.EASY, date))
+
+        // Act
+        val count = bank.unplayedCount(mode, Difficulty.EASY, played)
+
+        // Assert
+        assertEquals(2, count)
+    }
+
+    @Test
     fun `given a date when a level's daily is picked twice then it is the same puzzle, named by mode, level and date`() {
         // Arrange
         val level = mode.levels.first()
