@@ -220,4 +220,58 @@ class BankStoreTest {
         // Assert
         assertEquals(true, ready)
     }
+
+    @Test
+    fun `given a complete update with an etag when the manifest is unchanged then only the manifest is requested with that etag`() =
+        runBlocking {
+            // Arrange
+            val manifest = manifest("slideout/easy.txt" to "new\n").copy(headers = mapOf("ETag" to "\"v1\""))
+            val sent = mutableListOf<Pair<String, String?>>()
+            val http =
+                Http { _, url, headers, _ ->
+                    val path = url.removePrefix("$BASE/")
+                    sent += path to headers["If-None-Match"]
+                    when {
+                        path == "manifest.json" && headers["If-None-Match"] == "\"v1\"" -> HttpResponse(304, "")
+                        path == "manifest.json" -> manifest
+                        path == "slideout/easy.txt" -> HttpResponse(200, "new\n")
+                        else -> HttpResponse(404, "")
+                    }
+                }
+            val store = BankStore(folder.root, http, BASE)
+            store.update()
+            sent.clear()
+
+            // Act
+            val downloaded = store.update()
+
+            // Assert
+            assertEquals(listOf(0, true, "new\n"), listOf(downloaded, store.isReady("slideout"), store.read("slideout/easy.txt")))
+            assertEquals(listOf<Pair<String, String?>>("manifest.json" to "\"v1\""), sent)
+        }
+
+    @Test
+    fun `given a download that doesn't match its hash when banks update then no partial file is left behind`() =
+        runBlocking {
+            // Arrange
+            val (store) =
+                store(
+                    mapOf(
+                        "manifest.json" to manifest("slideout/easy.txt" to "new\n"),
+                        "slideout/easy.txt" to HttpResponse(200, "tampered\n"),
+                    ),
+                )
+
+            // Act
+            store.update()
+
+            // Assert
+            assertEquals(
+                listOf(false, false),
+                listOf(
+                    java.io.File(folder.root, "slideout/easy.txt").exists(),
+                    java.io.File(folder.root, "slideout/easy.txt.part").exists(),
+                ),
+            )
+        }
 }

@@ -1,5 +1,6 @@
 package com.joclegg.puzzles.solitaire.core.data
 
+import com.joclegg.puzzles.core.data.DailyRecord
 import com.joclegg.puzzles.solitaire.engine.BoardCodec
 import com.joclegg.puzzles.solitaire.engine.BuildOrder
 import com.joclegg.puzzles.solitaire.engine.DrawMode
@@ -7,6 +8,7 @@ import com.joclegg.puzzles.solitaire.engine.MoveCodec
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.util.UUID
@@ -19,6 +21,8 @@ class GameRepository(
     val inProgress: Flow<List<SavedGame>> = dao.observeInProgress().map { rows -> rows.map { it.toModel() } }
 
     val history: Flow<List<SavedGame>> = dao.observeHistory().map { rows -> rows.map { it.toModel() } }
+
+    val dailies: Flow<List<DailyRecord>> = dao.observeDailies().distinctUntilChanged()
 
     val stats: Flow<List<DrawStats>> = dao.observeHistory().map { rows -> DrawMode.entries.map { mode -> rows.statsFor(mode) } }
 

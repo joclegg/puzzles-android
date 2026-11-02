@@ -13,6 +13,7 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.datastore.preferences)
+    api(projects.core.data)
     api(libs.kotlinx.coroutines.core)
 
     testImplementation(libs.robolectric)

@@ -141,52 +141,52 @@ fun dailyResults(
 ): Flow<List<DailyResult>> =
     when (tab) {
         SettingsTab.GENERAL, SettingsTab.SUDOKU -> {
-            app.sudoku.games.history.map { games ->
-                games.filter { it.status == SudokuStatus.COMPLETED }.mapNotNull { game ->
-                    DailyIds.parse(game.ref.id)?.let { (_, date) -> DailyResult(date, game.ref.id, game.finishedAt) }
+            app.sudoku.games.dailies.map { games ->
+                games.filter { it.status == SudokuStatus.COMPLETED.name }.mapNotNull { game ->
+                    DailyIds.parse(game.puzzleId)?.let { (_, date) -> DailyResult(date, game.puzzleId, game.finishedAt) }
                 }
             }
         }
 
         SettingsTab.SOLITAIRE -> {
-            app.solitaire.games.history.map { games ->
-                games.filter { it.status == SolitaireStatus.WON }.mapNotNull { result(it.deal.id, it.finishedAt) }
+            app.solitaire.games.dailies.map { games ->
+                games.filter { it.status == SolitaireStatus.WON.name }.mapNotNull { result(it.puzzleId, it.finishedAt) }
             }
         }
 
         SettingsTab.TWO_TONE -> {
-            app.twoTone.games.history.map { games ->
-                games.filter { it.status == TwoToneStatus.SOLVED }.mapNotNull { result(it.ref.id, it.finishedAt) }
+            app.twoTone.games.dailies.map { games ->
+                games.filter { it.status == TwoToneStatus.SOLVED.name }.mapNotNull { result(it.puzzleId, it.finishedAt) }
             }
         }
 
         SettingsTab.SIGHTLINES -> {
-            app.sightlines.games.history.map { games ->
-                games.filter { it.status == SightlinesStatus.SOLVED }.mapNotNull { result(it.ref.id, it.finishedAt) }
+            app.sightlines.games.dailies.map { games ->
+                games.filter { it.status == SightlinesStatus.SOLVED.name }.mapNotNull { result(it.puzzleId, it.finishedAt) }
             }
         }
 
         SettingsTab.FIVE_LETTERS -> {
-            app.fiveLetters.games.history.map { games ->
-                games.filter { it.status == FiveLettersStatus.WON }.mapNotNull { result(it.ref.id, it.finishedAt) }
+            app.fiveLetters.games.dailies.map { games ->
+                games.filter { it.status == FiveLettersStatus.WON.name }.mapNotNull { result(it.puzzleId, it.finishedAt) }
             }
         }
 
         SettingsTab.KAKURO -> {
-            app.kakuro.games.history.map { games ->
-                games.filter { it.status == KakuroStatus.SOLVED }.mapNotNull { result(it.ref.id, it.finishedAt) }
+            app.kakuro.games.dailies.map { games ->
+                games.filter { it.status == KakuroStatus.SOLVED.name }.mapNotNull { result(it.puzzleId, it.finishedAt) }
             }
         }
 
         SettingsTab.SLIDE_OUT -> {
-            app.slideOut.games.history.map { games ->
-                games.filter { it.status == SlideOutStatus.SOLVED }.mapNotNull { result(it.ref.id, it.finishedAt) }
+            app.slideOut.games.dailies.map { games ->
+                games.filter { it.status == SlideOutStatus.SOLVED.name }.mapNotNull { result(it.puzzleId, it.finishedAt) }
             }
         }
 
         SettingsTab.WORD_WHEEL -> {
-            app.wordWheel.games.history.map { games ->
-                games.filter { it.status == WordWheelStatus.SOLVED }.mapNotNull { result(it.ref.id, it.finishedAt) }
+            app.wordWheel.games.dailies.map { games ->
+                games.filter { it.status == WordWheelStatus.SOLVED.name }.mapNotNull { result(it.puzzleId, it.finishedAt) }
             }
         }
     }
@@ -222,10 +222,10 @@ private suspend fun sudoku(
     date: LocalDate,
 ): List<GameDaily> {
     val solved =
-        app.sudoku.games.history
+        app.sudoku.games.dailies
             .first()
-            .filter { it.status == SudokuStatus.COMPLETED }
-            .map { it.ref.id }
+            .filter { it.status == SudokuStatus.COMPLETED.name }
+            .map { it.puzzleId }
             .toSet()
     return GameMode.entries.flatMap { mode ->
         val modeName = mode.name.lowercase().replaceFirstChar(Char::uppercase)
@@ -261,9 +261,9 @@ private suspend fun solitaire(
 ): List<GameDaily> {
     val daily = DealRef.dailyId(date)
     val won =
-        app.solitaire.games.history
+        app.solitaire.games.dailies
             .first()
-            .any { it.deal.id == daily && it.status == SolitaireStatus.WON }
+            .any { it.puzzleId == daily && it.status == SolitaireStatus.WON.name }
     return listOf(
         GameDaily("SOLITAIRE", "Deal", "daily_play_solitaire", won, !won, SolitaireRoutes.HOME, "Daily deal", {
             app.solitaire.games.inProgress
@@ -286,23 +286,24 @@ private suspend fun fiveLetters(
     date: LocalDate,
 ): List<GameDaily> {
     val history =
-        app.fiveLetters.games.history
+        app.fiveLetters.games.dailies
             .first()
     val daily = WordRef.dailyId(date)
-    val finished = history.any { it.ref.id == daily && (it.status == FiveLettersStatus.WON || it.status == FiveLettersStatus.LOST) }
+    val finished =
+        history.any { it.puzzleId == daily && (it.status == FiveLettersStatus.WON.name || it.status == FiveLettersStatus.LOST.name) }
     return listOf(
         GameDaily(
             "FIVE_LETTERS",
             "Word",
             "daily_play_word",
-            history.any { it.ref.id == daily && it.status == FiveLettersStatus.WON },
+            history.any { it.puzzleId == daily && it.status == FiveLettersStatus.WON.name },
             !finished,
             FiveLettersRoutes.HOME,
             "Puzzles daily",
             {
-                app.fiveLetters.games.history
+                app.fiveLetters.games.dailies
                     .first()
-                    .find { it.ref.id == daily && it.status != FiveLettersStatus.ABANDONED }
+                    .find { it.puzzleId == daily && it.status != FiveLettersStatus.ABANDONED.name }
                     ?.id ?: app.fiveLetters.games
                     .start(
                         WordRef.daily(app.fiveLetters.words(), date),
@@ -316,14 +317,14 @@ private suspend fun fiveLetters(
             "FIVE_LETTERS",
             "Daily puzzle 2",
             "daily_play_daily2",
-            history.any { it.ref.daily2Date == date && it.status == FiveLettersStatus.WON },
+            history.any { WordRef.daily2DateOf(it.puzzleId) == date && it.status == FiveLettersStatus.WON.name },
             false,
             FiveLettersRoutes.HOME,
             "Daily puzzle 2",
             {
-                app.fiveLetters.games.history
+                app.fiveLetters.games.dailies
                     .first()
-                    .find { it.ref.daily2Date == date && it.status != FiveLettersStatus.ABANDONED }
+                    .find { WordRef.daily2DateOf(it.puzzleId) == date && it.status != FiveLettersStatus.ABANDONED.name }
                     ?.id ?: app.fiveLetters.daily2Words.word(date)?.let { answer ->
                     app.fiveLetters.games
                         .start(
@@ -343,11 +344,11 @@ private suspend fun twoTone(
     date: LocalDate,
 ): List<GameDaily> {
     val history =
-        app.twoTone.games.history
+        app.twoTone.games.dailies
             .first()
     return TWO_TONE_SIZES.map { item ->
         val id = TwoToneRef.dailyId(date, item)
-        val solved = history.any { it.ref.id == id && it.status == TwoToneStatus.SOLVED }
+        val solved = history.any { it.puzzleId == id && it.status == TwoToneStatus.SOLVED.name }
         GameDaily(
             "TWO_TONE",
             twotoneSizeLabel(item),
@@ -372,11 +373,11 @@ private suspend fun sightlines(
     date: LocalDate,
 ): List<GameDaily> {
     val history =
-        app.sightlines.games.history
+        app.sightlines.games.dailies
             .first()
     return SIGHTLINES_SIZES.map { item ->
         val id = SightlinesRef.dailyId(date, item)
-        val solved = history.any { it.ref.id == id && it.status == SightlinesStatus.SOLVED }
+        val solved = history.any { it.puzzleId == id && it.status == SightlinesStatus.SOLVED.name }
         GameDaily(
             "SIGHTLINES",
             sightlinesSizeLabel(item),
@@ -401,11 +402,11 @@ private suspend fun kakuro(
     date: LocalDate,
 ): List<GameDaily> {
     val history =
-        app.kakuro.games.history
+        app.kakuro.games.dailies
             .first()
     return KAKURO_SIZES.map { item ->
         val id = KakuroRef.dailyId(date, item)
-        val solved = history.any { it.ref.id == id && it.status == KakuroStatus.SOLVED }
+        val solved = history.any { it.puzzleId == id && it.status == KakuroStatus.SOLVED.name }
         GameDaily(
             "KAKURO",
             kakuroSizeLabel(item),
@@ -430,11 +431,11 @@ private suspend fun slideOut(
     date: LocalDate,
 ): List<GameDaily> {
     val history =
-        app.slideOut.games.history
+        app.slideOut.games.dailies
             .first()
     return SlideOutLevel.entries.map { item ->
         val id = SlideOutRef.dailyId(date, item)
-        val solved = history.any { it.ref.id == id && it.status == SlideOutStatus.SOLVED }
+        val solved = history.any { it.puzzleId == id && it.status == SlideOutStatus.SOLVED.name }
         GameDaily(
             "SLIDE_OUT",
             item.slideOutLabel(),
@@ -459,11 +460,11 @@ private suspend fun wordWheel(
     date: LocalDate,
 ): List<GameDaily> {
     val history =
-        app.wordWheel.games.history
+        app.wordWheel.games.dailies
             .first()
     return WordWheelLevel.entries.map { item ->
         val id = WordWheelRef.dailyId(date, item)
-        val solved = history.any { it.ref.id == id && it.status == WordWheelStatus.SOLVED }
+        val solved = history.any { it.puzzleId == id && it.status == WordWheelStatus.SOLVED.name }
         GameDaily(
             "WORD_WHEEL",
             item.wordWheelLabel(),

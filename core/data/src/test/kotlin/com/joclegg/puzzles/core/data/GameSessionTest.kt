@@ -57,7 +57,7 @@ class GameSessionTest {
         }
 
     @Test
-    fun `given a visible session when time passes then it ticks every half second`() =
+    fun `given a visible session when time passes then it ticks every second`() =
         runTest {
             // Arrange
             val session = session()
@@ -65,10 +65,26 @@ class GameSessionTest {
             // Act
             session.onVisible()
             runCurrent()
-            advanceTimeBy(1_100)
+            advanceTimeBy(2_100)
 
             // Assert
             assertEquals(3, ticks)
+        }
+
+    @Test
+    fun `given a session part way through a second when it resumes then the next tick lands on the whole second`() =
+        runTest {
+            // Arrange
+            val session = session()
+            session.restore(10_400)
+
+            // Act
+            session.onVisible()
+            runCurrent()
+            advanceTimeBy(601)
+
+            // Assert
+            assertEquals(2, ticks)
         }
 
     @Test

@@ -57,6 +57,7 @@ class PuzzlesApplication : Application() {
             store = syncStore,
         )
     }
+    val bankStore by lazy { BankStore(File(filesDir, BANKS_FOLDER)) }
     private val _bankStatus = MutableStateFlow(BankStatus())
     val bankStatus: StateFlow<BankStatus> = _bankStatus.asStateFlow()
 
@@ -66,16 +67,17 @@ class PuzzlesApplication : Application() {
         }
         _bankStatus.update { it.copy(updating = true) }
         background.launch {
-            banks.update()
+            bankStore.update()
             _bankStatus.update { BankStatus(updating = false, checks = it.checks + 1) }
         }
     }
 
     override fun onCreate() {
         super.onCreate()
+        background.launch { bankStore.refresh() }
         val meta = getSharedPreferences(APP_META, MODE_PRIVATE)
         if (!meta.getBoolean(HELPER_DEFAULTS_CHECKED, false)) {
-            val existingUser = File(filesDir, "puzzles-data").exists() || databaseList().isNotEmpty()
+            val existingUser = File(filesDir, BANKS_FOLDER).exists() || databaseList().isNotEmpty()
             meta.edit { putBoolean(HELPER_DEFAULTS_CHECKED, true) }
             if (existingUser) {
                 background.launch { keepLegacyHelperDefaults() }
@@ -111,7 +113,7 @@ data class BankStatus(
 )
 
 val Context.banks: BankStore
-    get() = BankStore(File(filesDir, "puzzles-data"))
+    get() = (applicationContext as PuzzlesApplication).bankStore
 
 fun Context.installSeedBanks() {
     val manifest = runCatching { assets.open(SEED_MANIFEST) }.getOrNull()
@@ -125,4 +127,5 @@ fun Context.installSeedBanks() {
 private const val APP_META = "app_meta"
 private const val HELPER_DEFAULTS_CHECKED = "helper_defaults_checked"
 private const val CELEBRATED_ON = "all_golds_celebrated_on"
+private const val BANKS_FOLDER = "puzzles-data"
 private const val SEED_MANIFEST = "puzzles-data/manifest.json"

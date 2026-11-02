@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -105,8 +106,10 @@ fun SudokuBoard(
         val grid = board.grid
         val cellSize = maxWidth / grid.size
         val cageOf =
-            IntArray(grid.cells) { NO_CAGE }.also { owner ->
-                board.cages.forEachIndexed { i, cage -> cage.cells.forEach { owner[it] = i } }
+            remember(grid, board.cages) {
+                IntArray(grid.cells) { NO_CAGE }.also { owner ->
+                    board.cages.forEachIndexed { i, cage -> cage.cells.forEach { owner[it] = i } }
+                }
             }
         Column(Modifier.fillMaxSize()) {
             repeat(grid.size) { row ->

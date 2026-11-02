@@ -92,4 +92,20 @@ class GameRepositoryTest {
             // Assert
             assertEquals(game.copy(changes = changes, elapsedMs = 12_000, hints = 2), repository.get(game.id))
         }
+
+    @Test
+    fun `given a daily and a random puzzle when dailies are read then only the daily is listed with its status`() =
+        runTest {
+            // Arrange
+            val date = LocalDate.of(2026, 10, 25)
+            repository.start { PuzzleRef.random(bank, 6, 1) }
+            val daily = repository.start { PuzzleRef.daily(bank, date, 8) }
+            repository.solve(daily)
+
+            // Act
+            val dailies = repository.dailies.first()
+
+            // Assert
+            assertEquals(listOf(PuzzleRef.dailyId(date, 8) to GameStatus.SOLVED.name), dailies.map { it.puzzleId to it.status })
+        }
 }

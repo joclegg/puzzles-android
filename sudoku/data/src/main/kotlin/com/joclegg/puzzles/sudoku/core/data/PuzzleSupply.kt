@@ -23,8 +23,9 @@ class PuzzleSupply(
         mode: GameMode,
         difficulty: Difficulty,
     ): PuzzleRef {
-        val ref = take(mode, difficulty)
-        if (stock(mode, difficulty) < LOW_WATERMARK) {
+        val played = games.playedPuzzleIds(mode)
+        val ref = take(mode, difficulty, played)
+        if (stock(mode, difficulty, played) < LOW_WATERMARK) {
             onRunningLow()
         }
         return ref
@@ -33,8 +34,8 @@ class PuzzleSupply(
     private suspend fun take(
         mode: GameMode,
         difficulty: Difficulty,
+        played: Set<String>,
     ): PuzzleRef {
-        val played = games.playedPuzzleIds(mode)
         withContext(io) { bank.nextUnplayed(mode, difficulty, played) }?.let { return it }
         val stocked = generated.takeUnused(mode.name, difficulty.name)
         if (stocked != null) {
@@ -48,8 +49,13 @@ class PuzzleSupply(
     suspend fun stock(
         mode: GameMode,
         difficulty: Difficulty,
+    ): Int = stock(mode, difficulty, games.playedPuzzleIds(mode))
+
+    private suspend fun stock(
+        mode: GameMode,
+        difficulty: Difficulty,
+        played: Set<String>,
     ): Int {
-        val played = games.playedPuzzleIds(mode)
         val bundled = withContext(io) { bank.unplayedCount(mode, difficulty, played) }
         return bundled + generated.unusedCount(mode.name, difficulty.name)
     }
@@ -59,8 +65,9 @@ class PuzzleSupply(
         shouldStop: () -> Boolean = { false },
     ) {
         for (mode in GameMode.entries) {
+            val played = games.playedPuzzleIds(mode)
             for (difficulty in mode.levels) {
-                var missing = target - stock(mode, difficulty)
+                var missing = target - stock(mode, difficulty, played)
                 while (missing > 0 && !shouldStop()) {
                     val fresh = withContext(background) { generate(mode, difficulty) }
                     generated.insert(entity(mode, difficulty, fresh, used = false))

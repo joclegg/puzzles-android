@@ -51,7 +51,25 @@ class PuzzleBank(
         mode: GameMode,
         difficulty: Difficulty,
         played: Set<String>,
-    ) = (0 until size(mode, difficulty)).filter { "${fileName(mode, difficulty)}:$it" !in played }
+    ): List<Int> {
+        val playedIndices = playedIndices(mode, difficulty, played)
+        return (0 until size(mode, difficulty)).filter { it !in playedIndices }
+    }
+
+    private fun playedIndices(
+        mode: GameMode,
+        difficulty: Difficulty,
+        played: Set<String>,
+    ): Set<Int> {
+        val prefix = "${fileName(mode, difficulty)}:"
+        return played.mapNotNullTo(HashSet()) { id ->
+            if (id.startsWith(prefix)) {
+                id.substring(prefix.length).toIntOrNull()
+            } else {
+                null
+            }
+        }
+    }
 
     fun next(
         mode: GameMode,
@@ -60,7 +78,7 @@ class PuzzleBank(
         random: Random = Random.Default,
     ): PuzzleRef {
         val count = size(mode, difficulty)
-        val unplayed = (0 until count).filter { "${fileName(mode, difficulty)}:$it" !in played }
+        val unplayed = unplayedIndices(mode, difficulty, played)
         return get(mode, difficulty, unplayed.randomOrNull(random) ?: random.nextInt(count))
     }
 
