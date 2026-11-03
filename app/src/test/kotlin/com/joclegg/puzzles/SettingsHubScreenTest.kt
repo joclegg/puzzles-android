@@ -8,6 +8,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -61,7 +62,7 @@ class SettingsHubScreenTest {
         show(AppSettingsUiState(signedIn = true))
 
         // Act
-        compose.onNodeWithTag("privacy_policy").performClick()
+        compose.onNodeWithTag("privacy_policy").performScrollTo().performClick()
 
         // Assert
         assertEquals(listOf(SettingsHub.PRIVACY_POLICY_URL), opened)
