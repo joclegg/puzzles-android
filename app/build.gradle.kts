@@ -1,6 +1,9 @@
+import com.github.triplet.gradle.androidpublisher.ReleaseStatus
+
 plugins {
     alias(libs.plugins.puzzles.android.application)
     alias(libs.plugins.puzzles.android.compose)
+    alias(libs.plugins.play.publisher)
 }
 
 val releaseKeystore = providers.environmentVariable("PUZZLES_KEYSTORE").orNull
@@ -32,12 +35,31 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
-            signingConfig =
-                if (releaseKeystore != null) {
-                    signingConfigs.getByName("release")
-                } else {
-                    signingConfigs.getByName("debug")
-                }
+            if (releaseKeystore != null) {
+                signingConfig = signingConfigs.getByName("release")
+            }
+        }
+    }
+    playConfigs {
+        register("debug") {
+            enabled.set(false)
+        }
+    }
+}
+
+play {
+    track.set("internal")
+    releaseStatus.set(ReleaseStatus.COMPLETED)
+    defaultToAppBundles.set(true)
+    useApplicationDefaultCredentials.set(true)
+}
+
+val releaseSigningTasks = setOf("packageRelease", "signReleaseBundle")
+
+tasks.configureEach {
+    if (name in releaseSigningTasks && releaseKeystore == null) {
+        doFirst {
+            throw GradleException("Set PUZZLES_KEYSTORE to sign a release build")
         }
     }
 }
