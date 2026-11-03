@@ -40,6 +40,11 @@ android {
             }
         }
     }
+    playConfigs {
+        register("debug") {
+            enabled.set(false)
+        }
+    }
 }
 
 play {
@@ -47,12 +52,6 @@ play {
     releaseStatus.set(ReleaseStatus.COMPLETED)
     defaultToAppBundles.set(true)
     useApplicationDefaultCredentials.set(true)
-}
-
-playConfigs {
-    register("debug") {
-        enabled.set(false)
-    }
 }
 
 val releaseSigningTasks = setOf("packageRelease", "signReleaseBundle")
