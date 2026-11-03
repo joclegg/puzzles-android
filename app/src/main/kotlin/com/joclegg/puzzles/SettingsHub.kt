@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -30,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
@@ -67,6 +70,7 @@ enum class SettingsTab(
 
 object SettingsHub {
     const val ROUTE = "settings/{tab}?mode={mode}"
+    const val PRIVACY_POLICY_URL = "https://joclegg.github.io/puzzles-web/#/privacy"
 
     fun route(
         tab: SettingsTab,
@@ -203,7 +207,10 @@ private fun GeneralSettings(
     modifier: Modifier = Modifier,
 ) {
     val theme = state.theme
-    Column(modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    Column(
+        modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
         OutlinedCard(Modifier.fillMaxWidth()) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Text(stringResource(R.string.appearance), style = MaterialTheme.typography.titleMedium)
@@ -236,6 +243,18 @@ private fun GeneralSettings(
         if (state.signedIn) {
             AccountSettings(state.deleteAccount, onDeleteAccount)
         }
+        PrivacyPolicyLink()
+    }
+}
+
+@Composable
+private fun PrivacyPolicyLink(modifier: Modifier = Modifier) {
+    val uriHandler = LocalUriHandler.current
+    TextButton(
+        onClick = { uriHandler.openUri(SettingsHub.PRIVACY_POLICY_URL) },
+        modifier = modifier.testTag("privacy_policy"),
+    ) {
+        Text(stringResource(R.string.privacy_policy))
     }
 }
 
