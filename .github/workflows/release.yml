@@ -6,6 +6,7 @@ on:
 
 permissions:
   contents: write
+  id-token: write
 
 concurrency:
   group: release
@@ -47,6 +48,8 @@ jobs:
           ./gradlew assembleRelease bundleRelease -PversionName=${{ steps.version.outputs.name }} -PversionCode=${{ steps.version.outputs.code }}
           cp app/build/outputs/apk/release/app-release.apk "puzzles-${{ steps.version.outputs.name }}.apk"
           cp app/build/outputs/bundle/release/app-release.aab "puzzles-${{ steps.version.outputs.name }}.aab"
+          mkdir -p "$RUNNER_TEMP/play"
+          cp app/build/outputs/bundle/release/app-release.aab "$RUNNER_TEMP/play/"
       - name: Publish the GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
@@ -54,3 +57,14 @@ jobs:
           gh release create "v${{ steps.version.outputs.name }}"
           "puzzles-${{ steps.version.outputs.name }}.apk" "puzzles-${{ steps.version.outputs.name }}.aab"
           --target "$GITHUB_SHA" --title "Puzzles ${{ steps.version.outputs.name }}" --generate-notes
+      - name: Sign in to Google Cloud for Google Play
+        if: vars.PLAY_SERVICE_ACCOUNT != ''
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ vars.PLAY_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.PLAY_SERVICE_ACCOUNT }}
+      - name: Upload the app bundle and store listing to Google Play
+        if: vars.PLAY_SERVICE_ACCOUNT != ''
+        run: >
+          ./gradlew :app:publishReleaseBundle --artifact-dir "$RUNNER_TEMP/play" :app:publishReleaseListing
+          -PversionName=${{ steps.version.outputs.name }} -PversionCode=${{ steps.version.outputs.code }}

@@ -20,6 +20,7 @@ mockk = "1.14.6"
 spotless = "8.9.0"
 ktlint = "1.8.0"
 compose-rules = "0.6.8"
+play-publisher = "4.1.1"
 
 compile-sdk = "37"
 target-sdk = "36"
@@ -71,6 +72,7 @@ kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
+play-publisher = { id = "com.github.triplet.play", version.ref = "play-publisher" }
 
 puzzles-android-application = { id = "puzzles.android.application" }
 puzzles-android-library = { id = "puzzles.android.library" }

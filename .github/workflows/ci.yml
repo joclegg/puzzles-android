@@ -21,7 +21,7 @@ jobs:
           java-version: 21
       - uses: gradle/actions/setup-gradle@v4
       - run: ./gradlew spotlessCheck
-      - run: ./gradlew lintDebug test assembleDebug
+      - run: ./gradlew lintDebug lintRelease test assembleDebug
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
