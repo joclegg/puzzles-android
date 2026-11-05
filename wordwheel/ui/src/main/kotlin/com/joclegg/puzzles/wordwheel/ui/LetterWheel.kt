@@ -56,8 +56,10 @@ fun LetterWheel(
                 val angle = 2 * PI * index / letters.length - PI / 2
                 Offset((sizePx / 2 + radius * cos(angle)).toFloat(), (sizePx / 2 + radius * sin(angle)).toFloat())
             }
+        val currentCentres by rememberUpdatedState(centres)
+        val currentLetterPx by rememberUpdatedState(letterPx)
 
-        fun letterAt(point: Offset) = centres.indexOfFirst { hypot(it.x - point.x, it.y - point.y) < letterPx / 2 }
+        fun letterAt(point: Offset) = currentCentres.indexOfFirst { hypot(it.x - point.x, it.y - point.y) < currentLetterPx / 2 }
         Canvas(
             Modifier
                 .fillMaxSize()
@@ -69,13 +71,28 @@ fun LetterWheel(
                         }
                     }
                 }.pointerInput(letters) {
+                    var startIndex = -1
+                    var before = emptyList<Int>()
+                    var swiped = false
+
+                    fun restoreTap() {
+                        currentOnChange(
+                            if (startIndex >= 0 && startIndex !in before) {
+                                before + startIndex
+                            } else {
+                                before
+                            },
+                        )
+                    }
                     detectDragGestures(
                         onDragStart = { start ->
                             finger = start
-                            val index = letterAt(start)
+                            startIndex = letterAt(start)
+                            before = currentChosen
+                            swiped = false
                             currentOnChange(
-                                if (index >= 0) {
-                                    listOf(index)
+                                if (startIndex >= 0) {
+                                    listOf(startIndex)
                                 } else {
                                     emptyList()
                                 },
@@ -83,13 +100,25 @@ fun LetterWheel(
                         },
                         onDragEnd = {
                             finger = null
-                            currentOnEnd()
+                            if (swiped) {
+                                currentOnEnd()
+                            } else {
+                                restoreTap()
+                            }
                         },
-                        onDragCancel = { finger = null },
+                        onDragCancel = {
+                            finger = null
+                            if (!swiped) {
+                                restoreTap()
+                            }
+                        },
                     ) { change, _ ->
                         finger = change.position
                         val index = letterAt(change.position)
                         val path = currentChosen
+                        if (index >= 0 && index != startIndex) {
+                            swiped = true
+                        }
                         when {
                             index < 0 || path.lastOrNull() == index -> Unit
                             path.size > 1 && path[path.size - 2] == index -> currentOnChange(path.dropLast(1))
