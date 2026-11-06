@@ -67,8 +67,7 @@ fun GameState.toBoardUi(markBrokenRules: Boolean): BoardUi {
         hintTwin =
             (currentHint as? Hint.Next)
                 ?.deduction
-                ?.twin
-                ?.let { grid.cellsOf(it).toSet() }
+                ?.let { deduction -> deduction.twin?.let { twin -> (grid.cellsOf(deduction.line) + grid.cellsOf(twin)).toSet() } }
                 .orEmpty(),
     )
 }
@@ -132,7 +131,7 @@ private fun TileView(
             .then(
                 when {
                     hinted -> Modifier.border(3.dp, colors.hintTarget, TileShape)
-                    cell in board.hintTwin -> Modifier.border(3.dp, colors.hintTarget.copy(alpha = 0.5f), TileShape)
+                    cell in board.hintTwin -> Modifier.border(3.dp, colors.hintTarget, TileShape)
                     broken -> Modifier.border(3.dp, colors.broken, TileShape)
                     else -> Modifier
                 },
