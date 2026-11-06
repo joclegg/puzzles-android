@@ -4,6 +4,10 @@ import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.os.SystemClock
+import android.util.Log
+import android.view.Choreographer
+import android.view.MotionEvent
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
@@ -83,6 +87,45 @@ class MainActivity : ComponentActivity() {
                 )
             }
         }
+    }
+
+    private var lastFrame = 0L
+
+    private val frames =
+        object : Choreographer.FrameCallback {
+            override fun doFrame(frameTimeNanos: Long) {
+                if (lastFrame != 0L && frameTimeNanos - lastFrame > SLOW_FRAME_NS) {
+                    Log.d(TOUCH_LOG, "slow frame ${(frameTimeNanos - lastFrame) / 1_000_000} ms")
+                }
+                lastFrame = frameTimeNanos
+                Choreographer.getInstance().postFrameCallback(this)
+            }
+        }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d(TOUCH_LOG, "resumed at ${SystemClock.uptimeMillis()}")
+        lastFrame = 0L
+        Choreographer.getInstance().postFrameCallback(frames)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Choreographer.getInstance().removeFrameCallback(frames)
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        Log.d(TOUCH_LOG, "window focus $hasFocus at ${SystemClock.uptimeMillis()}")
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        val handled = super.dispatchTouchEvent(ev)
+        if (ev.actionMasked != MotionEvent.ACTION_MOVE) {
+            val lag = SystemClock.uptimeMillis() - ev.eventTime
+            Log.d(TOUCH_LOG, "touch ${MotionEvent.actionToString(ev.actionMasked)} at ${ev.eventTime} lag $lag ms handled $handled")
+        }
+        return handled
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -236,6 +279,8 @@ class MainActivity : ComponentActivity() {
     }
 
     private companion object {
+        const val TOUCH_LOG = "PuzzlesTouch"
+        const val SLOW_FRAME_NS = 50_000_000L
         const val FIXTURE_EXTRA = "fixture"
         const val AUTH_SCHEME = "com.joclegg.puzzles"
     }

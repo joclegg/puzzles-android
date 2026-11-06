@@ -43,6 +43,13 @@ fun GameCard(
     val shape = RoundedCornerShape(24.dp)
     val iconShape = RoundedCornerShape(20.dp)
     val interactionSource = remember { MutableInteractionSource() }
+    androidx.compose.runtime.LaunchedEffect(interactionSource) {
+        interactionSource.interactions.collect { android.util.Log.d("PuzzlesTouch", "card $title $it at ${android.os.SystemClock.uptimeMillis()}") }
+    }
+    androidx.compose.runtime.DisposableEffect(Unit) {
+        android.util.Log.d("PuzzlesTouch", "card $title composed")
+        onDispose { android.util.Log.d("PuzzlesTouch", "card $title disposed") }
+    }
     Row(
         modifier
             .scale(pressScale(interactionSource))
@@ -50,7 +57,10 @@ fun GameCard(
             .clip(shape)
             .background(Brush.linearGradient(listOf(accent.copy(alpha = 0.2f), accent.copy(alpha = 0.06f), Color.Transparent)))
             .border(1.dp, accent.copy(alpha = 0.25f), shape)
-            .clickable(interactionSource = interactionSource, onClick = onClick)
+            .clickable(interactionSource = interactionSource, onClick = {
+                android.util.Log.d("PuzzlesTouch", "card $title clicked")
+                onClick()
+            })
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp),

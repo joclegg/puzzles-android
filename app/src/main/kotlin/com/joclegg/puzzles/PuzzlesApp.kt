@@ -1,11 +1,15 @@
 package com.joclegg.puzzles
 
+import android.os.SystemClock
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -15,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -75,6 +80,15 @@ fun PuzzlesApp(
     navController: NavHostController = rememberNavController(),
 ) {
     val currentOnConsume by rememberUpdatedState(onConsumeOpenGame)
+    DisposableEffect(navController) {
+        val listener =
+            NavController.OnDestinationChangedListener { _, destination, _ ->
+                Log.d("PuzzlesTouch", "destination ${destination.route} at ${SystemClock.uptimeMillis()}")
+            }
+        navController.addOnDestinationChangedListener(listener)
+        onDispose { navController.removeOnDestinationChangedListener(listener) }
+    }
+    SideEffect { Log.d("PuzzlesTouch", "PuzzlesApp recomposed at ${SystemClock.uptimeMillis()}") }
     LaunchedEffect(openGame) {
         if (openGame != null) {
             val definition = app.definition(openGame.game)
