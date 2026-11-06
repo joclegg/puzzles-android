@@ -55,7 +55,7 @@ Puzzles is a single-activity Android app with eight games: Sudoku (`sudoku`), So
 - MUST keep at most one game in progress per save slot, and keep undo unlimited by saving the full move history.
 - MUST pick or generate daily puzzles locally, seeded by date, so everyone gets the same daily puzzle.
 - MUST NOT reorder or remove released Five Letters answers; only append.
-- MUST NOT add a hint, auto-solve or cage-combination helper to Sudoku, or a hint or auto-solve to Solitaire beyond Finish.
+- MUST NOT add a hint or auto-solve to Sudoku, or a hint or auto-solve to Solitaire beyond Finish.
 - MUST put every player preference in Settings, with helpers off by default, and MUST NOT duplicate a Settings choice as a button on a game screen.
 - MUST give every screen except the launcher a `BackButton` at the top left, and each game's Home a `DailyCalendarButton`.
 - MUST write unit tests for shared `core` code and for every rule in each game's `engine` (JUnit 5 with `kotlin.test`).

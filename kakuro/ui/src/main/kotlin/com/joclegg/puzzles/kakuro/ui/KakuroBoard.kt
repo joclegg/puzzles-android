@@ -28,7 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.joclegg.puzzles.kakuro.engine.Combinations
+import com.joclegg.puzzles.core.data.Combinations
 import com.joclegg.puzzles.kakuro.engine.GameState
 import com.joclegg.puzzles.kakuro.engine.Puzzle
 

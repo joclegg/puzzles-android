@@ -1,5 +1,7 @@
 package com.joclegg.puzzles.sudoku.engine
 
+import com.joclegg.puzzles.core.data.Combinations
+
 enum class InputMode { CELL_FIRST, DIGIT_FIRST }
 
 enum class Highlight { SELECTED, SAME_DIGIT, NOTE_MATCH, PEER, NONE }
@@ -92,6 +94,17 @@ data class GameState(
         }
         val digits = cage.cells.map { values[it] }
         return digits.sum() != cage.sum || digits.toSet().size != digits.size
+    }
+
+    fun selectedCageCombinations(): Pair<Cage, List<Int>>? {
+        val cell = selected ?: return null
+        val cage = puzzle.cages.getOrNull(puzzle.cageIndexByCell[cell]) ?: return null
+        val placed = cage.cells.filter { values[it] != 0 }.fold(0) { mask, other -> mask or Combinations.bit(values[other]) }
+        val fitting =
+            Combinations.masks(cage.cells.size, cage.sum).filter { mask ->
+                mask and placed == placed && Combinations.digitsOf(mask).all { it in puzzle.grid.digits }
+            }
+        return cage to fitting
     }
 
     val highlightDigit: Int?

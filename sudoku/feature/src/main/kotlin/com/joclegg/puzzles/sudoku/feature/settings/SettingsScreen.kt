@@ -31,6 +31,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.joclegg.puzzles.core.data.CombinationOrder
 import com.joclegg.puzzles.core.ui.BackButton
 import com.joclegg.puzzles.sudoku.core.data.DigitCounts
 import com.joclegg.puzzles.sudoku.core.data.GameMode
@@ -59,6 +60,7 @@ fun SettingsRoute(
         onInputModeChange = viewModel::onInputModeChange,
         onMistakeLevelChange = viewModel::onMistakeLevelChange,
         onDigitCountsChange = viewModel::onDigitCountsChange,
+        onCombinationOrderChange = viewModel::onCombinationOrderChange,
         onHintStyleChange = viewModel::onHintStyleChange,
         onSameNumberStyleChange = viewModel::onSameNumberStyleChange,
         onNotesStyleChange = viewModel::onNotesStyleChange,
@@ -75,6 +77,7 @@ fun SettingsScreen(
     onInputModeChange: (InputMode) -> Unit,
     onMistakeLevelChange: (GameMode, MistakeCheck) -> Unit,
     onDigitCountsChange: (GameMode, DigitCounts) -> Unit,
+    onCombinationOrderChange: (GameMode, CombinationOrder) -> Unit,
     onHintStyleChange: (GameMode, HintStyle) -> Unit,
     onSameNumberStyleChange: (GameMode, HighlightStyle) -> Unit,
     onNotesStyleChange: (GameMode, HighlightStyle) -> Unit,
@@ -215,6 +218,30 @@ fun SettingsScreen(
                 )
                 if (current.showHints) {
                     HintStyleRow(current.hintStyle, { onHintStyleChange(mode, it) })
+                }
+                if (mode == GameMode.KILLER) {
+                    ToggleRow(
+                        current,
+                        Toggle.SHOW_COMBINATIONS,
+                        toggle,
+                        stringResource(R.string.sum_helper),
+                        detail = stringResource(R.string.list_the_digit_combinations_that_still_fit_the_selected_cage),
+                    )
+                    if (current.showCombinations) {
+                        Text(stringResource(R.string.sum_helper_order))
+                        Choice(
+                            options = CombinationOrder.entries,
+                            selected = current.combinationOrder,
+                            label = {
+                                when (it) {
+                                    CombinationOrder.INCREASING -> "Increasing"
+                                    CombinationOrder.DECREASING -> "Decreasing"
+                                }
+                            },
+                            tag = { "setting_combination_order_${it.name.lowercase()}" },
+                            onSelect = { onCombinationOrderChange(mode, it) },
+                        )
+                    }
                 }
                 ToggleRow(
                     current,

@@ -1,5 +1,8 @@
 package com.joclegg.puzzles
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -41,6 +44,8 @@ data class OpenGame(
 )
 
 const val LAUNCHER = "launcher"
+
+private const val TRANSITION_MS = 150
 
 fun todaysMedal(
     app: PuzzlesApplication,
@@ -106,7 +111,15 @@ fun PuzzlesApp(
         LocalDailyCalendars provides calendars,
     ) {
         Scaffold(modifier.fillMaxSize().semantics { testTagsAsResourceId = true }) { padding ->
-            NavHost(navController, startDestination = LAUNCHER, modifier = Modifier.padding(padding)) {
+            NavHost(
+                navController,
+                startDestination = LAUNCHER,
+                modifier = Modifier.padding(padding),
+                enterTransition = { fadeIn(tween(TRANSITION_MS)) },
+                exitTransition = { fadeOut(tween(TRANSITION_MS)) },
+                popEnterTransition = { fadeIn(tween(TRANSITION_MS)) },
+                popExitTransition = { fadeOut(tween(TRANSITION_MS)) },
+            ) {
                 composable(
                     SettingsHub.ROUTE,
                     arguments =

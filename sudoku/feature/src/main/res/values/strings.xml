@@ -79,4 +79,7 @@
     <string name="undo_the_last_move">Undo the last move</string>
     <string name="when_you_place_a_number">When you place a number</string>
     <string name="your_numbers_pencil_marks_mistakes_and">Your numbers, pencil marks, mistakes and time will be cleared.</string>
+    <string name="sum_helper">Sum helper</string>
+    <string name="sum_helper_order">Sum helper order</string>
+    <string name="list_the_digit_combinations_that_still_fit_the_selected_cage">List the digit combinations that still fit the selected cell\'s cage.</string>
 </resources>
