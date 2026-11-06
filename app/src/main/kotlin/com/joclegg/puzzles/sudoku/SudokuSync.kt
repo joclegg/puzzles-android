@@ -1,5 +1,6 @@
 package com.joclegg.puzzles.sudoku
 
+import com.joclegg.puzzles.core.data.CombinationOrder
 import com.joclegg.puzzles.core.sync.StampedPreferences
 import com.joclegg.puzzles.core.sync.SyncSource
 import com.joclegg.puzzles.core.sync.toJsonName
@@ -143,6 +144,7 @@ private fun modeJson(mode: ModeSettings): JSONObject {
             .put("sameNumberStyle", mode.sameNumberStyle.toJsonName())
             .put("notesStyle", mode.notesStyle.toJsonName())
             .put("digitCounts", mode.digitCounts.toJsonName())
+            .put("combinationOrder", mode.combinationOrder.toJsonName())
     Toggle.entries.filter { it !in ASSISTS }.forEach { json.put(it.name.toJsonName(), it.read(mode)) }
     return putAssists(json, mode)
 }
@@ -228,5 +230,8 @@ private suspend fun applyModeJson(
     }
     if (json.has("digitCounts")) {
         DigitCounts.entries.find { it.name == json.enumName("digitCounts") }?.let { settings.setDigitCounts(mode, it) }
+    }
+    if (json.has("combinationOrder")) {
+        CombinationOrder.entries.find { it.name == json.enumName("combinationOrder") }?.let { settings.setCombinationOrder(mode, it) }
     }
 }

@@ -2,6 +2,7 @@ package com.joclegg.puzzles.sudoku.feature.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.joclegg.puzzles.core.data.CombinationOrder
 import com.joclegg.puzzles.sudoku.core.data.DigitCounts
 import com.joclegg.puzzles.sudoku.core.data.GameMode
 import com.joclegg.puzzles.sudoku.core.data.HintStyle
@@ -42,6 +43,13 @@ class SettingsViewModel(
         style: HintStyle,
     ) {
         viewModelScope.launch { settings.setHintStyle(mode, style) }
+    }
+
+    fun onCombinationOrderChange(
+        mode: GameMode,
+        order: CombinationOrder,
+    ) {
+        viewModelScope.launch { settings.setCombinationOrder(mode, order) }
     }
 
     fun onDigitCountsChange(

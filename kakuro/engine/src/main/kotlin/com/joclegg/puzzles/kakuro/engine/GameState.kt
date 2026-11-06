@@ -1,5 +1,7 @@
 package com.joclegg.puzzles.kakuro.engine
 
+import com.joclegg.puzzles.core.data.Combinations
+
 data class Change(
     val cell: Int,
     val fromValue: Int,

@@ -161,6 +161,9 @@ fun GameScreen(
             style = MaterialTheme.typography.titleSmall,
             modifier = Modifier.padding(horizontal = 16.dp).testTag("hint_message"),
         )
+        state.combinations?.let {
+            Text(it, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.padding(horizontal = 16.dp).testTag("combinations"))
+        }
         NumberPad(
             onDigit = onDigitClick,
             activeDigit = state.activeDigit.takeIf { state.inputMode == InputMode.DIGIT_FIRST },

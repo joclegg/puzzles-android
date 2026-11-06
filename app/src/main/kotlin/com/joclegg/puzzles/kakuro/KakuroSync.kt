@@ -1,5 +1,6 @@
 package com.joclegg.puzzles.kakuro
 
+import com.joclegg.puzzles.core.data.CombinationOrder
 import com.joclegg.puzzles.core.sync.StampedPreferences
 import com.joclegg.puzzles.core.sync.SyncSource
 import com.joclegg.puzzles.core.sync.toJsonName
@@ -8,7 +9,6 @@ import com.joclegg.puzzles.kakuro.core.data.GameEntity
 import com.joclegg.puzzles.kakuro.core.data.HintStyle
 import com.joclegg.puzzles.kakuro.core.data.SettingsRepository
 import com.joclegg.puzzles.kakuro.core.data.Toggle
-import com.joclegg.puzzles.kakuro.engine.CombinationOrder
 import com.joclegg.puzzles.kakuro.engine.InputMode
 import com.joclegg.puzzles.kakuro.engine.MistakeCheck
 import com.joclegg.puzzles.sync.EntityAccess

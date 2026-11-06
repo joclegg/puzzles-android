@@ -1,7 +1,14 @@
 package com.joclegg.puzzles.sudoku.feature.game
 
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.joclegg.puzzles.core.data.CombinationOrder
+import com.joclegg.puzzles.core.data.Combinations
 import com.joclegg.puzzles.core.data.GameSession
 import com.joclegg.puzzles.sudoku.core.data.DigitCounts
 import com.joclegg.puzzles.sudoku.core.data.GameMode
@@ -11,6 +18,7 @@ import com.joclegg.puzzles.sudoku.core.data.ModeSettings
 import com.joclegg.puzzles.sudoku.core.data.SavedGame
 import com.joclegg.puzzles.sudoku.core.data.Settings
 import com.joclegg.puzzles.sudoku.core.data.SettingsRepository
+import com.joclegg.puzzles.sudoku.engine.Cage
 import com.joclegg.puzzles.sudoku.engine.Difficulty
 import com.joclegg.puzzles.sudoku.engine.GameState
 import com.joclegg.puzzles.sudoku.engine.InputMode
@@ -58,6 +66,7 @@ data class GameUiState(
     val showTutorial: Boolean = true,
     val allowReveal: Boolean = true,
     val hintMessage: String? = null,
+    val combinations: AnnotatedString? = null,
 )
 
 class GameViewModel(
@@ -286,10 +295,49 @@ class GameViewModel(
                 showTutorial = display.showTutorial,
                 allowReveal = display.allowReveal,
                 hintMessage = hintMessage,
+                combinations =
+                    if (display.showCombinations) {
+                        current.selectedCageCombinations()?.let { (cage, masks) ->
+                            cageCombinations(current, cage, masks, display.combinationOrder)
+                        }
+                    } else {
+                        null
+                    },
                 newBest = newBest,
                 resultSaved = resultSaved,
                 revealed = revealed,
             )
+        }
+    }
+}
+
+private fun cageCombinations(
+    game: GameState,
+    cage: Cage,
+    masks: List<Int>,
+    order: CombinationOrder,
+): AnnotatedString {
+    val placed =
+        cage.cells
+            .map { game.values[it] }
+            .filter { it != 0 }
+            .toSet()
+    return buildAnnotatedString {
+        append("Cage ${cage.sum} in ${cage.cells.size}: ")
+        if (masks.isEmpty()) {
+            append("none fit")
+        }
+        Combinations.ordered(masks, order).forEachIndexed { index, digits ->
+            if (index > 0) {
+                append("  ")
+            }
+            digits.forEach { digit ->
+                if (digit in placed) {
+                    withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("$digit") }
+                } else {
+                    append("$digit")
+                }
+            }
         }
     }
 }

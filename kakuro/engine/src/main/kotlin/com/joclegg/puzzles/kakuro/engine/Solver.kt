@@ -1,5 +1,7 @@
 package com.joclegg.puzzles.kakuro.engine
 
+import com.joclegg.puzzles.core.data.Combinations
+
 object Solver {
     fun candidates(
         puzzle: Puzzle,

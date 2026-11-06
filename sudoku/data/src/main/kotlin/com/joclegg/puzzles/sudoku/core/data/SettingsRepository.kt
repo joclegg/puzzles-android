@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.joclegg.puzzles.core.data.CombinationOrder
 import com.joclegg.puzzles.sudoku.engine.HighlightStyle
 import com.joclegg.puzzles.sudoku.engine.InputMode
 import com.joclegg.puzzles.sudoku.engine.MistakeCheck
@@ -36,6 +37,8 @@ data class ModeSettings(
     val showTutorial: Boolean = true,
     val allowReveal: Boolean = false,
     val hintStyle: HintStyle = HintStyle.POINT,
+    val showCombinations: Boolean = false,
+    val combinationOrder: CombinationOrder = CombinationOrder.INCREASING,
 ) {
     val playOptions get() = PlayOptions(highlightHouses, highlightCage, sameNumberStyle, notesStyle, autoRemoveNotes, highlightLastPlaced)
 }
@@ -74,6 +77,7 @@ enum class Toggle(
     SHOW_HINTS(ModeSettings::showHints),
     SHOW_TUTORIAL(ModeSettings::showTutorial, default = true),
     ALLOW_REVEAL(ModeSettings::allowReveal),
+    SHOW_COMBINATIONS(ModeSettings::showCombinations, killerOnly = true),
     ;
 
     fun defaultFor(mode: GameMode) =
@@ -133,6 +137,13 @@ class SettingsRepository(
         style: HintStyle,
     ) {
         store.edit { it[hintStyleKey(mode)] = style.name }
+    }
+
+    suspend fun setCombinationOrder(
+        mode: GameMode,
+        order: CombinationOrder,
+    ) {
+        store.edit { it[combinationOrderKey(mode)] = order.name }
     }
 
     suspend fun setDigitCounts(
@@ -212,6 +223,8 @@ private fun digitCountsKey(mode: GameMode) = stringPreferencesKey("digit_counts_
 
 private fun hintStyleKey(mode: GameMode) = stringPreferencesKey("hint_style_${mode.name.lowercase()}")
 
+private fun combinationOrderKey(mode: GameMode) = stringPreferencesKey("combination_order_${mode.name.lowercase()}")
+
 private fun mistakeKey(mode: GameMode) = stringPreferencesKey("mistakes_${mode.name.lowercase()}")
 
 private fun Preferences.modeSettings(mode: GameMode): ModeSettings {
@@ -237,5 +250,9 @@ private fun Preferences.modeSettings(mode: GameMode): ModeSettings {
         showTutorial = on(Toggle.SHOW_TUTORIAL),
         allowReveal = on(Toggle.ALLOW_REVEAL),
         hintStyle = this[hintStyleKey(mode)]?.let { saved -> HintStyle.entries.find { it.name == saved } } ?: HintStyle.POINT,
+        showCombinations = on(Toggle.SHOW_COMBINATIONS),
+        combinationOrder =
+            this[combinationOrderKey(mode)]?.let { saved -> CombinationOrder.entries.find { it.name == saved } }
+                ?: CombinationOrder.INCREASING,
     )
 }
