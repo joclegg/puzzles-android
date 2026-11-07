@@ -3,7 +3,6 @@ package com.joclegg.puzzles.wordwheel.core.data
 import com.joclegg.puzzles.core.data.DailyRecord
 import com.joclegg.puzzles.wordwheel.engine.Level
 import com.joclegg.puzzles.wordwheel.engine.Puzzle
-import java.util.UUID
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -13,6 +12,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.UUID
 
 class GameRepository(
     private val dao: GameDao,

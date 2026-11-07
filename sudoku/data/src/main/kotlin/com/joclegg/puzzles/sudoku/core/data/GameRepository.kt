@@ -5,7 +5,6 @@ import com.joclegg.puzzles.sudoku.engine.Difficulty
 import com.joclegg.puzzles.sudoku.engine.MistakeCheck
 import com.joclegg.puzzles.sudoku.engine.MoveCodec
 import com.joclegg.puzzles.sudoku.engine.PuzzleCodec
-import java.util.UUID
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,6 +15,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.UUID
 
 class GameRepository(
     private val dao: GameDao,

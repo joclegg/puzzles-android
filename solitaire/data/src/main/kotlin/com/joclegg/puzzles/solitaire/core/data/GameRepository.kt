@@ -5,7 +5,6 @@ import com.joclegg.puzzles.solitaire.engine.BoardCodec
 import com.joclegg.puzzles.solitaire.engine.BuildOrder
 import com.joclegg.puzzles.solitaire.engine.DrawMode
 import com.joclegg.puzzles.solitaire.engine.MoveCodec
-import java.util.UUID
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -15,6 +14,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.UUID
 
 class GameRepository(
     private val dao: GameDao,

@@ -4,7 +4,6 @@ import com.joclegg.puzzles.core.data.DailyRecord
 import com.joclegg.puzzles.twotone.engine.ChangeCodec
 import com.joclegg.puzzles.twotone.engine.Puzzle
 import com.joclegg.puzzles.twotone.engine.SIZES
-import java.util.UUID
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -14,6 +13,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.UUID
 
 class GameRepository(
     private val dao: GameDao,
