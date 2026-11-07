@@ -5,19 +5,23 @@ import com.joclegg.puzzles.sudoku.engine.Difficulty
 import com.joclegg.puzzles.sudoku.engine.MistakeCheck
 import com.joclegg.puzzles.sudoku.engine.MoveCodec
 import com.joclegg.puzzles.sudoku.engine.PuzzleCodec
+import java.util.UUID
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.UUID
 
 class GameRepository(
     private val dao: GameDao,
     private val background: CoroutineDispatcher = Dispatchers.Default,
     private val now: () -> Long = System::currentTimeMillis,
+    private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + background),
 ) {
     val inProgress: Flow<List<SavedGame>> = dao.observeInProgress().map { rows -> rows.map { it.toModel() } }
 
@@ -75,12 +79,12 @@ class GameRepository(
 
     suspend fun reveal(game: SavedGame) {
         dao.save(withContext(background) { game.copy(status = GameStatus.REVEALED, finishedAt = now()).toEntity(now()) })
-        dao.trimSteps(now())
+        scope.launch { dao.trimSteps(now()) }
     }
 
     suspend fun complete(game: SavedGame): Boolean {
         dao.save(withContext(background) { game.copy(status = GameStatus.COMPLETED, finishedAt = now()).toEntity(now()) })
-        dao.trimSteps(now())
+        scope.launch { dao.trimSteps(now()) }
         val difficulty = game.ref.difficulty ?: return false
         if (game.ref.custom) {
             return false
