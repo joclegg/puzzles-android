@@ -17,6 +17,7 @@
     <string name="not_done">not done</string>
     <string name="play">Play</string>
     <string name="play_next">PLAY NEXT</string>
+    <string name="view_board">View board</string>
     <string name="resume">Resume</string>
     <string name="settings">Settings</string>
     <string name="stats">Stats</string>

@@ -219,7 +219,6 @@ private fun ResultDialog(
         lost = !state.won,
         onDismissRequest = onClose,
     ) {
-        TextButton(onClick = onClose, modifier = Modifier.testTag("result_close")) { Text(stringResource(R.string.close)) }
         TextButton(onClick = onShare, modifier = Modifier.testTag("result_share")) { Text(stringResource(R.string.share)) }
     }
 }
