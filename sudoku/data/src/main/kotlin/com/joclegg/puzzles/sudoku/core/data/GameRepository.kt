@@ -75,10 +75,12 @@ class GameRepository(
 
     suspend fun reveal(game: SavedGame) {
         dao.save(withContext(background) { game.copy(status = GameStatus.REVEALED, finishedAt = now()).toEntity(now()) })
+        dao.trimSteps(now())
     }
 
     suspend fun complete(game: SavedGame): Boolean {
         dao.save(withContext(background) { game.copy(status = GameStatus.COMPLETED, finishedAt = now()).toEntity(now()) })
+        dao.trimSteps(now())
         val difficulty = game.ref.difficulty ?: return false
         if (game.ref.custom) {
             return false

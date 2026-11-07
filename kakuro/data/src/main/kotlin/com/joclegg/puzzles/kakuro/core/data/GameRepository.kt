@@ -52,10 +52,12 @@ class GameRepository(
 
     suspend fun reveal(game: SavedGame) {
         dao.save(withContext(background) { game.copy(status = GameStatus.REVEALED, finishedAt = now()).toEntity(now()) })
+        dao.trimSteps(now())
     }
 
     suspend fun solve(game: SavedGame): Boolean {
         dao.save(withContext(background) { game.copy(status = GameStatus.SOLVED, finishedAt = now()).toEntity(now()) })
+        dao.trimSteps(now())
         val previous = dao.bestTimeExcluding(game.ref.size, game.id)
         return previous == null || game.elapsedMs < previous
     }

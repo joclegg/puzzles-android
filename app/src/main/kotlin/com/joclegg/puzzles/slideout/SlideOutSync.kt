@@ -57,6 +57,7 @@ private object SlideOutMapper : EntityMapper<GameEntity> {
             .put("size", Level.named(entity.level).ordinal)
             .put("puzzle", entity.puzzle)
             .put("changes", entity.moves)
+            .put("moveCount", entity.moveCount)
             .put("elapsedMs", entity.elapsedMs)
             .put("hints", entity.hints)
             .put("mistakes", 0)
@@ -75,7 +76,7 @@ private object SlideOutMapper : EntityMapper<GameEntity> {
         level = Level.atSize(json.getInt("size")).name,
         puzzle = json.getString("puzzle"),
         moves = json.getString("changes"),
-        moveCount = MoveCodec.decode(json.getString("changes")).size,
+        moveCount = json.optInt("moveCount", MoveCodec.decode(json.getString("changes")).size),
         elapsedMs = json.getLong("elapsedMs"),
         hints = json.optInt("hints"),
         status = json.enumName("status"),

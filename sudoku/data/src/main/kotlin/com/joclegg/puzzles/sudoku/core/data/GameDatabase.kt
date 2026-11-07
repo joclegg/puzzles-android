@@ -67,6 +67,11 @@ interface GameDao {
     @Query("SELECT * FROM games WHERE updatedAt > :since")
     suspend fun changedSince(since: Long): List<GameEntity>
 
+    @Query(
+        "UPDATE games SET undoHistory = '', updatedAt = :now WHERE undoHistory != '' AND status != 'IN_PROGRESS' AND EXISTS (SELECT 1 FROM games AS newer WHERE newer.status != 'IN_PROGRESS' AND newer.custom = games.custom AND newer.mode = games.mode AND newer.difficulty IS games.difficulty AND (newer.puzzleId LIKE 'daily_%') = (games.puzzleId LIKE 'daily_%') AND (COALESCE(newer.finishedAt, newer.startedAt) > COALESCE(games.finishedAt, games.startedAt) OR (COALESCE(newer.finishedAt, newer.startedAt) = COALESCE(games.finishedAt, games.startedAt) AND newer.id > games.id)))",
+    )
+    suspend fun trimSteps(now: Long)
+
     @Query("DELETE FROM games WHERE uuid = :uuid")
     suspend fun deleteByUuid(uuid: String)
 

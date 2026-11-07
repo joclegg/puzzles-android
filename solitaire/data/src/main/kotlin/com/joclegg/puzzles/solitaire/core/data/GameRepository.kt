@@ -51,10 +51,12 @@ class GameRepository(
 
     suspend fun lose(game: SavedGame) {
         dao.save(withContext(background) { game.copy(status = GameStatus.LOST, finishedAt = now()).toEntity(now()) })
+        dao.trimSteps(now())
     }
 
     suspend fun win(game: SavedGame): Boolean {
         dao.save(withContext(background) { game.copy(status = GameStatus.WON, finishedAt = now()).toEntity(now()) })
+        dao.trimSteps(now())
         val previous = dao.bestTimeExcluding(game.deal.drawMode.name, game.id)
         return previous == null || game.elapsedMs < previous
     }
