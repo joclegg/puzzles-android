@@ -18,8 +18,8 @@ import java.util.UUID
 class GameRepository(
     private val dao: GameDao,
     private val background: CoroutineDispatcher = Dispatchers.Default,
-    private val now: () -> Long = System::currentTimeMillis,
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + background),
+    private val now: () -> Long = System::currentTimeMillis,
 ) {
     val inProgress: Flow<List<SavedGame>> = dao.observeInProgress().map { rows -> rows.map { it.toModel() } }
 
