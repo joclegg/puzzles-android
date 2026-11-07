@@ -30,6 +30,7 @@ class SignInUrlTest(
             listOf(
                 arrayOf<Any>(SignInProvider.GOOGLE, "provider=google"),
                 arrayOf<Any>(SignInProvider.MICROSOFT, "provider=azure&scopes=email"),
+                arrayOf<Any>(SignInProvider.APPLE, "provider=apple"),
             )
     }
 }

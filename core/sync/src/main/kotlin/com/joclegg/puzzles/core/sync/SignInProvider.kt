@@ -6,4 +6,5 @@ enum class SignInProvider(
 ) {
     GOOGLE("google", null),
     MICROSOFT("azure", "email"),
+    APPLE("apple", null),
 }
