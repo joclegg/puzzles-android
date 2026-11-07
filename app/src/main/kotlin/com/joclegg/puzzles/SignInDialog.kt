@@ -179,6 +179,12 @@ private fun ChooseStep(
         } else {
             MICROSOFT_LIGHT
         }
+    val appleStyle =
+        if (darkTheme) {
+            APPLE_DARK
+        } else {
+            APPLE_LIGHT
+        }
     Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(stringResource(R.string.sync_your_games_and_settings_with_the))
         ProviderButton(
@@ -190,6 +196,11 @@ private fun ChooseStep(
             style = microsoftStyle,
             onClick = { onProviderClick(SignInProvider.MICROSOFT) },
             modifier = Modifier.testTag("sign_in_microsoft"),
+        )
+        ProviderButton(
+            style = appleStyle,
+            onClick = { onProviderClick(SignInProvider.APPLE) },
+            modifier = Modifier.testTag("sign_in_apple"),
         )
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             HorizontalDivider(Modifier.weight(1f))
@@ -300,3 +311,25 @@ private val MICROSOFT_LIGHT =
     )
 
 private val MICROSOFT_DARK = MICROSOFT_LIGHT.copy(background = Color(0xFF2F2F2F), border = Color(0xFF2F2F2F), text = Color(0xFFFFFFFF))
+
+private val APPLE_LIGHT =
+    ProviderStyle(
+        label = "Sign in with Apple",
+        logo = R.drawable.ic_apple_logo,
+        background = Color(0xFFFFFFFF),
+        border = Color(0xFF8C8C8C),
+        text = Color(0xFF000000),
+        shape = RoundedCornerShape(4.dp),
+        height = 40.dp,
+        gap = 10.dp,
+        size = 14.sp,
+        weight = FontWeight.Medium,
+    )
+
+private val APPLE_DARK =
+    APPLE_LIGHT.copy(
+        logo = R.drawable.ic_apple_logo_white,
+        background = Color(0xFF2F2F2F),
+        border = Color(0xFF2F2F2F),
+        text = Color(0xFFFFFFFF),
+    )
