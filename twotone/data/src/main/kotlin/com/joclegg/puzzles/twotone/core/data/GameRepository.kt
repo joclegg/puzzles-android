@@ -5,16 +5,20 @@ import com.joclegg.puzzles.twotone.engine.ChangeCodec
 import com.joclegg.puzzles.twotone.engine.Puzzle
 import com.joclegg.puzzles.twotone.engine.SIZES
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.UUID
 
 class GameRepository(
     private val dao: GameDao,
     private val background: CoroutineDispatcher = Dispatchers.Default,
+    private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + background),
     private val now: () -> Long = System::currentTimeMillis,
 ) {
     val inProgress: Flow<List<SavedGame>> = dao.observeInProgress().map { rows -> rows.map { it.toModel() } }
@@ -52,10 +56,12 @@ class GameRepository(
 
     suspend fun reveal(game: SavedGame) {
         dao.save(withContext(background) { game.copy(status = GameStatus.REVEALED, finishedAt = now()).toEntity(now()) })
+        scope.launch { dao.trimSteps(now()) }
     }
 
     suspend fun solve(game: SavedGame): Boolean {
         dao.save(withContext(background) { game.copy(status = GameStatus.SOLVED, finishedAt = now()).toEntity(now()) })
+        scope.launch { dao.trimSteps(now()) }
         val previous = dao.bestTimeExcluding(game.ref.size, game.id)
         return previous == null || game.elapsedMs < previous
     }

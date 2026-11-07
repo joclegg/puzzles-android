@@ -28,12 +28,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
@@ -85,6 +87,14 @@ fun WinDialog(
     onDismissRequest: () -> Unit = {},
     buttons: @Composable () -> Unit,
 ) {
+    var dismissed by rememberSaveable { mutableStateOf(false) }
+    if (dismissed) {
+        return
+    }
+    val dismiss = {
+        dismissed = true
+        onDismissRequest()
+    }
     val loadDailies = LocalDailiesLeft.current
     val dailies by produceState(emptyList<DailyLeft>()) { value = loadDailies(dailyGroup) }
     val calendars = LocalDailyCalendars.current
@@ -101,7 +111,7 @@ fun WinDialog(
     LaunchedEffect(Unit) {
         pop.animateTo(1f, spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow))
     }
-    Dialog(onDismissRequest = onDismissRequest, properties = DialogProperties(usePlatformDefaultWidth = false)) {
+    Dialog(onDismissRequest = dismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) {
         Surface(
             shape = RoundedCornerShape(28.dp),
             tonalElevation = 6.dp,
@@ -213,6 +223,9 @@ fun WinDialog(
                     Modifier.fillMaxWidth().padding(12.dp),
                     horizontalArrangement = Arrangement.End,
                 ) {
+                    TextButton(onClick = dismiss, modifier = Modifier.testTag("win_view_board")) {
+                        Text(stringResource(R.string.view_board))
+                    }
                     buttons()
                 }
             }

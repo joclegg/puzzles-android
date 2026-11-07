@@ -115,7 +115,6 @@ private fun SolvedScreen(
                 }
             },
         modifier = modifier.dialogTestTags().testTag("solved_screen"),
-        onDismissRequest = onDismiss,
     ) {
         TextButton(onClick = onDismiss, modifier = Modifier.testTag("solved_home")) { Text(stringResource(R.string.home)) }
     }
