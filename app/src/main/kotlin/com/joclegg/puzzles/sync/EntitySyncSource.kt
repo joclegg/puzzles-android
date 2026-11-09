@@ -15,9 +15,15 @@ class EntitySyncSource<E>(
     private val writeSettings: suspend (JSONObject) -> Unit,
 ) : SyncSource {
     override suspend fun changedSince(since: Long): List<SyncRow> =
-        entities.changedSince(since).map { SyncRow(mapper.uuidOf(it), mapper.toJson(it), mapper.updatedAtOf(it)) }
+        entities
+            .changedSince(since)
+            .map { SyncRow(mapper.uuidOf(it), mapper.toJson(it), mapper.updatedAtOf(it)) }
+            .filterNot { it.data.isFixture() }
 
     override suspend fun apply(row: SyncRow) {
+        if (row.data.isFixture()) {
+            return
+        }
         val local = entities.byUuid(row.id)
         if (local != null && mapper.updatedAtOf(local) >= row.updatedAt) {
             return

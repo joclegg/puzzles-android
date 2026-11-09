@@ -26,3 +26,5 @@ fun JSONObject.optEnumName(key: String): String? =
     }
 
 fun String.toJsonEnum(): String = toJsonName()
+
+fun JSONObject.isFixture(): Boolean = listOf("puzzleId", "wordId", "dealId").any { optString(it).startsWith("fixture") }
