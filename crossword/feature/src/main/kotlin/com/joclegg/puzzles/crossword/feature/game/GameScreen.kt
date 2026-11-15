@@ -53,6 +53,7 @@ import com.joclegg.puzzles.crossword.ui.ClueUi
 import com.joclegg.puzzles.crossword.ui.CrosswordBoard
 import com.joclegg.puzzles.crossword.ui.CrosswordIcons
 import com.joclegg.puzzles.crossword.ui.CrosswordInput
+import com.joclegg.puzzles.crossword.ui.HintButton
 import com.joclegg.puzzles.crossword.ui.LocalCrosswordColors
 import com.joclegg.puzzles.crossword.ui.ToolButton
 import com.joclegg.puzzles.crossword.ui.dialogTestTags
@@ -82,6 +83,7 @@ fun GameRoute(
             onNextClue = viewModel::onNextClue,
             onUndo = viewModel::onUndo,
             onRedo = viewModel::onRedo,
+            onHint = viewModel::onHint,
             onRestart = viewModel::onRestart,
             onRevealLetter = viewModel::onRevealLetter,
             onRevealWord = viewModel::onRevealWord,
@@ -104,6 +106,7 @@ fun GameScreen(
     onNextClue: () -> Unit,
     onUndo: () -> Unit,
     onRedo: () -> Unit,
+    onHint: () -> Unit,
     onRestart: () -> Unit,
     onRevealLetter: () -> Unit,
     onRevealWord: () -> Unit,
@@ -147,6 +150,9 @@ fun GameScreen(
             }
             ToolButton(CrosswordIcons.Undo, stringResource(R.string.undo), onUndo, tag = "undo", enabled = state.canUndo)
             ToolButton(CrosswordIcons.Redo, stringResource(R.string.redo), onRedo, tag = "redo", enabled = state.canRedo)
+            if (state.showHints) {
+                HintButton(onHint, enabled = !state.solved && !state.revealed)
+            }
             Column {
                 IconButton(onClick = { menuOpen = true }, modifier = Modifier.testTag("game_menu")) {
                     Icon(CrosswordIcons.More, contentDescription = stringResource(R.string.more))
@@ -207,6 +213,11 @@ fun GameScreen(
             }
         }
         HelpersHint(onSettings)
+        Text(
+            state.hintMessage.orEmpty(),
+            style = MaterialTheme.typography.titleSmall,
+            modifier = Modifier.padding(horizontal = 16.dp).testTag("hint_message"),
+        )
         CrosswordInput(onInput, focusRequester, Modifier.size(1.dp))
         val onCell = { cell: Int ->
             focusBoard()

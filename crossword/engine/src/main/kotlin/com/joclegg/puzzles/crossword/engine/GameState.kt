@@ -243,6 +243,23 @@ data class GameState(
         ).keepDirection()
     }
 
+    fun pointAt(hint: Hint): GameState {
+        val direction =
+            if (puzzle.wordAt(hint.cell, isAcross) != null) {
+                isAcross
+            } else {
+                !isAcross
+            }
+        return copy(selected = hint.cell, isAcross = direction, jumpedFrom = null, reveals = reveals + 1)
+    }
+
+    fun placeHint(hint: Hint): GameState {
+        if (isSolved) {
+            return this
+        }
+        return pointAt(hint).record(listOf(Change(hint.cell, entries[hint.cell], hint.letter)))
+    }
+
     fun restart(): GameState = GameState(puzzle, skipFilledCells = skipFilledCells, countMistakes = countMistakes)
 
     private fun reveal(cells: List<Int>): GameState {

@@ -4,8 +4,11 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+
+enum class HintStyle { POINT, FILL }
 
 enum class Toggle(
     val read: (Settings) -> Boolean,
@@ -15,6 +18,7 @@ enum class Toggle(
     SHOW_MISTAKES(Settings::showMistakes),
     ALLOW_REVEAL(Settings::allowReveal),
     SKIP_FILLED_CELLS(Settings::skipFilledCells, default = true),
+    SHOW_HINTS(Settings::showHints),
 }
 
 data class Settings(
@@ -22,6 +26,8 @@ data class Settings(
     val showMistakes: Boolean = false,
     val allowReveal: Boolean = false,
     val skipFilledCells: Boolean = true,
+    val showHints: Boolean = false,
+    val hintStyle: HintStyle = HintStyle.POINT,
 )
 
 class SettingsRepository(
@@ -35,8 +41,14 @@ class SettingsRepository(
                 showMistakes = on(Toggle.SHOW_MISTAKES),
                 allowReveal = on(Toggle.ALLOW_REVEAL),
                 skipFilledCells = on(Toggle.SKIP_FILLED_CELLS),
+                showHints = on(Toggle.SHOW_HINTS),
+                hintStyle = prefs[HINT_STYLE]?.let { saved -> HintStyle.entries.find { it.name == saved } } ?: HintStyle.POINT,
             )
         }
+
+    suspend fun setHintStyle(style: HintStyle) {
+        store.edit { it[HINT_STYLE] = style.name }
+    }
 
     suspend fun keepLegacyDefaults() {
         store.edit { prefs ->
@@ -53,5 +65,7 @@ class SettingsRepository(
 }
 
 private val Toggle.key get() = booleanPreferencesKey(name.lowercase())
+
+private val HINT_STYLE = stringPreferencesKey("hint_style")
 
 private val LEGACY_TOGGLES = listOf(Toggle.SHOW_MISTAKES, Toggle.ALLOW_REVEAL)

@@ -5,6 +5,7 @@ import com.joclegg.puzzles.core.sync.SyncSource
 import com.joclegg.puzzles.core.sync.toJsonName
 import com.joclegg.puzzles.crossword.core.data.GameDao
 import com.joclegg.puzzles.crossword.core.data.GameEntity
+import com.joclegg.puzzles.crossword.core.data.HintStyle
 import com.joclegg.puzzles.crossword.core.data.SettingsRepository
 import com.joclegg.puzzles.crossword.core.data.Toggle
 import com.joclegg.puzzles.sync.EntityAccess
@@ -90,6 +91,7 @@ private suspend fun settingsJson(settings: SettingsRepository): JSONObject {
     val current = settings.settings.first()
     val json = JSONObject()
     Toggle.entries.forEach { json.put(toggleKey(it), it.read(current)) }
+    json.put("hintStyle", current.hintStyle.toJsonName())
     return json
 }
 
@@ -98,4 +100,7 @@ private suspend fun applySettingsJson(
     json: JSONObject,
 ) {
     Toggle.entries.filter { json.has(toggleKey(it)) }.forEach { settings.set(it, json.getBoolean(toggleKey(it))) }
+    if (json.has("hintStyle")) {
+        HintStyle.entries.find { it.name == json.enumName("hintStyle") }?.let { settings.setHintStyle(it) }
+    }
 }

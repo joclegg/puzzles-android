@@ -1,3 +1,4 @@
+crossword_hint 24
 crossword_menu_settings 15
 crossword_resume 21
 crossword_reveal 14

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joclegg.puzzles.core.data.GameSession
 import com.joclegg.puzzles.crossword.core.data.GameRepository
+import com.joclegg.puzzles.crossword.core.data.HintStyle
 import com.joclegg.puzzles.crossword.core.data.PuzzleBank
 import com.joclegg.puzzles.crossword.core.data.PuzzleRef
 import com.joclegg.puzzles.crossword.core.data.SavedGame
@@ -12,6 +13,7 @@ import com.joclegg.puzzles.crossword.core.data.SettingsRepository
 import com.joclegg.puzzles.crossword.engine.Clues
 import com.joclegg.puzzles.crossword.engine.GameState
 import com.joclegg.puzzles.crossword.engine.Word
+import com.joclegg.puzzles.crossword.engine.findHint
 import com.joclegg.puzzles.crossword.ui.BoardInput
 import com.joclegg.puzzles.crossword.ui.BoardUi
 import com.joclegg.puzzles.crossword.ui.ClueUi
@@ -45,6 +47,8 @@ data class GameUiState(
     val resultSaved: Boolean,
     val allowReveal: Boolean = false,
     val revealed: Boolean = false,
+    val showHints: Boolean = false,
+    val hintMessage: String? = null,
 )
 
 class GameViewModel(
@@ -71,6 +75,7 @@ class GameViewModel(
     private var resultSaved = false
     private var display = Settings()
     private var revealed = false
+    private var hintMessage: String? = null
 
     private val _uiState = MutableStateFlow<GameUiState?>(null)
     val uiState: StateFlow<GameUiState?> = _uiState.asStateFlow()
@@ -121,6 +126,29 @@ class GameViewModel(
 
     fun onRedo() = move { it.redo() }
 
+    fun onHint() {
+        val current = game ?: return
+        if (current.isSolved || revealed) {
+            return
+        }
+        val hint = current.findHint() ?: return
+        val fill = display.hintStyle == HintStyle.FILL
+        move {
+            if (fill) {
+                it.placeHint(hint)
+            } else {
+                it.pointAt(hint)
+            }
+        }
+        if (game?.isSolved == false) {
+            session.saveSoon()
+        }
+        if (!fill) {
+            hintMessage = hint.message
+            publish()
+        }
+    }
+
     fun onRevealLetter() = move { it.revealLetter() }
 
     fun onRevealWord() = move { it.revealWord() }
@@ -144,6 +172,7 @@ class GameViewModel(
             return
         }
         game = current.restart()
+        hintMessage = null
         session.restart()
         persistNow()
         publish()
@@ -169,6 +198,7 @@ class GameViewModel(
             return
         }
         val before = game ?: return
+        hintMessage = null
         val after = change(before)
         if (after == before) {
             return
@@ -237,6 +267,8 @@ class GameViewModel(
                 resultSaved = resultSaved,
                 allowReveal = display.allowReveal,
                 revealed = revealed,
+                showHints = display.showHints,
+                hintMessage = hintMessage,
             )
     }
 }

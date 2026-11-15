@@ -21,6 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joclegg.puzzles.core.ui.BackButton
+import com.joclegg.puzzles.crossword.core.data.HintStyle
 import com.joclegg.puzzles.crossword.core.data.Settings
 import com.joclegg.puzzles.crossword.core.data.Toggle
 import com.joclegg.puzzles.crossword.feature.R
@@ -32,13 +33,14 @@ fun SettingsRoute(
     modifier: Modifier = Modifier,
 ) {
     val settings by viewModel.uiState.collectAsStateWithLifecycle()
-    SettingsScreen(settings, viewModel::onToggle, onBack, modifier)
+    SettingsScreen(settings, viewModel::onToggle, viewModel::onHintStyleChange, onBack, modifier)
 }
 
 @Composable
 fun SettingsScreen(
     settings: Settings,
     onToggle: (Toggle, Boolean) -> Unit,
+    onHintStyleChange: (HintStyle) -> Unit,
     onBack: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
@@ -71,11 +73,21 @@ fun SettingsScreen(
                 )
                 ToggleRow(
                     settings,
+                    Toggle.SHOW_HINTS,
+                    onToggle,
+                    stringResource(R.string.hints),
+                    detail = stringResource(R.string.show_the_hint_button),
+                )
+                ToggleRow(
+                    settings,
                     Toggle.ALLOW_REVEAL,
                     onToggle,
                     stringResource(R.string.allow_reveal),
                     detail = stringResource(R.string.offer_reveal_letter_word_and_puzzle),
                 )
+                if (settings.showHints) {
+                    HintStyleRow(settings.hintStyle, onHintStyleChange)
+                }
             }
         }
     }
@@ -101,6 +113,37 @@ private fun ToggleRow(
             checked = toggle.read(settings),
             onCheckedChange = { onToggle(toggle, it) },
             modifier = Modifier.testTag("setting_${toggle.name.lowercase()}"),
+        )
+    }
+}
+
+@Composable
+private fun HintStyleRow(
+    style: HintStyle,
+    onChange: (HintStyle) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Column(Modifier.weight(1f)) {
+            Text(stringResource(R.string.hints_fill_the_answer_in))
+            Text(
+                stringResource(R.string.off_a_hint_points_at_the_next_step_and),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        Switch(
+            checked = style == HintStyle.FILL,
+            onCheckedChange = {
+                onChange(
+                    if (it) {
+                        HintStyle.FILL
+                    } else {
+                        HintStyle.POINT
+                    },
+                )
+            },
+            modifier = Modifier.testTag("setting_hint_fill"),
         )
     }
 }

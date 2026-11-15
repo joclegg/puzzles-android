@@ -2,6 +2,7 @@ package com.joclegg.puzzles.crossword.feature.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.joclegg.puzzles.crossword.core.data.HintStyle
 import com.joclegg.puzzles.crossword.core.data.Settings
 import com.joclegg.puzzles.crossword.core.data.SettingsRepository
 import com.joclegg.puzzles.crossword.core.data.Toggle
@@ -21,6 +22,10 @@ class SettingsViewModel(
         enabled: Boolean,
     ) {
         viewModelScope.launch { settings.set(toggle, enabled) }
+    }
+
+    fun onHintStyleChange(style: HintStyle) {
+        viewModelScope.launch { settings.setHintStyle(style) }
     }
 
     private companion object {

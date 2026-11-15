@@ -1,0 +1,51 @@
+appId: com.joclegg.puzzles
+name: Crossword - the hint button points at the next letter, and fills it in when hints fill answers
+---
+- launchApp:
+    clearState: true
+    arguments:
+      banks: "crossword"
+      helpers: "on"
+      fixture: "crossword_empty"
+- waitForAnimationToEnd:
+    timeout: 1500
+- assertNotVisible:
+    id: "hint"
+- tapOn:
+    id: "game_menu"
+- tapOn:
+    id: "menu_settings"
+- waitForAnimationToEnd:
+    timeout: 1500
+- tapOn:
+    id: "setting_show_hints"
+- tapOn:
+    id: "back"
+- waitForAnimationToEnd:
+    timeout: 1500
+- tapOn:
+    id: "hint"
+- assertVisible:
+    id: "hint_message"
+    text: "Try C here."
+- tapOn:
+    id: "game_menu"
+- tapOn:
+    id: "menu_settings"
+- waitForAnimationToEnd:
+    timeout: 1500
+- tapOn:
+    id: "setting_hint_fill"
+- tapOn:
+    id: "back"
+- waitForAnimationToEnd:
+    timeout: 1500
+- tapOn:
+    id: "hint"
+- assertVisible:
+    text: "C"
+    childOf:
+      id: "cell_r1c1"
+- assertVisible:
+    id: "undo"
+    enabled: true
