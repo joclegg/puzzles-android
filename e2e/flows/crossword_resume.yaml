@@ -7,8 +7,11 @@ name: Crossword - a puzzle in progress survives the app being closed
       banks: "crossword"
       helpers: "on"
       fixture: "crossword_empty"
-- waitForAnimationToEnd:
-    timeout: 1500
+- extendedWaitUntil:
+    visible:
+      id: "crossword_keyboard"
+      focused: true
+    timeout: 10000
 - inputText: "CA"
 - assertVisible:
     text: "A"
