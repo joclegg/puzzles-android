@@ -9,9 +9,11 @@ name: Crossword - a puzzle in progress survives the app being closed
       fixture: "crossword_empty"
 - waitForAnimationToEnd:
     timeout: 1500
-- tapOn:
-    id: "cell_r1c1"
 - inputText: "CA"
+- assertVisible:
+    text: "A"
+    childOf:
+      id: "cell_r1c2"
 - launchApp:
     stopApp: true
 - waitForAnimationToEnd:
