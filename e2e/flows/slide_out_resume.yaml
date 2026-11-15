@@ -5,6 +5,8 @@ tags:
 ---
 - launchApp:
     clearState: true
+    arguments:
+      banks: "slideout"
 - waitForAnimationToEnd:
     timeout: 1500
 - scrollUntilVisible:

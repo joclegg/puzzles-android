@@ -4,6 +4,7 @@ name: Crossword - Reveal puzzle fills the grid and ends the puzzle
 - launchApp:
     clearState: true
     arguments:
+      banks: "crossword"
       helpers: "on"
       fixture: "crossword_empty"
 - waitForAnimationToEnd:
@@ -15,8 +16,9 @@ name: Crossword - Reveal puzzle fills the grid and ends the puzzle
 - tapOn:
     id: "confirm_reveal"
 - assertVisible:
-    id: "cell_r3c3"
     text: "W"
+    childOf:
+      id: "cell_r3c3"
 - assertVisible:
     id: "undo"
     enabled: false

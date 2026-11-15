@@ -49,6 +49,7 @@ class BankStore(
         manifest: String,
         read: (String) -> ByteArray,
     ) {
+        directory.mkdirs()
         val files = JSONObject(manifest).getJSONObject("files")
         val known = mutableMapOf<String, String>()
         files.keys().forEach { path ->

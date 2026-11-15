@@ -138,7 +138,6 @@ done
 
 APK="${E2E_APK:-}"
 if [[ -z "$APK" ]]; then
-  e2e/fetch-banks.sh
   ./gradlew -q :app:assembleDebug
   APK=app/build/outputs/apk/debug/app-debug.apk
 fi

@@ -4,6 +4,7 @@ name: Crossword - a puzzle in progress survives the app being closed
 - launchApp:
     clearState: true
     arguments:
+      banks: "crossword"
       helpers: "on"
       fixture: "crossword_empty"
 - waitForAnimationToEnd:
@@ -28,5 +29,6 @@ name: Crossword - a puzzle in progress survives the app being closed
 - waitForAnimationToEnd:
     timeout: 1500
 - assertVisible:
-    id: "cell_r1c2"
     text: "A"
+    childOf:
+      id: "cell_r1c2"

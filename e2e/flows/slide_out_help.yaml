@@ -4,6 +4,7 @@ name: Slide Out - the rules open and the walkthrough steps through
 - launchApp:
     clearState: true
     arguments:
+      banks: "slideout"
       fixture: "slide_out_two_moves"
 - extendedWaitUntil:
     visible:

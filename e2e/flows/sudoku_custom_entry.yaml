@@ -4,6 +4,7 @@ name: Custom entry - clashes, multiple solutions, and a real puzzle
 - launchApp:
     clearState: true
     arguments:
+      banks: "sudoku"
       helpers: "on"
 - waitForAnimationToEnd:
     timeout: 1500

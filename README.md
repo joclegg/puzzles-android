@@ -23,7 +23,7 @@ Every game has a daily puzzle with medals, stats and history.
 - Puzzle banks and word lists come from [puzzles-data](https://github.com/joclegg/puzzles-data). The app downloads them in the background, so new puzzles need no release.
 - Optional sync through the shared Supabase backend in [puzzles-backend](https://github.com/joclegg/puzzles-backend).
 - Gradle with a version catalog and convention plugins in `build-logic/`. Spotless with ktlint and the Compose rules, plus Android Lint.
-- Tests: JUnit 5 for the pure game engines, JUnit 4 with Robolectric for Android and Compose code, and Maestro flows for end-to-end checks.
+- Tests: JUnit 5 for the pure game engines, JUnit 4 with Robolectric for Android and Compose code, and Maestro flows for end-to-end checks. Tests never use the published banks: each flow installs its own small banks from `app/src/debug/assets/banks/` through its `banks` launch argument.
 
 See [`AGENTS.md`](AGENTS.md) for the project layout and conventions.
 

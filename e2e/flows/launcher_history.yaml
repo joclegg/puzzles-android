@@ -5,6 +5,8 @@ tags:
 ---
 - launchApp:
     clearState: true
+    arguments:
+      banks: "none"
 - waitForAnimationToEnd:
     timeout: 1500
 - tapOn:

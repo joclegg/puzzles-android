@@ -4,6 +4,7 @@ name: Crossword - Settings in the game menu opens Crossword's settings
 - launchApp:
     clearState: true
     arguments:
+      banks: "crossword"
       helpers: "on"
       fixture: "crossword_empty"
 - waitForAnimationToEnd:
