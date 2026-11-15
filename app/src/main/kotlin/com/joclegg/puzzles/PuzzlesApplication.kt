@@ -9,6 +9,7 @@ import com.joclegg.puzzles.core.sync.SupabaseAuth
 import com.joclegg.puzzles.core.sync.SyncEngine
 import com.joclegg.puzzles.core.sync.SyncStore
 import com.joclegg.puzzles.core.ui.Medal
+import com.joclegg.puzzles.crossword.CrosswordDefinition
 import com.joclegg.puzzles.fiveletters.FiveLettersDefinition
 import com.joclegg.puzzles.kakuro.KakuroDefinition
 import com.joclegg.puzzles.sightlines.SightlinesDefinition
@@ -43,7 +44,8 @@ class PuzzlesApplication : Application() {
     val kakuro by lazy { KakuroDefinition(this) }
     val slideOut by lazy { SlideOutDefinition(this) }
     val wordWheel by lazy { WordWheelDefinition(this) }
-    val games: List<GameDefinition> by lazy { listOf(sudoku, solitaire, twoTone, sightlines, fiveLetters, kakuro, slideOut, wordWheel) }
+    val crossword by lazy { CrosswordDefinition(this) }
+    val games: List<GameDefinition> by lazy { listOf(sudoku, solitaire, twoTone, sightlines, fiveLetters, kakuro, slideOut, wordWheel, crossword) }
 
     fun definition(game: PuzzleGame): GameDefinition = games.first { it.game == game }
 

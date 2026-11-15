@@ -1,0 +1,22 @@
+appId: com.joclegg.puzzles
+name: Crossword - Reveal puzzle fills the grid and ends the puzzle
+---
+- launchApp:
+    clearState: true
+    arguments:
+      helpers: "on"
+      fixture: "crossword_empty"
+- waitForAnimationToEnd:
+    timeout: 1500
+- tapOn:
+    id: "game_menu"
+- tapOn:
+    id: "menu_solution"
+- tapOn:
+    id: "confirm_reveal"
+- assertVisible:
+    id: "cell_r3c3"
+    text: "W"
+- assertVisible:
+    id: "undo"
+    enabled: false

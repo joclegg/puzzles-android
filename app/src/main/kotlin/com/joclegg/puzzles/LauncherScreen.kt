@@ -30,6 +30,9 @@ import com.joclegg.puzzles.core.ui.Medal
 import com.joclegg.puzzles.core.ui.MenuIcons
 import com.joclegg.puzzles.core.ui.medalColour
 import com.joclegg.puzzles.fiveletters.ui.FiveLettersGameIcon
+import com.joclegg.puzzles.crossword.ui.CrosswordGameIcon
+import com.joclegg.puzzles.crossword.ui.CrosswordTheme
+import com.joclegg.puzzles.crossword.ui.LocalCrosswordColors
 import com.joclegg.puzzles.fiveletters.ui.FiveLettersTheme
 import com.joclegg.puzzles.fiveletters.ui.LocalFiveLettersColors
 import com.joclegg.puzzles.kakuro.ui.KakuroGameIcon
@@ -73,6 +76,7 @@ fun LauncherScreen(
     onKakuroClick: () -> Unit,
     onSlideOutClick: () -> Unit,
     onWordWheelClick: () -> Unit,
+    onCrosswordClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var choosingSignIn by remember { mutableStateOf(false) }
@@ -213,6 +217,18 @@ fun LauncherScreen(
                 medals[PuzzleGame.WORD_WHEEL] ?: Medal.NONE,
             ) {
                 WordWheelGameIcon()
+            }
+        }
+        CrosswordTheme(darkTheme) {
+            GameCard(
+                stringResource(R.string.crossword),
+                stringResource(R.string.quick_british_crosswords),
+                LocalCrosswordColors.current.accent,
+                onCrosswordClick,
+                Modifier.testTag("game_crossword"),
+                medals[PuzzleGame.CROSSWORD] ?: Medal.NONE,
+            ) {
+                CrosswordGameIcon()
             }
         }
     }

@@ -69,6 +69,8 @@ fun combinedHistory(app: PuzzlesApplication): Flow<List<HistoryEntry>> =
                 .entries { entry("Slide Out", it.finishedAt, it.status.name, it.elapsedMs) },
             app.wordWheel.games.history
                 .entries { entry("Word Wheel", it.finishedAt, it.status.name, it.elapsedMs) },
+            app.crossword.games.history
+                .entries { entry("Crossword", it.finishedAt, it.status.name, it.elapsedMs) },
         ),
     ) { lists -> mergeHistory(lists.toList()) }
 

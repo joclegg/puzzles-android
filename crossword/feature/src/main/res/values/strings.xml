@@ -1,0 +1,26 @@
+<resources>
+    <string name="allow_reveal">Reveal</string>
+    <string name="cancel">Cancel</string>
+    <string name="colour_wrong_letters_red">Colour wrong letters red.</string>
+    <string name="crossword">Crossword</string>
+    <string name="home">Home</string>
+    <string name="more">More</string>
+    <string name="new_puzzle">New puzzle</string>
+    <string name="offer_reveal_letter_word_and_puzzle">Offer Reveal letter, Reveal word and Reveal puzzle in the game menu.</string>
+    <string name="quick_british_crosswords">Quick British crosswords, typed on your keyboard</string>
+    <string name="redo">Redo</string>
+    <string name="restart_this_puzzle">Restart this puzzle</string>
+    <string name="reveal_letter">Reveal letter</string>
+    <string name="reveal_puzzle">Reveal puzzle</string>
+    <string name="reveal_word">Reveal word</string>
+    <string name="settings">Settings</string>
+    <string name="show_mistakes">Show mistakes</string>
+    <string name="show_the_solution">Reveal the whole puzzle?</string>
+    <string name="show_the_timer">Show the timer</string>
+    <string name="skip_filled_cells">Skip filled cells</string>
+    <string name="skip_filled_cells_detail">When typing, jump over cells that already have a letter.</string>
+    <string name="solved">Solved!</string>
+    <string name="this_ends_the_puzzle_it_won_t_count">This ends the puzzle. It won\'t count towards best times.</string>
+    <string name="time">Time</string>
+    <string name="undo">Undo</string>
+</resources>

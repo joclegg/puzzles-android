@@ -17,6 +17,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.joclegg.puzzles.core.sync.SignInProvider
+import com.joclegg.puzzles.crossword.CrosswordFixtures
 import com.joclegg.puzzles.fiveletters.FiveLettersFixtures
 import com.joclegg.puzzles.kakuro.KakuroFixtures
 import com.joclegg.puzzles.sightlines.SightlinesFixtures
@@ -150,6 +151,7 @@ class MainActivity : ComponentActivity() {
         val kakuro = KakuroFixtures.puzzle(name)
         val slideOut = SlideOutFixtures.puzzle(name)
         val wordWheel = WordWheelFixtures.puzzle(name)
+        val crossword = CrosswordFixtures.puzzle(name)
         runBlocking { HelperFixtures.apply(app, intent.getStringExtra(HelperFixtures.EXTRA)) }
         lifecycleScope.launch {
             if (draft != null) {
@@ -230,6 +232,19 @@ class MainActivity : ComponentActivity() {
                         app.wordWheel.games
                             .start { wordWheel }
                             .id,
+                    )
+            }
+            if (crossword != null) {
+                openGame.value =
+                    OpenGame(
+                        PuzzleGame.CROSSWORD,
+                        app.crossword.games
+                            .start { crossword }
+                            .let { game ->
+                                val entries = CrosswordFixtures.entries(name) ?: return@let game.id
+                                app.crossword.games.save(game.copy(entries = entries))
+                                game.id
+                            },
                     )
             }
         }

@@ -66,6 +66,7 @@ enum class SettingsTab(
     KAKURO("Kakuro"),
     SLIDE_OUT("Slide Out"),
     WORD_WHEEL("Word Wheel"),
+    CROSSWORD("Crossword"),
 }
 
 object SettingsHub {

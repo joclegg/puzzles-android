@@ -36,6 +36,11 @@ spotless {
         suppressLintsFor {
             step = "ktlint"
             shortCode = "compose:compositionlocal-allowlist"
+            path = "crossword/ui/src/main/kotlin/com/joclegg/puzzles/crossword/ui/Theme.kt"
+        }
+        suppressLintsFor {
+            step = "ktlint"
+            shortCode = "compose:compositionlocal-allowlist"
             path = "fiveletters/ui/src/main/kotlin/com/joclegg/puzzles/fiveletters/ui/Theme.kt"
         }
         suppressLintsFor {

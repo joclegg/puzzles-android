@@ -35,6 +35,7 @@
     <string name="five_letters">Five Letters</string>
     <string name="gold_in_every_puzzle">Gold in every puzzle</string>
     <string name="guess_the_word_in_six_tries_a_new_one">Guess the word in six tries, a new one every day</string>
+    <string name="crossword">Crossword</string>
     <string name="guesses">Guesses</string>
     <string name="history">History</string>
     <string name="kakuro">Kakuro</string>
@@ -65,6 +66,7 @@
     <string name="two_tone">Two Tone</string>
     <string name="use_a_different_email">Use a different email</string>
     <string name="we_couldn_t_send_the_email_try_again">We couldn\'t send the email. Try again in a minute.</string>
+    <string name="quick_british_crosswords">Quick British crosswords, typed on your keyboard</string>
     <string name="win_rate">Win rate</string>
     <string name="won">Won</string>
     <string name="word_wheel">Word Wheel</string>
