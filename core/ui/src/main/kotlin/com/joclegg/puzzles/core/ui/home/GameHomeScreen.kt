@@ -2,6 +2,7 @@ package com.joclegg.puzzles.core.ui.home
 
 import androidx.compose.ui.res.stringResource
 import com.joclegg.puzzles.core.ui.R
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -98,7 +99,13 @@ fun GameHomeScaffold(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             BackButton(onBack)
-            Text(title, style = MaterialTheme.typography.headlineLarge, modifier = Modifier.weight(1f))
+            Text(
+                title,
+                style = MaterialTheme.typography.headlineLarge,
+                maxLines = 1,
+                autoSize = TextAutoSize.StepBased(maxFontSize = MaterialTheme.typography.headlineLarge.fontSize),
+                modifier = Modifier.weight(1f),
+            )
             DailyCalendarButton(calendarGame)
             IconButton(onClick = onStats, modifier = Modifier.testTag("stats")) {
                 Icon(MenuIcons.Stats, contentDescription = statsLabel)
