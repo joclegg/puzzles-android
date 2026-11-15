@@ -36,6 +36,8 @@ data class GameState(
     val countMistakes: Boolean = false,
     val mistakes: Int = 0,
     val reveals: Int = 0,
+    val jumpedFrom: Int? = null,
+    val jumpedAcross: Boolean = true,
 ) {
     val isSolved: Boolean get() = entries == puzzle.solution
 
@@ -52,7 +54,14 @@ data class GameState(
 
     fun isWordFilled(word: Word) = word.cells.all { entries[it] != EMPTY }
 
-    fun tapCell(cell: Int): GameState {
+    fun tapCell(cell: Int): GameState =
+        if (jumpedFrom != null) {
+            copy(jumpedFrom = null).tapCell(cell)
+        } else {
+            tapCellNow(cell)
+        }
+
+    private fun tapCellNow(cell: Int): GameState {
         if (!puzzle.isWhite[cell]) {
             return this
         }
@@ -68,7 +77,14 @@ data class GameState(
         return copy(selected = cell, isAcross = direction)
     }
 
-    fun toggleDirection(): GameState {
+    fun toggleDirection(): GameState =
+        if (jumpedFrom != null) {
+            copy(jumpedFrom = null).toggleDirection()
+        } else {
+            toggleDirectionNow()
+        }
+
+    private fun toggleDirectionNow(): GameState {
         val cell = selected ?: return this
         if (puzzle.wordAt(cell, !isAcross) == null) {
             return this
@@ -76,9 +92,16 @@ data class GameState(
         return copy(isAcross = !isAcross)
     }
 
-    fun selectWord(word: Word): GameState = copy(selected = firstEmptyOrFirst(word), isAcross = word.isAcross)
+    fun selectWord(word: Word): GameState = copy(selected = firstEmptyOrFirst(word), isAcross = word.isAcross, jumpedFrom = null)
 
-    fun arrow(arrow: Arrow): GameState {
+    fun arrow(arrow: Arrow): GameState =
+        if (jumpedFrom != null) {
+            copy(jumpedFrom = null).arrow(arrow)
+        } else {
+            arrowNow(arrow)
+        }
+
+    private fun arrowNow(arrow: Arrow): GameState {
         val cell = selected ?: return this
         if (arrow.isAcross != isAcross && puzzle.wordAt(cell, arrow.isAcross) != null) {
             return copy(isAcross = arrow.isAcross)
@@ -105,11 +128,18 @@ data class GameState(
         return copy(selected = next, isAcross = direction)
     }
 
-    fun nextClue(): GameState = moveClue(1)
+    fun nextClue(): GameState = copy(jumpedFrom = null).moveClue(1)
 
-    fun previousClue(): GameState = moveClue(-1)
+    fun previousClue(): GameState = copy(jumpedFrom = null).moveClue(-1)
 
-    fun type(letter: Char): GameState {
+    fun type(letter: Char): GameState =
+        if (jumpedFrom != null) {
+            copy(jumpedFrom = null).type(letter)
+        } else {
+            typeNow(letter)
+        }
+
+    private fun typeNow(letter: Char): GameState {
         val cell = selected ?: return this
         val upper = letter.uppercaseChar()
         if (isSolved || upper !in 'A'..'Z') {
@@ -131,6 +161,10 @@ data class GameState(
         if (isSolved) {
             return this
         }
+        val jumped = jumpedFrom
+        if (jumped != null) {
+            return copy(selected = jumped, isAcross = jumpedAcross, jumpedFrom = null).clear(jumped)
+        }
         val word = currentWord ?: return this
         if (entries[cell] != EMPTY) {
             return clear(cell)
@@ -143,19 +177,40 @@ data class GameState(
         return copy(selected = previous.cells.last(), isAcross = previous.isAcross).clear(previous.cells.last())
     }
 
-    fun revealLetter(): GameState {
+    fun revealLetter(): GameState =
+        if (jumpedFrom != null) {
+            copy(jumpedFrom = null).revealLetter()
+        } else {
+            revealLetterNow()
+        }
+
+    private fun revealLetterNow(): GameState {
         val cell = selected ?: return this
         return reveal(listOf(cell))
     }
 
-    fun revealWord(): GameState {
+    fun revealWord(): GameState =
+        if (jumpedFrom != null) {
+            copy(jumpedFrom = null).revealWord()
+        } else {
+            revealWordNow()
+        }
+
+    private fun revealWordNow(): GameState {
         val word = currentWord ?: return this
         return reveal(word.cells)
     }
 
     fun revealSolution(): GameState = copy(entries = puzzle.solution, undone = emptyList())
 
-    fun undo(): GameState {
+    fun undo(): GameState =
+        if (jumpedFrom != null) {
+            copy(jumpedFrom = null).undo()
+        } else {
+            undoNow()
+        }
+
+    private fun undoNow(): GameState {
         val last = changes.lastOrNull() ?: return this
         if (isSolved) {
             return this
@@ -168,7 +223,14 @@ data class GameState(
         ).keepDirection()
     }
 
-    fun redo(): GameState {
+    fun redo(): GameState =
+        if (jumpedFrom != null) {
+            copy(jumpedFrom = null).redo()
+        } else {
+            redoNow()
+        }
+
+    private fun redoNow(): GameState {
         val next = undone.lastOrNull() ?: return this
         if (isSolved) {
             return this
@@ -215,7 +277,7 @@ data class GameState(
                     .map { puzzle.words[(start + it).mod(puzzle.words.size)] }
                     .firstOrNull { !isWordFilled(it) }
             if (next != null) {
-                return selectWord(next)
+                return selectWord(next).copy(jumpedFrom = cell, jumpedAcross = word.isAcross)
             }
         }
         return copy(selected = word.cells.last())

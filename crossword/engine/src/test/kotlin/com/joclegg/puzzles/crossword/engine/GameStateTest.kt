@@ -331,4 +331,29 @@ class GameStateTest {
         // Assert
         assertEquals(expected, game.mistakes)
     }
+
+    @Test
+    fun `given typing that jumps past a full clue when backspace is pressed next then the cell just typed is cleared and selected`() {
+        // Arrange
+        val typed = GameState(small, entries = "....#.WET").typed("CAT")
+
+        // Act
+        val cleared = typed.backspace()
+
+        // Assert
+        assertEquals(3 to false, typed.selected to typed.isAcross)
+        assertEquals(Triple("CA..#.WET", 2, true), Triple(cleared.entries, cleared.selected, cleared.isAcross))
+    }
+
+    @Test
+    fun `given typing that jumped to the next clue when another input comes before backspace then backspace follows the normal rules`() {
+        // Arrange
+        val typed = GameState(small, entries = "....#.WET").typed("CAT").toggleDirection().toggleDirection()
+
+        // Act
+        val cleared = typed.backspace()
+
+        // Assert
+        assertEquals(Triple(".AT.#.WET", 0, false), Triple(cleared.entries, cleared.selected, cleared.isAcross))
+    }
 }
