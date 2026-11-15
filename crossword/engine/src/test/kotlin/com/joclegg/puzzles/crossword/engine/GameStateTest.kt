@@ -77,7 +77,7 @@ class GameStateTest {
     @Test
     fun `given the empty first cell of a word when backspace is pressed then the previous clue's last cell is cleared and selected`() {
         // Arrange
-        val game = GameState(small, entries = "CAT.#....").tapCell(6)
+        val game = GameState(small, entries = "CAT.#....")
 
         // Act
         val cleared = game.backspace()
@@ -209,7 +209,7 @@ class GameStateTest {
     @Test
     fun `given a partly filled clue when it is reached by next clue then its first empty cell is selected`() {
         // Arrange
-        val game = GameState(small, entries = "CAT.#.W..")
+        val game = GameState(small, entries = "CAT.#.W..").tapCell(0)
 
         // Act
         val next = game.nextClue()
