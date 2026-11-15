@@ -36,7 +36,7 @@ import kotlinx.coroutines.flow.map
 import java.time.LocalDate
 import java.time.ZoneId
 
-enum class PuzzleGame { SUDOKU, SOLITAIRE, TWO_TONE, SIGHTLINES, FIVE_LETTERS, KAKURO, SLIDE_OUT, WORD_WHEEL }
+enum class PuzzleGame { SUDOKU, SOLITAIRE, TWO_TONE, SIGHTLINES, FIVE_LETTERS, KAKURO, SLIDE_OUT, WORD_WHEEL, CROSSWORD }
 
 data class OpenGame(
     val game: PuzzleGame,
@@ -182,6 +182,7 @@ fun PuzzlesApp(
                         onKakuroClick = { openHome(PuzzleGame.KAKURO) },
                         onSlideOutClick = { openHome(PuzzleGame.SLIDE_OUT) },
                         onWordWheelClick = { openHome(PuzzleGame.WORD_WHEEL) },
+                        onCrosswordClick = { openHome(PuzzleGame.CROSSWORD) },
                     )
                 }
                 app.games.forEach { it.registerGraph(this, navController, darkTheme) }

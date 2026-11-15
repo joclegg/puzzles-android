@@ -4,6 +4,7 @@ name: Sightlines - with Pick a colour on, picking blue and tapping fills the las
 - launchApp:
     clearState: true
     arguments:
+      banks: "none"
       fixture: "sightlines_one_left"
 - waitForAnimationToEnd:
     timeout: 1500

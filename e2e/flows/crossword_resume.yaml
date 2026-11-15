@@ -1,0 +1,38 @@
+appId: com.joclegg.puzzles
+name: Crossword - a puzzle in progress survives the app being closed
+---
+- launchApp:
+    clearState: true
+    arguments:
+      banks: "crossword"
+      helpers: "on"
+      fixture: "crossword_empty"
+- tapOn:
+    id: "cell_r1c2"
+- tapOn:
+    id: "cell_r1c1"
+- inputText: "CA"
+- assertVisible:
+    text: "A"
+    childOf:
+      id: "cell_r1c2"
+- launchApp:
+    stopApp: true
+- waitForAnimationToEnd:
+    timeout: 1500
+- scrollUntilVisible:
+    element:
+      id: "game_crossword"
+    centerElement: true
+- tapOn:
+    id: "game_crossword"
+- waitForAnimationToEnd:
+    timeout: 1500
+- tapOn:
+    id: "continue"
+- waitForAnimationToEnd:
+    timeout: 1500
+- assertVisible:
+    text: "A"
+    childOf:
+      id: "cell_r1c2"

@@ -4,6 +4,7 @@ name: Sightlines - a puzzle in progress survives the app being closed
 - launchApp:
     clearState: true
     arguments:
+      banks: "none"
       helpers: "on"
       fixture: "sightlines_two_left"
 - waitForAnimationToEnd:

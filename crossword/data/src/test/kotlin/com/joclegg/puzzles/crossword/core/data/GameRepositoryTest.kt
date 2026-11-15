@@ -1,0 +1,121 @@
+package com.joclegg.puzzles.crossword.core.data
+
+import androidx.room.Room
+import androidx.test.core.app.ApplicationProvider
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.joclegg.puzzles.crossword.engine.Change
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.runTest
+import org.junit.After
+import org.junit.Assert.assertEquals
+import org.junit.Test
+import org.junit.runner.RunWith
+import java.time.LocalDate
+
+@RunWith(AndroidJUnit4::class)
+class GameRepositoryTest {
+    private val database =
+        Room
+            .inMemoryDatabaseBuilder(ApplicationProvider.getApplicationContext(), GameDatabase::class.java)
+            .allowMainThreadQueries()
+            .build()
+    private val bank =
+        PuzzleBank { path -> javaClass.classLoader!!.getResource(path)!!.readText() }
+    private val repository = GameRepository(database.gameDao(), Dispatchers.Unconfined) { 1_000L }
+
+    @After
+    fun close() = database.close()
+
+    private suspend fun solveIn(
+        elapsedMs: Long,
+        size: Int = 11,
+    ): Boolean = repository.solve(repository.start { PuzzleRef.random(bank, size, elapsedMs) }.copy(elapsedMs = elapsedMs))
+
+    @Test
+    fun `given a best time when a slower and then a faster puzzle are solved then only the faster is a new best`() =
+        runTest {
+            // Arrange
+            solveIn(60_000)
+
+            // Act
+            val results = listOf(solveIn(90_000), solveIn(30_000))
+
+            // Assert
+            assertEquals(listOf(false, true), results)
+        }
+
+    @Test
+    fun `given solved and abandoned puzzles when stats are read then played, solved, best and average are right`() =
+        runTest {
+            // Arrange
+            solveIn(60_000)
+            solveIn(30_000)
+            repository.start { PuzzleRef.random(bank, 11, 1) }
+            repository.start { PuzzleRef.random(bank, 11, 2) }
+
+            // Act
+            val stats = repository.stats.first().first { it.size == 11 }
+
+            // Assert
+            assertEquals(SizeStats(11, played = 3, solved = 2, bestMs = 30_000, averageMs = 45_000), stats)
+        }
+
+    @Test
+    fun `given a puzzle in progress when one of another size or the daily starts then the first is kept`() =
+        runTest {
+            // Arrange
+            repository.start { PuzzleRef.random(bank, 11, 1) }
+
+            // Act
+            repository.start { PuzzleRef.random(bank, 13, 2) }
+            repository.start { PuzzleRef.daily(bank, LocalDate.of(2026, 11, 16), 6) }
+
+            // Assert
+            assertEquals(3, repository.inProgress.first().size)
+        }
+
+    @Test
+    fun `given a saved game with changes when it is read back then it is unchanged`() =
+        runTest {
+            // Arrange
+            val game = repository.start { PuzzleRef.random(bank, 11, 5) }
+            val changes = listOf(Change(0, '.', 'A'), Change(0, 'A', '.'), Change(1, '.', 'B'))
+
+            // Act
+            repository.save(game.copy(entries = game.entries.replaceRange(1, 2, "B"), changes = changes, elapsedMs = 12_000, hints = 2))
+
+            // Assert
+            assertEquals(
+                game.copy(entries = game.entries.replaceRange(1, 2, "B"), changes = changes, elapsedMs = 12_000, hints = 2),
+                repository.get(game.id),
+            )
+        }
+
+    @Test
+    fun `given a daily and a random puzzle when dailies are read then only the daily is listed with its status`() =
+        runTest {
+            // Arrange
+            val date = LocalDate.of(2026, 11, 16)
+            repository.start { PuzzleRef.random(bank, 11, 1) }
+            val daily = repository.start { PuzzleRef.daily(bank, date, 13) }
+            repository.solve(daily)
+
+            // Act
+            val dailies = repository.dailies.first()
+
+            // Assert
+            assertEquals(listOf(PuzzleRef.dailyId(date, 13) to GameStatus.SOLVED.name), dailies.map { it.puzzleId to it.status })
+        }
+
+    @Test
+    fun `given a date when its daily is picked then the same line comes back each time`() {
+        // Act
+        val picks = (1..2).map { PuzzleRef.daily(bank, LocalDate.of(2026, 11, 20), 15).ref() }
+
+        // Assert
+        assertEquals(1, picks.toSet().size)
+    }
+
+    private fun PuzzleRef.ref() = id to puzzle
+}

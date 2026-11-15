@@ -4,13 +4,14 @@ name: Settings - dark theme, hiding the timer and mistake counter, and choosing 
 - launchApp:
     clearState: true
     arguments:
+      banks: "sudoku"
       helpers: "on"
 - waitForAnimationToEnd:
     timeout: 1500
-- scrollUntilVisible:
-    element:
+- extendedWaitUntil:
+    visible:
       id: "game_sudoku"
-    centerElement: true
+    timeout: 10000
 - tapOn:
     id: "game_sudoku"
 - waitForAnimationToEnd:

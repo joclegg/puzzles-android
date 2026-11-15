@@ -4,6 +4,7 @@ name: Each level keeps its own game in progress
 - launchApp:
     clearState: true
     arguments:
+      banks: "sudoku"
       helpers: "on"
       fixture: "classic_easy"
 - waitForAnimationToEnd:

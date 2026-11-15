@@ -4,13 +4,14 @@ name: Custom killer - draw cages with sums, then play it
 - launchApp:
     clearState: true
     arguments:
+      banks: "sudoku"
       helpers: "on"
 - waitForAnimationToEnd:
     timeout: 1500
-- scrollUntilVisible:
-    element:
+- extendedWaitUntil:
+    visible:
       id: "game_sudoku"
-    centerElement: true
+    timeout: 10000
 - tapOn:
     id: "game_sudoku"
 - waitForAnimationToEnd:

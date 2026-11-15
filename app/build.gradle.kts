@@ -9,11 +9,6 @@ plugins {
 val releaseKeystore = providers.environmentVariable("PUZZLES_KEYSTORE").orNull
 
 android {
-    sourceSets {
-        getByName("debug") {
-            assets.directories.add("../e2e/banks")
-        }
-    }
     namespace = "com.joclegg.puzzles"
     defaultConfig {
         applicationId = "com.joclegg.puzzles"
@@ -85,6 +80,9 @@ dependencies {
     implementation(projects.kakuro.data)
     implementation(projects.kakuro.ui)
     implementation(projects.kakuro.feature)
+    implementation(projects.crossword.data)
+    implementation(projects.crossword.ui)
+    implementation(projects.crossword.feature)
     implementation(projects.slideout.data)
     implementation(projects.slideout.ui)
     implementation(projects.slideout.feature)

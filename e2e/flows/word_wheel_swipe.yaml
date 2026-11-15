@@ -4,6 +4,7 @@ name: Word Wheel - swiping across the letters enters a word
 - launchApp:
     clearState: true
     arguments:
+      banks: "wordwheel"
       fixture: "word_wheel_two_words"
 - extendedWaitUntil:
     visible:

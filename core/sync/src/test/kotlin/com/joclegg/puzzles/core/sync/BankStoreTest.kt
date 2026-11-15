@@ -222,6 +222,18 @@ class BankStoreTest {
     }
 
     @Test
+    fun `given a folder that doesn't exist yet when an empty manifest is installed then the store is ready`() {
+        // Arrange
+        val store = BankStore(java.io.File(folder.root, "missing"), { _, _, _, _ -> throw java.io.IOException("offline") }, BASE)
+
+        // Act
+        store.install(manifest().body) { ByteArray(0) }
+
+        // Assert
+        assertEquals(true, store.isReady)
+    }
+
+    @Test
     fun `given a complete update with an etag when the manifest is unchanged then only the manifest is requested with that etag`() =
         runBlocking {
             // Arrange

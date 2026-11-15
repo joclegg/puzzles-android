@@ -3,6 +3,8 @@ name: Kakuro - the sum helper starts increasing and can list combinations in dec
 ---
 - launchApp:
     clearState: true
+    arguments:
+      banks: "kakuro"
 - waitForAnimationToEnd:
     timeout: 1500
 - scrollUntilVisible:

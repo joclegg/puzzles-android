@@ -3,6 +3,8 @@ name: Five Letters - hard mode and high contrast stay on, and a new game starts 
 ---
 - launchApp:
     clearState: true
+    arguments:
+      banks: "words"
 - waitForAnimationToEnd:
     timeout: 1500
 - scrollUntilVisible:

@@ -8,6 +8,8 @@ import com.joclegg.puzzles.core.ui.DailyChoice
 import com.joclegg.puzzles.core.ui.DailyLeft
 import com.joclegg.puzzles.core.ui.DailyResult
 import com.joclegg.puzzles.core.ui.Medal
+import com.joclegg.puzzles.crossword.CrosswordRoutes
+import com.joclegg.puzzles.crossword.CrosswordRoutes.openCrosswordGame
 import com.joclegg.puzzles.fiveletters.FiveLettersRoutes
 import com.joclegg.puzzles.fiveletters.FiveLettersRoutes.openFiveLettersGame
 import com.joclegg.puzzles.fiveletters.core.data.WordRef
@@ -36,6 +38,10 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import com.joclegg.puzzles.crossword.core.data.GameStatus as CrosswordStatus
+import com.joclegg.puzzles.crossword.core.data.PuzzleRef as CrosswordRef
+import com.joclegg.puzzles.crossword.engine.SIZES as CROSSWORD_SIZES
+import com.joclegg.puzzles.crossword.ui.sizeLabel as crosswordSizeLabel
 import com.joclegg.puzzles.fiveletters.core.data.GameStatus as FiveLettersStatus
 import com.joclegg.puzzles.kakuro.core.data.GameStatus as KakuroStatus
 import com.joclegg.puzzles.kakuro.core.data.PuzzleRef as KakuroRef
@@ -133,6 +139,7 @@ fun calendarRules(tab: SettingsTab): CalendarRules =
         SettingsTab.KAKURO -> CalendarRules(KAKURO_SIZES.size)
         SettingsTab.SLIDE_OUT -> CalendarRules(SlideOutLevel.entries.size)
         SettingsTab.WORD_WHEEL -> CalendarRules(WordWheelLevel.entries.size)
+        SettingsTab.CROSSWORD -> CalendarRules(CROSSWORD_SIZES.size)
     }
 
 fun dailyResults(
@@ -189,6 +196,12 @@ fun dailyResults(
                 games.filter { it.status == WordWheelStatus.SOLVED.name }.mapNotNull { result(it.puzzleId, it.finishedAt) }
             }
         }
+
+        SettingsTab.CROSSWORD -> {
+            app.crossword.games.dailies.map { games ->
+                games.filter { it.status == CrosswordStatus.SOLVED.name }.mapNotNull { result(it.puzzleId, it.finishedAt) }
+            }
+        }
     }
 
 private val DAILY_ID = Regex("^(?:daily2?|${WordRef.LEGACY_DAILY2_PREFIX.removeSuffix("_")})_(\\d{4}-\\d{2}-\\d{2})(?:_.*)?$")
@@ -215,6 +228,7 @@ suspend fun dailiesOn(
         SettingsTab.KAKURO -> kakuro(app, date)
         SettingsTab.SLIDE_OUT -> slideOut(app, date)
         SettingsTab.WORD_WHEEL -> wordWheel(app, date)
+        SettingsTab.CROSSWORD -> crossword(app, date)
     }
 
 private suspend fun sudoku(
@@ -481,5 +495,34 @@ private suspend fun wordWheel(
                     .id
             },
         ) { openWordWheelGame(it) }
+    }
+}
+
+private suspend fun crossword(
+    app: PuzzlesApplication,
+    date: LocalDate,
+): List<GameDaily> {
+    val history =
+        app.crossword.games.dailies
+            .first()
+    return CROSSWORD_SIZES.map { item ->
+        val id = CrosswordRef.dailyId(date, item)
+        val solved = history.any { it.puzzleId == id && it.status == CrosswordStatus.SOLVED.name }
+        GameDaily(
+            "CROSSWORD",
+            crosswordSizeLabel(item),
+            "daily_play_crossword_$item",
+            solved,
+            !solved,
+            CrosswordRoutes.HOME,
+            open = {
+                app.crossword.games.inProgress
+                    .first()
+                    .find { it.ref.id == id }
+                    ?.id ?: app.crossword.games
+                    .start { CrosswordRef.daily(app.crossword.bank, date, item) }
+                    .id
+            },
+        ) { openCrosswordGame(it) }
     }
 }

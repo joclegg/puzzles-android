@@ -3,6 +3,8 @@ name: Slide Out - a daily opens, and reopens the same game
 ---
 - launchApp:
     clearState: true
+    arguments:
+      banks: "slideout"
 - waitForAnimationToEnd:
     timeout: 1500
 - scrollUntilVisible:

@@ -4,6 +4,7 @@ name: Slide Out - a solve shows in stats, and history replays it then backs out 
 - launchApp:
     clearState: true
     arguments:
+      banks: "slideout"
       fixture: "slide_out_two_moves"
 - extendedWaitUntil:
     visible:

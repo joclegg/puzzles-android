@@ -4,6 +4,7 @@ name: Launcher - finishing today's daily shows a bronze medal on that game's car
 - launchApp:
     clearState: true
     arguments:
+      banks: "sudoku"
       fixture: "daily_classic_one_left"
 - waitForAnimationToEnd:
     timeout: 1500

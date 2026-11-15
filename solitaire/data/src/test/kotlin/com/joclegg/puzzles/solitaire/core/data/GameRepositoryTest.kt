@@ -7,6 +7,7 @@ import com.joclegg.puzzles.solitaire.engine.BuildOrder
 import com.joclegg.puzzles.solitaire.engine.DrawMode
 import com.joclegg.puzzles.solitaire.engine.Move
 import com.joclegg.puzzles.solitaire.engine.Pile
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -22,7 +23,7 @@ class GameRepositoryTest {
             .inMemoryDatabaseBuilder(ApplicationProvider.getApplicationContext(), GameDatabase::class.java)
             .allowMainThreadQueries()
             .build()
-    private val repository = GameRepository(database.gameDao()) { 1_000L }
+    private val repository = GameRepository(database.gameDao(), Dispatchers.Unconfined) { 1_000L }
 
     @After
     fun close() = database.close()

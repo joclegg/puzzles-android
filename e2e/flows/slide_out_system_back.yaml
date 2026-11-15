@@ -4,6 +4,7 @@ name: Slide Out - the system back gesture leaves the game for Home
 - launchApp:
     clearState: true
     arguments:
+      banks: "slideout"
       fixture: "slide_out_two_moves"
 - extendedWaitUntil:
     visible:

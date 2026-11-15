@@ -6,6 +6,7 @@ tags:
 - launchApp:
     clearState: true
     arguments:
+      banks: "none"
       helpers: "on"
       fixture: "sightlines_one_left"
 - waitForAnimationToEnd:

@@ -1,0 +1,89 @@
+ABYSS;Chasm
+ACUTELY;Keenly
+AGED;Elderly
+AHA;Cry of discovery
+ALIBI;Excuse
+AMP;Unit of current
+BENCH;Seat
+BOIL;Seethe
+BOW;Ribbon knot
+BRAKE;Slow down
+BRIEFCASE;Document carrier
+CAB;Taxi
+CARP;Freshwater fish
+CAT;Feline pet
+CHATEAU;French castle
+CLIENTELE;Customers
+COT;Baby's bed
+DAUNT;Intimidate
+DECIMAL;Base-ten
+DEDUCT;Subtract
+DEN;Lair
+DISSENTER;Objector
+DRANK;Swallowed liquid
+DRAWN;Haggard
+EAGLE;Bird of prey
+EERIE;Spooky
+EMANATE;Issue
+EMIT;Give off
+ERR;Blunder
+ESSENCE;Core
+FEAR;Dread
+FRAUD;Swindle
+FRUSTRATED;Thwarted
+HUE;Colour
+IDEA;Notion
+INFINITELY;Endlessly
+INFO;Facts, for short
+INN;Pub
+ISLE;Island
+JETTISON;Discard
+LANDLOCKED;Without a coastline
+LEARNED;Scholarly
+LOCKET;Pendant
+LOTS;Plenty
+LOWBROW;Unsophisticated
+LURIDLY;Sensationally
+MANNEQUIN;Dummy
+MASONRY;Stonework
+MERMAID;Mythical sea maiden
+MINI;Small car or skirt
+MISSTEP;Blunder
+NIECE;Sibling's daughter
+NOISILY;Loudly
+NOT;In no way
+NUTS;Crazy
+OSTRACISM;Exclusion
+OUTCAST;Pariah
+PERSEVERE;Keep going
+PHYSICIAN;Doctor
+PYTHON;Large snake
+RAINBOW;Coloured arc
+REEF;Coral ridge
+REISSUE;Republish
+RID;Free
+SCREAM;Shriek
+SHAKILY;Unsteadily
+SIDELINES;Edges of a pitch
+SIDLE;Edge furtively
+SOD;Turf
+STAIN;Mark
+SUBSTANCE;Material
+SUITABLE;Appropriate
+SUSPENSE;Tension
+TEN;Number of commandments
+THERAPY;Treatment
+TIMER;Clock
+TOOK;Grabbed
+TOW;Pull
+TRANSPIRE;Happen
+TRY;Attempt
+UNDERSTAND;Comprehend
+UTERI;Wombs
+UTTER;Say
+WEARINESS;Tiredness
+WEBSITE;Online page
+WHENEVER;At any time
+WHEW;Expression of relief
+WRESTLING;Grappling
+YOURS;Belonging to you

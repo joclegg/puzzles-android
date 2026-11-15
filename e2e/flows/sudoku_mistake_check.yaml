@@ -6,6 +6,7 @@ tags:
 - launchApp:
     clearState: true
     arguments:
+      banks: "sudoku"
       helpers: "on"
       fixture: "classic_easy"
 - waitForAnimationToEnd:
@@ -20,13 +21,14 @@ tags:
 - launchApp:
     clearState: true
     arguments:
+      banks: "sudoku"
       helpers: "on"
 - waitForAnimationToEnd:
     timeout: 1500
-- scrollUntilVisible:
-    element:
+- extendedWaitUntil:
+    visible:
       id: "game_sudoku"
-    centerElement: true
+    timeout: 10000
 - tapOn:
     id: "game_sudoku"
 - waitForAnimationToEnd:
@@ -57,10 +59,10 @@ tags:
     stopApp: true
 - waitForAnimationToEnd:
     timeout: 1500
-- scrollUntilVisible:
-    element:
+- extendedWaitUntil:
+    visible:
       id: "game_sudoku"
-    centerElement: true
+    timeout: 10000
 - tapOn:
     id: "game_sudoku"
 - waitForAnimationToEnd:

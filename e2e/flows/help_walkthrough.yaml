@@ -4,6 +4,7 @@ name: How to play walks through the screen one step at a time
 - launchApp:
     clearState: true
     arguments:
+      banks: "sudoku"
       helpers: "on"
       fixture: "classic_easy"
 - waitForAnimationToEnd:
