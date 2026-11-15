@@ -86,7 +86,10 @@ class GameRepositoryTest {
             repository.save(game.copy(entries = game.entries.replaceRange(1, 2, "B"), changes = changes, elapsedMs = 12_000, hints = 2))
 
             // Assert
-            assertEquals(game.copy(entries = game.entries.replaceRange(1, 2, "B"), changes = changes, elapsedMs = 12_000, hints = 2), repository.get(game.id))
+            assertEquals(
+                game.copy(entries = game.entries.replaceRange(1, 2, "B"), changes = changes, elapsedMs = 12_000, hints = 2),
+                repository.get(game.id),
+            )
         }
 
     @Test

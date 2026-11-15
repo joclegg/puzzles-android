@@ -45,7 +45,9 @@ class PuzzlesApplication : Application() {
     val slideOut by lazy { SlideOutDefinition(this) }
     val wordWheel by lazy { WordWheelDefinition(this) }
     val crossword by lazy { CrosswordDefinition(this) }
-    val games: List<GameDefinition> by lazy { listOf(sudoku, solitaire, twoTone, sightlines, fiveLetters, kakuro, slideOut, wordWheel, crossword) }
+    val games: List<GameDefinition> by lazy {
+        listOf(sudoku, solitaire, twoTone, sightlines, fiveLetters, kakuro, slideOut, wordWheel, crossword)
+    }
 
     fun definition(game: PuzzleGame): GameDefinition = games.first { it.game == game }
 

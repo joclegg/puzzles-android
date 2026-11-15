@@ -8,9 +8,9 @@ import com.joclegg.puzzles.core.ui.DailyChoice
 import com.joclegg.puzzles.core.ui.DailyLeft
 import com.joclegg.puzzles.core.ui.DailyResult
 import com.joclegg.puzzles.core.ui.Medal
-import com.joclegg.puzzles.fiveletters.FiveLettersRoutes
 import com.joclegg.puzzles.crossword.CrosswordRoutes
 import com.joclegg.puzzles.crossword.CrosswordRoutes.openCrosswordGame
+import com.joclegg.puzzles.fiveletters.FiveLettersRoutes
 import com.joclegg.puzzles.fiveletters.FiveLettersRoutes.openFiveLettersGame
 import com.joclegg.puzzles.fiveletters.core.data.WordRef
 import com.joclegg.puzzles.kakuro.KakuroRoutes
