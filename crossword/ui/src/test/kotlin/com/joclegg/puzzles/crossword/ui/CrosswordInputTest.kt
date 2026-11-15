@@ -72,7 +72,7 @@ class CrosswordInputTest {
         compose.onNodeWithTag(INPUT_TAG).performTextInput("7-!")
 
         // Assert
-        assertEquals(emptyList(), received)
+        assertEquals(emptyList<BoardInput>(), received)
     }
 
     @OptIn(ExperimentalTestApi::class)
