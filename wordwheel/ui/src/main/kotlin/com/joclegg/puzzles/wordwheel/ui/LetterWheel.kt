@@ -2,8 +2,8 @@ package com.joclegg.puzzles.wordwheel.ui
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.aspectRatio
@@ -64,65 +64,65 @@ fun LetterWheel(
             Modifier
                 .fillMaxSize()
                 .pointerInput(letters) {
-                    detectTapGestures { point ->
-                        val index = letterAt(point)
-                        if (index >= 0 && index !in currentChosen) {
-                            currentOnChange(currentChosen + index)
-                        }
-                    }
-                }.pointerInput(letters) {
-                    var startIndex = -1
-                    var before = emptyList<Int>()
-                    var swiped = false
-
-                    fun restoreTap() {
-                        currentOnChange(
+                    awaitEachGesture {
+                        val down = awaitFirstDown(requireUnconsumed = false)
+                        val startIndex = letterAt(down.position)
+                        val before = currentChosen
+                        val tapped =
                             if (startIndex >= 0 && startIndex !in before) {
                                 before + startIndex
                             } else {
                                 before
-                            },
-                        )
-                    }
-                    detectDragGestures(
-                        onDragStart = { start ->
-                            finger = start
-                            startIndex = letterAt(start)
-                            before = currentChosen
-                            swiped = false
-                            currentOnChange(
-                                if (startIndex >= 0) {
-                                    listOf(startIndex)
+                            }
+                        var path =
+                            if (startIndex >= 0) {
+                                listOf(startIndex)
+                            } else {
+                                emptyList()
+                            }
+                        var dragging = false
+                        var swiped = false
+                        var released = false
+                        try {
+                            while (!released) {
+                                val change = awaitPointerEvent().changes.firstOrNull { it.id == down.id }
+                                if (change == null || !change.pressed) {
+                                    released = true
                                 } else {
-                                    emptyList()
-                                },
-                            )
-                        },
-                        onDragEnd = {
+                                    val sent = path
+                                    if (!dragging && (change.position - down.position).getDistance() > viewConfiguration.touchSlop) {
+                                        dragging = true
+                                        currentOnChange(path)
+                                    }
+                                    if (dragging) {
+                                        (change.historical.map { it.position } + change.position).forEach { point ->
+                                            val index = letterAt(point)
+                                            if (index >= 0 && index != startIndex) {
+                                                swiped = true
+                                            }
+                                            when {
+                                                index < 0 || path.lastOrNull() == index -> Unit
+                                                path.size > 1 && path[path.size - 2] == index -> path = path.dropLast(1)
+                                                index !in path -> path = path + index
+                                            }
+                                        }
+                                        if (path != sent) {
+                                            currentOnChange(path)
+                                        }
+                                        finger = change.position
+                                        change.consume()
+                                    }
+                                }
+                            }
+                        } finally {
                             finger = null
                             if (swiped) {
-                                currentOnEnd()
-                            } else {
-                                restoreTap()
+                                if (released) {
+                                    currentOnEnd()
+                                }
+                            } else if (dragging || (released && tapped != before)) {
+                                currentOnChange(tapped)
                             }
-                        },
-                        onDragCancel = {
-                            finger = null
-                            if (!swiped) {
-                                restoreTap()
-                            }
-                        },
-                    ) { change, _ ->
-                        finger = change.position
-                        val index = letterAt(change.position)
-                        val path = currentChosen
-                        if (index >= 0 && index != startIndex) {
-                            swiped = true
-                        }
-                        when {
-                            index < 0 || path.lastOrNull() == index -> Unit
-                            path.size > 1 && path[path.size - 2] == index -> currentOnChange(path.dropLast(1))
-                            index !in path -> currentOnChange(path + index)
                         }
                     }
                 },
