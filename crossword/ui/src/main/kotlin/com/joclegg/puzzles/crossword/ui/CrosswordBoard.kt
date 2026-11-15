@@ -89,7 +89,13 @@ fun CrosswordBoard(
 ) {
     val colors = LocalCrosswordColors.current
     val size = board.puzzle.size
-    Column(modifier.aspectRatio(1f).background(colors.line).border(1.dp, colors.line).testTag("board")) {
+    Column(
+        modifier
+            .aspectRatio(1f)
+            .background(colors.line)
+            .border(1.dp, colors.line)
+            .testTag("board"),
+    ) {
         for (row in 0 until size) {
             Row(Modifier.fillMaxWidth().weight(1f)) {
                 for (col in 0 until size) {
