@@ -10,10 +10,10 @@ tags:
       helpers: "on"
 - waitForAnimationToEnd:
     timeout: 1500
-- scrollUntilVisible:
-    element:
+- extendedWaitUntil:
+    visible:
       id: "game_sudoku"
-    centerElement: true
+    timeout: 10000
 - tapOn:
     id: "game_sudoku"
 - waitForAnimationToEnd:

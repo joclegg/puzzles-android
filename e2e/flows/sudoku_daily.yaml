@@ -8,10 +8,10 @@ name: Daily puzzle - starts one level's puzzle, and resumes it the same day
       helpers: "on"
 - waitForAnimationToEnd:
     timeout: 1500
-- scrollUntilVisible:
-    element:
+- extendedWaitUntil:
+    visible:
       id: "game_sudoku"
-    centerElement: true
+    timeout: 10000
 - tapOn:
     id: "game_sudoku"
 - waitForAnimationToEnd:
