@@ -227,8 +227,9 @@ fun GameScreen(
             focusBoard()
             onClueClick(clue)
         }
+        val window = LocalWindowInfo.current.containerSize
         BoxWithConstraints(Modifier.weight(1f).fillMaxWidth()) {
-            val wide = maxWidth > maxHeight
+            val wide = window.width > window.height
             val board =
                 @Composable { boardModifier: Modifier ->
                     CrosswordBoard(state.board, onCell, boardModifier)
