@@ -1,5 +1,6 @@
 package com.joclegg.puzzles.crossword.feature.game
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -234,11 +235,18 @@ fun GameScreen(
                         ClueLists(state.acrossClues, state.downClues, state.currentClue, onClue, Modifier.weight(1f))
                     }
                 }
-            } else {
+            } else if (maxHeight > maxWidth + CLUE_LISTS_MIN_HEIGHT) {
                 Column(Modifier.fillMaxSize().padding(horizontal = 8.dp)) {
                     board(Modifier.fillMaxWidth())
                     clueBar(Modifier.fillMaxWidth().padding(vertical = 4.dp))
                     ClueLists(state.acrossClues, state.downClues, state.currentClue, onClue, Modifier.weight(1f))
+                }
+            } else {
+                Column(Modifier.fillMaxSize().padding(horizontal = 8.dp)) {
+                    Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
+                        board(Modifier.fillMaxHeight())
+                    }
+                    clueBar(Modifier.fillMaxWidth().padding(vertical = 4.dp))
                 }
             }
         }
@@ -265,6 +273,8 @@ fun GameScreen(
         SolvedDialog(state, onNewPuzzle, onHome)
     }
 }
+
+private val CLUE_LISTS_MIN_HEIGHT = 120.dp
 
 @Composable
 private fun SolvedDialog(
