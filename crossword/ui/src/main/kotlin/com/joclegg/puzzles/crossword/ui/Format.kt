@@ -8,7 +8,8 @@ fun sizeLabel(size: Int) =
     when (size) {
         11 -> "Small"
         13 -> "Medium"
-        else -> "Large"
+        15 -> "Large"
+        else -> "$size x $size"
     }
 
 fun PuzzleRef.title(): String =
