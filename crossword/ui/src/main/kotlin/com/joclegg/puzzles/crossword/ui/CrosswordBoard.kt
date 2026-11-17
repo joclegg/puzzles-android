@@ -9,11 +9,16 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -21,6 +26,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
@@ -30,12 +36,18 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
+import androidx.compose.ui.unit.min
 import com.joclegg.puzzles.crossword.engine.EMPTY
 import com.joclegg.puzzles.crossword.engine.GameState
 import com.joclegg.puzzles.crossword.engine.Puzzle
 import com.joclegg.puzzles.crossword.engine.Word
 import com.joclegg.puzzles.crossword.engine.enumeration
+import kotlin.math.ceil
+import kotlin.math.floor
+import kotlin.math.roundToInt
 
 @Immutable
 data class BoardUi(
@@ -110,6 +122,69 @@ fun CrosswordBoard(
             }
         }
     }
+}
+
+@Composable
+fun BoardViewport(
+    board: BoardUi,
+    onCellClick: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    BoxWithConstraints(modifier, contentAlignment = Alignment.Center) {
+        val size = board.puzzle.size
+        val side = boardSide(maxWidth, maxHeight, size)
+        if (side <= maxHeight) {
+            CrosswordBoard(board, onCellClick, Modifier.size(side))
+        } else {
+            val scroll = rememberScrollState()
+            val viewportPx = constraints.maxHeight
+            val sidePx = with(LocalDensity.current) { side.roundToPx() }
+            val rows = board.wordCells.map { it / size }
+            val selectedRow = board.selected?.let { it / size }
+            LaunchedEffect(selectedRow, rows, viewportPx, sidePx) {
+                if (selectedRow != null) {
+                    val wordRows = (rows.minOrNull() ?: selectedRow)..(rows.maxOrNull() ?: selectedRow)
+                    scroll.animateScrollTo(boardScroll(scroll.value, viewportPx, sidePx, size, selectedRow, wordRows))
+                }
+            }
+            Box(
+                Modifier
+                    .width(side)
+                    .fillMaxHeight()
+                    .verticalScroll(scroll)
+                    .testTag("board_viewport"),
+            ) {
+                CrosswordBoard(board, onCellClick, Modifier.size(side))
+            }
+        }
+    }
+}
+
+fun boardSide(
+    maxWidth: Dp,
+    maxHeight: Dp,
+    size: Int,
+): Dp = min(maxWidth, max(maxHeight, COMFORTABLE_CELL * size))
+
+internal fun boardScroll(
+    current: Int,
+    viewport: Int,
+    side: Int,
+    size: Int,
+    selectedRow: Int,
+    wordRows: IntRange,
+): Int {
+    val cell = side.toFloat() / size
+    val top = floor(wordRows.first * cell).toInt()
+    val bottom = ceil((wordRows.last + 1) * cell).toInt()
+    val margin = ((viewport - (bottom - top)) / 2).coerceIn(0, cell.roundToInt())
+    val target =
+        if (bottom - top <= viewport) {
+            current.coerceIn(bottom + margin - viewport, top - margin)
+        } else {
+            ((selectedRow + 0.5f) * cell - viewport / 2f).roundToInt()
+        }
+    return target.coerceIn(0, (side - viewport).coerceAtLeast(0))
 }
 
 @Composable
@@ -272,5 +347,6 @@ private fun ClueRow(
     }
 }
 
+private val COMFORTABLE_CELL = 32.dp
 private const val LETTER_FRACTION = 0.55f
 private const val NUMBER_FRACTION = 0.28f

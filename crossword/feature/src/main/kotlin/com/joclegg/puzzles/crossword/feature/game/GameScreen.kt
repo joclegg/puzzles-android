@@ -1,6 +1,5 @@
 package com.joclegg.puzzles.crossword.feature.game
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -47,6 +46,7 @@ import com.joclegg.puzzles.core.ui.WinStat
 import com.joclegg.puzzles.core.ui.formatDuration
 import com.joclegg.puzzles.crossword.feature.R
 import com.joclegg.puzzles.crossword.ui.BoardInput
+import com.joclegg.puzzles.crossword.ui.BoardViewport
 import com.joclegg.puzzles.crossword.ui.ClueBar
 import com.joclegg.puzzles.crossword.ui.ClueLists
 import com.joclegg.puzzles.crossword.ui.ClueUi
@@ -56,6 +56,7 @@ import com.joclegg.puzzles.crossword.ui.CrosswordInput
 import com.joclegg.puzzles.crossword.ui.HintButton
 import com.joclegg.puzzles.crossword.ui.LocalCrosswordColors
 import com.joclegg.puzzles.crossword.ui.ToolButton
+import com.joclegg.puzzles.crossword.ui.boardSide
 import com.joclegg.puzzles.crossword.ui.dialogTestTags
 import kotlinx.coroutines.launch
 
@@ -213,11 +214,13 @@ fun GameScreen(
             }
         }
         HelpersHint(onSettings)
-        Text(
-            state.hintMessage.orEmpty(),
-            style = MaterialTheme.typography.titleSmall,
-            modifier = Modifier.padding(horizontal = 16.dp).testTag("hint_message"),
-        )
+        state.hintMessage?.let {
+            Text(
+                it,
+                style = MaterialTheme.typography.titleSmall,
+                modifier = Modifier.padding(horizontal = 16.dp).testTag("hint_message"),
+            )
+        }
         CrosswordInput(onInput, focusRequester, Modifier.size(1.dp))
         val onCell = { cell: Int ->
             focusBoard()
@@ -229,18 +232,15 @@ fun GameScreen(
         }
         val window = LocalWindowInfo.current.containerSize
         BoxWithConstraints(Modifier.weight(1f).fillMaxWidth()) {
-            val wide = window.width > window.height
-            val board =
-                @Composable { boardModifier: Modifier ->
-                    CrosswordBoard(state.board, onCell, boardModifier)
-                }
+            val wide = window.width > window.height && maxWidth >= WIDE_MIN_WIDTH
             val clueBar =
                 @Composable { barModifier: Modifier ->
                     ClueBar(state.currentClue, onPreviousClue, onNextClue, barModifier)
                 }
             if (wide) {
+                val boardWidth = boardSide(maxWidth / 2, maxHeight - 16.dp, state.board.puzzle.size)
                 Row(Modifier.fillMaxSize().padding(8.dp)) {
-                    board(Modifier.fillMaxHeight())
+                    BoardViewport(state.board, onCell, Modifier.fillMaxHeight().width(boardWidth))
                     Spacer(Modifier.width(8.dp))
                     Column(Modifier.weight(1f)) {
                         clueBar(Modifier.fillMaxWidth())
@@ -249,15 +249,13 @@ fun GameScreen(
                 }
             } else if (maxHeight > maxWidth + CLUE_LISTS_MIN_HEIGHT) {
                 Column(Modifier.fillMaxSize().padding(horizontal = 8.dp)) {
-                    board(Modifier.fillMaxWidth())
+                    CrosswordBoard(state.board, onCell, Modifier.fillMaxWidth())
                     clueBar(Modifier.fillMaxWidth().padding(vertical = 4.dp))
                     ClueLists(state.acrossClues, state.downClues, state.currentClue, onClue, Modifier.weight(1f))
                 }
             } else {
                 Column(Modifier.fillMaxSize().padding(horizontal = 8.dp)) {
-                    Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
-                        board(Modifier.fillMaxHeight())
-                    }
+                    BoardViewport(state.board, onCell, Modifier.weight(1f).fillMaxWidth())
                     clueBar(Modifier.fillMaxWidth().padding(vertical = 4.dp))
                 }
             }
@@ -287,6 +285,7 @@ fun GameScreen(
 }
 
 private val CLUE_LISTS_MIN_HEIGHT = 120.dp
+private val WIDE_MIN_WIDTH = 600.dp
 
 @Composable
 private fun SolvedDialog(
