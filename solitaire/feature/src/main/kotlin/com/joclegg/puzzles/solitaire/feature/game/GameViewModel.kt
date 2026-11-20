@@ -3,6 +3,7 @@ package com.joclegg.puzzles.solitaire.feature.game
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joclegg.puzzles.core.data.GameSession
+import com.joclegg.puzzles.core.ui.dailyDateOf
 import com.joclegg.puzzles.solitaire.core.data.DealRef
 import com.joclegg.puzzles.solitaire.core.data.GameRepository
 import com.joclegg.puzzles.solitaire.core.data.HintStyle
@@ -34,8 +35,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.LocalDate
 
 data class GameUiState(
+    val dailyDate: LocalDate? = null,
     val title: String,
     val table: TableUi,
     val elapsedMs: Long,
@@ -327,6 +330,7 @@ class GameViewModel(
         val deal = saved?.deal ?: return
         _uiState.update {
             GameUiState(
+                dailyDate = dailyDateOf(deal.id),
                 title = deal.title(),
                 table = current.toTableUi(),
                 elapsedMs = session.elapsedMs(),

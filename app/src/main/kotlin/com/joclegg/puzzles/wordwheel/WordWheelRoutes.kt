@@ -71,6 +71,7 @@ object WordWheelRoutes {
                     StatsViewModel(wordWheelStatsSource(container.games))
                 },
                 onBack = navController::popBackStack,
+                shareGroup = "WORD_WHEEL",
                 footnote = WORD_WHEEL_STATS_FOOTNOTE,
             ) { WordWheelStatsTable(it) }
         }

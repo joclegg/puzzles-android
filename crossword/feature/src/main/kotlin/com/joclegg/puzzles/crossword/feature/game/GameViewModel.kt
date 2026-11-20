@@ -3,6 +3,7 @@ package com.joclegg.puzzles.crossword.feature.game
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joclegg.puzzles.core.data.GameSession
+import com.joclegg.puzzles.core.ui.dailyDateOf
 import com.joclegg.puzzles.crossword.core.data.GameRepository
 import com.joclegg.puzzles.crossword.core.data.HintStyle
 import com.joclegg.puzzles.crossword.core.data.PuzzleBank
@@ -30,8 +31,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.LocalDate
 
 data class GameUiState(
+    val dailyDate: LocalDate? = null,
     val title: String,
     val levelLabel: String,
     val board: BoardUi,
@@ -252,6 +255,7 @@ class GameViewModel(
         val clueOf = { word: Word -> current.clueUi(word, clues::clueFor) }
         _uiState.value =
             GameUiState(
+                dailyDate = dailyDateOf(ref.id),
                 title = ref.title(),
                 levelLabel = sizeLabel(ref.size),
                 board = current.toBoardUi(display.showMistakes),

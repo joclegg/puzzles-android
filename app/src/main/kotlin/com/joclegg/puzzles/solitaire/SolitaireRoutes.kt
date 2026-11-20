@@ -81,6 +81,7 @@ object SolitaireRoutes {
                     StatsViewModel(solitaireStatsSource(container.games))
                 },
                 onBack = navController::popBackStack,
+                shareGroup = "SOLITAIRE",
                 spacing = 20.dp,
                 footnote = SOLITAIRE_STATS_FOOTNOTE,
             ) { stats ->

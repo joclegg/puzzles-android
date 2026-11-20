@@ -295,6 +295,7 @@ private fun SolvedDialog(
     modifier: Modifier = Modifier,
 ) {
     WinDialog(
+        dailyDate = state.dailyDate,
         title = stringResource(R.string.solved),
         accent = LocalCrosswordColors.current.accent,
         dailyGroup = "CROSSWORD",

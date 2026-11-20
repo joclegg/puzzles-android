@@ -96,6 +96,8 @@ fun PuzzlesApp(
                 onOpen = { game -> navController.navigate(DailyCalendarRoutes.route(SettingsTab.valueOf(game))) },
                 allGold = app.celebrateAllGolds(medals),
                 onAllGoldShown = app::markAllGoldsCelebrated,
+                shareDailies = { group, date -> dailiesShare(app, shareTab(group), date) },
+                shareRecords = { group -> recordsShare(app, shareTab(group)) },
             )
         }
     val todays by medals.collectAsState(emptyMap())

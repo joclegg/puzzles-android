@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joclegg.puzzles.core.data.Combinations
 import com.joclegg.puzzles.core.data.GameSession
+import com.joclegg.puzzles.core.ui.dailyDateOf
 import com.joclegg.puzzles.kakuro.core.data.GameRepository
 import com.joclegg.puzzles.kakuro.core.data.HintStyle
 import com.joclegg.puzzles.kakuro.core.data.PuzzleBank
@@ -35,8 +36,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.LocalDate
 
 data class GameUiState(
+    val dailyDate: LocalDate? = null,
     val title: String,
     val levelLabel: String,
     val board: BoardUi,
@@ -233,6 +236,7 @@ class GameViewModel(
         val board = current.toBoardUi()
         _uiState.value =
             GameUiState(
+                dailyDate = dailyDateOf(ref.id),
                 showHints = display.showHints,
                 showTutorial = display.showTutorial,
                 allowReveal = display.allowReveal,

@@ -97,6 +97,7 @@ private fun SolvedScreen(
     modifier: Modifier = Modifier,
 ) {
     WinDialog(
+        dailyDate = state.dailyDate,
         title = stringResource(R.string.solved),
         accent = LocalSudokuColors.current.accent,
         dailyGroup = "SUDOKU_${state.mode.name}",

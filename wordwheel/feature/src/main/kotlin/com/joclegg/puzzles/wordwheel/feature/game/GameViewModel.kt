@@ -2,6 +2,7 @@ package com.joclegg.puzzles.wordwheel.feature.game
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.joclegg.puzzles.core.ui.dailyDateOf
 import com.joclegg.puzzles.wordwheel.core.data.GameRepository
 import com.joclegg.puzzles.wordwheel.core.data.PuzzleBank
 import com.joclegg.puzzles.wordwheel.core.data.PuzzleRef
@@ -22,9 +23,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.LocalDate
 import kotlin.random.Random
 
 data class GameUiState(
+    val dailyDate: LocalDate? = null,
     val title: String,
     val levelLabel: String,
     val grid: GridUi,
@@ -203,6 +206,7 @@ class GameViewModel(
                 .toSet()
         _uiState.value =
             GameUiState(
+                dailyDate = dailyDateOf(ref.id),
                 showHints = display.showHints,
                 showTutorial = display.showTutorial,
                 allowReveal = display.allowReveal,

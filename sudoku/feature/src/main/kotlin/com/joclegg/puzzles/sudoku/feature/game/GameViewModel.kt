@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.joclegg.puzzles.core.data.CombinationOrder
 import com.joclegg.puzzles.core.data.Combinations
 import com.joclegg.puzzles.core.data.GameSession
+import com.joclegg.puzzles.core.ui.dailyDateOf
 import com.joclegg.puzzles.sudoku.core.data.DigitCounts
 import com.joclegg.puzzles.sudoku.core.data.GameMode
 import com.joclegg.puzzles.sudoku.core.data.GameRepository
@@ -36,8 +37,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.LocalDate
 
 data class GameUiState(
+    val dailyDate: LocalDate? = null,
     val mode: GameMode,
     val difficulty: Difficulty?,
     val custom: Boolean,
@@ -249,6 +252,7 @@ class GameViewModel(
         val ref = saved?.ref ?: return
         _uiState.update {
             GameUiState(
+                dailyDate = dailyDateOf(ref.id),
                 mode = ref.mode,
                 difficulty = ref.difficulty,
                 custom = ref.custom,

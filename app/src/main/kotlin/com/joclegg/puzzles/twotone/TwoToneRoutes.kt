@@ -64,6 +64,7 @@ object TwoToneRoutes {
                     StatsViewModel(twoToneStatsSource(container.games))
                 },
                 onBack = navController::popBackStack,
+                shareGroup = "TWO_TONE",
                 footnote = TWOTONE_STATS_FOOTNOTE,
             ) { TwoToneStatsTable(it) }
         }

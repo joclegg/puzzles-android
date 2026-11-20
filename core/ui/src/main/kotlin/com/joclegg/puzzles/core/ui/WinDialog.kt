@@ -37,6 +37,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
@@ -45,12 +46,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 data class WinStat(
     val label: String,
@@ -85,6 +89,7 @@ fun WinDialog(
     newTag: String = "win_new",
     onNew: (() -> Unit)? = null,
     onDismissRequest: () -> Unit = {},
+    dailyDate: LocalDate? = null,
     buttons: @Composable () -> Unit,
 ) {
     var dismissed by rememberSaveable { mutableStateOf(false) }
@@ -96,6 +101,8 @@ fun WinDialog(
         onDismissRequest()
     }
     val loadDailies = LocalDailiesLeft.current
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val dailies by produceState(emptyList<DailyLeft>()) { value = loadDailies(dailyGroup) }
     val calendars = LocalDailyCalendars.current
     val allGoldFlow = remember(calendars) { calendars.allGold }
@@ -225,6 +232,14 @@ fun WinDialog(
                 ) {
                     TextButton(onClick = dismiss, modifier = Modifier.testTag("win_view_board")) {
                         Text(stringResource(R.string.view_board))
+                    }
+                    if (dailyDate != null) {
+                        TextButton(
+                            onClick = { scope.launch { calendars.shareDailies(dailyGroup, dailyDate)?.let(context::shareText) } },
+                            modifier = Modifier.testTag("win_share_dailies"),
+                        ) {
+                            Text(stringResource(R.string.share))
+                        }
                     }
                     buttons()
                 }

@@ -86,6 +86,7 @@ object SudokuRoutes {
                     StatsViewModel(sudokuStatsSource(container.games, container.settings))
                 },
                 onBack = navController::popBackStack,
+                shareGroup = "SUDOKU",
                 title = stringResource(R.string.best_times),
                 spacing = 20.dp,
                 footnote = SUDOKU_STATS_FOOTNOTE,
