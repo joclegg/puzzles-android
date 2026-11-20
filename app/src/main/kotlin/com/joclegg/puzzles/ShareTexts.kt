@@ -73,7 +73,10 @@ private class Played(
     val slots: List<Slot>,
     val solved: List<Solved>,
     val withMoves: Boolean = false,
-)
+    val pastBests: Map<String, Long> = emptyMap(),
+) {
+    fun bestFor(size: String): Long? = (solved.filter { it.size == size }.map { it.elapsedMs } + listOfNotNull(pastBests[size])).minOrNull()
+}
 
 fun shareTab(group: String): SettingsTab = CALENDAR_TABS.filter { group.startsWith(it.name) }.maxBy { it.name.length }
 
@@ -129,7 +132,7 @@ suspend fun recordsShare(
                     val onSize = played.solved.filter { it.size == slot.size }
                     ShareRecord(
                         slot.label,
-                        onSize.minOfOrNull { it.elapsedMs },
+                        played.bestFor(slot.size),
                         onSize.mapNotNull { it.moves }.minOrNull().takeIf { played.withMoves },
                     )
                 }
@@ -169,7 +172,7 @@ private suspend fun dailyBody(
         else -> {
             val played = played(app, tab)
             played.slots.map { slot ->
-                val best = played.solved.filter { it.size == slot.size }.minOfOrNull { it.elapsedMs }
+                val best = played.bestFor(slot.size)
                 val game = played.solved.find { it.id == slot.dailyId(date) }
                 dailyLine(ShareDaily(slot.label, game?.elapsedMs, game != null && game.elapsedMs == best, game?.moves))
             }
@@ -258,6 +261,10 @@ private suspend fun played(
                     .first()
                     .filter { it.status == SudokuStatus.COMPLETED && !it.ref.custom && it.ref.difficulty != null }
                     .map { Solved(it.ref.id, "${it.ref.mode.name}_${it.ref.difficulty?.name}", it.elapsedMs) },
+                pastBests =
+                    app.sudoku.games.bestTimes
+                        .first()
+                        .associate { "${it.mode.name}_${it.difficulty.name}" to it.bestMs },
             )
         }
     }

@@ -88,7 +88,7 @@ class ShareTextTest {
 
         // Assert
         assertEquals(listOf("Fastest win 2:05", "Fewest moves 98"), lines)
-        assertEquals("2 wins · 67% · 🔥 1 · longest 🔥 4", summary)
+        assertEquals("2 wins · 66% · 🔥 1 · longest 🔥 4", summary)
     }
 
     @Test

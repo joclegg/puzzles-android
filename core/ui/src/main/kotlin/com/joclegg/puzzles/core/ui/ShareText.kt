@@ -98,7 +98,7 @@ fun solitaireSummary(
         if (played == 0) {
             0
         } else {
-            (wins * 100.0 / played).roundToInt()
+            wins * 100 / played
         }
     return "$wins wins · $percent% · 🔥 $streak · longest 🔥 $longest"
 }
