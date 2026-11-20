@@ -25,6 +25,7 @@ import com.joclegg.puzzles.sudoku.core.data.DailyIds
 import com.joclegg.puzzles.sudoku.core.data.GameMode
 import com.joclegg.puzzles.sudoku.core.data.levels
 import kotlinx.coroutines.flow.first
+import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import com.joclegg.puzzles.crossword.core.data.GameStatus as CrosswordStatus
@@ -161,7 +162,11 @@ private suspend fun dailyBody(
                     .first()
                     .filter { it.status == FiveLettersStatus.WON || it.status == FiveLettersStatus.LOST }
             val daily = finished.find { it.ref.id == WordRef.dailyId(date) }
-            val daily2 = finished.find { WordRef.daily2DateOf(it.ref.id) == date }
+            val daily2 =
+                finished.find { game ->
+                    WordRef.daily2DateOf(game.ref.id) == date &&
+                        game.finishedAt?.let { Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate() } == date
+                }
             listOfNotNull(
                 daily?.let { GameState(it.ref.answer, it.guesses, hardMode = it.hardMode).shareText(it.ref.title()) }
                     ?: dailyLine(ShareDaily("Puzzles daily", null)),
