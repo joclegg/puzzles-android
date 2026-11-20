@@ -143,7 +143,10 @@ if [[ -z "$APK" ]]; then
 fi
 INSTALLS=()
 for serial in "${DEVICES[@]}"; do
-  adb -s "$serial" install -r "$APK" >/dev/null &
+  {
+    adb -s "$serial" uninstall com.joclegg.puzzles >/dev/null 2>&1 || true
+    adb -s "$serial" install "$APK" >/dev/null
+  } &
   INSTALLS+=($!)
 done
 for pid in "${INSTALLS[@]}"; do wait "$pid"; done
