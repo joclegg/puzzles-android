@@ -71,6 +71,7 @@ object CrosswordRoutes {
                     StatsViewModel(crosswordStatsSource(container.games))
                 },
                 onBack = navController::popBackStack,
+                shareGroup = "CROSSWORD",
                 footnote = CROSSWORD_STATS_FOOTNOTE,
             ) { CrosswordStatsTable(it) }
         }

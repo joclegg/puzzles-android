@@ -71,6 +71,7 @@ object KakuroRoutes {
                     StatsViewModel(kakuroStatsSource(container.games))
                 },
                 onBack = navController::popBackStack,
+                shareGroup = "KAKURO",
                 footnote = KAKURO_STATS_FOOTNOTE,
             ) { KakuroStatsTable(it) }
         }

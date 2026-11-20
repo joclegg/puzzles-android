@@ -71,6 +71,7 @@ object SlideOutRoutes {
                     StatsViewModel(slideOutStatsSource(container.games))
                 },
                 onBack = navController::popBackStack,
+                shareGroup = "SLIDE_OUT",
                 footnote = SLIDE_OUT_STATS_FOOTNOTE,
             ) { SlideOutStatsTable(it) }
         }

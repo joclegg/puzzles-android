@@ -57,6 +57,8 @@ data class DailyCalendars(
     val onOpen: (String) -> Unit,
     val allGold: Flow<Boolean> = flowOf(false),
     val onAllGoldShown: () -> Unit = {},
+    val shareDailies: suspend (String, LocalDate) -> String? = { _, _ -> null },
+    val shareRecords: suspend (String) -> String? = { null },
 )
 
 data class DailyChoice(
@@ -129,13 +131,19 @@ fun DailyCalendarScreen(
     onDayClick: (LocalDate) -> Unit,
     onDismissChoices: () -> Unit,
     modifier: Modifier = Modifier,
+    onShare: (() -> Unit)? = null,
 ) {
     var month by rememberSaveable { mutableStateOf(YearMonth.from(today)) }
     val locale = LocalConfiguration.current.locales[0]
     Column(modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             backButton()
-            Text(stringResource(R.string.daily_calendar), style = MaterialTheme.typography.headlineMedium)
+            Text(stringResource(R.string.daily_calendar), style = MaterialTheme.typography.headlineMedium, modifier = Modifier.weight(1f))
+            if (onShare != null) {
+                TextButton(onClick = onShare, modifier = Modifier.testTag("calendar_share")) {
+                    Text(stringResource(R.string.share))
+                }
+            }
         }
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             TextButton(onClick = { month = month.minusMonths(1) }, modifier = Modifier.testTag("month_previous")) { Text("‹") }

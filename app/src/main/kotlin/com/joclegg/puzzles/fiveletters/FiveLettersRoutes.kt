@@ -73,6 +73,7 @@ object FiveLettersRoutes {
                     StatsViewModel(fiveLettersStatsSource(container.games))
                 },
                 onBack = navController::popBackStack,
+                shareGroup = "FIVE_LETTERS",
                 spacing = 16.dp,
             ) { FiveLettersStatsPanels(it) }
         }

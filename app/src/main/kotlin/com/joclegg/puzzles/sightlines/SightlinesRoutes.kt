@@ -64,6 +64,7 @@ object SightlinesRoutes {
                     StatsViewModel(sightlinesStatsSource(container.games))
                 },
                 onBack = navController::popBackStack,
+                shareGroup = "SIGHTLINES",
                 footnote = SIGHTLINES_STATS_FOOTNOTE,
             ) { SightlinesStatsTable(it) }
         }

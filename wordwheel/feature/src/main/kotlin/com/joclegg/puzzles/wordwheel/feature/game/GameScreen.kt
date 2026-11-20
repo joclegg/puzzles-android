@@ -206,6 +206,7 @@ private fun SolvedDialog(
     modifier: Modifier = Modifier,
 ) {
     WinDialog(
+        dailyDate = state.dailyDate,
         title = stringResource(R.string.solved),
         accent = LocalWordWheelColors.current.accent,
         dailyGroup = "WORD_WHEEL",

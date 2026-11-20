@@ -201,6 +201,7 @@ private fun SolvedDialog(
     modifier: Modifier = Modifier,
 ) {
     WinDialog(
+        dailyDate = state.dailyDate,
         title = stringResource(R.string.solved),
         accent = LocalSlideOutColors.current.accent,
         dailyGroup = "SLIDE_OUT",

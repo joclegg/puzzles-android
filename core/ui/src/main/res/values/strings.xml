@@ -1,6 +1,7 @@
 <resources>
     <string name="all">All</string>
     <string name="back">Back</string>
+    <string name="share">Share</string>
     <string name="close">Close</string>
     <string name="continue_label">Continue</string>
     <string name="customise_helpers">Customise helpers</string>

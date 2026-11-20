@@ -3,6 +3,7 @@ package com.joclegg.puzzles.slideout.feature.game
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joclegg.puzzles.core.data.GameSession
+import com.joclegg.puzzles.core.ui.dailyDateOf
 import com.joclegg.puzzles.slideout.core.data.GameRepository
 import com.joclegg.puzzles.slideout.core.data.PuzzleBank
 import com.joclegg.puzzles.slideout.core.data.PuzzleRef
@@ -23,8 +24,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.LocalDate
 
 data class GameUiState(
+    val dailyDate: LocalDate? = null,
     val title: String,
     val levelLabel: String,
     val board: BoardUi,
@@ -199,6 +202,7 @@ class GameViewModel(
         val ref = saved?.ref ?: return
         _uiState.value =
             GameUiState(
+                dailyDate = dailyDateOf(ref.id),
                 showHints = display.showHints,
                 showTutorial = display.showTutorial,
                 allowReveal = display.allowReveal,

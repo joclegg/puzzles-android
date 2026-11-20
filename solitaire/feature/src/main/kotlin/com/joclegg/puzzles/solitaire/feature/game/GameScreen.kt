@@ -237,6 +237,7 @@ private fun WonDialog(
     modifier: Modifier = Modifier,
 ) {
     WinDialog(
+        dailyDate = state.dailyDate,
         title = stringResource(R.string.you_won),
         accent = LocalSolitaireColors.current.accent,
         dailyGroup = "SOLITAIRE",
