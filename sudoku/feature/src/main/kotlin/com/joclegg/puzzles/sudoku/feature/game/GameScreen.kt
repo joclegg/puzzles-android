@@ -310,9 +310,16 @@ private fun tutorial(digitFirst: Boolean): List<TourStep> =
             TourStep("board", "Tap a cell to select it. Shaded cells are givens and can't change.")
         },
         if (digitFirst) {
-            TourStep("pad", "Pick a number, then tap cells to place it. The pencil puts numbers in as notes, the eraser clears a cell.")
+            TourStep(
+                "pad",
+                "Pick a number, then tap cells to place it. The pencil puts numbers in as notes. " +
+                    "The eraser and Mark are modes: tap cells to clear them or box them in red, tap the tool again to stop.",
+            )
         } else {
-            TourStep("pad", "Tap a cell, then a number to place it. The pencil puts numbers in as notes, the eraser clears a cell.")
+            TourStep(
+                "pad",
+                "Tap a cell, then a number to place it. The pencil puts numbers in as notes, the eraser clears a cell and Mark boxes it in red.",
+            )
         },
         TourStep("hint", "Stuck? The bulb points at a cell you can fill next and says why."),
         TourStep("menu", "Restart, show the solution and settings live in this menu."),
