@@ -1,5 +1,8 @@
 package com.joclegg.puzzles.sudoku.engine
 
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -58,5 +61,43 @@ class HintTest {
 
         // Assert
         assertEquals(hint.digit, placed.values[hint.cell])
+    }
+
+    @ParameterizedTest
+    @MethodSource("noteCases")
+    fun `given other cells noted with their candidates when the fallback hint is asked for then covered cells are skipped`(
+        notesOf: (Int) -> Int,
+        expectHinted: Boolean,
+    ) {
+        // Arrange
+        val empty = game.values.indices.filter { game.values[it] == 0 }
+        val target = empty.first { Integer.bitCount(candidatesOf(it)) >= 2 }
+        val notes = game.notes.toMutableList()
+        empty.forEach { notes[it] = candidatesOf(it) }
+        notes[target] = notesOf(candidatesOf(target))
+
+        // Act
+        val hint = game.copy(notes = notes).fewestCandidatesHint()!!
+
+        // Assert
+        if (expectHinted) {
+            assertEquals(listOf(target, true), listOf(hint.cell, hint.message.startsWith("This cell can only be")))
+        } else {
+            assertEquals("This one is the ${easyPuzzle.solution!![hint.cell]}.", hint.message)
+        }
+    }
+
+    private fun candidatesOf(cell: Int): Int =
+        easyPuzzle.grid.peers[cell].fold(easyPuzzle.grid.allDigits) { mask, peer -> mask and digitBit(game.values[peer]).inv() }
+
+    companion object {
+        @JvmStatic
+        fun noteCases(): List<Arguments> =
+            listOf(
+                Arguments.of({ _: Int -> 0 }, true),
+                Arguments.of({ candidates: Int -> candidates or easyPuzzle.grid.allDigits }, true),
+                Arguments.of({ candidates: Int -> candidates }, false),
+                Arguments.of({ candidates: Int -> Integer.lowestOneBit(candidates) }, false),
+            )
     }
 }

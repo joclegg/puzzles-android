@@ -135,7 +135,7 @@ fun GameScreen(
                 )
             }
             if (state.showTutorial) {
-                HowToPlayButton(RULES, TUTORIAL, tour)
+                HowToPlayButton(rules(state.pickColour), tutorial(state.pickColour), tour)
             }
             Column {
                 IconButton(onClick = { menuOpen = true }, modifier = Modifier.testTag("game_menu").tourTarget(tour, "menu")) {
@@ -248,17 +248,28 @@ private fun SolvedDialog(
     }
 }
 
-private val RULES =
+private fun rules(pickColour: Boolean): List<String> =
     listOf(
-        "Fill every dot blue or red. Tap a dot to cycle it: blue, red, empty.",
+        if (pickColour) {
+            "Fill every dot blue or red. Choose a colour under the board, then tap dots to paint them."
+        } else {
+            "Fill every dot blue or red. Tap a dot to cycle it: blue, red, empty."
+        },
         "Blue dots can see other blue dots in their own row and column. Red dots block the view.",
         "A number says how many blue dots that dot can see.",
         "Every blue dot must see at least one other.",
     )
 
-private val TUTORIAL =
+private fun tutorial(pickColour: Boolean): List<TourStep> =
     listOf(
-        TourStep("board", "Tap a dot to cycle it blue, red, empty. A number says how many blue dots it can see; red dots block the view."),
-        TourStep("hint", "Stuck? The bulb shows you the next step."),
-        TourStep("menu", "Restart, show the solution and settings live in this menu."),
+        TourStep(
+            "board",
+            if (pickColour) {
+                "Choose a colour under the board, then tap dots to paint them."
+            } else {
+                "Tap a dot to cycle it: blue, red, empty."
+            } + " A number says how many blue dots it can see; red dots block the view.",
+        ),
+        TourStep("hint", "Stuck? The bulb points at the next step and explains it."),
+        TourStep("menu", "Restart, new puzzle, show the solution and settings live in this menu."),
     )

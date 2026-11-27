@@ -147,7 +147,7 @@ fun GameScreen(
                 )
             }
             if (state.showTutorial) {
-                HowToPlayButton(RULES, TUTORIAL, tour)
+                HowToPlayButton(rules(state.pickColour), tutorial(state.pickColour), tour)
             }
             Column {
                 IconButton(onClick = { menuOpen = true }, modifier = Modifier.testTag("game_menu").tourTarget(tour, "menu")) {
@@ -264,20 +264,28 @@ private fun SolvedDialog(
     }
 }
 
-private val RULES =
+private fun rules(pickColour: Boolean): List<String> =
     listOf(
-        "Fill every tile red or blue. Tap a tile to cycle it: red, blue, empty.",
+        if (pickColour) {
+            "Fill every tile red or blue. Choose a colour under the board, then tap tiles to paint them."
+        } else {
+            "Fill every tile red or blue. Tap a tile to cycle it: red, blue, empty."
+        },
         "No three tiles of the same colour next to each other in a row or column.",
         "Every row and column has as many red tiles as blue.",
         "No two rows are the same, and no two columns are the same.",
     )
 
-private val TUTORIAL =
+private fun tutorial(pickColour: Boolean): List<TourStep> =
     listOf(
         TourStep(
             "board",
-            "Tap a tile to cycle it red, blue, empty. No three of a colour in a line, and each row and column is half red, half blue.",
+            if (pickColour) {
+                "Choose a colour under the board, then tap tiles to paint them."
+            } else {
+                "Tap a tile to cycle it: red, blue, empty."
+            } + " No three of a colour in a line, and each row and column is half red, half blue.",
         ),
-        TourStep("hint", "Stuck? The bulb shows you the next step."),
-        TourStep("menu", "Restart, show the solution and settings live in this menu."),
+        TourStep("hint", "Stuck? The bulb points at the next step and explains it."),
+        TourStep("menu", "Restart, new puzzle, show the solution and settings live in this menu."),
     )

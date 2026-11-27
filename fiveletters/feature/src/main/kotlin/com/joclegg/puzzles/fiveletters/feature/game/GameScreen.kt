@@ -237,7 +237,7 @@ private val TUTORIAL =
             "board",
             "Guess the word in six tries. Green is the right letter in the right place, yellow is in the word but elsewhere, grey is not in it.",
         ),
-        TourStep("keyboard", "Type with these keys, then press Enter."),
+        TourStep("keyboard", "Type with these keys, then press Enter. Delete is on the left."),
         TourStep("hint", "Stuck? The bulb tells you one letter and where it goes."),
         TourStep("menu", "Show the word and settings live in this menu."),
     )

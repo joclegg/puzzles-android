@@ -128,7 +128,7 @@ fun GameScreen(
                 HintButton(onHint, enabled = !state.won, modifier = Modifier.tourTarget(tour, "hint"))
             }
             if (state.showTutorial) {
-                HowToPlayButton(RULES, TUTORIAL, tour)
+                HowToPlayButton(rules(state.oneTapMove), TUTORIAL, tour)
             }
             Column {
                 IconButton(onClick = { menuOpen = true }, modifier = Modifier.testTag("game_menu").tourTarget(tour, "menu")) {
@@ -256,12 +256,16 @@ private fun WonDialog(
     }
 }
 
-private val RULES =
+private fun rules(oneTapMove: Boolean): List<String> =
     listOf(
         "Move every card up to the four foundations, Ace to King.",
         "In the columns, build down in alternating colours. Any face-up run can move together.",
         "Only a King can fill an empty column.",
-        "Tap a card to send it to the best place, or drag it.",
+        if (oneTapMove) {
+            "Tap a card to send it to the best place, or drag it."
+        } else {
+            "Tap a card, then where it should go, or drag it."
+        },
     )
 
 private val TUTORIAL =

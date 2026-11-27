@@ -7,7 +7,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -36,8 +39,8 @@ import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.addPathNodes
-import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionOnScreen
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
@@ -45,6 +48,7 @@ import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupPositionProvider
 import androidx.compose.ui.window.PopupProperties
@@ -65,7 +69,7 @@ fun rememberTourState(): TourState = remember { TourState() }
 fun Modifier.tourTarget(
     tour: TourState,
     key: String,
-): Modifier = onGloballyPositioned { tour.bounds[key] = it.boundsInWindow() }
+): Modifier = onGloballyPositioned { tour.bounds[key] = Rect(it.positionOnScreen(), it.size.toSize()) }
 
 @Composable
 fun HintButton(
@@ -96,7 +100,7 @@ fun HowToPlayButton(
             modifier = Modifier.dialogTestTags(),
             title = { Text(stringResource(R.string.how_to_play)) },
             text = {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     rules.forEach { Text(it) }
                 }
             },
@@ -129,11 +133,12 @@ private fun Walkthrough(
     val step = steps[index]
     val last = index == steps.lastIndex
     val highlight = MaterialTheme.colorScheme.primary
+    var origin by remember { mutableStateOf(Offset.Zero) }
     Popup(popupPositionProvider = WindowOrigin, onDismissRequest = onClose, properties = PopupProperties(focusable = true)) {
-        Box(Modifier.fillMaxSize().dialogTestTags()) {
+        Box(Modifier.fillMaxSize().onGloballyPositioned { origin = it.positionOnScreen() }.dialogTestTags()) {
             Canvas(Modifier.fillMaxSize()) {
                 drawRect(Color.Black.copy(alpha = 0.4f))
-                tour.bounds[step.target]?.let { target ->
+                tour.bounds[step.target]?.translate(-origin)?.let { target ->
                     drawRoundRect(
                         color = highlight,
                         topLeft = Offset(target.left - PAD, target.top - PAD),
@@ -147,6 +152,7 @@ private fun Walkthrough(
                 Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
+                    .navigationBarsPadding()
                     .padding(16.dp)
                     .testTag("walkthrough"),
             ) {

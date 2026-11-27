@@ -126,7 +126,7 @@ fun GameScreen(
                 HintButton(onHint, enabled = !state.solved, modifier = Modifier.tourTarget(tour, "hint"))
             }
             if (state.showTutorial) {
-                HowToPlayButton(RULES, TUTORIAL, tour)
+                HowToPlayButton(RULES, tutorial(state.digitFirst), tour)
             }
             Column {
                 IconButton(onClick = { menuOpen = true }, modifier = Modifier.testTag("game_menu").tourTarget(tour, "menu")) {
@@ -186,7 +186,7 @@ fun GameScreen(
         Spacer(Modifier.weight(1f))
         NumberPad(
             onDigitClick,
-            Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 16.dp),
+            Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 16.dp).tourTarget(tour, "pad"),
             activeDigit = state.activeDigit,
             doneDigits = state.doneDigits,
             tools =
@@ -283,9 +283,14 @@ private val RULES =
         "A digit can't repeat within a run.",
     )
 
-private val TUTORIAL =
+private fun tutorial(digitFirst: Boolean): List<TourStep> =
     listOf(
         TourStep("board", "Each white cell takes a digit from 1 to 9. A clue is the sum of the run to its right or below it."),
-        TourStep("hint", "Stuck? The bulb shows you the next step."),
-        TourStep("menu", "Restart, show the solution and settings live in this menu."),
+        if (digitFirst) {
+            TourStep("pad", "Pick a number, then tap cells to place it. The pencil puts numbers in as notes, the eraser clears a cell.")
+        } else {
+            TourStep("pad", "Tap a cell, then a number to place it. The pencil puts numbers in as notes, the eraser clears a cell.")
+        },
+        TourStep("hint", "Stuck? The bulb points at a cell you can work out and says why."),
+        TourStep("menu", "Restart, new puzzle, show the solution and settings live in this menu."),
     )

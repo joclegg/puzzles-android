@@ -54,10 +54,14 @@ import com.joclegg.puzzles.crossword.ui.CrosswordBoard
 import com.joclegg.puzzles.crossword.ui.CrosswordIcons
 import com.joclegg.puzzles.crossword.ui.CrosswordInput
 import com.joclegg.puzzles.crossword.ui.HintButton
+import com.joclegg.puzzles.crossword.ui.HowToPlayButton
 import com.joclegg.puzzles.crossword.ui.LocalCrosswordColors
 import com.joclegg.puzzles.crossword.ui.ToolButton
+import com.joclegg.puzzles.crossword.ui.TourStep
 import com.joclegg.puzzles.crossword.ui.boardSide
 import com.joclegg.puzzles.crossword.ui.dialogTestTags
+import com.joclegg.puzzles.crossword.ui.rememberTourState
+import com.joclegg.puzzles.crossword.ui.tourTarget
 import kotlinx.coroutines.launch
 
 @Composable
@@ -119,6 +123,7 @@ fun GameScreen(
 ) {
     var menuOpen by remember { mutableStateOf(false) }
     var revealing by remember { mutableStateOf(false) }
+    val tour = rememberTourState()
     val focusRequester = remember { FocusRequester() }
     val keyboard = LocalSoftwareKeyboardController.current
     val focusBoard: () -> Unit = {
@@ -152,10 +157,11 @@ fun GameScreen(
             ToolButton(CrosswordIcons.Undo, stringResource(R.string.undo), onUndo, tag = "undo", enabled = state.canUndo)
             ToolButton(CrosswordIcons.Redo, stringResource(R.string.redo), onRedo, tag = "redo", enabled = state.canRedo)
             if (state.showHints) {
-                HintButton(onHint, enabled = !state.solved && !state.revealed)
+                HintButton(onHint, enabled = !state.solved && !state.revealed, modifier = Modifier.tourTarget(tour, "hint"))
             }
+            HowToPlayButton(RULES, TUTORIAL, tour)
             Column {
-                IconButton(onClick = { menuOpen = true }, modifier = Modifier.testTag("game_menu")) {
+                IconButton(onClick = { menuOpen = true }, modifier = Modifier.testTag("game_menu").tourTarget(tour, "menu")) {
                     Icon(CrosswordIcons.More, contentDescription = stringResource(R.string.more))
                 }
                 DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }, modifier = Modifier.dialogTestTags()) {
@@ -235,12 +241,12 @@ fun GameScreen(
             val wide = window.width > window.height && maxWidth >= WIDE_MIN_WIDTH
             val clueBar =
                 @Composable { barModifier: Modifier ->
-                    ClueBar(state.currentClue, onPreviousClue, onNextClue, barModifier)
+                    ClueBar(state.currentClue, onPreviousClue, onNextClue, barModifier.tourTarget(tour, "clue"))
                 }
             if (wide) {
                 val boardWidth = boardSide(maxWidth / 2, maxHeight - 16.dp, state.board.puzzle.size)
                 Row(Modifier.fillMaxSize().padding(8.dp)) {
-                    BoardViewport(state.board, onCell, Modifier.fillMaxHeight().width(boardWidth))
+                    BoardViewport(state.board, onCell, Modifier.tourTarget(tour, "board").fillMaxHeight().width(boardWidth))
                     Spacer(Modifier.width(8.dp))
                     Column(Modifier.weight(1f)) {
                         clueBar(Modifier.fillMaxWidth())
@@ -249,13 +255,13 @@ fun GameScreen(
                 }
             } else if (maxHeight > maxWidth + CLUE_LISTS_MIN_HEIGHT) {
                 Column(Modifier.fillMaxSize().padding(horizontal = 8.dp)) {
-                    CrosswordBoard(state.board, onCell, Modifier.fillMaxWidth())
+                    CrosswordBoard(state.board, onCell, Modifier.tourTarget(tour, "board").fillMaxWidth())
                     clueBar(Modifier.fillMaxWidth().padding(vertical = 4.dp))
                     ClueLists(state.acrossClues, state.downClues, state.currentClue, onClue, Modifier.weight(1f))
                 }
             } else {
                 Column(Modifier.fillMaxSize().padding(horizontal = 8.dp)) {
-                    BoardViewport(state.board, onCell, Modifier.weight(1f).fillMaxWidth())
+                    BoardViewport(state.board, onCell, Modifier.weight(1f).fillMaxWidth().tourTarget(tour, "board"))
                     clueBar(Modifier.fillMaxWidth().padding(vertical = 4.dp))
                 }
             }
@@ -283,6 +289,21 @@ fun GameScreen(
         SolvedDialog(state, onNewPuzzle, onHome)
     }
 }
+
+private val RULES =
+    listOf(
+        "Fill the grid with the answers to the clues.",
+        "Tap a cell to pick it. Tap it again to switch between across and down.",
+        "Type the answer with the keyboard.",
+    )
+
+private val TUTORIAL =
+    listOf(
+        TourStep("board", "Tap a cell to pick it. Tap it again to switch between across and down, then type the answer."),
+        TourStep("clue", "This is the clue for the word you're on. The arrows move to the previous or next clue."),
+        TourStep("hint", "Stuck? The bulb points at the next step and explains it."),
+        TourStep("menu", "Restart, new puzzle, reveal a letter, word or the puzzle, and settings live in this menu."),
+    )
 
 private val CLUE_LISTS_MIN_HEIGHT = 120.dp
 private val WIDE_MIN_WIDTH = 600.dp
