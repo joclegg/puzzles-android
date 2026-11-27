@@ -301,7 +301,7 @@ private val TUTORIAL =
     listOf(
         TourStep("board", "Tap a cell to pick it. Tap it again to switch between across and down, then type the answer."),
         TourStep("clue", "This is the clue for the word you're on. The arrows move to the previous or next clue."),
-        TourStep("hint", "Stuck? The bulb points at the next step and explains it."),
+        TourStep("hint", "Stuck? The bulb tells you one letter and where it goes."),
         TourStep("menu", "Restart, new puzzle, reveal a letter, word or the puzzle, and settings live in this menu."),
     )
 
