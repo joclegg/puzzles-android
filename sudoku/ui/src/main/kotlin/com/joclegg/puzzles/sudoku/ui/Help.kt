@@ -7,8 +7,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
@@ -118,8 +118,9 @@ fun HowToPlayButton(
             },
         )
     }
-    if (walking) {
-        Walkthrough(steps, tour, onClose = { walking = false })
+    val shown = steps.filter { it.target in tour.bounds }
+    if (walking && shown.isNotEmpty()) {
+        Walkthrough(shown, tour, onClose = { walking = false })
     }
 }
 
@@ -134,11 +135,26 @@ private fun Walkthrough(
     val last = index == steps.lastIndex
     val highlight = MaterialTheme.colorScheme.primary
     var origin by remember { mutableStateOf(Offset.Zero) }
+    var height by remember { mutableIntStateOf(0) }
+    val target = tour.bounds[step.target]?.translate(-origin)
+    val cardAlignment =
+        if (target != null && target.top > height / 2f) {
+            Alignment.TopCenter
+        } else {
+            Alignment.BottomCenter
+        }
     Popup(popupPositionProvider = WindowOrigin, onDismissRequest = onClose, properties = PopupProperties(focusable = true)) {
-        Box(Modifier.fillMaxSize().onGloballyPositioned { origin = it.positionOnScreen() }.dialogTestTags()) {
+        Box(
+            Modifier
+                .fillMaxSize()
+                .onGloballyPositioned {
+                    origin = it.positionOnScreen()
+                    height = it.size.height
+                }.dialogTestTags(),
+        ) {
             Canvas(Modifier.fillMaxSize()) {
                 drawRect(Color.Black.copy(alpha = 0.4f))
-                tour.bounds[step.target]?.translate(-origin)?.let { target ->
+                target?.let { target ->
                     drawRoundRect(
                         color = highlight,
                         topLeft = Offset(target.left - PAD, target.top - PAD),
@@ -150,9 +166,9 @@ private fun Walkthrough(
             }
             Card(
                 Modifier
-                    .align(Alignment.BottomCenter)
+                    .align(cardAlignment)
                     .fillMaxWidth()
-                    .navigationBarsPadding()
+                    .systemBarsPadding()
                     .padding(16.dp)
                     .testTag("walkthrough"),
             ) {
