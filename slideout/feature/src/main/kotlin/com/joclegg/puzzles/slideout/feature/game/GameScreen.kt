@@ -243,6 +243,6 @@ private val RULES =
 private val TUTORIAL =
     listOf(
         TourStep("board", "Drag a block along its length to slide it. Free the red block through the gap on the right."),
-        TourStep("hint", "Stuck? The bulb shows you the next step."),
-        TourStep("menu", "Restart, show the solution and settings live in this menu."),
+        TourStep("hint", "Stuck? The bulb highlights the block to move next."),
+        TourStep("menu", "Restart, new puzzle, show the solution and settings live in this menu."),
     )

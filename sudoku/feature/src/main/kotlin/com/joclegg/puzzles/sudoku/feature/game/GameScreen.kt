@@ -290,7 +290,7 @@ private fun GameHeader(
                 HintButton(onHint, enabled = !state.completed && !state.revealed, modifier = Modifier.tourTarget(tour, "hint"))
             }
             if (state.showTutorial) {
-                HowToPlayButton(RULES, TUTORIAL, tour)
+                HowToPlayButton(RULES, tutorial(state.inputMode == InputMode.DIGIT_FIRST), tour)
             }
         }
     }
@@ -302,10 +302,25 @@ private val RULES =
         "In killer sudoku the numbers in each dashed cage also add up to its total, with no number repeated in a cage.",
     )
 
-private val TUTORIAL =
+private fun tutorial(digitFirst: Boolean): List<TourStep> =
     listOf(
-        TourStep("board", "Tap a cell to select it. Shaded cells are givens and can't change."),
-        TourStep("pad", "Then tap a number to place it. The pencil puts numbers in as notes, the eraser clears a cell."),
+        if (digitFirst) {
+            TourStep("board", "Shaded cells are givens and can't change.")
+        } else {
+            TourStep("board", "Tap a cell to select it. Shaded cells are givens and can't change.")
+        },
+        if (digitFirst) {
+            TourStep(
+                "pad",
+                "Pick a number, then tap cells to place it. The pencil puts numbers in as notes. " +
+                    "The eraser and Mark are modes: tap cells to clear them or box them in red, tap the tool again to stop.",
+            )
+        } else {
+            TourStep(
+                "pad",
+                "Tap a cell, then a number to place it. The pencil puts numbers in as notes, the eraser clears a cell and Mark boxes it in red.",
+            )
+        },
         TourStep("hint", "Stuck? The bulb points at a cell you can fill next and says why."),
         TourStep("menu", "Restart, show the solution and settings live in this menu."),
     )

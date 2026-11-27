@@ -19,8 +19,6 @@ name: Slide Out - the rules open and the walkthrough steps through
     text: "Drag a block.*"
 - tapOn:
     id: "walkthrough_next"
-- tapOn:
-    id: "walkthrough_next"
 - assertVisible:
     id: "walkthrough_text"
     text: "Restart.*"

@@ -1,5 +1,9 @@
 package com.joclegg.puzzles.kakuro.engine
 
+import com.joclegg.puzzles.core.data.Combinations
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -65,5 +69,36 @@ class HintTest {
 
         // Assert
         assertEquals(small.solution, revealed.values)
+    }
+
+    @ParameterizedTest
+    @MethodSource("noteCases")
+    fun `given other cells noted with their candidates when the fallback hint is asked for then covered cells are skipped`(
+        targetNotes: Int,
+        expected: Hint,
+    ) {
+        // Arrange
+        val oneOrTwo = Combinations.bit(1) or Combinations.bit(2)
+        val notes = listOf(0, 0, 0, 0, targetNotes, oneOrTwo, 0, oneOrTwo, oneOrTwo)
+
+        // Act
+        val hint = GameState(ambiguous).copy(notes = notes).fewestCandidatesHint()
+
+        // Assert
+        assertEquals(expected, hint)
+    }
+
+    companion object {
+        private val ambiguous = Puzzle(size = 3, solution = listOf(0, 0, 0, 0, 1, 2, 0, 2, 1))
+        private const val ALLOWED = "This cell's across run (3 in 2) and down run (3 in 2) only allow 1 or 2."
+
+        @JvmStatic
+        fun noteCases(): List<Arguments> =
+            listOf(
+                Arguments.of(0, Hint(4, 1, ALLOWED)),
+                Arguments.of(Combinations.bit(1) or Combinations.bit(2) or Combinations.bit(3), Hint(4, 1, ALLOWED)),
+                Arguments.of(Combinations.bit(1) or Combinations.bit(2), Hint(4, 1, "This one is the 1.")),
+                Arguments.of(Combinations.bit(2), Hint(4, 1, "This one is the 1.")),
+            )
     }
 }

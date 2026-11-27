@@ -44,10 +44,14 @@ fun GameState.findHint(): Hint? {
 fun GameState.fewestCandidatesHint(): Hint? {
     val grid = puzzle.grid
     val solution = puzzle.solution ?: return null
+    val empty = values.indices.filter { values[it] == 0 }
+    val useful = empty.filter { notes[it] == 0 || notes[it] and candidatesOf(it).inv() != 0 }
     val cell =
-        values.indices
-            .filter { values[it] == 0 }
-            .minByOrNull { Integer.bitCount(candidatesOf(it)) } ?: return null
+        useful.minByOrNull { Integer.bitCount(candidatesOf(it)) }
+            ?: empty.minByOrNull { Integer.bitCount(candidatesOf(it)) }?.let {
+                return Hint(it, solution[it], "This one is the ${solution[it]}.")
+            }
+            ?: return null
     val digits = (1..grid.size).filter { candidatesOf(cell) and digitBit(it) != 0 }
     return Hint(cell, solution[cell], "This cell can only be ${digits.spoken()}: everything else is in its row, column or box.")
 }

@@ -57,6 +57,7 @@ data class GameUiState(
     val showHints: Boolean = true,
     val showTutorial: Boolean = true,
     val hintMessage: String? = null,
+    val oneTapMove: Boolean = true,
 )
 
 class GameViewModel(
@@ -349,6 +350,7 @@ class GameViewModel(
                 showHints = display.showHints,
                 showTutorial = display.showTutorial,
                 hintMessage = hintMessage,
+                oneTapMove = current.oneTapMove,
             )
         }
     }

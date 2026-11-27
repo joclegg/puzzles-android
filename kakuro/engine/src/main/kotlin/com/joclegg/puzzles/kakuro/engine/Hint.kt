@@ -45,11 +45,17 @@ fun GameState.findHint(): Hint? {
 }
 
 fun GameState.fewestCandidatesHint(): Hint? {
-    val cell =
+    val empty =
         puzzle.runsOf.keys
             .filter { values[it] == 0 }
             .sorted()
-            .minByOrNull { Integer.bitCount(runCandidates(it)) } ?: return null
+    val useful = empty.filter { notes[it] == 0 || notes[it] and runCandidates(it).inv() != 0 }
+    val cell =
+        useful.minByOrNull { Integer.bitCount(runCandidates(it)) }
+            ?: empty.minByOrNull { Integer.bitCount(runCandidates(it)) }?.let {
+                return Hint(it, puzzle.solution[it], "This one is the ${puzzle.solution[it]}.")
+            }
+            ?: return null
     val digits = Combinations.digitsOf(runCandidates(cell))
     val runs =
         puzzle.runsOf.getValue(cell).sortedByDescending { it.isAcross }.joinToString(" and ") { run ->

@@ -8,6 +8,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -36,8 +39,8 @@ import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.addPathNodes
-import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionOnScreen
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
@@ -45,6 +48,7 @@ import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupPositionProvider
 import androidx.compose.ui.window.PopupProperties
@@ -65,7 +69,7 @@ fun rememberTourState(): TourState = remember { TourState() }
 fun Modifier.tourTarget(
     tour: TourState,
     key: String,
-): Modifier = onGloballyPositioned { tour.bounds[key] = it.boundsInWindow() }
+): Modifier = onGloballyPositioned { tour.bounds[key] = Rect(it.positionOnScreen(), it.size.toSize()) }
 
 @Composable
 fun HintButton(
@@ -96,7 +100,7 @@ fun HowToPlayButton(
             modifier = Modifier.dialogTestTags(),
             title = { Text(stringResource(R.string.how_to_play)) },
             text = {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     rules.forEach { Text(it) }
                 }
             },
@@ -114,8 +118,9 @@ fun HowToPlayButton(
             },
         )
     }
-    if (walking) {
-        Walkthrough(steps, tour, onClose = { walking = false })
+    val shown = steps.filter { it.target in tour.bounds }
+    if (walking && shown.isNotEmpty()) {
+        Walkthrough(shown, tour, onClose = { walking = false })
     }
 }
 
@@ -129,11 +134,27 @@ private fun Walkthrough(
     val step = steps[index]
     val last = index == steps.lastIndex
     val highlight = MaterialTheme.colorScheme.primary
+    var origin by remember { mutableStateOf(Offset.Zero) }
+    var height by remember { mutableIntStateOf(0) }
+    val target = tour.bounds[step.target]?.translate(-origin)
+    val cardAlignment =
+        if (target != null && target.top > height / 2f) {
+            Alignment.TopCenter
+        } else {
+            Alignment.BottomCenter
+        }
     Popup(popupPositionProvider = WindowOrigin, onDismissRequest = onClose, properties = PopupProperties(focusable = true)) {
-        Box(Modifier.fillMaxSize().dialogTestTags()) {
+        Box(
+            Modifier
+                .fillMaxSize()
+                .onGloballyPositioned {
+                    origin = it.positionOnScreen()
+                    height = it.size.height
+                }.dialogTestTags(),
+        ) {
             Canvas(Modifier.fillMaxSize()) {
                 drawRect(Color.Black.copy(alpha = 0.4f))
-                tour.bounds[step.target]?.let { target ->
+                target?.let { target ->
                     drawRoundRect(
                         color = highlight,
                         topLeft = Offset(target.left - PAD, target.top - PAD),
@@ -145,8 +166,9 @@ private fun Walkthrough(
             }
             Card(
                 Modifier
-                    .align(Alignment.BottomCenter)
+                    .align(cardAlignment)
                     .fillMaxWidth()
+                    .systemBarsPadding()
                     .padding(16.dp)
                     .testTag("walkthrough"),
             ) {
